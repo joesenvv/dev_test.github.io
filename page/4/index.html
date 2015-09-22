@@ -1,0 +1,486 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>第 4 页 | wudaijun&#39;s blog</title>
+  <meta name="author" content="wudaijun">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+  <meta property="og:site_name" content="wudaijun&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <meta name="wumiiVerification" content="fb50a101-84fe-4ca2-91a7-ae8cf792978b" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+
+<body>
+  <header id="header" class="inner"><div class= "header-content">
+	<div class = "alignleft col-one">
+		
+			<img src = "/assets/avatar/avatar.png">
+		
+		<div class="header-div">
+		    <h1><a href="/", style="font-family:Fantasy">wudaijun&#39;s blog</a></h1>
+		    <h2><a href="/">写下来的才是实在货</a></h2>
+		</div>
+	</div>
+	<div class = "alignright col-two">
+		
+			<img src = "/assets/avatar/hello.jpg">
+		
+	</div>
+	<div class="clearfix"></div>
+</div>
+
+<div class= "header-nav">
+	<div id="main-nav" class="alignleft">
+	    
+	      <a href="/">首页</a>
+	    
+	      <a href="/archives">归档</a>
+	    
+	</div>
+	<div id="sub-nav" class="alignright">
+	    
+	      <a href="/about">关于我</a>
+	    
+	</div>
+	<div class="clearfix"></div>
+</div>
+</header>
+  
+      <div id="content" class="inner">
+  		<div id="main-col" class="alignleft"><div id="wrapper">
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2014-12-11T16:00:00.000Z"><a href="/2014/12/12/ngserver-playersession/">2014-12-12</a></time>
+        
+  
+    <h1 class="title"><a href="/2014/12/12/ngserver-playersession/">NGServer 加入PlayerSession</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="PlayerSession类">PlayerSession类</h2><p>在之前的网络底层设计中，Player和Session之间通过组合实现弱关联，但仍然有个诟病：Player类和Session类在网络连接到来时一并创建了。这样后面在做断线重连的时候，会有两个Player。而事实上LoginService只管登录认证，登录认证的时候并不需要创建Player类，因此可以延迟Player的创建，将其放在MapService中。而这之前LoginService的登录认证也需要用户的一些基本信息。基于这些，实现了PlayerSession类：</p>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2014/12/12/ngserver-playersession/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2014/12/12/ngserver-playersession/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2014-11-24T16:00:00.000Z"><a href="/2014/11/25/cpp-constructor/">2014-11-25</a></time>
+        
+  
+    <h1 class="title"><a href="/2014/11/25/cpp-constructor/">C++ 构造语义</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>本文是《深度探索C++对象模型》的读书笔记，主要根据自己的理解整理一下C++对象构造的实现细节以及其在实际编程中所带来的影响。</p>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2014/11/25/cpp-constructor/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2014/11/25/cpp-constructor/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2014-11-04T16:00:00.000Z"><a href="/2014/11/05/ngserver-message-encoder/">2014-11-05</a></time>
+        
+  
+    <h1 class="title"><a href="/2014/11/05/ngserver-message-encoder/">NGServer 消息的编解码</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>消息编解码(或序列化)主要是将消息体由一些标准库容器或自定义的类型，转化成二进制流，方便网络传输。为了减少网络IO，编解码中也可能在存在数据”压缩和解压”，但这种压缩是针对于特定的数据类型，并不是针对于二进制流的。在NGServer的消息编解码中，并不涉及数据压缩。</p>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2014/11/05/ngserver-message-encoder/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2014/11/05/ngserver-message-encoder/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2014-11-04T16:00:00.000Z"><a href="/2014/11/05/ngserver-message-callback/">2014-11-05</a></time>
+        
+  
+    <h1 class="title"><a href="/2014/11/05/ngserver-message-callback/">NGServer 消息的注册与回调</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>在前面Service框架的介绍中，提到在GameService的<code>ProcessMsg(UserMessage*)</code>和<code>ProcessMsg(InsideMessage*)</code>中，都完成了消息的回调处理。消息响应函数的注册是在服务初始化(Init())中完成的。需要注册和回调的消息有InsideMessage和UserMessage，对于InsideMessage，响应函数只有一种形式：即为响应服务的成员函数。而对于UserMessage，由于UserMessage有Player指针，响应函数则会有多种形式：</p>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2014/11/05/ngserver-message-callback/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2014/11/05/ngserver-message-callback/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2014-10-30T16:00:00.000Z"><a href="/2014/10/31/ngserver-service/">2014-10-31</a></time>
+        
+  
+    <h1 class="title"><a href="/2014/10/31/ngserver-service/">NGServer Service框架</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>NGServer的核心概念便是服务(Service)，它对逻辑层表现为一个线程，处理各种特定的相关业务。如日志服务(LogService)，数据库服务(DBService)，登录服务(LoginService)。服务之间通过消息进行交互。Service实际上并不是一个独立线程，Service与线程是一种”多对多”的关系。即所有的Service通过ServiceManager来管理，后者维护一个线程池，并将线程池与”服务池”以某种调度方式关联，让线程充分被利用。</p>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2014/10/31/ngserver-service/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2014/10/31/ngserver-service/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2014-10-30T16:00:00.000Z"><a href="/2014/10/31/ngserver-player/">2014-10-31</a></time>
+        
+  
+    <h1 class="title"><a href="/2014/10/31/ngserver-player/">NGServer Session -&gt; Player</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>在服务器中，一般都有一个代表客户端或玩家的类，用来处理一些相关逻辑并保存必要数据。也就是NGServer中的Player类，在网络模型中，一般一个Player对应一次会话(Session)，因此在很多服务器模型中，客户端类直接从Session类派生，这样客户端可以直接通过父类Session的接口发送数据，并且通过实现Sessoin的虚函数对数据进行处理。这种模型的好处在于简单，客户端类能够完全控制网络IO，并且对IO事件进行及时地处理。比如连接断开，那么客户端类可以通过实现Session的OnClose()函数完成一些业务逻辑上的处理，比如保存用户数据。而这种编程模型，将客户端和网络会话的耦合性提到了最高：Client is a Session。方便的同时，很大程度上限制了模块的可拓展性，比如客户端的断线重连，由于这种继承关系，导致Session在销毁的同时必然导致Client”逻辑上”的断线，这样玩家重连的时候，数据只能重新加载，建立新的Session和Client。这种情况还会发生在客户端异处登录时，原有客户端被挤下线的同时，逻辑上的数据也丢失了，而新的客户端将重新加载数据。除了断线重连之外，该模型还会造成不必要的编译依赖。因此我们需要将逻辑上的客户端和底层的网络Session解耦。</p>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2014/10/31/ngserver-player/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2014/10/31/ngserver-player/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2014-10-29T16:00:00.000Z"><a href="/2014/10/30/ngserver-session/">2014-10-30</a></time>
+        
+  
+    <h1 class="title"><a href="/2014/10/30/ngserver-session/">NGServer Session设计</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>在网络编程模型中，一个Session代表一次会话，主要维护网络数据的发送和接收。对外提供发送数据和处理数据的接口。一个高效的Session主要通过缓冲和异步来提高IO效率。NGServer的Session运用双缓冲和boost::asio的异步机制，很好地做到了这一点。</p>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2014/10/30/ngserver-session/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2014/10/30/ngserver-session/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2014-09-19T16:00:00.000Z"><a href="/2014/09/20/ngserver-startpage/">2014-09-20</a></time>
+        
+  
+    <h1 class="title"><a href="/2014/09/20/ngserver-startpage/">NGServer 简介</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>NGServer是本人做的一个迷你型C++游戏服务器框架。Github地址：<a href="https://github.com/wudaijun/NGServer。">https://github.com/wudaijun/NGServer。</a><br>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2014/09/20/ngserver-startpage/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2014/09/20/ngserver-startpage/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+ 
+<nav id="pagination">
+  
+    <a href="/page/3/" class="alignleft prev">上一页</a>
+  
+  
+  <div class="clearfix"></div>
+</nav>
+</div></div>
+  		<aside id="sidebar" class="alignright">
+   <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:wudaijun.com">
+  </form>
+</div> 
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+<!--   
+	
+		<li><a href="/categories/c-c/">c/c++</a><small>5</small></li>
+	
+  
+	
+		<li><a href="/categories/erlang/">erlang</a><small>10</small></li>
+	
+  
+	
+		<li><a href="/categories/gameserver/">gameserver</a><small>18</small></li>
+	
+  
+	
+		<li><a href="/categories/lua/">lua</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/python/">python</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/tool/">tool</a><small>3</small></li>
+	
+   -->
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">3</span></li></ul> 
+</div>
+ 
+
+
+  
+  <div class="widget tag">
+    <h3 class="title">归档</h3>
+	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">2015年09月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">2015年08月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">2015年07月</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">2015年06月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">2015年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">2015年04月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">2015年03月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2015年02月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">2015年01月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">2014年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">2014年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">2014年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">2014年09月</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/c-c/" style="font-size: 15.71px;">c/c++</a> <a href="/tags/erlang/" style="font-size: 20px;">erlang</a> <a href="/tags/firefly/" style="font-size: 11.43px;">firefly</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/kbengine/" style="font-size: 11.43px;">kbengine</a> <a href="/tags/lua/" style="font-size: 17.14px;">lua</a> <a href="/tags/multi-thread/" style="font-size: 12.86px;">multi-thread</a> <a href="/tags/ngserver/" style="font-size: 18.57px;">ngserver</a> <a href="/tags/python/" style="font-size: 12.86px;">python</a> <a href="/tags/skynet/" style="font-size: 14.29px;">skynet</a> <a href="/tags/tool/" style="font-size: 11.43px;">tool</a>
+  </div>
+</div>
+
+</aside>
+           <div class="clearfix"></div>
+      </div>
+  	
+   <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2015 wudaijun
+  
+</div>
+<div class="alignright">
+	<a href="https://github.com/pengloo53/light-ch">Hexo theme</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="http://libs.baidu.com/jquery/2.1.1/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+	<script>
+	var _hmt = _hmt || [];
+	(function() {
+	  var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?380ce5c81e06b297c4a75c0c66825c3d";
+	  var s = document.getElementsByTagName("script")[0]; 
+	  s.parentNode.insertBefore(hm, s);
+	})();
+	</script>
+
+
+<div id="toTop">
+	<a href="#">▲</a>
+	<a href="#footer">▼</a>
+</div>
+<!--  -->
+
+
+</body>
+</html>

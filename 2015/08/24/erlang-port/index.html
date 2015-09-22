@@ -1,0 +1,256 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Erlang Ports | wudaijun&#39;s blog</title>
+  <meta name="author" content="wudaijun">
+  
+  <meta name="description" content="Erlang虚拟机就像一个操作系统，操作系统可以通过Port与外界交互，完成IO操作。Port就像操作系统的套接字，在Erlang中其行为模式与进程无二，可以收发消息，注册名字等等，只不过它不具有代码执行能力，它是外部程序”伪装”的Erlang进程。Erlang Port可分为两种，一种是普通端口(Ports)，外部程序以操作系统进程的方式独立运行，它通过标准输入输出与Erlang虚拟机交互。另一种是端口驱动(Port Driver)，它以动态链接库的方式内联(linkin)到Erlang虚拟机，作为虚拟机的一部分，与Erlang虚拟机共享一个操作系统进程。除了端口以外，Erlang还可以通过NIF的方式调用外部程序，Erlang使用NIF就像调用普通Erlang函数一样，只不过这个函数是其它语言实现的。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Erlang Ports"/>
+  <meta property="og:site_name" content="wudaijun&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <meta name="wumiiVerification" content="fb50a101-84fe-4ca2-91a7-ae8cf792978b" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+
+<body>
+  <header id="header" class="inner"><div class= "header-content">
+	<div class = "alignleft col-one">
+		
+			<img src = "/assets/avatar/avatar.png">
+		
+		<div class="header-div">
+		    <h1><a href="/", style="font-family:Fantasy">wudaijun&#39;s blog</a></h1>
+		    <h2><a href="/">写下来的才是实在货</a></h2>
+		</div>
+	</div>
+	<div class = "alignright col-two">
+		
+			<img src = "/assets/avatar/hello.jpg">
+		
+	</div>
+	<div class="clearfix"></div>
+</div>
+
+<div class= "header-nav">
+	<div id="main-nav" class="alignleft">
+	    
+	      <a href="/">首页</a>
+	    
+	      <a href="/archives">归档</a>
+	    
+	</div>
+	<div id="sub-nav" class="alignright">
+	    
+	      <a href="/about">关于我</a>
+	    
+	</div>
+	<div class="clearfix"></div>
+</div>
+</header>
+  
+      <div id="content" class="inner">
+  		<div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2015-08-23T16:00:00.000Z"><a href="/2015/08/24/erlang-port/">2015-08-24</a></time>
+        
+  
+    <h1 class="title">Erlang Ports</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <div id="toc" class="toc-article">
+	<div class="toc-title">目录</div>
+	<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#一-_Ports"><span class="toc-text">一. Ports</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-简介"><span class="toc-text">1.简介</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-优缺点"><span class="toc-text">2.优缺点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-使用"><span class="toc-text">3.使用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二-_Port_Driver"><span class="toc-text">二. Port Driver</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-简介-1"><span class="toc-text">1.简介</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-优缺点-1"><span class="toc-text">2.优缺点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-使用-1"><span class="toc-text">3.使用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三-_NIF"><span class="toc-text">三. NIF</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-_简介"><span class="toc-text">1. 简介</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-_优缺点"><span class="toc-text">2. 优缺点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-_使用"><span class="toc-text">3. 使用</span></a></li></ol></li></ol>
+</div>
+      
+        <p>Erlang虚拟机就像一个操作系统，操作系统可以通过Port与外界交互，完成IO操作。Port就像操作系统的套接字，在Erlang中其行为模式与进程无二，可以收发消息，注册名字等等，只不过它不具有代码执行能力，它是外部程序”伪装”的Erlang进程。Erlang Port可分为两种，一种是普通端口(Ports)，外部程序以操作系统进程的方式独立运行，它通过标准输入输出与Erlang虚拟机交互。另一种是端口驱动(Port Driver)，它以动态链接库的方式内联(linkin)到Erlang虚拟机，作为虚拟机的一部分，与Erlang虚拟机共享一个操作系统进程。除了端口以外，Erlang还可以通过NIF的方式调用外部程序，Erlang使用NIF就像调用普通Erlang函数一样，只不过这个函数是其它语言实现的。</p>
+<a id="more"></a>
+<p>Erlang与外部程序交互的方式主要有三种：</p>
+<ol>
+<li>普通端口(Ports)</li>
+<li>端口驱动(Port Driver),也叫链入式驱动(Linkin Driver)</li>
+<li>原生实现函数(Native Implemented Functions, NIF)</li>
+</ol>
+<h3 id="一-_Ports">一. Ports</h3><h4 id="1-简介">1.简介</h4><p><img src="/assets/image/Erlang_Port.png" alt="" title="普通端口"></p>
+<p>图一. Ports 通信模型</p>
+<p>普通端口是连接外部程序进程和Erlang虚拟机的桥梁，外部进程通过标准输入输出与Erlang虚拟机交互，并运行于独立的地址空间。</p>
+<p>从操作系统的角度看，外部程序和Erlang虚拟机都是独立允许的进程，只不过外部程序的标准输入输出与Erlang虚拟机对接在了一起而已。因此外部程序可以通过<code>read(0, req_buf, len)</code>来获取虚拟机发出的指令，也可通过<code>write(1, ack_buf, len)</code>来发出响应。当外部程序崩溃了，Erlang虚拟机可以检测到，可以选择重启等对应策略。由于两者在不同的地址空间，只能通过标准IO交互，因此外部程序的崩溃不会影响到Erlang虚拟机本身的正常运行。</p>
+<p>从Erlang的角度看，端口的行为模式表现为一个进程，但它本身无法执行代码，每个端口都有一个属主进程，一般是调用<code>open_port</code>的进程，端口将外界收到的数据发给属主。Erlang中其它进程也通过属主进程与端口交互。当属主进程终止时，端口也将被自动关闭。</p>
+<h4 id="2-优缺点">2.优缺点</h4><p>普通端口的优势在于隔离性和安全性，因为外部程序的任何异常都不会导致虚拟机崩溃，并且Erlang层通过<code>receive</code>来实现同步调用等待外部程序响应时，是不会影响Erlang虚拟机调度的。至于普通端口的缺点，主要是效率低，由于传递的是字节流数据，因此需要对数据进行序列化反序列化，Erlang本身针对C和Java提供了对应的编解码库ei和Jinterface。</p>
+<h4 id="3-使用">3.使用</h4><p>将外部C代码编译为可执行文件，通过<code>erlang:open_port/2</code>打开端口，Erlang层之后即可通过消息与Port交互。C程序从标准输入读取字节流，反序列化得到请求数据，处理完成之后，将序列化后的响应数据写入标准输出。Port收到数据后，会将数据以消息的方式发往属主进程。</p>
+<p>参见：<a href="http://erlang.org/doc/tutorial/c_port.html" target="_blank" rel="external">http://erlang.org/doc/tutorial/c_port.html</a></p>
+<h3 id="二-_Port_Driver">二. Port Driver</h3><h4 id="1-简介-1">1.简介</h4><p><img src="/assets/image/Erlang_Port_Driver.png" alt="" title="端口驱动"></p>
+<p>图二. Port Driver 通信模型</p>
+<p>从Erlang层来看，端口驱动和普通端口所体现的行为模式一样，收发消息，注册名字，并且共用一套Port API。但是端口驱动本身是作为一个动态链接库运行于Erlang虚拟机中的，也就是和Erlang虚拟机共享一个操作系统进程。</p>
+<h4 id="2-优缺点-1">2.优缺点</h4><p>端口驱动的主要优势是效率高，但是缺点是链入的动态链接库本身出现内测泄露或异常，将影响虚拟机的正常运行甚至导致虚拟机崩溃。将外部模块的问题带入了虚拟机本身。并且Port Driver的调用是阻塞的，这将影响到虚拟机调度。因此Erlang Driver提供了一系列的异步接口。</p>
+<h4 id="3-使用-1">3.使用</h4><p>Port Driver是符合<a href="http://erlang.org/doc/man/erl_driver.html" target="_blank" rel="external">Erlang Driver</a>规范的动态链接库，它向Erlang虚拟机提供一个<a href="http://erlang.org/doc/man/driver_entry.html" target="_blank" rel="external">ErlDrvEntry</a>结构体，其内主要包含由虚拟机回调Driver的各个接口。<a href="http://wudaijun.com/2015/01/skynet-c-module/">skynet挂接service</a>的思想大概也继承于此，只不过Erlang Port Driver更为完善和复杂。</p>
+<p>具体使用参见：<a href="http://erlang.org/doc/tutorial/c_portdriver.html" target="_blank" rel="external">http://erlang.org/doc/tutorial/c_portdriver.html</a></p>
+<h3 id="三-_NIF">三. NIF</h3><h4 id="1-_简介">1. 简介</h4><p>Erlang挂接外部模块的第三种方式就是NIF，NIF是由C实现的函数，但是在Erlang层和调用BIF一样方便和快速。</p>
+<h4 id="2-_优缺点">2. 优缺点</h4><p>原生函数(NIF)是三种方式中效率最高的，但是也是风险最高的。它和Port Driver一样可能导致虚拟机异常和崩溃，NIF是在虚拟机线程上下文中调用的，NIF不将控制权交还给虚拟机，虚拟机就无法再次调度该线程。因此NIF只适用于安全，高速的原生实现。</p>
+<h4 id="3-_使用">3. 使用</h4><p>参见：<a href="http://www.erlang.org/doc/tutorial/nif.html" target="_blank" rel="external">http://www.erlang.org/doc/tutorial/nif.html</a></p>
+
+      
+    </div>
+    <footer>
+<!--        -->
+        
+  
+  <div class="categories">
+    <a href="/categories/erlang/">erlang</a>
+  </div>
+
+        
+  
+  <div class="tags">
+    <a href="/tags/erlang/">erlang</a>
+  </div>
+
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+<!--   <h1 class="title">留言</h1> -->
+
+
+    <!-- 多说评论框 start -->
+<div class="ds-thread" data-thread-key="2015/08/24/erlang-port/" data-title="Erlang Ports" data-url="http://wudaijun.com/2015/08/24/erlang-port/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wudaijun"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共JS代码 end -->
+
+
+  
+</section>
+
+
+
+</div></div>
+  		<aside id="sidebar" class="alignright">
+   <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:wudaijun.com">
+  </form>
+</div> 
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+<!--   
+	
+		<li><a href="/categories/c-c/">c/c++</a><small>5</small></li>
+	
+  
+	
+		<li><a href="/categories/erlang/">erlang</a><small>10</small></li>
+	
+  
+	
+		<li><a href="/categories/gameserver/">gameserver</a><small>18</small></li>
+	
+  
+	
+		<li><a href="/categories/lua/">lua</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/python/">python</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/tool/">tool</a><small>3</small></li>
+	
+   -->
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">3</span></li></ul> 
+</div>
+ 
+
+
+  
+  <div class="widget tag">
+    <h3 class="title">归档</h3>
+	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">2015年09月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">2015年08月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">2015年07月</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">2015年06月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">2015年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">2015年04月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">2015年03月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2015年02月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">2015年01月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">2014年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">2014年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">2014年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">2014年09月</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/c-c/" style="font-size: 15.71px;">c/c++</a> <a href="/tags/erlang/" style="font-size: 20px;">erlang</a> <a href="/tags/firefly/" style="font-size: 11.43px;">firefly</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/kbengine/" style="font-size: 11.43px;">kbengine</a> <a href="/tags/lua/" style="font-size: 17.14px;">lua</a> <a href="/tags/multi-thread/" style="font-size: 12.86px;">multi-thread</a> <a href="/tags/ngserver/" style="font-size: 18.57px;">ngserver</a> <a href="/tags/python/" style="font-size: 12.86px;">python</a> <a href="/tags/skynet/" style="font-size: 14.29px;">skynet</a> <a href="/tags/tool/" style="font-size: 11.43px;">tool</a>
+  </div>
+</div>
+
+</aside>
+           <div class="clearfix"></div>
+      </div>
+  	
+   <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2015 wudaijun
+  
+</div>
+<div class="alignright">
+	<a href="https://github.com/pengloo53/light-ch">Hexo theme</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="http://libs.baidu.com/jquery/2.1.1/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+	<script>
+	var _hmt = _hmt || [];
+	(function() {
+	  var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?380ce5c81e06b297c4a75c0c66825c3d";
+	  var s = document.getElementsByTagName("script")[0]; 
+	  s.parentNode.insertBefore(hm, s);
+	})();
+	</script>
+
+
+<div id="toTop">
+	<a href="#">▲</a>
+	<a href="#footer">▼</a>
+</div>
+<!--  -->
+
+
+</body>
+</html>

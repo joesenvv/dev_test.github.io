@@ -1,0 +1,593 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>wudaijun&#39;s blog</title>
+  <meta name="author" content="wudaijun">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+  <meta property="og:site_name" content="wudaijun&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <meta name="wumiiVerification" content="fb50a101-84fe-4ca2-91a7-ae8cf792978b" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+
+<body>
+  <header id="header" class="inner"><div class= "header-content">
+	<div class = "alignleft col-one">
+		
+			<img src = "/assets/avatar/avatar.png">
+		
+		<div class="header-div">
+		    <h1><a href="/", style="font-family:Fantasy">wudaijun&#39;s blog</a></h1>
+		    <h2><a href="/">写下来的才是实在货</a></h2>
+		</div>
+	</div>
+	<div class = "alignright col-two">
+		
+			<img src = "/assets/avatar/hello.jpg">
+		
+	</div>
+	<div class="clearfix"></div>
+</div>
+
+<div class= "header-nav">
+	<div id="main-nav" class="alignleft">
+	    
+	      <a href="/">首页</a>
+	    
+	      <a href="/archives">归档</a>
+	    
+	</div>
+	<div id="sub-nav" class="alignright">
+	    
+	      <a href="/about">关于我</a>
+	    
+	</div>
+	<div class="clearfix"></div>
+</div>
+</header>
+  
+      <div id="content" class="inner">
+  		<div id="main-col" class="alignleft"><div id="wrapper">
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2015-09-18T16:00:00.000Z"><a href="/2015/09/19/use-hexo-rebuild-blog/">2015-09-19</a></time>
+        
+  
+    <h1 class="title"><a href="/2015/09/19/use-hexo-rebuild-blog/">博客开始使用Hexo</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>最近又开始想在博客上实现自己一直想要的摘要功能，然后倒腾jekyll，本来也没有前端基础，就博客系统而言，对我来说，简单就好，能专注写东西。但是发现jekyll偏离了这个宗旨，缺乏成熟的主题机制，可定制性太强，学习成本高。然后发现了这个<a href="https://github.com/pengloo53/Hexo-theme-light_cn">Hexo主题</a>，觉得就是自己想要的功能。最终抛弃了jekyll，投向Hexo。</p>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2015/09/19/use-hexo-rebuild-blog/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2015/09/19/use-hexo-rebuild-blog/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2015-09-15T16:00:00.000Z"><a href="/2015/09/16/erlang-server-design2-pvp-battle/">2015-09-16</a></time>
+        
+  
+    <h1 class="title"><a href="/2015/09/16/erlang-server-design2-pvp-battle/">开发笔记(2) pvp server</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h3 id="PVP简介">PVP简介</h3><p>接<a href="http://wudaijun.com/2015/08/erlang-server-design1/">这里</a>，由于是大服机制，每个player_server可以跑在任何player_node上，那么逻辑上的小服并不以一个node实际存在，而仅仅是player上的一个字段，对应的每个逻辑小服需要有个pvp_server进程用于维护pvp，也就是竞技场，由于pvp_server要维护排行榜逻辑，因此每个逻辑小服是只能对应一个pvp_server的。</p>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2015/09/16/erlang-server-design2-pvp-battle/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2015/09/16/erlang-server-design2-pvp-battle/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2015-08-23T16:00:00.000Z"><a href="/2015/08/24/erlang-port/">2015-08-24</a></time>
+        
+  
+    <h1 class="title"><a href="/2015/08/24/erlang-port/">Erlang Ports</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>Erlang虚拟机就像一个操作系统，操作系统可以通过Port与外界交互，完成IO操作。Port就像操作系统的套接字，在Erlang中其行为模式与进程无二，可以收发消息，注册名字等等，只不过它不具有代码执行能力，它是外部程序”伪装”的Erlang进程。Erlang Port可分为两种，一种是普通端口(Ports)，外部程序以操作系统进程的方式独立运行，它通过标准输入输出与Erlang虚拟机交互。另一种是端口驱动(Port Driver)，它以动态链接库的方式内联(linkin)到Erlang虚拟机，作为虚拟机的一部分，与Erlang虚拟机共享一个操作系统进程。除了端口以外，Erlang还可以通过NIF的方式调用外部程序，Erlang使用NIF就像调用普通Erlang函数一样，只不过这个函数是其它语言实现的。</p>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2015/08/24/erlang-port/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2015/08/24/erlang-port/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2015-08-05T16:00:00.000Z"><a href="/2015/08/06/erlang-server-design1-cluster-server/">2015-08-06</a></time>
+        
+  
+    <h1 class="title"><a href="/2015/08/06/erlang-server-design1-cluster-server/">开发笔记(1) cluster server</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="设计原则">设计原则</h2><p>无单点，高可用性，强大的热更支持。</p>
+<h2 id="集群">集群</h2><p>整个服务器可能有很多node，node可根据其职责来划分，如player_node，master_node，pvp_node，每种node可有多个。其中master_node负责连接和管理所有node，新加入的node只需和master_node连接，即加入了整个集群。</p>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2015/08/06/erlang-server-design1-cluster-server/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2015/08/06/erlang-server-design1-cluster-server/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2015-07-23T16:00:00.000Z"><a href="/2015/07/24/kbengine-study2/">2015-07-24</a></time>
+        
+  
+    <h1 class="title"><a href="/2015/07/24/kbengine-study2/">kbengine 源码导读(二) 加载流程</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="一-_登录流程">一. 登录流程</h2><p><strong>注册</strong></p>
+<pre><code>Unity3d:CreateAccount
+Loginapp:reqCreateAccount 
+-<span class="ruby">&gt; <span class="symbol">dbmgr:</span>reqCreateAccount 
+</span>-<span class="ruby">&gt; <span class="constant">Loginapp</span><span class="symbol">:onReqCreateAccountResult</span> 
+</span>-<span class="ruby">&gt; <span class="constant">Client</span><span class="symbol">:onReqCreateAccountResult</span></span>
+</code></pre>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2015/07/24/kbengine-study2/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2015/07/24/kbengine-study2/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2015-07-22T16:00:00.000Z"><a href="/2015/07/23/kbengine-study1/">2015-07-23</a></time>
+        
+  
+    <h1 class="title"><a href="/2015/07/23/kbengine-study1/">kbengine 源码导读(一) 网络底层</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="一-_network部分">一. network部分</h2><p><strong>EndPoint:</strong></p>
+<p>抽象一个Socket及其相关操作，隔离平台相关性。</p>
+<p><strong>TcpPacket:</strong></p>
+<p>代表一个TCP包，这个包只是recv收到的字节流，并不是上层协议中的消息(Message)。</p>
+<p><strong>MsgHandlers:</strong></p>
+<p>每个MessageHandler类对应一个消息的处理。MsgHanders维护MsgId -&gt; MsgHandler的映射。</p>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2015/07/23/kbengine-study1/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2015/07/23/kbengine-study1/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2015-07-19T16:00:00.000Z"><a href="/2015/07/20/c-linker-model/">2015-07-20</a></time>
+        
+  
+    <h1 class="title"><a href="/2015/07/20/c-linker-model/">C链接模型_符号解析</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>链接器的工作主要分为两个阶段：符号解析和重定位。本文简单介绍符号解析过程。</p>
+<p>符号解析的功能是将每个模块符号引用绑定到一个确切的符号定义。</p>
+<h3 id="1-_符号分类">1. 符号分类</h3><ul>
+<li>全局符号：非静态全局变量，非静态函数</li>
+<li>外部符号：定义于其它模块，而被本模块引用的全局变量和函数</li>
+<li>本地符号：静态变量(包括全局和局部)，静态函数</li>
+</ul>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2015/07/20/c-linker-model/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2015/07/20/c-linker-model/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2015-07-08T16:00:00.000Z"><a href="/2015/07/09/rebar-hotcode/">2015-07-09</a></time>
+        
+  
+    <h1 class="title"><a href="/2015/07/09/rebar-hotcode/">rebar的热更</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>由于项目开发中早早地用到了<a href="https://github.com/basho/rebar">rebar</a>，虽然rebar在很多方面都比自己构建原生OTP应用更方便，但是每一次修改，都需要重新编译，发布，启动，非常耗费时间，而rebar本身的<a href="https://github.com/rebar/rebar/wiki/Upgrades">upgrade</a>又比较麻烦，是针对于版本发布的，不适合开发测试使用。</p>
+<p>因此找到了一种基于.beam文件更新加载的方法，借鉴自<a href="https://github.com/mochi/mochiweb/blob/master/src/reloader.erl">mochiweb reloader</a>。</p>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2015/07/09/rebar-hotcode/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2015/07/09/rebar-hotcode/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2015-07-02T16:00:00.000Z"><a href="/2015/07/03/erlang-mongodb/">2015-07-03</a></time>
+        
+  
+    <h1 class="title"><a href="/2015/07/03/erlang-mongodb/">Erlang mongodb</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>erlang mongodb驱动地址: <a href="https://github.com/comtihon/mongodb-erlang">https://github.com/comtihon/mongodb-erlang</a></p>
+<p><strong>1. 存取</strong></p>
+<p>首先，该驱动不支持将List和Integer作为Key，事实上，它将erlang中List看做数组而不是字符串：</p>
+<pre><code>mongo:<span class="operator"><span class="keyword">insert</span>(<span class="keyword">Connection</span>, Collection, {<span class="string">"key1"</span>, value1})      % <span class="keyword">ERROR</span>
+mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span>, Collection, {<span class="number">1</span>, value1})           % <span class="keyword">ERROR</span>
+
+mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span>, Collection, {key1, value1})        % OK
+mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span>, Collection, {&lt;&lt;<span class="string">"key1""&gt;&gt;, value1}) % OK</span></span>
+</code></pre>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2015/07/03/erlang-mongodb/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2015/07/03/erlang-mongodb/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2015-06-30T16:00:00.000Z"><a href="/2015/07/01/erlang-superviosr/">2015-07-01</a></time>
+        
+  
+    <h1 class="title"><a href="/2015/07/01/erlang-superviosr/">Erlang supervisor</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h3 id="一-_简介">一. 简介</h3><p>Supervisor(监督者)用于监督一个或多个Erlang OTP子进程，Supervisor本身是个behaviour，仅有一个Callback: <code>init/1</code>，该函数返回{ok, {ChildSpecList, RestartStrategy}}。ChildSpecs是ChildSpec列表，</p>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2015/07/01/erlang-superviosr/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2015/07/01/erlang-superviosr/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+ 
+<nav id="pagination">
+  
+  
+    <a href="/page/2/" class="alignright next">下一页</a>
+  
+  <div class="clearfix"></div>
+</nav>
+</div></div>
+  		<aside id="sidebar" class="alignright">
+   <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:wudaijun.com">
+  </form>
+</div> 
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+<!--   
+	
+		<li><a href="/categories/c-c/">c/c++</a><small>5</small></li>
+	
+  
+	
+		<li><a href="/categories/erlang/">erlang</a><small>10</small></li>
+	
+  
+	
+		<li><a href="/categories/gameserver/">gameserver</a><small>18</small></li>
+	
+  
+	
+		<li><a href="/categories/lua/">lua</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/python/">python</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/tool/">tool</a><small>3</small></li>
+	
+   -->
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">3</span></li></ul> 
+</div>
+ 
+
+
+  
+  <div class="widget tag">
+    <h3 class="title">归档</h3>
+	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">2015年09月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">2015年08月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">2015年07月</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">2015年06月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">2015年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">2015年04月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">2015年03月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2015年02月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">2015年01月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">2014年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">2014年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">2014年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">2014年09月</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/c-c/" style="font-size: 15.71px;">c/c++</a> <a href="/tags/erlang/" style="font-size: 20px;">erlang</a> <a href="/tags/firefly/" style="font-size: 11.43px;">firefly</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/kbengine/" style="font-size: 11.43px;">kbengine</a> <a href="/tags/lua/" style="font-size: 17.14px;">lua</a> <a href="/tags/multi-thread/" style="font-size: 12.86px;">multi-thread</a> <a href="/tags/ngserver/" style="font-size: 18.57px;">ngserver</a> <a href="/tags/python/" style="font-size: 12.86px;">python</a> <a href="/tags/skynet/" style="font-size: 14.29px;">skynet</a> <a href="/tags/tool/" style="font-size: 11.43px;">tool</a>
+  </div>
+</div>
+
+</aside>
+           <div class="clearfix"></div>
+      </div>
+  	
+   <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2015 wudaijun
+  
+</div>
+<div class="alignright">
+	<a href="https://github.com/pengloo53/light-ch">Hexo theme</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="http://libs.baidu.com/jquery/2.1.1/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+	<script>
+	var _hmt = _hmt || [];
+	(function() {
+	  var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?380ce5c81e06b297c4a75c0c66825c3d";
+	  var s = document.getElementsByTagName("script")[0]; 
+	  s.parentNode.insertBefore(hm, s);
+	})();
+	</script>
+
+
+<div id="toTop">
+	<a href="#">▲</a>
+	<a href="#footer">▼</a>
+</div>
+<!--  -->
+
+
+</body>
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>NGServer Session -&gt; Player | wudaijun&#39;s blog</title>
+  <meta name="author" content="wudaijun">
+  
+  <meta name="description" content="在服务器中，一般都有一个代表客户端或玩家的类，用来处理一些相关逻辑并保存必要数据。也就是NGServer中的Player类，在网络模型中，一般一个Player对应一次会话(Session)，因此在很多服务器模型中，客户端类直接从Session类派生，这样客户端可以直接通过父类Session的接口发送数据，并且通过实现Sessoin的虚函数对数据进行处理。这种模型的好处在于简单，客户端类能够完全控制网络IO，并且对IO事件进行及时地处理。比如连接断开，那么客户端类可以通过实现Session的OnClose()函数完成一些业务逻辑上的处理，比如保存用户数据。而这种编程模型，将客户端和网络会话的耦合性提到了最高：Client is a Session。方便的同时，很大程度上限制了模块的可拓展性，比如客户端的断线重连，由于这种继承关系，导致Session在销毁的同时必然导致Client”逻辑上”的断线，这样玩家重连的时候，数据只能重新加载，建立新的Session和Client。这种情况还会发生在客户端异处登录时，原有客户端被挤下线的同时，逻辑上的数据也丢失了，而新的客户端将重新加载数据。除了断线重连之外，该模型还会造成不必要的编译依赖。因此我们需要将逻辑上的客户端和底层的网络Session解耦。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="NGServer Session -&gt; Player"/>
+  <meta property="og:site_name" content="wudaijun&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <meta name="wumiiVerification" content="fb50a101-84fe-4ca2-91a7-ae8cf792978b" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+
+<body>
+  <header id="header" class="inner"><div class= "header-content">
+	<div class = "alignleft col-one">
+		
+			<img src = "/assets/avatar/avatar.png">
+		
+		<div class="header-div">
+		    <h1><a href="/", style="font-family:Fantasy">wudaijun&#39;s blog</a></h1>
+		    <h2><a href="/">写下来的才是实在货</a></h2>
+		</div>
+	</div>
+	<div class = "alignright col-two">
+		
+			<img src = "/assets/avatar/hello.jpg">
+		
+	</div>
+	<div class="clearfix"></div>
+</div>
+
+<div class= "header-nav">
+	<div id="main-nav" class="alignleft">
+	    
+	      <a href="/">首页</a>
+	    
+	      <a href="/archives">归档</a>
+	    
+	</div>
+	<div id="sub-nav" class="alignright">
+	    
+	      <a href="/about">关于我</a>
+	    
+	</div>
+	<div class="clearfix"></div>
+</div>
+</header>
+  
+      <div id="content" class="inner">
+  		<div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2014-10-30T16:00:00.000Z"><a href="/2014/10/31/ngserver-player/">2014-10-31</a></time>
+        
+  
+    <h1 class="title">NGServer Session -&gt; Player</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <div id="toc" class="toc-article">
+	<div class="toc-title">目录</div>
+	
+</div>
+      
+        <p>在服务器中，一般都有一个代表客户端或玩家的类，用来处理一些相关逻辑并保存必要数据。也就是NGServer中的Player类，在网络模型中，一般一个Player对应一次会话(Session)，因此在很多服务器模型中，客户端类直接从Session类派生，这样客户端可以直接通过父类Session的接口发送数据，并且通过实现Sessoin的虚函数对数据进行处理。这种模型的好处在于简单，客户端类能够完全控制网络IO，并且对IO事件进行及时地处理。比如连接断开，那么客户端类可以通过实现Session的OnClose()函数完成一些业务逻辑上的处理，比如保存用户数据。而这种编程模型，将客户端和网络会话的耦合性提到了最高：Client is a Session。方便的同时，很大程度上限制了模块的可拓展性，比如客户端的断线重连，由于这种继承关系，导致Session在销毁的同时必然导致Client”逻辑上”的断线，这样玩家重连的时候，数据只能重新加载，建立新的Session和Client。这种情况还会发生在客户端异处登录时，原有客户端被挤下线的同时，逻辑上的数据也丢失了，而新的客户端将重新加载数据。除了断线重连之外，该模型还会造成不必要的编译依赖。因此我们需要将逻辑上的客户端和底层的网络Session解耦。</p>
+<a id="more"></a>
+<p>一种可行的解耦方式是让Session和Player以”包含”的方式并存。即让Session指针或引用作为Player的一个成员。如此数据的发送仍然比较简单，而数据的接收和处理则需要Session通知Player类，这里有两种方式：</p>
+<ol>
+<li>让Session也包含一个Player的引用，如此Session在收到数据或连接关闭时也能调用Player接口进行业务逻辑上的处理。</li>
+<li>通过std::bind直接让Player的数据解码接口(Decoder)交给Session，Session的数据接收和关闭均通过Decoder交由Player,如此实现更弱的耦合性。</li>
+</ol>
+<p>NGServer采用第二种方式：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> PlayerManager::OnConnect(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;Socket&gt;&amp; socket)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">uint32_t</span> id = ++_connect_id;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 创建Player和Session 并将Player和Session关联</span></span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;Session&gt; session = <span class="built_in">std</span>::make_shared&lt;Session&gt;(socket, id);</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;Player&gt; player = <span class="built_in">std</span>::make_shared&lt;Player&gt;(session, LoginService::sDefaultSid);</span><br><span class="line">	<span class="built_in">std</span>::function&lt;<span class="keyword">int32_t</span>(<span class="keyword">const</span> <span class="keyword">char</span>*, <span class="keyword">size_t</span> len)&gt; decoder = <span class="built_in">std</span>::bind(&amp;Player::Decode, player, <span class="built_in">std</span>::placeholders::_1, <span class="built_in">std</span>::placeholders::_2);</span><br><span class="line">	player-&gt;SetConnId(id);</span><br><span class="line">	session-&gt;SetDecoder(decoder);</span><br><span class="line"></span><br><span class="line">	AddPlayer(player);</span><br><span class="line"></span><br><span class="line">	session-&gt;StartRecv();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>PlayerManager管理所有Player的连接，它继承于AsyncTcpListener，一个连接监听器，提供OnConnect接口处理客户端连接事件。因此PlayerManager负责Session和Player的创建和管理，并将Session和Player关联。当有新用户连接时，在OnConnect中，创建Player和Session，并相互关联。Session将收到的数据通过Player::Decode解码，该函数返回解包完成后缓冲区的剩余长度，以便Session调整缓冲区。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Session收到新的数据</span></span><br><span class="line"><span class="keyword">void</span> Session::ReadComplete(<span class="keyword">const</span> boost::system::error_code&amp; err, <span class="keyword">size_t</span> bytes_transferred)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (err || bytes_transferred == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        DisConnect();</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    _recv_total += bytes_transferred;</span><br><span class="line">    _recv_off += bytes_transferred;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 处理数据</span></span><br><span class="line">    <span class="keyword">if</span> (ProcessData())</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 继续接收数据</span></span><br><span class="line">        AsyncReadSome();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对缓冲区中的数据解包 返回false则断开连接</span></span><br><span class="line"><span class="keyword">bool</span> Session::ProcessData()</span><br><span class="line">&#123;</span><br><span class="line">    assert(_decoder);</span><br><span class="line">    <span class="comment">// 将数据交由解码器处理 返回处理之后的缓冲区剩余字节数 返回-1表示服务器主动断线</span></span><br><span class="line">    <span class="keyword">int32_t</span> remain = _decoder(_recv_buf,_recv_off);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 服务器断开连接</span></span><br><span class="line">    <span class="keyword">if</span> (remain &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ShutDown(ShutDownType::shutdown_receive);</span><br><span class="line">        DisConnect();</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 处理之后的偏移</span></span><br><span class="line">    <span class="keyword">if</span> (remain &gt; <span class="number">0</span> &amp;&amp; remain &lt; kBufferSize)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">size_t</span> remain_off = _recv_off - remain;</span><br><span class="line">        _recv_off = (<span class="keyword">size_t</span>)remain;</span><br><span class="line">        <span class="built_in">memcpy</span>(_recv_buf, _recv_buf + remain_off, _recv_off);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        _recv_off = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>网络底层部分到此结束，焦点将由Player::Decode转向逻辑层。</p>
+
+      
+    </div>
+    <footer>
+<!--        -->
+        
+  
+  <div class="categories">
+    <a href="/categories/gameserver/">gameserver</a>
+  </div>
+
+        
+  
+  <div class="tags">
+    <a href="/tags/ngserver/">ngserver</a>
+  </div>
+
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+<!--   <h1 class="title">留言</h1> -->
+
+
+    <!-- 多说评论框 start -->
+<div class="ds-thread" data-thread-key="2014/10/31/ngserver-player/" data-title="NGServer Session -&gt; Player" data-url="http://wudaijun.com/2014/10/31/ngserver-player/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wudaijun"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共JS代码 end -->
+
+
+  
+</section>
+
+
+
+</div></div>
+  		<aside id="sidebar" class="alignright">
+   <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:wudaijun.com">
+  </form>
+</div> 
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+<!--   
+	
+		<li><a href="/categories/c-c/">c/c++</a><small>5</small></li>
+	
+  
+	
+		<li><a href="/categories/erlang/">erlang</a><small>10</small></li>
+	
+  
+	
+		<li><a href="/categories/gameserver/">gameserver</a><small>18</small></li>
+	
+  
+	
+		<li><a href="/categories/lua/">lua</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/python/">python</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/tool/">tool</a><small>3</small></li>
+	
+   -->
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">3</span></li></ul> 
+</div>
+ 
+
+
+  
+  <div class="widget tag">
+    <h3 class="title">归档</h3>
+	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">2015年09月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">2015年08月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">2015年07月</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">2015年06月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">2015年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">2015年04月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">2015年03月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2015年02月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">2015年01月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">2014年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">2014年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">2014年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">2014年09月</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/c-c/" style="font-size: 15.71px;">c/c++</a> <a href="/tags/erlang/" style="font-size: 20px;">erlang</a> <a href="/tags/firefly/" style="font-size: 11.43px;">firefly</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/kbengine/" style="font-size: 11.43px;">kbengine</a> <a href="/tags/lua/" style="font-size: 17.14px;">lua</a> <a href="/tags/multi-thread/" style="font-size: 12.86px;">multi-thread</a> <a href="/tags/ngserver/" style="font-size: 18.57px;">ngserver</a> <a href="/tags/python/" style="font-size: 12.86px;">python</a> <a href="/tags/skynet/" style="font-size: 14.29px;">skynet</a> <a href="/tags/tool/" style="font-size: 11.43px;">tool</a>
+  </div>
+</div>
+
+</aside>
+           <div class="clearfix"></div>
+      </div>
+  	
+   <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2015 wudaijun
+  
+</div>
+<div class="alignright">
+	<a href="https://github.com/pengloo53/light-ch">Hexo theme</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="http://libs.baidu.com/jquery/2.1.1/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+	<script>
+	var _hmt = _hmt || [];
+	(function() {
+	  var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?380ce5c81e06b297c4a75c0c66825c3d";
+	  var s = document.getElementsByTagName("script")[0]; 
+	  s.parentNode.insertBefore(hm, s);
+	})();
+	</script>
+
+
+<div id="toTop">
+	<a href="#">▲</a>
+	<a href="#footer">▼</a>
+</div>
+<!--  -->
+
+
+</body>
+</html>

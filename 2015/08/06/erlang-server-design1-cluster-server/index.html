@@ -1,0 +1,248 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>开发笔记(1) cluster server | wudaijun&#39;s blog</title>
+  <meta name="author" content="wudaijun">
+  
+  <meta name="description" content="设计原则无单点，高可用性，强大的热更支持。
+集群整个服务器可能有很多node，node可根据其职责来划分，如player_node，master_node，pvp_node，每种node可有多个。其中master_node负责连接和管理所有node，新加入的node只需和master_node连接，即加入了整个集群。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="开发笔记(1) cluster server"/>
+  <meta property="og:site_name" content="wudaijun&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <meta name="wumiiVerification" content="fb50a101-84fe-4ca2-91a7-ae8cf792978b" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+
+<body>
+  <header id="header" class="inner"><div class= "header-content">
+	<div class = "alignleft col-one">
+		
+			<img src = "/assets/avatar/avatar.png">
+		
+		<div class="header-div">
+		    <h1><a href="/", style="font-family:Fantasy">wudaijun&#39;s blog</a></h1>
+		    <h2><a href="/">写下来的才是实在货</a></h2>
+		</div>
+	</div>
+	<div class = "alignright col-two">
+		
+			<img src = "/assets/avatar/hello.jpg">
+		
+	</div>
+	<div class="clearfix"></div>
+</div>
+
+<div class= "header-nav">
+	<div id="main-nav" class="alignleft">
+	    
+	      <a href="/">首页</a>
+	    
+	      <a href="/archives">归档</a>
+	    
+	</div>
+	<div id="sub-nav" class="alignright">
+	    
+	      <a href="/about">关于我</a>
+	    
+	</div>
+	<div class="clearfix"></div>
+</div>
+</header>
+  
+      <div id="content" class="inner">
+  		<div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2015-08-05T16:00:00.000Z"><a href="/2015/08/06/erlang-server-design1-cluster-server/">2015-08-06</a></time>
+        
+  
+    <h1 class="title">开发笔记(1) cluster server</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <div id="toc" class="toc-article">
+	<div class="toc-title">目录</div>
+	<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#设计原则"><span class="toc-text">设计原则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#集群"><span class="toc-text">集群</span></a></li></ol>
+</div>
+      
+        <h2 id="设计原则">设计原则</h2><p>无单点，高可用性，强大的热更支持。</p>
+<h2 id="集群">集群</h2><p>整个服务器可能有很多node，node可根据其职责来划分，如player_node，master_node，pvp_node，每种node可有多个。其中master_node负责连接和管理所有node，新加入的node只需和master_node连接，即加入了整个集群。</p>
+<a id="more"></a>
+<p>后端集群集中处理的一件事是：根据{type, id}二元组创建/取出对应进程Pid，比如type为player，id则为playerid，根据这两个值取出玩家进程Pid，而不管该进程实际运行于哪个player_node上，进程位置对于应用来说是透明的。理想情况下，每个node部署在一台物理机上，当一个物理机挂掉之后，之后负载将分发到其它同类型的node，而挂掉的node已有的进程将重新创建在其它node上。对玩家进程来说，就是一次重新登录。包括master_node在内，所有类型的node至少配置两个以上，这样，整个系统是没有单点的。</p>
+<p>如果由其它语言来实现这样一个集群，可能颇为麻烦，因为要实时同步所有node信息和node上的process信息。但通过<a href="http://wudaijun.com/2015/04/erlang-mnesia/">Erlang mnesia</a>来做这件事，却只需几百代码。得益于mnesia天生分布式的特性，可以将node信息和process信息存入mnesia表中：</p>
+<pre><code><span class="pp"><span class="keyword">-record</span><span class="params">(cluster_node, <span class="tuple">{type, node}</span>)</span></span>.               <span class="comment">% 用于进程创建</span>
+<span class="pp"><span class="keyword">-record</span><span class="params">(<span class="function_name">cluster_</span>(type)<span class="variable">_</span>process, <span class="tuple">{id, node, pid}</span>)</span></span>. <span class="comment">% 用于进程获取</span>
+</code></pre><p>其中cluster<em>node为所有node共享，`cluster</em>(type)_process` 一般为指定type的node共享。cluster_server提供如下接口：</p>
+<figure class="highlight erlang-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% Type: 进程类型(如player, pvp, agent)</span></span><br><span class="line"><span class="comment">% Id:	进程ID，用于检索进程(如playerid)</span></span><br><span class="line"><span class="comment">% Callback: 创建进程的回调MFA，可用于执行具体创建工作 如 player_sup:start_child(PlayerId)</span></span><br><span class="line"><span class="comment">% Selector: 自定义的node筛选规则，用于选择创建该进程的node</span></span><br><span class="line"><span class="function_or_atom">create_process</span>(<span class="variable">Type</span>, <span class="variable">Id</span>, <span class="variable">Callback</span>, <span class="variable">Selector</span>) <span class="arrow">-&gt;</span> &#123;<span class="ok">ok</span>, <span class="variable">Pid</span>()&#125; | &#123;<span class="function_or_atom">error</span>, <span class="variable">Reason</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">% 根据进程类型和进程ID，获取进程</span></span><br><span class="line"><span class="function_or_atom">get_process</span>(<span class="variable">Type</span>, <span class="variable">Id</span>) <span class="arrow">-&gt;</span> &#123;<span class="ok">ok</span>, <span class="variable">Pid</span>()&#125; | &#123;<span class="function_or_atom">error</span>, <span class="function_or_atom">not_find</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">% 添加进程到cluster_(Type)_process表中 Node即为当前node() 一般在进程init中调用</span></span><br><span class="line"><span class="function_or_atom">set_process</span>(<span class="variable">Type</span>, <span class="variable">Id</span>, <span class="variable">Pid</span>) <span class="arrow">-&gt;</span> <span class="ok">ok</span> | &#123;<span class="function_or_atom">error</span>, <span class="variable">Reason</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">% 删除进程 一般在进程terminate时调用</span></span><br><span class="line"><span class="function_or_atom">del_process</span>(<span class="variable">Type</span>, <span class="variable">Id</span>) <span class="arrow">-&gt;</span> <span class="ok">ok</span></span><br></pre></td></tr></table></figure>
+<p>##PlayerServer：</p>
+<p>数据库： <a href="https://github.com/comtihon/mongodb-erlang" target="_blank" rel="external">mongodb</a></p>
+<p>网络层： <a href="https://github.com/ninenines/ranch" target="_blank" rel="external">ranch</a></p>
+<p>协议层： <a href="https://github.com/basho/erlang_protobuffs" target="_blank" rel="external">protobuf</a></p>
+<p>为了更好地支持热更时的数据结构兼容性，我们将整个玩家数据PlayerData组织为dict，放在gen_server的State中。尽管对于交互性弱的游戏来说，将玩家数据模块化放在进程字典中更快更方便，但是在代码可读性和数据管理上，会更麻烦。而且将PlayerData置于gen_server state中的另一个好处是：所有消息处理都具备事务性。逻辑处理上遇到错误可通过抛异常的方式结束处理，消息分发器捕获异常，响应错误消息。整个消息处理中，PlayerData要么被正确处理，要么不变。</p>
+<p>将PlayerData组织为dict而不是record的原因有两个：一是为了更好地支持热更机制，二是<a href="http://wudaijun.com/2015/07/erlang-mongodb/">dict与mongodb的转换</a>比较方便。</p>
+<p>至于其它的Agent进程与Player进程关联，登录重登机制，都大同小异。现在在考虑的一件事是落地优化，目前实行的落地是直接覆写，没有进行字段跟踪或模块标记来优化。</p>
+
+      
+    </div>
+    <footer>
+<!--        -->
+        
+  
+  <div class="categories">
+    <a href="/categories/erlang/">erlang</a>
+  </div>
+
+        
+  
+  <div class="tags">
+    <a href="/tags/erlang/">erlang</a>
+  </div>
+
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+<!--   <h1 class="title">留言</h1> -->
+
+
+    <!-- 多说评论框 start -->
+<div class="ds-thread" data-thread-key="2015/08/06/erlang-server-design1-cluster-server/" data-title="开发笔记(1) cluster server" data-url="http://wudaijun.com/2015/08/06/erlang-server-design1-cluster-server/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wudaijun"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共JS代码 end -->
+
+
+  
+</section>
+
+
+
+</div></div>
+  		<aside id="sidebar" class="alignright">
+   <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:wudaijun.com">
+  </form>
+</div> 
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+<!--   
+	
+		<li><a href="/categories/c-c/">c/c++</a><small>5</small></li>
+	
+  
+	
+		<li><a href="/categories/erlang/">erlang</a><small>10</small></li>
+	
+  
+	
+		<li><a href="/categories/gameserver/">gameserver</a><small>18</small></li>
+	
+  
+	
+		<li><a href="/categories/lua/">lua</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/python/">python</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/tool/">tool</a><small>3</small></li>
+	
+   -->
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">3</span></li></ul> 
+</div>
+ 
+
+
+  
+  <div class="widget tag">
+    <h3 class="title">归档</h3>
+	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">2015年09月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">2015年08月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">2015年07月</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">2015年06月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">2015年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">2015年04月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">2015年03月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2015年02月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">2015年01月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">2014年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">2014年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">2014年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">2014年09月</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/c-c/" style="font-size: 15.71px;">c/c++</a> <a href="/tags/erlang/" style="font-size: 20px;">erlang</a> <a href="/tags/firefly/" style="font-size: 11.43px;">firefly</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/kbengine/" style="font-size: 11.43px;">kbengine</a> <a href="/tags/lua/" style="font-size: 17.14px;">lua</a> <a href="/tags/multi-thread/" style="font-size: 12.86px;">multi-thread</a> <a href="/tags/ngserver/" style="font-size: 18.57px;">ngserver</a> <a href="/tags/python/" style="font-size: 12.86px;">python</a> <a href="/tags/skynet/" style="font-size: 14.29px;">skynet</a> <a href="/tags/tool/" style="font-size: 11.43px;">tool</a>
+  </div>
+</div>
+
+</aside>
+           <div class="clearfix"></div>
+      </div>
+  	
+   <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2015 wudaijun
+  
+</div>
+<div class="alignright">
+	<a href="https://github.com/pengloo53/light-ch">Hexo theme</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="http://libs.baidu.com/jquery/2.1.1/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+	<script>
+	var _hmt = _hmt || [];
+	(function() {
+	  var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?380ce5c81e06b297c4a75c0c66825c3d";
+	  var s = document.getElementsByTagName("script")[0]; 
+	  s.parentNode.insertBefore(hm, s);
+	})();
+	</script>
+
+
+<div id="toTop">
+	<a href="#">▲</a>
+	<a href="#footer">▼</a>
+</div>
+<!--  -->
+
+
+</body>
+</html>

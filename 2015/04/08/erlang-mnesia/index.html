@@ -1,0 +1,307 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Erlang mnesia | wudaijun&#39;s blog</title>
+  <meta name="author" content="wudaijun">
+  
+  <meta name="description" content="mnesia是erlang提供的一个基于分布式的数据库管理系统。它的分布式和erlang一样都是”天生的”。集群，备份，主从这些在mnesia上面都非常简单。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Erlang mnesia"/>
+  <meta property="og:site_name" content="wudaijun&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <meta name="wumiiVerification" content="fb50a101-84fe-4ca2-91a7-ae8cf792978b" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+
+<body>
+  <header id="header" class="inner"><div class= "header-content">
+	<div class = "alignleft col-one">
+		
+			<img src = "/assets/avatar/avatar.png">
+		
+		<div class="header-div">
+		    <h1><a href="/", style="font-family:Fantasy">wudaijun&#39;s blog</a></h1>
+		    <h2><a href="/">写下来的才是实在货</a></h2>
+		</div>
+	</div>
+	<div class = "alignright col-two">
+		
+			<img src = "/assets/avatar/hello.jpg">
+		
+	</div>
+	<div class="clearfix"></div>
+</div>
+
+<div class= "header-nav">
+	<div id="main-nav" class="alignleft">
+	    
+	      <a href="/">首页</a>
+	    
+	      <a href="/archives">归档</a>
+	    
+	</div>
+	<div id="sub-nav" class="alignright">
+	    
+	      <a href="/about">关于我</a>
+	    
+	</div>
+	<div class="clearfix"></div>
+</div>
+</header>
+  
+      <div id="content" class="inner">
+  		<div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2015-04-07T16:00:00.000Z"><a href="/2015/04/08/erlang-mnesia/">2015-04-08</a></time>
+        
+  
+    <h1 class="title">Erlang mnesia</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <div id="toc" class="toc-article">
+	<div class="toc-title">目录</div>
+	<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#mnesia_基础"><span class="toc-text">mnesia 基础</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-_官方文档"><span class="toc-text">1. 官方文档</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-_表的存储形式"><span class="toc-text">2. 表的存储形式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-_表的重要属性"><span class="toc-text">3. 表的重要属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-_schema表"><span class="toc-text">4. schema表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-_单节点使用示例"><span class="toc-text">5. 单节点使用示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-_表名与记录名"><span class="toc-text">6. 表名与记录名</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mnesia_集群"><span class="toc-text">mnesia 集群</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-_启动节点"><span class="toc-text">1. 启动节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-_创建/加入集群"><span class="toc-text">2. 创建/加入集群</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-_退出集群"><span class="toc-text">3. 退出集群</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-_添加本地备份"><span class="toc-text">4. 添加本地备份</span></a></li></ol></li></ol>
+</div>
+      
+        <p>mnesia是erlang提供的一个基于分布式的数据库管理系统。它的分布式和erlang一样都是”天生的”。集群，备份，主从这些在mnesia上面都非常简单。</p>
+<a id="more"></a>
+<h2 id="mnesia_基础">mnesia 基础</h2><h3 id="1-_官方文档">1. 官方文档</h3><ul>
+<li><a href="http://www.erlang.org/doc/man/mnesia.html" title="erlang mnesia" target="_blank" rel="external">Erlang Mnesia Man Page</a></li>
+<li><a href="http://www.erlang.org/doc/apps/mnesia/Mnesia_chap3.html" title="building a mnesia database" target="_blank" rel="external">Building A Mnesia Database</a></li>
+<li><a href="http://www.hitb.com.cn/c/document_library/get_file?p_l_id=10190&amp;folderId=11012&amp;name=DLFE-1103.pdf" title="mnesia用户手册" target="_blank" rel="external">Mnesia 中文版 用户手册</a></li>
+</ul>
+<h3 id="2-_表的存储形式">2. 表的存储形式</h3><p>mnesia中的表有三种存储形式：ram_copies, disc_copies, disc_only_copies。</p>
+<ul>
+<li>ram_copies: 表仅存储于内存，可通过<code>mnesia:dump_tables(TabList)</code>来将数据导入到硬盘。</li>
+<li>disc_copies: 表存储于内存中，但同时拥有磁盘备份，对表的写操作会分为两步：1.将写操作写入日志文件 2. 对内存中的表执行写操作</li>
+<li>disc_only_copies: 表仅存储于磁盘中，对表的读写将会更慢，但是不会占用内存</li>
+</ul>
+<p>表的存储形式可以在表的创建中指出，默认为ram_copies。也可以在创建表后通过<code>change_table_copy_type/3</code>来修改。</p>
+<h3 id="3-_表的重要属性">3. 表的重要属性</h3><p>表的属性由<code>mnesia:create_table(Name, TableDef)</code>中的TableDef指定，TableDef是一个Tuple List，其中比较重要的属性有：</p>
+<ul>
+<li>type: 表的类型，主要有set, ordered_set和bag三种。前两者要求key唯一，bag不要求key唯一，但要求至少有一个字段不同。另外set和bag通过哈希表实现，而ordered_set则使用其它数据结构(如红黑树)以对key排序。type属性默认为set。</li>
+<li>attributes: 表中条目的字段，通常由record_info(fields, myrecord)得出，而myrecord一般则用作表名。</li>
+<li>local_content: 标识该表是否为本地表，local_content属性为true的表将仅本地可见，不会共享到集群中。local_content默认为false。</li>
+<li>index: 表的索引。</li>
+<li>ram_copies: 指名该表在哪些节点上存储为ram_copies。默认值为[node()]。即新建表默认都存储为ram_copies。</li>
+<li>disc_copies: 该表在哪些节点上存储为disc_copies。默认为[]。</li>
+<li>disc_only_copies: 该表在哪些节点上存储为disc_only_copies。默认为[]。</li>
+</ul>
+<h3 id="4-_schema表">4. schema表</h3><p>schema表是mnesia数据库一张特殊的表，又叫模式表。它记录数据库中其它表的信息，schema表只能有ram_copies或disc_copies两种存储形式。并且一旦schema表存储为ram_copies，那么该节点上的其它表，也将只能存储为ram_copies。</p>
+<p>mnesia需要schema表的初始化自身，可在mnesia启动前，通过<code>create_schema/1</code>来创建一个disc_copies类型的schema表，如果不调用<code>create_schema/1</code>，直接启动<code>mnesia:start/0</code>，默认生成一个ram_copies类型的schema表，此时我们称该mnesia节点为”无盘节点”，因为其所有表都不能存储于磁盘中。</p>
+<h3 id="5-_单节点使用示例">5. 单节点使用示例</h3><pre><code>➜  ~  <span class="function_or_atom">erl</span> -<span class="function_or_atom">mnesia</span> <span class="function_or_atom">dir</span> <span class="string">'"Tmp/ErlDB/test"'</span>
+
+<span class="variable">Erlang</span>/<span class="variable">OTP</span> <span class="number">17</span> [<span class="function_or_atom">erts</span>-<span class="number">6.3</span>.<span class="number">1</span>] [<span class="function_or_atom">source</span>] [<span class="number">64</span>-<span class="function_or_atom">bit</span>] [<span class="function_or_atom">smp</span>:<span class="number">4</span>:<span class="number">4</span>] [<span class="function_or_atom">async</span>-<span class="function_or_atom">threads</span>:<span class="number">10</span>] [<span class="function_or_atom">hipe</span>] [<span class="function_or_atom">kernel</span>-<span class="function_or_atom">poll:false</span>] [<span class="function_or_atom">dtrace</span>]
+
+<span class="variable">Eshell</span> <span class="variable">V6</span>.<span class="number">3.1</span>  (<span class="function_or_atom">abort</span> <span class="function_or_atom">with</span> ^<span class="variable">G</span>)
+# 创建<span class="function_or_atom">disc_copies</span>存储类型的<span class="function_or_atom">schema</span>表 但其它表的默认存储类型仍然为<span class="function_or_atom">ram_copies</span>
+<span class="prompt">1&gt; </span><span class="function_or_atom">mnesia:create_schema</span>([<span class="function_or_atom">node</span>()]).
+<span class="ok">ok</span>
+<span class="prompt">2&gt; </span><span class="function_or_atom">mnesia:start</span>().
+<span class="ok">ok</span>
+<span class="prompt">3&gt; </span><span class="function_or_atom">rd</span>(<span class="function_or_atom">person</span>, {<span class="function_or_atom">name</span>, <span class="function_or_atom">sex</span>, <span class="function_or_atom">age</span>}).
+<span class="function_or_atom">person</span>
+# 创建<span class="function_or_atom">disc_copies</span>存储类型的<span class="function_or_atom">table</span>，<span class="function_or_atom">table</span>的<span class="function_or_atom">fields</span>即为<span class="function_or_atom">person</span>记录的<span class="function_or_atom">fields</span>
+<span class="prompt">4&gt; </span><span class="function_or_atom">mnesia:create_table</span>(<span class="function_or_atom">person</span>, [{<span class="function_or_atom">disc_copies</span>, [<span class="function_or_atom">node</span>()]}, {<span class="function_or_atom">attributes</span>, <span class="function_or_atom">record_info</span>(<span class="function_or_atom">fields</span>, <span class="function_or_atom">person</span>)}]).
+{<span class="function_or_atom">atomic</span>,<span class="ok">ok</span>}
+# 等价于<span class="function_or_atom">mnesia:dirty_write</span>({<span class="function_or_atom">person</span>, <span class="string">"wdj"</span>, <span class="function_or_atom">undefined</span>, <span class="number">3</span>})
+<span class="prompt">5&gt; </span><span class="function_or_atom">mnesia:dirty_write</span>(#<span class="function_or_atom">person</span>{<span class="function_or_atom">name</span>=<span class="string">"wdj"</span>, <span class="function_or_atom">age</span>=<span class="number">3</span>}).
+<span class="ok">ok</span>
+<span class="prompt">6&gt; </span><span class="function_or_atom">mnesia:dirty_read</span>(<span class="function_or_atom">person</span>, <span class="string">"wdj"</span>).
+[#<span class="function_or_atom">person</span>{<span class="function_or_atom">name</span> = <span class="string">"wdj"</span>,<span class="function_or_atom">sex</span> = <span class="function_or_atom">undefined</span>,<span class="function_or_atom">age</span> = <span class="number">3</span>}]
+</code></pre><p><code>record_info(fileds, person)</code>返回<code>[name,sex,age]</code>。<code>mnesia:create_table/2</code>默认将attributes属性中的第一个field作为key，即name。</p>
+<p>mnesia:read, mnesia:write, mnesia:select等API均不能直接调用，需要封装在事务（transaction）中使用：</p>
+<pre><code><span class="constant">F</span> = <span class="function"><span class="keyword">fun</span>() <span class="title">-</span></span>&gt;  
+    <span class="constant">Rec</span> = <span class="comment">#person{name="BigBen", sex=1, age=99},  </span>
+    <span class="symbol">mnesia:</span>write(<span class="constant">Rec</span>)  
+<span class="keyword">end</span>,  
+<span class="symbol">mnesia:</span>transaction(<span class="constant">F</span>). 
+</code></pre><p>而对应的mnesia:dirty_read mnesia:dirty_write，即”脏操作”，无需事务保护，也就没有锁，事务管理器等。dirty版本的读写一般要比事务性读写快十倍以上。但是失去了原子性和隔离性。</p>
+<h3 id="6-_表名与记录名">6. 表名与记录名</h3><p>mnesia表由记录组成，记录第一个元素为是记录名，第二个元素为标识记录的键。{表名，键}可以唯一标识表中特定记录，又称为记录的对象标识(Oid)。</p>
+<p>mnesia要求表中所有的记录必须为同一个record的实例，前面的例子中，表名即为记录名，表字段则为记录的域。而实际上，记录名可以是但不一定是表名，记录名可通过record_name属性指出，没有指定table_name则记录名默认为create_table第一参数指定的表名。</p>
+<pre><code>mnesia:dirty_write(<span class="keyword">Record</span>) -&gt;
+    <span class="keyword">Tab</span> = element(<span class="number">1</span>, <span class="keyword">Record</span>), 
+    mnesia:dirty_write(<span class="keyword">Tab</span>, <span class="keyword">Record</span>). % 这里提取出表名，表名和表中记录原型实际上是分离的
+</code></pre><p>表名和记录名不一致使我们可以定义多个以同一record的原型的table。</p>
+<hr>
+<h2 id="mnesia_集群">mnesia 集群</h2><p><a href="http://veniceweb.googlecode.com/svn/trunk/public/daily_tech_doc/erlang_faq_20091125.txt" target="_blank" rel="external">这篇FAQ</a>中归纳了mnesia集群的大多数问题。</p>
+<h3 id="1-_启动节点">1. 启动节点</h3><p>erlang中，一个节点(node)即为一个erlang虚拟机，比如一个erl shell终端就是一个节点。前面我们启动erl shell时，使用的是单节点模式，要使本节点能与其它的节点通信，需要在erl shell启动时，通过<code>-name ABC</code>或<code>-sname ABC</code>指定节点名字。erlang 节点名字规范为<code>nodename@hostname</code>，nodename即我们指定的ABC，hostname则分为longname(<code>-name</code>)和shortname(<code>-sname</code>)，longname包含本地完整域名地址，适合广域网使用。而shortname则是本地在局域网上的名字，适合局域网和本机使用。</p>
+<pre><code>erl -sname MyNode
+
+<span class="list">(<span class="keyword">MyNode</span>@T4F-MBP-15)</span><span class="number">1</span>&gt;
+</code></pre><p>在erlang脚本中启动节点，需要调用<code>net_kernel:start([NodeName, NameType])</code>.</p>
+<h3 id="2-_创建/加入集群">2. 创建/加入集群</h3><p>schema模式表本身带有集群节点的信息，因此我们可以通过 <code>create_schema([&#39;node1@host,&#39;node2@host&#39;])</code> 来将node1，node2初始化一个集群，并且指定schema表为disc_copies。在启动的时候，Mnesia使用其模式表来确定应该与哪些节点尝试建立联系。如果其它节点已经启动，启动的节点将其表定义与其它节点带来的表定义合并。这也应用于模式表自身的定义。</p>
+<p>应用参数 extra_db_nodes 包含一个 Mnesia 除了在其模式表中找到的节点之外也应该建立联系的节点列表。其默认值为空列表[ ]。因此，当无盘节点需要从一个在网络上的远程节点找到模式定义时，我们需要通过应用参数 <code>-mnesia extra_db_nodes NodeList</code> 提供这个信息。没有这个配置参数集，Mnesia 将作为单节点系统启动。也有可能在 Mnesia 启动后用<code>mnesia:change_config/2</code>赋值给’extra_db_nodes’强制建立连接, 即<code>mnesia:change_config (extra_db_nodes, NodeList)</code>。</p>
+<p>mnesia会同步集群中节点上所有的表信息，如果某节点需要自己本地维护一张表而不希望共享该表，可以在创建表时指定local_content属性。</p>
+<p>此时运行<code>mnesia:info()</code>，可以看到集群中的数据表，并且类型为remote，即远程数据库。事实上，remote可以看做mnesia集群中，表的第四种存储形式。</p>
+<p>在添加一个节点入集群时，mnesia会尝试合并(merge)新节点和集群中的schema表，这种合并往往会在新节点已有disc_copies的schema表时失败：<code>{error,{merge_schema_failed,&quot;Incompatible schema cookies. ...</code></p>
+<h3 id="3-_退出集群">3. 退出集群</h3><p>通过<code>mnesia:del_table_copy(schema, &#39;mynode@host&#39;)</code>将会把’mynode@host’移出集群，但需要先将’mynode@host’上的mnesia停止运行。如果在’mynode@host’节点上有一个磁盘驻留模式(disc_copies)，应该将整个 mnesia目录删除。可用 <code>mnesia:delete_schema/1</code> 来完成。如果 mnesia 再次在’mynode@host’节点上启动并且目录还没有被清除，mnesia 的行为是不确定的。</p>
+<h3 id="4-_添加本地备份">4. 添加本地备份</h3><p>如果我们希望取得更快的访问速度，或者需要对远程数据库备份的话，可以通过<code>mnesia:add_table_copy(Tab, Node, Type)</code>备份远程数据库，type字段为ram_copies, disc_copies, disc_only_copies之一，但仍受限于schema(schema表为ram_copies，则本节点上其它表只能为ram_copies)。</p>
+<p>集群中的每张表，在不同的node上，可以有不同的存储形式(remote, ram_copies, disc_copies, disc_only_copies)。通过<code>mnesia:info()</code>可以查看各个表在不同的node上的存储形式。</p>
+<p>添加备份后，mnesia会自动同步各节点对同一张表的更新操作。</p>
+
+      
+    </div>
+    <footer>
+<!--        -->
+        
+  
+  <div class="categories">
+    <a href="/categories/erlang/">erlang</a>
+  </div>
+
+        
+  
+  <div class="tags">
+    <a href="/tags/erlang/">erlang</a>
+  </div>
+
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+<!--   <h1 class="title">留言</h1> -->
+
+
+    <!-- 多说评论框 start -->
+<div class="ds-thread" data-thread-key="2015/04/08/erlang-mnesia/" data-title="Erlang mnesia" data-url="http://wudaijun.com/2015/04/08/erlang-mnesia/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wudaijun"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共JS代码 end -->
+
+
+  
+</section>
+
+
+
+</div></div>
+  		<aside id="sidebar" class="alignright">
+   <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:wudaijun.com">
+  </form>
+</div> 
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+<!--   
+	
+		<li><a href="/categories/c-c/">c/c++</a><small>5</small></li>
+	
+  
+	
+		<li><a href="/categories/erlang/">erlang</a><small>10</small></li>
+	
+  
+	
+		<li><a href="/categories/gameserver/">gameserver</a><small>18</small></li>
+	
+  
+	
+		<li><a href="/categories/lua/">lua</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/python/">python</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/tool/">tool</a><small>3</small></li>
+	
+   -->
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">3</span></li></ul> 
+</div>
+ 
+
+
+  
+  <div class="widget tag">
+    <h3 class="title">归档</h3>
+	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">2015年09月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">2015年08月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">2015年07月</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">2015年06月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">2015年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">2015年04月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">2015年03月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2015年02月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">2015年01月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">2014年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">2014年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">2014年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">2014年09月</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/c-c/" style="font-size: 15.71px;">c/c++</a> <a href="/tags/erlang/" style="font-size: 20px;">erlang</a> <a href="/tags/firefly/" style="font-size: 11.43px;">firefly</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/kbengine/" style="font-size: 11.43px;">kbengine</a> <a href="/tags/lua/" style="font-size: 17.14px;">lua</a> <a href="/tags/multi-thread/" style="font-size: 12.86px;">multi-thread</a> <a href="/tags/ngserver/" style="font-size: 18.57px;">ngserver</a> <a href="/tags/python/" style="font-size: 12.86px;">python</a> <a href="/tags/skynet/" style="font-size: 14.29px;">skynet</a> <a href="/tags/tool/" style="font-size: 11.43px;">tool</a>
+  </div>
+</div>
+
+</aside>
+           <div class="clearfix"></div>
+      </div>
+  	
+   <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2015 wudaijun
+  
+</div>
+<div class="alignright">
+	<a href="https://github.com/pengloo53/light-ch">Hexo theme</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="http://libs.baidu.com/jquery/2.1.1/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+	<script>
+	var _hmt = _hmt || [];
+	(function() {
+	  var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?380ce5c81e06b297c4a75c0c66825c3d";
+	  var s = document.getElementsByTagName("script")[0]; 
+	  s.parentNode.insertBefore(hm, s);
+	})();
+	</script>
+
+
+<div id="toTop">
+	<a href="#">▲</a>
+	<a href="#footer">▼</a>
+</div>
+<!--  -->
+
+
+</body>
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Erlang 随想 | wudaijun&#39;s blog</title>
+  <meta name="author" content="wudaijun">
+  
+  <meta name="description" content="接触Erlang不到两个月时间，之前一直用C++开发。Erlang这门语言确实带给我更多的思考。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Erlang 随想"/>
+  <meta property="og:site_name" content="wudaijun&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <meta name="wumiiVerification" content="fb50a101-84fe-4ca2-91a7-ae8cf792978b" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+
+<body>
+  <header id="header" class="inner"><div class= "header-content">
+	<div class = "alignleft col-one">
+		
+			<img src = "/assets/avatar/avatar.png">
+		
+		<div class="header-div">
+		    <h1><a href="/", style="font-family:Fantasy">wudaijun&#39;s blog</a></h1>
+		    <h2><a href="/">写下来的才是实在货</a></h2>
+		</div>
+	</div>
+	<div class = "alignright col-two">
+		
+			<img src = "/assets/avatar/hello.jpg">
+		
+	</div>
+	<div class="clearfix"></div>
+</div>
+
+<div class= "header-nav">
+	<div id="main-nav" class="alignleft">
+	    
+	      <a href="/">首页</a>
+	    
+	      <a href="/archives">归档</a>
+	    
+	</div>
+	<div id="sub-nav" class="alignright">
+	    
+	      <a href="/about">关于我</a>
+	    
+	</div>
+	<div class="clearfix"></div>
+</div>
+</header>
+  
+      <div id="content" class="inner">
+  		<div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2015-04-21T16:00:00.000Z"><a href="/2015/04/22/erlang-thinking/">2015-04-22</a></time>
+        
+  
+    <h1 class="title">Erlang 随想</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <div id="toc" class="toc-article">
+	<div class="toc-title">目录</div>
+	<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#并发模型"><span class="toc-text">并发模型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-共享资源"><span class="toc-text">1.共享资源</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-消息传递"><span class="toc-text">2.消息传递</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Erlang"><span class="toc-text">Erlang</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-面向进程"><span class="toc-text">1.面向进程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-变量不可变"><span class="toc-text">2.变量不可变</span></a></li></ol></li></ol>
+</div>
+      
+        <p>接触Erlang不到两个月时间，之前一直用C++开发。Erlang这门语言确实带给我更多的思考。</p>
+<a id="more"></a>
+<h3 id="并发模型">并发模型</h3><p>在C++游戏服务器中，我们想要实现一个logger，支持多线程调用。因此该日志系统必须是线程安全的(c++标准输出<code>std::cout</code>不是线程安全的)。对应的主要有两种实现策略：</p>
+<h4 id="1-共享资源">1.共享资源</h4><p>常规的思维是，为了实现这个功能，去定义一个接口(函数或类)，可提供给所有用户(线程)使用。但由于多个用户共享一个IO设备资源，因此需要在接口内部通过锁或其它同步方式来实现对资源的访问控制。而锁的设计与调试历来是并发程序中最耗费精力的一部分，并且由于代码在调用线程的上下文中执行，因此接口内部发生故障也会影响到调用线程，如死循环，内存越界等。即隔离性差(包括线程之间的隔离，和模块之间的解耦)。</p>
+<h4 id="2-消息传递">2.消息传递</h4><p>另一种方式是，将logger抽象为一个单独的执行体，它可以是一个单独的线程，由它来独占IO设备资源，其它线程想要使用IO设备，都需要通知(发送消息)logger线程，由logger线程来操作IO。这样就不会出现资源访问控制的问题。当然你需要自己实现一个线程安全的消息队列，但这毕竟是公共设施，是属于框架层的。<a href="https://github.com/wudaijun/NGServer" target="_blank" rel="external">NGServer</a>和<a href="https://github.com/cloudwu/skynet" target="_blank" rel="external">skynet</a>就是这么做的。消息传递方式的瓶颈在于消息拷贝。</p>
+<p>再举一个例子，针对于排行榜系统，玩家需要不定期的读取排行榜，而其它玩家的数据变动也会影响到排行榜数据，如果使用共享内存的方式，你可能会使用读写锁，双缓冲，share_ptr copy on write，等多种方式来优化线程之间的同步问题。但仍然是如履薄冰，因为某一次死锁或出错，都可能造成整个游戏服务器宕机。事实上排行榜系统并不是很重要，我们宁愿它无法正常服务，也不应该影响到游戏的正常逻辑。</p>
+<p>通过将排行榜独立为一个服务，利用消息传递进行读取于写入，可以很大程度减轻服务之间相互影响的可能性，但往往游戏中的这一类系统太多，一是不能很好地控制和管理这些服务，二是服务之间的消息协议会越来越繁多和复杂，skynet设计者云风也<a href="http://blog.codingnow.com/2012/09/the_design_of_skynet.html" target="_blank" rel="external">提到了这一点</a>。</p>
+<hr>
+<h3 id="Erlang">Erlang</h3><p>终于主角出场了，Erlang是消息传递的忠实拥护者，并且构建了大量的基础设施来更好支持这一特性。我觉得Erlang的精髓在于<strong>面向进程</strong>和<strong>变量不可变语义</strong>。</p>
+<h4 id="1-面向进程">1.面向进程</h4><p>Erlang中的服务就是进程，Erlang中的进程比C++的线程更轻量，可以轻易数万数十万级别。Erlang进程相关的基础设施，包括消息队列，调度算法，消息编码都已经千锤百炼，拿来即用。加之工业级的OTP，消息分发和回调也完成了大半，并且更好地支持了容错和热更等机制。</p>
+<p>Erlang中将逻辑抽象成进程，而不是对象，Erlang不支持面向对象。上面提到的日志和排行榜，都可以抽象成一个Erlang进程，让它来负责相关的处理。不需要锁，同时也增加了隔离性，<strong>Erlang进程封装了状态</strong>。</p>
+<h4 id="2-变量不可变">2.变量不可变</h4><p>Erlang是函数式编程语言，遵循变量不可变语义，一个变量自绑定值起，就一直代表某个值。这种语义刚开始虽然会带来一些不便，但是附带的好处却是巨大的：变量不可变进一步降低了Erlang进程之间相互影响的可能性。例如在NGServer中，你可以通过在线程之间传递指针共享信息，这样做虽通常是为了效率起见，而缺点在于线程之前的关联度增加，并且指针本身的管理和释放也并非易事。在Erlang中，所有的消息都执行拷贝，并且不存在指针引用，因此进程中拿到的消息都是独立的，不变的，这样大幅度降低了犯错的可能性。</p>
+
+      
+    </div>
+    <footer>
+<!--        -->
+        
+  
+  <div class="categories">
+    <a href="/categories/erlang/">erlang</a>
+  </div>
+
+        
+  
+  <div class="tags">
+    <a href="/tags/erlang/">erlang</a>
+  </div>
+
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+<!--   <h1 class="title">留言</h1> -->
+
+
+    <!-- 多说评论框 start -->
+<div class="ds-thread" data-thread-key="2015/04/22/erlang-thinking/" data-title="Erlang 随想" data-url="http://wudaijun.com/2015/04/22/erlang-thinking/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wudaijun"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共JS代码 end -->
+
+
+  
+</section>
+
+
+
+</div></div>
+  		<aside id="sidebar" class="alignright">
+   <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:wudaijun.com">
+  </form>
+</div> 
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+<!--   
+	
+		<li><a href="/categories/c-c/">c/c++</a><small>5</small></li>
+	
+  
+	
+		<li><a href="/categories/erlang/">erlang</a><small>10</small></li>
+	
+  
+	
+		<li><a href="/categories/gameserver/">gameserver</a><small>18</small></li>
+	
+  
+	
+		<li><a href="/categories/lua/">lua</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/python/">python</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/tool/">tool</a><small>3</small></li>
+	
+   -->
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">3</span></li></ul> 
+</div>
+ 
+
+
+  
+  <div class="widget tag">
+    <h3 class="title">归档</h3>
+	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">2015年09月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">2015年08月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">2015年07月</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">2015年06月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">2015年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">2015年04月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">2015年03月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2015年02月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">2015年01月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">2014年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">2014年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">2014年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">2014年09月</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/c-c/" style="font-size: 15.71px;">c/c++</a> <a href="/tags/erlang/" style="font-size: 20px;">erlang</a> <a href="/tags/firefly/" style="font-size: 11.43px;">firefly</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/kbengine/" style="font-size: 11.43px;">kbengine</a> <a href="/tags/lua/" style="font-size: 17.14px;">lua</a> <a href="/tags/multi-thread/" style="font-size: 12.86px;">multi-thread</a> <a href="/tags/ngserver/" style="font-size: 18.57px;">ngserver</a> <a href="/tags/python/" style="font-size: 12.86px;">python</a> <a href="/tags/skynet/" style="font-size: 14.29px;">skynet</a> <a href="/tags/tool/" style="font-size: 11.43px;">tool</a>
+  </div>
+</div>
+
+</aside>
+           <div class="clearfix"></div>
+      </div>
+  	
+   <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2015 wudaijun
+  
+</div>
+<div class="alignright">
+	<a href="https://github.com/pengloo53/light-ch">Hexo theme</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="http://libs.baidu.com/jquery/2.1.1/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+	<script>
+	var _hmt = _hmt || [];
+	(function() {
+	  var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?380ce5c81e06b297c4a75c0c66825c3d";
+	  var s = document.getElementsByTagName("script")[0]; 
+	  s.parentNode.insertBefore(hm, s);
+	})();
+	</script>
+
+
+<div id="toTop">
+	<a href="#">▲</a>
+	<a href="#footer">▼</a>
+</div>
+<!--  -->
+
+
+</body>
+</html>
