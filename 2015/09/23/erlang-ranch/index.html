@@ -1,0 +1,275 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>ranch | wudaijun&#39;s blog</title>
+  <meta name="author" content="wudaijun">
+  
+  <meta name="description" content="一. 简介ranch是erlang的一个开源网络库，提供一个高效的监听进程池，并且将数据传输和数据处理分离开来。使用起来非常简单，灵活。关于ranch的更多介绍和使用，参见官方文档。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="ranch"/>
+  <meta property="og:site_name" content="wudaijun&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <meta name="wumiiVerification" content="fb50a101-84fe-4ca2-91a7-ae8cf792978b" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+
+<body>
+  <header id="header" class="inner"><div class= "header-content">
+	<div class = "alignleft col-one">
+		
+			<img src = "/assets/avatar/avatar.png">
+		
+		<div class="header-div">
+		    <h1><a href="/", style="font-family:Fantasy">wudaijun&#39;s blog</a></h1>
+		    <h2><a href="/">写下来的才是实在货</a></h2>
+		</div>
+	</div>
+	<div class = "alignright col-two">
+		
+			<img src = "/assets/avatar/hello.jpg">
+		
+	</div>
+	<div class="clearfix"></div>
+</div>
+
+<div class= "header-nav">
+	<div id="main-nav" class="alignleft">
+	    
+	      <a href="/">首页</a>
+	    
+	      <a href="/archives">归档</a>
+	    
+	</div>
+	<div id="sub-nav" class="alignright">
+	    
+	      <a href="/about">关于我</a>
+	    
+	</div>
+	<div class="clearfix"></div>
+</div>
+</header>
+  
+      <div id="content" class="inner">
+  		<div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2015-09-22T16:00:00.000Z"><a href="/2015/09/23/erlang-ranch/">2015-09-23</a></time>
+        
+  
+    <h1 class="title">ranch</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <div id="toc" class="toc-article">
+	<div class="toc-title">目录</div>
+	<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#一-_简介"><span class="toc-text">一. 简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二-_功能"><span class="toc-text">二. 功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三-_使用"><span class="toc-text">三. 使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四-_结构"><span class="toc-text">四. 结构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#ranch_server:"><span class="toc-text">ranch_server:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ranch_listener_sup:"><span class="toc-text">ranch_listener_sup:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ranch_acceptors_sup:"><span class="toc-text">ranch_acceptors_sup:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ranch_acceptor:"><span class="toc-text">ranch_acceptor:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ranch_conns_sup:"><span class="toc-text">ranch_conns_sup:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#your_protocol"><span class="toc-text">your_protocol</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#五-_其它"><span class="toc-text">五. 其它</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#proc_lib"><span class="toc-text">proc_lib</span></a></li></ol></li></ol>
+</div>
+      
+        <h3 id="一-_简介">一. 简介</h3><p><a href="https://github.com/ninenines/ranch" target="_blank" rel="external">ranch</a>是erlang的一个开源网络库，提供一个高效的监听进程池，并且将数据传输和数据处理分离开来。使用起来非常简单，灵活。关于ranch的更多介绍和使用，参见<a href="https://github.com/ninenines/ranch/tree/master/doc/src" target="_blank" rel="external">官方文档</a>。<br><a id="more"></a></p>
+<h3 id="二-_功能">二. 功能</h3><p>ranch将网络连接分为传输层(transport)和协议层(protocol)，传输层是底层数据的传输方式，如tcp, udp, ssl等。协议层负责数据在业务逻辑上的处理，是开发者真正需要关心的部分。而ranch的一个目标就是将传输层和逻辑层很好的分离开来。</p>
+<p>对服务器端来说，传输层需要负责管理监听套接字和连接套接字。ranch提供一个可设置的进程池，用于高效地接受新连接，将新连接套接字交予用户定义的连接进程，进行业务逻辑上的处理。</p>
+<p>ranch做了什么：</p>
+<ul>
+<li>允许多个应用同时使用，即可有多个listener，每个listener通过名字标识</li>
+<li>每个listenr可单独设置acceptor进程池的大小和其它选项</li>
+<li>可设置最大连接数，并且可动态改变其大小</li>
+<li>到达最大连接数时，后续连接(已经accept的连接)进程将被阻塞，待负载降下来或最大连接数变大后被唤醒</li>
+<li>提供安全的网络退出方式</li>
+</ul>
+<h3 id="三-_使用">三. 使用</h3><pre><code><span class="atom">ok</span> = <span class="atom">application</span>:<span class="atom">start</span>(<span class="atom">ranch</span>).
+
+{<span class="atom">ok</span>, <span class="name">_</span>} = <span class="atom">ranch</span>:<span class="atom">start_listener</span>(<span class="atom">tcp_echo</span>, <span class="number">100</span>, <span class="comment">% 监听器名字和监听进程池大小</span>
+    <span class="atom">ranch_tcp</span>, [{<span class="atom">port</span>, <span class="number">5555</span>}],        <span class="comment">% 定义底层transport handler及其选项 ranch_tcp由ranch提供，底层使用gen_tcp</span>
+    <span class="atom">echo_protocol</span>, []                <span class="comment">% 自定义的protocol handler进程所在模块，及其选项</span>
+).
+</code></pre><p>之后我们需要做的，就是定义echo_protocol，ranch会在每个新连接到达时，调用<code>echo_protocol:start_link/4</code>，生成我们的协议处理进程。参见<a href="https://github.com/ninenines/ranch/blob/master/examples/tcp_echo/src/echo_protocol.erl" target="_blank" rel="external">官网示例</a>。使用起来非常简单。</p>
+<h3 id="四-_结构">四. 结构</h3><p>ranch的进程结构如下：</p>
+<p><img src="/assets/image/erlang_ranch.png" alt="" title="ranch进程结构"></p>
+<h4 id="ranch_server:">ranch_server:</h4><p>维护全局配置信息，整个ranch_app唯一，由多个listener共享。通过ets维护一些配置信息和核心进程的Pid信息，格式<code>\{\{Opt, Ref\}, OptValue\}</code>，Ref是listener名字。</p>
+<h4 id="ranch_listener_sup:">ranch_listener_sup:</h4><p>由<code>ranch:start_listener/6</code>启动，其子进程有ranch_conns_sup和ranch_acceptors_sup，以<code>rest_for_one</code>策略启动，亦即一旦ranch_conns_sup挂了，ranch_acceptors_sup也将被终止，然后再依次重启。</p>
+<h4 id="ranch_acceptors_sup:">ranch_acceptors_sup:</h4><p>由它创建监听套接字，并启动N个ranch_accepter执行accept操作(<code>gen_tcp:accept</code>本身支持多process执行)。</p>
+<h4 id="ranch_acceptor:">ranch_acceptor:</h4><p>执行loop，不断执行accept操作，将新conn socket的所属权交给ranch_conns_sup(<code>gen_tcp:controlling_process</code>)，通知其启动新protocol handle进行处理，并阻塞等待ranch_conns_sup返回。</p>
+<h4 id="ranch_conns_sup:">ranch_conns_sup:</h4><p>维护当前所有连接，当新连接到达时，调用<code>your_protocol:start_link/4</code>创建新进程，之后将conn socket所属权交给新连接进程。当连接到达上限时，阻塞前来通知开启新连接的Acceptor进程。直到阀值提高，或有其它连接断开，再唤醒这些Acceptor。ranch的实际最大连接数 = max_conns + NAcceptor。</p>
+<h4 id="your_protocol">your_protocol</h4><p>开发者定义protocol，当有新连接到达时，将调用<code>your_protocol:start_link/4</code>启动新进程，之后的处理交予开发者。</p>
+<h3 id="五-_其它">五. 其它</h3><ul>
+<li>对于不需要接收其它进程消息的进程，应该定义通过receive清理进程信箱，避免意料之外的消息一直堆积在信箱中。见<a href="https://github.com/ninenines/ranch/blob/master/src/ranch_acceptor.erl" target="_blank" rel="external">ranch_accepter.erl</a>。</li>
+<li>rest_for_one，实现更加强大灵活的监督者。</li>
+<li>ranch将网络的退出方式(brutal_kill，Timeout，infinity等)，交给开发者定制，而不放在框架中。</li>
+<li>注意套接字所属权的转移：<code>ranch_acceptor</code> -&gt; <code>ranch_conns_sup</code> -&gt; <code>your_protocol</code>。</li>
+</ul>
+<h4 id="proc_lib">proc_lib</h4><p>ranch中多处用到了proc_lib启动进程，proc_lib是OTP进程的基石，所有OTP behaviour进程都通过proc_lib来创建新进程。</p>
+<p>proc_lib的使用方法：</p>
+<ol>
+<li><code>proc_lib:start_link(M, F, A)</code>启动一个符合OTP规范的进程</li>
+<li>在<code>M:F(A)</code>中，通过<code>proc_lib:init_ack(Parent, Ret)</code>来告诉父进程自身已经初始化完成，此时<code>proc_lib:start_link/3</code>方才返回</li>
+<li>如果进程本身为OTP进程，此时可通过<code>gen_server:enter_loop(Module, Opts, State)</code>来进入OTP进程的主循环</li>
+</ol>
+<p>proc_lib使用情形：</p>
+<ol>
+<li>为了让非OTP进程，能够以OTP规范启动，这样才能融入监督树中并被正确重启。如<code>gen_server:start_link</code>最终也通过<code>proc_lib:start_link</code>来启动进程。见<a href="https://github.com/ninenines/ranch/blob/master/src/ranch_conns_sup.erl" target="_blank" rel="external">ranch_conns_sup.erl</a>。</li>
+<li>让OTP进程在<code>init()</code>中进行消息处理，本来在init未返回之前，进程还未初始化完成，这个时候进程处理消息，会陷入死锁，但通过<code>proc_lib:init_ack/2</code>可以先让本进程伪初始化完成，然后进行消息处理，最后通过<code>gen_server:enter_loop</code>进入gen_server主循环。</li>
+</ol>
+
+      
+    </div>
+    <footer>
+<!--        -->
+        
+  
+  <div class="categories">
+    <a href="/categories/erlang/">erlang</a>
+  </div>
+
+        
+  
+  <div class="tags">
+    <a href="/tags/erlang/">erlang</a>
+  </div>
+
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+<!--   <h1 class="title">留言</h1> -->
+
+
+    <!-- 多说评论框 start -->
+<div class="ds-thread" data-thread-key="2015/09/23/erlang-ranch/" data-title="ranch" data-url="http://wudaijun.com/2015/09/23/erlang-ranch/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wudaijun"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共JS代码 end -->
+
+
+  
+</section>
+
+
+
+</div></div>
+  		<aside id="sidebar" class="alignright">
+   <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:wudaijun.com">
+  </form>
+</div> 
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+<!--   
+	
+		<li><a href="/categories/c-c/">c/c++</a><small>5</small></li>
+	
+  
+	
+		<li><a href="/categories/erlang/">erlang</a><small>11</small></li>
+	
+  
+	
+		<li><a href="/categories/gameserver/">gameserver</a><small>18</small></li>
+	
+  
+	
+		<li><a href="/categories/lua/">lua</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/python/">python</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/tool/">tool</a><small>3</small></li>
+	
+   -->
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">3</span></li></ul> 
+</div>
+ 
+
+
+  
+  <div class="widget tag">
+    <h3 class="title">归档</h3>
+	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">2015年09月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">2015年08月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">2015年07月</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">2015年06月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">2015年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">2015年04月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">2015年03月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2015年02月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">2015年01月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">2014年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">2014年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">2014年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">2014年09月</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/c-c/" style="font-size: 15.71px;">c/c++</a> <a href="/tags/erlang/" style="font-size: 20px;">erlang</a> <a href="/tags/firefly/" style="font-size: 11.43px;">firefly</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/kbengine/" style="font-size: 11.43px;">kbengine</a> <a href="/tags/lua/" style="font-size: 17.14px;">lua</a> <a href="/tags/multi-thread/" style="font-size: 12.86px;">multi-thread</a> <a href="/tags/ngserver/" style="font-size: 18.57px;">ngserver</a> <a href="/tags/python/" style="font-size: 12.86px;">python</a> <a href="/tags/skynet/" style="font-size: 14.29px;">skynet</a> <a href="/tags/tool/" style="font-size: 11.43px;">tool</a>
+  </div>
+</div>
+
+</aside>
+           <div class="clearfix"></div>
+      </div>
+  	
+   <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2015 wudaijun
+  
+</div>
+<div class="alignright">
+	<a href="https://github.com/pengloo53/light-ch">Hexo theme</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="http://libs.baidu.com/jquery/2.1.1/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+	<script>
+	var _hmt = _hmt || [];
+	(function() {
+	  var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?380ce5c81e06b297c4a75c0c66825c3d";
+	  var s = document.getElementsByTagName("script")[0]; 
+	  s.parentNode.insertBefore(hm, s);
+	})();
+	</script>
+
+
+<div id="toTop">
+	<a href="#">▲</a>
+	<a href="#footer">▼</a>
+</div>
+<!--  -->
+
+
+</body>
+</html>
