@@ -67,6 +67,47 @@
   <div class="post-content">
     <header>
         <div class="icon"></div>
+        <time datetime="2015-09-24T16:00:00.000Z"><a href="/2015/09/25/erlang-process-links/">2015-09-25</a></time>
+        
+  
+    <h1 class="title"><a href="/2015/09/25/erlang-process-links/">【译】进程和错误</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p><a href="http://learnyousomeerlang.com/content">learn some erlang</a>上很喜欢的一个章节，主要阐述进程，链接，监视，信号捕获等。花了两天的时间才翻译完(- -)。第一次翻译文章，真心不是件容易的事。但也受益匪浅，平时一晃而过的地方，现在却要字字推敲。这是初稿，后续慢慢校正。原文地址：<a href="http://learnyousomeerlang.com/errors-and-processes">http://learnyousomeerlang.com/errors-and-processes</a></p>
+<h2 id=""></br></h2><p></br></p>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2015/09/25/erlang-process-links/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2015/09/25/erlang-process-links/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
         <time datetime="2015-09-22T16:00:00.000Z"><a href="/2015/09/23/erlang-ranch/">2015-09-23</a></time>
         
   
@@ -440,54 +481,6 @@ Loginapp:reqCreateAccount
 
 
 
-
-    <article class="post">
-  
-  <div class="post-content">
-    <header>
-        <div class="icon"></div>
-        <time datetime="2015-07-02T16:00:00.000Z"><a href="/2015/07/03/erlang-mongodb/">2015-07-03</a></time>
-        
-  
-    <h1 class="title"><a href="/2015/07/03/erlang-mongodb/">Erlang mongodb</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>erlang mongodb驱动地址: <a href="https://github.com/comtihon/mongodb-erlang">https://github.com/comtihon/mongodb-erlang</a></p>
-<p><strong>1. 存取</strong></p>
-<p>首先，该驱动不支持将List和Integer作为Key，事实上，它将erlang中List看做数组而不是字符串：</p>
-<pre><code>mongo:<span class="operator"><span class="keyword">insert</span>(<span class="keyword">Connection</span>, Collection, {<span class="string">"key1"</span>, value1})      % <span class="keyword">ERROR</span>
-mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span>, Collection, {<span class="number">1</span>, value1})           % <span class="keyword">ERROR</span>
-
-mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span>, Collection, {key1, value1})        % OK
-mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span>, Collection, {&lt;&lt;<span class="string">"key1""&gt;&gt;, value1}) % OK</span></span>
-</code></pre>
-      
-    </div>
-    <footer>
-<!--        -->
-        
-          <div class="alignleft">
-            <a href="/2015/07/03/erlang-mongodb/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-        <div class="alignright">
-          <a href="/2015/07/03/erlang-mongodb/#comment" class="comment-link">Comments</a>
-        </div>
-        
-<!--        -->
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
  
 <nav id="pagination">
   
@@ -514,7 +507,7 @@ mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span
 	
   
 	
-		<li><a href="/categories/erlang/">erlang</a><small>11</small></li>
+		<li><a href="/categories/erlang/">erlang</a><small>12</small></li>
 	
   
 	
@@ -533,7 +526,7 @@ mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span
 		<li><a href="/categories/tool/">tool</a><small>3</small></li>
 	
    -->
-     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">3</span></li></ul> 
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">3</span></li></ul> 
 </div>
  
 
@@ -541,7 +534,7 @@ mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span
   
   <div class="widget tag">
     <h3 class="title">归档</h3>
-	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">2015年09月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">2015年08月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">2015年07月</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">2015年06月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">2015年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">2015年04月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">2015年03月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2015年02月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">2015年01月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">2014年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">2014年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">2014年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">2014年09月</a><span class="archive-list-count">1</span></li></ul>
+	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">2015年09月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">2015年08月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">2015年07月</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">2015年06月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">2015年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">2015年04月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">2015年03月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2015年02月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">2015年01月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">2014年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">2014年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">2014年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">2014年09月</a><span class="archive-list-count">1</span></li></ul>
   </div>
 
 
