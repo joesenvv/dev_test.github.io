@@ -1,0 +1,266 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Unity 动画系统小记 | wudaijun&#39;s blog</title>
+  <meta name="author" content="wudaijun">
+  
+  <meta name="description" content="如果动画包含多层，要在初始化时设置动画层权重。
+通常情况下，在我们操作角色时，脚本根据玩家输入，设置动画的行进速度(可平滑过度)，由动画的Blend Tree来做到角色走和跑之间的平滑过渡，并且将动画的实际位移作用于角色模型上。也就是说，由动画控制前进(走，跑)，脚本直接控制转向(rigidbody.MoveRotation)。模型只需提供Walk和Run两个动画片段即可，但需要导入位移信息。
+Animator有个比较有用的选项，用于通过脚本而不是动画来控制模型移动。
+Apply Root Motion：是否将动画的位移，转向作用于实际模型之上。即模型的运动(Position，Rotation的变化)是由动画控制还是脚本控制。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Unity 动画系统小记"/>
+  <meta property="og:site_name" content="wudaijun&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <meta name="wumiiVerification" content="fb50a101-84fe-4ca2-91a7-ae8cf792978b" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+
+<body>
+  <header id="header" class="inner"><div class= "header-content">
+	<div class = "alignleft col-one">
+		
+			<img src = "/assets/avatar/avatar.png">
+		
+		<div class="header-div">
+		    <h1><a href="/", style="font-family:Fantasy">wudaijun&#39;s blog</a></h1>
+		    <h2><a href="/">thinking... writing...</a></h2>
+		</div>
+	</div>
+	<div class = "alignright col-two">
+		
+			<img src = "/assets/avatar/hello.jpg">
+		
+	</div>
+	<div class="clearfix"></div>
+</div>
+
+<div class= "header-nav">
+	<div id="main-nav" class="alignleft">
+	    
+	      <a href="/">首页</a>
+	    
+	      <a href="/archives">归档</a>
+	    
+	</div>
+	<div id="sub-nav" class="alignright">
+	    
+	      <a href="/about">关于我</a>
+	    
+	</div>
+	<div class="clearfix"></div>
+</div>
+</header>
+  
+      <div id="content" class="inner">
+  		<div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2015-10-02T16:00:00.000Z"><a href="/2015/10/unity-mecanim/">2015-10-03</a></time>
+        
+  
+    <h1 class="title">Unity 动画系统小记</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <div id="toc" class="toc-article">
+	<div class="toc-title">目录</div>
+	
+</div>
+      
+        <p>如果动画包含多层，要在初始化时设置动画层权重。</p>
+<p>通常情况下，在我们操作角色时，脚本根据玩家输入，设置动画的行进速度(可平滑过度)，由动画的Blend Tree来做到角色走和跑之间的平滑过渡，并且将动画的实际位移作用于角色模型上。也就是说，由动画控制前进(走，跑)，脚本直接控制转向(<code>rigidbody.MoveRotation</code>)。模型只需提供<code>Walk</code>和<code>Run</code>两个动画片段即可，但需要导入位移信息。</p>
+<p>Animator有个比较有用的选项，用于通过脚本而不是动画来控制模型移动。</p>
+<p><code>Apply Root Motion</code>：是否将动画的位移，转向作用于实际模型之上。即模型的运动(Position，Rotation的变化)是由动画控制还是脚本控制。</p>
+<a id="more"></a>
+<p>Apply Root Motion的作用示例：</p>
+<p><img src="/assets/image/unity/apply_root_motion_demo.gif" alt=""></p>
+<p>当取消<code>Apply Root Motion</code>时，动画的转向和移动都将被屏蔽，只显示动画本身的动作。<code>Apply Root Motion</code>在一些场合下很有用，比如当模型自己有AI：</p>
+<p>NavMeshAgent: 寻路组件，要使用它，首先要烘培寻路地形(Windows-&gt;Navigation)，然后设置目标位置。NavMeshAgent组件会自动将游戏对象按照当前最佳路径移动至目标位置。默认情况下，Nav会自动控制模型的移动和转向。可通过<code>nav.updateRotation/updatePosition</code>决定NavMeshAgent对游戏对象的控制权，当两者都为False时，角色当原地不动。</p>
+<p>在游戏中，敌人或者是小兵通常同时具有Animator和NavMeshAgent，而如果此时我们想实现一些比较灵活的控制：比如敌人在寻路至目标点附近(比如刚好看到目标)时，停止移动(进行远程射击)。</p>
+<p>此时有两种做法：</p>
+<ol>
+<li><p>由NavMeshAgent控制敌人移动</p>
+<p> 此时禁用<code>Apply Root Motion</code>，Animator只做表现。在游戏逻辑中，根据当前Nav期望速度(决定前进速度和转向速度分量)，与目标的视角(当视角小于一定角度时，直接<code>LookAt</code>到目标位置方向，避免缓冲时间太慢)，是否已经看到目标(此时停下来，看向目标，开枪)等条件，设置Animator的<code>speed</code>(前进速度)和<code>angularSpeed</code>(转向速度)，此时动画层会作出响应的动作，如走，跑，转向等，但是没有实际运动(位移和转向)。然后在<code>OnAnimatorMove</code>中：</p>
+<pre><code><span class="function"><span class="keyword">void</span> <span class="title">OnAnimatorMove</span><span class="params">()</span>
+</span>{
+    nav.velocity = anim.deltaPosition / Time.deltaTime;
+}
+</code></pre><p> 这样我们可以使得动画层和表现和实际运动基本一致，每帧<code>Update()</code>在<code>OnAnimatorMove()</code>之前调用，所有状态都记录到了Animator中。由于Nav的转向是比较生硬的，我们也可以让动画来控制转向：首先在<code>Awake()</code>中<code>nav.updateRotation = false;</code>不让Nav调整敌人转向，然后在<code>OnAnimatorMove()</code>中添加：<code>transform.rotation = anim.rootRotation;</code>。</p>
+</li>
+<li><p>由动画控制敌人移动</p>
+<p> 逻辑处理不变，取消<code>OnAmimatorMove()</code>，勾选<code>Apply Root Motion</code>，并且同时禁用NavMeshAgent的updateRotation和updatePosition。此时nav的速度矢量仅作为参考，最终速度将设置在动画系统中，并由动画系统作用于实际模型。</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer>
+<!--        -->
+        
+  
+  <div class="categories">
+    <a href="/categories/unity/">unity</a>
+  </div>
+
+        
+  
+  <div class="tags">
+    <a href="/tags/unity/">unity</a>
+  </div>
+
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+<!--   <h1 class="title">留言</h1> -->
+
+
+    <!-- 多说评论框 start -->
+<div class="ds-thread" data-thread-key="2015/10/unity-mecanim/" data-title="Unity 动画系统小记" data-url="http://wudaijun.com/2015/10/unity-mecanim/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wudaijun"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共JS代码 end -->
+
+
+  
+</section>
+
+
+
+</div></div>
+  		<aside id="sidebar" class="alignright">
+   <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:wudaijun.com">
+  </form>
+</div> 
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+<!--   
+	
+		<li><a href="/categories/c-c/">c/c++</a><small>5</small></li>
+	
+  
+	
+		<li><a href="/categories/erlang/">erlang</a><small>12</small></li>
+	
+  
+	
+		<li><a href="/categories/gameserver/">gameserver</a><small>18</small></li>
+	
+  
+	
+		<li><a href="/categories/lua/">lua</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/network/">network</a><small>3</small></li>
+	
+  
+	
+		<li><a href="/categories/python/">python</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/tool/">tool</a><small>3</small></li>
+	
+  
+	
+		<li><a href="/categories/unity/">unity</a><small>1</small></li>
+	
+   -->
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/unity/">unity</a><span class="category-list-count">1</span></li></ul> 
+</div>
+ 
+
+
+  
+  <div class="widget tag">
+    <h3 class="title">归档</h3>
+	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">2015年10月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">2015年09月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">2015年08月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">2015年07月</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">2015年06月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">2015年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">2015年04月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">2015年03月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2015年02月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">2015年01月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">2014年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">2014年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">2014年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">2014年09月</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/c-c/" style="font-size: 15.71px;">c/c++</a> <a href="/tags/erlang/" style="font-size: 20px;">erlang</a> <a href="/tags/firefly/" style="font-size: 11.43px;">firefly</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/kbengine/" style="font-size: 11.43px;">kbengine</a> <a href="/tags/lua/" style="font-size: 17.14px;">lua</a> <a href="/tags/multi-thread/" style="font-size: 12.86px;">multi-thread</a> <a href="/tags/ngserver/" style="font-size: 18.57px;">ngserver</a> <a href="/tags/python/" style="font-size: 12.86px;">python</a> <a href="/tags/skynet/" style="font-size: 14.29px;">skynet</a> <a href="/tags/tcp-ip/" style="font-size: 12.86px;">tcp/ip</a> <a href="/tags/tool/" style="font-size: 11.43px;">tool</a> <a href="/tags/unity/" style="font-size: 10px;">unity</a>
+  </div>
+</div>
+
+</aside>
+           <div class="clearfix"></div>
+      </div>
+  	
+   <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2015 wudaijun
+  
+</div>
+<div class="alignright">
+	<a href="https://github.com/pengloo53/light-ch">Hexo theme</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="http://libs.baidu.com/jquery/2.1.1/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+	<script>
+	var _hmt = _hmt || [];
+	(function() {
+	  var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?380ce5c81e06b297c4a75c0c66825c3d";
+	  var s = document.getElementsByTagName("script")[0]; 
+	  s.parentNode.insertBefore(hm, s);
+	})();
+	</script>
+
+
+<div id="toTop">
+	<a href="#">▲</a>
+	<a href="#footer">▼</a>
+</div>
+<!--  -->
+
+
+</body>
+</html>

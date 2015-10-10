@@ -1,0 +1,288 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>kbengine 源码导读(二) 加载流程 | wudaijun&#39;s blog</title>
+  <meta name="author" content="wudaijun">
+  
+  <meta name="description" content="一. 登录流程注册
+Unity3d:CreateAccount
+Loginapp:reqCreateAccount 
+-&amp;gt; dbmgr:reqCreateAccount 
+-&amp;gt; Loginapp:onReqCreateAccountResult 
+-&amp;gt; Client:onReqCreateAccountResult">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="kbengine 源码导读(二) 加载流程"/>
+  <meta property="og:site_name" content="wudaijun&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <meta name="wumiiVerification" content="fb50a101-84fe-4ca2-91a7-ae8cf792978b" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+
+<body>
+  <header id="header" class="inner"><div class= "header-content">
+	<div class = "alignleft col-one">
+		
+			<img src = "/assets/avatar/avatar.png">
+		
+		<div class="header-div">
+		    <h1><a href="/", style="font-family:Fantasy">wudaijun&#39;s blog</a></h1>
+		    <h2><a href="/">thinking... writing...</a></h2>
+		</div>
+	</div>
+	<div class = "alignright col-two">
+		
+			<img src = "/assets/avatar/hello.jpg">
+		
+	</div>
+	<div class="clearfix"></div>
+</div>
+
+<div class= "header-nav">
+	<div id="main-nav" class="alignleft">
+	    
+	      <a href="/">首页</a>
+	    
+	      <a href="/archives">归档</a>
+	    
+	</div>
+	<div id="sub-nav" class="alignright">
+	    
+	      <a href="/about">关于我</a>
+	    
+	</div>
+	<div class="clearfix"></div>
+</div>
+</header>
+  
+      <div id="content" class="inner">
+  		<div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2015-07-23T16:00:00.000Z"><a href="/2015/07/kbengine-study2/">2015-07-24</a></time>
+        
+  
+    <h1 class="title">kbengine 源码导读(二) 加载流程</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <div id="toc" class="toc-article">
+	<div class="toc-title">目录</div>
+	<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一-_登录流程"><span class="toc-text">一. 登录流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-_地图创建"><span class="toc-text">二. 地图创建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三-_生成NPC/Monster"><span class="toc-text">三. 生成NPC/Monster</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四-_Entity_(实体)"><span class="toc-text">四. Entity (实体)</span></a></li></ol>
+</div>
+      
+        <h2 id="一-_登录流程">一. 登录流程</h2><p><strong>注册</strong></p>
+<pre><code>Unity3d:CreateAccount
+Loginapp:reqCreateAccount 
+-<span class="ruby">&gt; <span class="symbol">dbmgr:</span>reqCreateAccount 
+</span>-<span class="ruby">&gt; <span class="constant">Loginapp</span><span class="symbol">:onReqCreateAccountResult</span> 
+</span>-<span class="ruby">&gt; <span class="constant">Client</span><span class="symbol">:onReqCreateAccountResult</span></span>
+</code></pre><a id="more"></a>
+<p><strong>登录 Step1</strong></p>
+<pre><code>Unity3d:login
+Loginapp:login 
+-<span class="ruby">&gt; <span class="symbol">dbmgr:</span>onAccountLogin     /<span class="regexp">/检查登录 将登录结果返回给Loginapp
+</span></span>-<span class="ruby"><span class="regexp">&gt; Loginapp:onLoginAccountQueryResultFromDbmgr /</span><span class="regexp">/转发给BaseappMgr分配Baseapp
+</span></span>-<span class="ruby"><span class="regexp">&gt; BaseappMgr:registerPendingAccountToBaseapp /</span><span class="regexp">/将客户端分配到当前负载最低的Baseapp上 并返回该Baseapp的Ip Port
+</span></span>-<span class="ruby"><span class="regexp">&gt; onLoginAccountQueryBaseappAddrFromBaseappmgr /</span><span class="regexp">/将Baseapp的Ip Port转发给客户端
+</span></span>-<span class="ruby"><span class="regexp">&gt; Client:onLoginSuccessfully</span></span>
+</code></pre><p><strong>登录 Step2</strong></p>
+<pre><code><span class="string">Unity3d:</span>loginGateway      <span class="comment">//尝试在指定Baseapp上登录</span>
+<span class="string">Baseapp:</span>loginGateway    <span class="comment">//检查登录 处理重复登录 向数据库查询账号详细信息</span>
+<span class="string">dbmgr:</span>queryAccount        <span class="comment">//查询账号详细信息 返回给Baseapp</span>
+<span class="string">Baseapp:</span>onQueryAccountCBFromDbmgr    <span class="comment">//创建账号的Proxy并传入客户端的mailbox(用于和客户端交互)，Demo中的Account.py即继承于KBEngine.Proxy。</span>
+</code></pre><p><strong>获角 选角 创角</strong></p>
+<p>Unity3d的<code>reqAvatarList</code> <code>selectAvatarGame</code> <code>reqCreateAvatar</code> 都将直接转到Account.py中对应的相应函数上，KBEngine.Proxy已经封装了和客户端通讯的方法(通过Mailbox)。</p>
+<h2 id="二-_地图创建">二. 地图创建</h2><ol>
+<li>Baseapp启动，会回调到Python脚本层的onBaseAppReady(base/kbengine.py)</li>
+<li>第一个Baseapp启动时，在本Baseapp上创建世界管理器spaces Entity(Baseapp:createBaseLocally) 定义于spaces.py</li>
+<li>spaces读取配置文件data/d_spaces.py，为每一个Space Entity创建一个SpaceAlloc，通过定时器分批次调用SpaceAlloc.init创建Space Entity(一秒回调创建一个)</li>
+<li>SpaceAlloc.init通过KBEngine.CreateSpaceAnyWhere()完成</li>
+<li>Baseapp:CreateSpaceAnyWhere()会转发给BaseappMgr，最终落在当前负载最轻的Baseapp上，通过CreateEntity完成Space Entity创建</li>
+<li>创建完成后，回调到发起方Baseapp:CreateSpaceAnywhereCallback() 最终回调到Python层SpaceAlloc.py:onSpaceCreatedCB()<br>注意，上面提到的Space Entity并不是真正的Space，而是Baseapp用于操作Space的一个句柄，真正的Sapce需要挂在Cellapp上，在srcipts/base/Space.py中完成真正的Space创建：</li>
+<li>Space.py:__init__()中，通过Baseapp:CreateInNewSpace()创建真正的Space，之后读取该Space上需创建的所有 Entity(配置在scripts/data/d_spaces_spawns中)，等待其上面的Entity被创建</li>
+<li>Baseapp:CreateInNewSpace()将请求转发给CellappMgr，后者会将请求分发到当前负载最轻的Cellapp上，Cellapp:onCreateInNewSpaceFromBaseapp()完成Space创建，回调Baseapp:OnEntityGetCell()</li>
+<li>注意，此时cell/Space.py:__init__()被调用，开始加载真正的几何数据和寻路相关，回调到Baseapp:OnEntityGetCell()</li>
+<li>Baseapp:OnEntityGetCell()判断该Entity是否是客户端，如果是则需要通知客户端(Baseapp::onClientEntityEnterWorld)，之后回调脚本Space.py:OnGetCell()</li>
+</ol>
+<p>至此，地图创建完成。</p>
+<h2 id="三-_生成NPC/Monster">三. 生成NPC/Monster</h2><p>对于NPC/Monster，是先创建其出生点，再由出生点创建真正的NPC/Monster</p>
+<ol>
+<li>接上面Space的Cell和Base部分均创建完成后，base/Space.py:OnGetCell()中，注册一个定时器，开始创建该Space上面的所有NPC/Monster的SpawnPoint，每0.1秒创建一个</li>
+<li>base/SpawnPoint.py中，创建其Cell部分</li>
+<li>cell/SpawnPoint.py中，通过createEntity创建其对应的真正的NPC/Monster</li>
+</ol>
+<h2 id="四-_Entity_(实体)">四. Entity (实体)</h2><p>Entity是服务器与客户端交互的一切实体的总称，包括：账号，角色，NCP，Monster，公会，等等。Entity通过 <entity>.def 来定义自己的属性和方法，指定属性和方法的作用域，即(Base, Cell, Client)的访问权限。因此C/S之间的消息协议实际上只是针对于Entity的远程调用。所以KBEngine本身没有消息协议一说，所有业务逻辑都围绕着Entity展开，通过<entity>.def来维护。</entity></entity></p>
+<p>参见：</p>
+<p><a href="http://kbengine.org/cn/docs/programming/entitydef.html" target="_blank" rel="external">http://kbengine.org/cn/docs/programming/entitydef.html</a><br><a href="http://kbengine.org/cn/docs/configuration/entities.html" target="_blank" rel="external">http://kbengine.org/cn/docs/configuration/entities.html</a></p>
+
+      
+    </div>
+    <footer>
+<!--        -->
+        
+  
+  <div class="categories">
+    <a href="/categories/gameserver/">gameserver</a>
+  </div>
+
+        
+  
+  <div class="tags">
+    <a href="/tags/kbengine/">kbengine</a>
+  </div>
+
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+<!--   <h1 class="title">留言</h1> -->
+
+
+    <!-- 多说评论框 start -->
+<div class="ds-thread" data-thread-key="2015/07/kbengine-study2/" data-title="kbengine 源码导读(二) 加载流程" data-url="http://wudaijun.com/2015/07/kbengine-study2/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wudaijun"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共JS代码 end -->
+
+
+  
+</section>
+
+
+
+</div></div>
+  		<aside id="sidebar" class="alignright">
+   <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:wudaijun.com">
+  </form>
+</div> 
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+<!--   
+	
+		<li><a href="/categories/c-c/">c/c++</a><small>5</small></li>
+	
+  
+	
+		<li><a href="/categories/erlang/">erlang</a><small>12</small></li>
+	
+  
+	
+		<li><a href="/categories/gameserver/">gameserver</a><small>18</small></li>
+	
+  
+	
+		<li><a href="/categories/lua/">lua</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/network/">network</a><small>3</small></li>
+	
+  
+	
+		<li><a href="/categories/python/">python</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/tool/">tool</a><small>3</small></li>
+	
+  
+	
+		<li><a href="/categories/unity/">unity</a><small>1</small></li>
+	
+   -->
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/unity/">unity</a><span class="category-list-count">1</span></li></ul> 
+</div>
+ 
+
+
+  
+  <div class="widget tag">
+    <h3 class="title">归档</h3>
+	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">2015年10月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">2015年09月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">2015年08月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">2015年07月</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">2015年06月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">2015年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">2015年04月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">2015年03月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2015年02月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">2015年01月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">2014年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">2014年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">2014年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">2014年09月</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/c-c/" style="font-size: 15.71px;">c/c++</a> <a href="/tags/erlang/" style="font-size: 20px;">erlang</a> <a href="/tags/firefly/" style="font-size: 11.43px;">firefly</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/kbengine/" style="font-size: 11.43px;">kbengine</a> <a href="/tags/lua/" style="font-size: 17.14px;">lua</a> <a href="/tags/multi-thread/" style="font-size: 12.86px;">multi-thread</a> <a href="/tags/ngserver/" style="font-size: 18.57px;">ngserver</a> <a href="/tags/python/" style="font-size: 12.86px;">python</a> <a href="/tags/skynet/" style="font-size: 14.29px;">skynet</a> <a href="/tags/tcp-ip/" style="font-size: 12.86px;">tcp/ip</a> <a href="/tags/tool/" style="font-size: 11.43px;">tool</a> <a href="/tags/unity/" style="font-size: 10px;">unity</a>
+  </div>
+</div>
+
+</aside>
+           <div class="clearfix"></div>
+      </div>
+  	
+   <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2015 wudaijun
+  
+</div>
+<div class="alignright">
+	<a href="https://github.com/pengloo53/light-ch">Hexo theme</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="http://libs.baidu.com/jquery/2.1.1/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+	<script>
+	var _hmt = _hmt || [];
+	(function() {
+	  var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?380ce5c81e06b297c4a75c0c66825c3d";
+	  var s = document.getElementsByTagName("script")[0]; 
+	  s.parentNode.insertBefore(hm, s);
+	})();
+	</script>
+
+
+<div id="toTop">
+	<a href="#">▲</a>
+	<a href="#footer">▼</a>
+</div>
+<!--  -->
+
+
+</body>
+</html>

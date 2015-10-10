@@ -32,7 +32,7 @@
 		
 		<div class="header-div">
 		    <h1><a href="/", style="font-family:Fantasy">wudaijun&#39;s blog</a></h1>
-		    <h2><a href="/">写下来的才是实在货</a></h2>
+		    <h2><a href="/">thinking... writing...</a></h2>
 		</div>
 	</div>
 	<div class = "alignright col-two">
@@ -67,10 +67,101 @@
   <div class="post-content">
     <header>
         <div class="icon"></div>
-        <time datetime="2015-07-19T16:00:00.000Z"><a href="/2015/07/20/c-linker-model/">2015-07-20</a></time>
+        <time datetime="2015-07-23T16:00:00.000Z"><a href="/2015/07/kbengine-study2/">2015-07-24</a></time>
         
   
-    <h1 class="title"><a href="/2015/07/20/c-linker-model/">C链接模型_符号解析</a></h1>
+    <h1 class="title"><a href="/2015/07/kbengine-study2/">kbengine 源码导读(二) 加载流程</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="一-_登录流程">一. 登录流程</h2><p><strong>注册</strong></p>
+<pre><code>Unity3d:CreateAccount
+Loginapp:reqCreateAccount 
+-<span class="ruby">&gt; <span class="symbol">dbmgr:</span>reqCreateAccount 
+</span>-<span class="ruby">&gt; <span class="constant">Loginapp</span><span class="symbol">:onReqCreateAccountResult</span> 
+</span>-<span class="ruby">&gt; <span class="constant">Client</span><span class="symbol">:onReqCreateAccountResult</span></span>
+</code></pre>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2015/07/kbengine-study2/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2015/07/kbengine-study2/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2015-07-22T16:00:00.000Z"><a href="/2015/07/kbengine-study1/">2015-07-23</a></time>
+        
+  
+    <h1 class="title"><a href="/2015/07/kbengine-study1/">kbengine 源码导读(一) 网络底层</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="一-_network部分">一. network部分</h2><p><strong>EndPoint:</strong></p>
+<p>抽象一个Socket及其相关操作，隔离平台相关性。</p>
+<p><strong>TcpPacket:</strong></p>
+<p>代表一个TCP包，这个包只是recv收到的字节流，并不是上层协议中的消息(Message)。</p>
+<p><strong>MsgHandlers:</strong></p>
+<p>每个MessageHandler类对应一个消息的处理。MsgHanders维护MsgId -&gt; MsgHandler的映射。</p>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2015/07/kbengine-study1/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2015/07/kbengine-study1/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2015-07-19T16:00:00.000Z"><a href="/2015/07/c-linker-model/">2015-07-20</a></time>
+        
+  
+    <h1 class="title"><a href="/2015/07/c-linker-model/">C链接模型_符号解析</a></h1>
   
 
     </header>
@@ -89,12 +180,12 @@
 <!--        -->
         
           <div class="alignleft">
-            <a href="/2015/07/20/c-linker-model/#more" class="more-link">Read More</a>
+            <a href="/2015/07/c-linker-model/#more" class="more-link">Read More</a>
           </div>
         
         
         <div class="alignright">
-          <a href="/2015/07/20/c-linker-model/#comment" class="comment-link">Comments</a>
+          <a href="/2015/07/c-linker-model/#comment" class="comment-link">Comments</a>
         </div>
         
 <!--        -->
@@ -113,10 +204,10 @@
   <div class="post-content">
     <header>
         <div class="icon"></div>
-        <time datetime="2015-07-08T16:00:00.000Z"><a href="/2015/07/09/rebar-hotcode/">2015-07-09</a></time>
+        <time datetime="2015-07-08T16:00:00.000Z"><a href="/2015/07/rebar-hotcode/">2015-07-09</a></time>
         
   
-    <h1 class="title"><a href="/2015/07/09/rebar-hotcode/">rebar的热更</a></h1>
+    <h1 class="title"><a href="/2015/07/rebar-hotcode/">rebar的热更</a></h1>
   
 
     </header>
@@ -130,12 +221,12 @@
 <!--        -->
         
           <div class="alignleft">
-            <a href="/2015/07/09/rebar-hotcode/#more" class="more-link">Read More</a>
+            <a href="/2015/07/rebar-hotcode/#more" class="more-link">Read More</a>
           </div>
         
         
         <div class="alignright">
-          <a href="/2015/07/09/rebar-hotcode/#comment" class="comment-link">Comments</a>
+          <a href="/2015/07/rebar-hotcode/#comment" class="comment-link">Comments</a>
         </div>
         
 <!--        -->
@@ -154,10 +245,10 @@
   <div class="post-content">
     <header>
         <div class="icon"></div>
-        <time datetime="2015-07-02T16:00:00.000Z"><a href="/2015/07/03/erlang-mongodb/">2015-07-03</a></time>
+        <time datetime="2015-07-02T16:00:00.000Z"><a href="/2015/07/erlang-mongodb/">2015-07-03</a></time>
         
   
-    <h1 class="title"><a href="/2015/07/03/erlang-mongodb/">Erlang mongodb</a></h1>
+    <h1 class="title"><a href="/2015/07/erlang-mongodb/">Erlang mongodb</a></h1>
   
 
     </header>
@@ -178,12 +269,12 @@ mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span
 <!--        -->
         
           <div class="alignleft">
-            <a href="/2015/07/03/erlang-mongodb/#more" class="more-link">Read More</a>
+            <a href="/2015/07/erlang-mongodb/#more" class="more-link">Read More</a>
           </div>
         
         
         <div class="alignright">
-          <a href="/2015/07/03/erlang-mongodb/#comment" class="comment-link">Comments</a>
+          <a href="/2015/07/erlang-mongodb/#comment" class="comment-link">Comments</a>
         </div>
         
 <!--        -->
@@ -202,10 +293,10 @@ mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span
   <div class="post-content">
     <header>
         <div class="icon"></div>
-        <time datetime="2015-06-30T16:00:00.000Z"><a href="/2015/07/01/erlang-superviosr/">2015-07-01</a></time>
+        <time datetime="2015-06-30T16:00:00.000Z"><a href="/2015/07/erlang-superviosr/">2015-07-01</a></time>
         
   
-    <h1 class="title"><a href="/2015/07/01/erlang-superviosr/">Erlang supervisor</a></h1>
+    <h1 class="title"><a href="/2015/07/erlang-superviosr/">Erlang supervisor</a></h1>
   
 
     </header>
@@ -218,12 +309,12 @@ mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span
 <!--        -->
         
           <div class="alignleft">
-            <a href="/2015/07/01/erlang-superviosr/#more" class="more-link">Read More</a>
+            <a href="/2015/07/erlang-superviosr/#more" class="more-link">Read More</a>
           </div>
         
         
         <div class="alignright">
-          <a href="/2015/07/01/erlang-superviosr/#comment" class="comment-link">Comments</a>
+          <a href="/2015/07/erlang-superviosr/#comment" class="comment-link">Comments</a>
         </div>
         
 <!--        -->
@@ -242,10 +333,10 @@ mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span
   <div class="post-content">
     <header>
         <div class="icon"></div>
-        <time datetime="2015-06-02T16:00:00.000Z"><a href="/2015/06/03/firefly-study2/">2015-06-03</a></time>
+        <time datetime="2015-06-02T16:00:00.000Z"><a href="/2015/06/firefly-study2/">2015-06-03</a></time>
         
   
-    <h1 class="title"><a href="/2015/06/03/firefly-study2/">Firefly 学习(二)</a></h1>
+    <h1 class="title"><a href="/2015/06/firefly-study2/">Firefly 学习(二)</a></h1>
   
 
     </header>
@@ -265,12 +356,12 @@ mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span
 <!--        -->
         
           <div class="alignleft">
-            <a href="/2015/06/03/firefly-study2/#more" class="more-link">Read More</a>
+            <a href="/2015/06/firefly-study2/#more" class="more-link">Read More</a>
           </div>
         
         
         <div class="alignright">
-          <a href="/2015/06/03/firefly-study2/#comment" class="comment-link">Comments</a>
+          <a href="/2015/06/firefly-study2/#comment" class="comment-link">Comments</a>
         </div>
         
 <!--        -->
@@ -289,10 +380,10 @@ mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span
   <div class="post-content">
     <header>
         <div class="icon"></div>
-        <time datetime="2015-05-28T16:00:00.000Z"><a href="/2015/05/29/twisted/">2015-05-29</a></time>
+        <time datetime="2015-05-28T16:00:00.000Z"><a href="/2015/05/twisted/">2015-05-29</a></time>
         
   
-    <h1 class="title"><a href="/2015/05/29/twisted/">Twisted</a></h1>
+    <h1 class="title"><a href="/2015/05/twisted/">Twisted</a></h1>
   
 
     </header>
@@ -305,12 +396,12 @@ mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span
 <!--        -->
         
           <div class="alignleft">
-            <a href="/2015/05/29/twisted/#more" class="more-link">Read More</a>
+            <a href="/2015/05/twisted/#more" class="more-link">Read More</a>
           </div>
         
         
         <div class="alignright">
-          <a href="/2015/05/29/twisted/#comment" class="comment-link">Comments</a>
+          <a href="/2015/05/twisted/#comment" class="comment-link">Comments</a>
         </div>
         
 <!--        -->
@@ -329,10 +420,10 @@ mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span
   <div class="post-content">
     <header>
         <div class="icon"></div>
-        <time datetime="2015-05-19T16:00:00.000Z"><a href="/2015/05/20/firefly-study1/">2015-05-20</a></time>
+        <time datetime="2015-05-19T16:00:00.000Z"><a href="/2015/05/firefly-study1/">2015-05-20</a></time>
         
   
-    <h1 class="title"><a href="/2015/05/20/firefly-study1/">Firefly 学习(一)</a></h1>
+    <h1 class="title"><a href="/2015/05/firefly-study1/">Firefly 学习(一)</a></h1>
   
 
     </header>
@@ -345,12 +436,12 @@ mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span
 <!--        -->
         
           <div class="alignleft">
-            <a href="/2015/05/20/firefly-study1/#more" class="more-link">Read More</a>
+            <a href="/2015/05/firefly-study1/#more" class="more-link">Read More</a>
           </div>
         
         
         <div class="alignright">
-          <a href="/2015/05/20/firefly-study1/#comment" class="comment-link">Comments</a>
+          <a href="/2015/05/firefly-study1/#comment" class="comment-link">Comments</a>
         </div>
         
 <!--        -->
@@ -369,10 +460,10 @@ mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span
   <div class="post-content">
     <header>
         <div class="icon"></div>
-        <time datetime="2015-05-18T16:00:00.000Z"><a href="/2015/05/19/wordpress-setup/">2015-05-19</a></time>
+        <time datetime="2015-05-18T16:00:00.000Z"><a href="/2015/05/wordpress-setup/">2015-05-19</a></time>
         
   
-    <h1 class="title"><a href="/2015/05/19/wordpress-setup/">WordPress搭建历程</a></h1>
+    <h1 class="title"><a href="/2015/05/wordpress-setup/">WordPress搭建历程</a></h1>
   
 
     </header>
@@ -385,92 +476,12 @@ mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span
 <!--        -->
         
           <div class="alignleft">
-            <a href="/2015/05/19/wordpress-setup/#more" class="more-link">Read More</a>
+            <a href="/2015/05/wordpress-setup/#more" class="more-link">Read More</a>
           </div>
         
         
         <div class="alignright">
-          <a href="/2015/05/19/wordpress-setup/#comment" class="comment-link">Comments</a>
-        </div>
-        
-<!--        -->
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-
-    <article class="post">
-  
-  <div class="post-content">
-    <header>
-        <div class="icon"></div>
-        <time datetime="2015-05-07T16:00:00.000Z"><a href="/2015/05/08/erlang-gameserver-persistence/">2015-05-08</a></time>
-        
-  
-    <h1 class="title"><a href="/2015/05/08/erlang-gameserver-persistence/">Erlang 服务器落地机制</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>游戏服务器中用得最多的就是gen_server，比如游戏中的Player进程，由于gen_server提供的完善的进程设施，我们无需过多地担心进程崩溃而造成的数据丢失的问题(至少还有个terminate用于做善后工作)。因此在进行数据写回时，可以通过定时写回的机制来减轻数据库负担。这一点也是C服务器望尘莫及的。</p>
-      
-    </div>
-    <footer>
-<!--        -->
-        
-          <div class="alignleft">
-            <a href="/2015/05/08/erlang-gameserver-persistence/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-        <div class="alignright">
-          <a href="/2015/05/08/erlang-gameserver-persistence/#comment" class="comment-link">Comments</a>
-        </div>
-        
-<!--        -->
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-
-    <article class="post">
-  
-  <div class="post-content">
-    <header>
-        <div class="icon"></div>
-        <time datetime="2015-04-21T16:00:00.000Z"><a href="/2015/04/22/erlang-thinking/">2015-04-22</a></time>
-        
-  
-    <h1 class="title"><a href="/2015/04/22/erlang-thinking/">Erlang 随想</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>接触Erlang不到两个月时间，之前一直用C++开发。Erlang这门语言确实带给我更多的思考。</p>
-      
-    </div>
-    <footer>
-<!--        -->
-        
-          <div class="alignleft">
-            <a href="/2015/04/22/erlang-thinking/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-        <div class="alignright">
-          <a href="/2015/04/22/erlang-thinking/#comment" class="comment-link">Comments</a>
+          <a href="/2015/05/wordpress-setup/#comment" class="comment-link">Comments</a>
         </div>
         
 <!--        -->
@@ -523,7 +534,7 @@ mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span
 	
   
 	
-		<li><a href="/categories/network/">network</a><small>1</small></li>
+		<li><a href="/categories/network/">network</a><small>3</small></li>
 	
   
 	
@@ -538,7 +549,7 @@ mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span
 		<li><a href="/categories/unity/">unity</a><small>1</small></li>
 	
    -->
-     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/unity/">unity</a><span class="category-list-count">1</span></li></ul> 
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/unity/">unity</a><span class="category-list-count">1</span></li></ul> 
 </div>
  
 
@@ -546,7 +557,7 @@ mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span
   
   <div class="widget tag">
     <h3 class="title">归档</h3>
-	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">2015年10月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">2015年09月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">2015年08月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">2015年07月</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">2015年06月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">2015年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">2015年04月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">2015年03月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2015年02月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">2015年01月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">2014年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">2014年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">2014年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">2014年09月</a><span class="archive-list-count">1</span></li></ul>
+	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">2015年10月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">2015年09月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">2015年08月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">2015年07月</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">2015年06月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">2015年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">2015年04月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">2015年03月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2015年02月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">2015年01月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">2014年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">2014年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">2014年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">2014年09月</a><span class="archive-list-count">1</span></li></ul>
   </div>
 
 
@@ -554,7 +565,7 @@ mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/c-c/" style="font-size: 15.71px;">c/c++</a> <a href="/tags/erlang/" style="font-size: 20px;">erlang</a> <a href="/tags/firefly/" style="font-size: 11.43px;">firefly</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/kbengine/" style="font-size: 11.43px;">kbengine</a> <a href="/tags/lua/" style="font-size: 17.14px;">lua</a> <a href="/tags/multi-thread/" style="font-size: 12.86px;">multi-thread</a> <a href="/tags/ngserver/" style="font-size: 18.57px;">ngserver</a> <a href="/tags/python/" style="font-size: 12.86px;">python</a> <a href="/tags/skynet/" style="font-size: 14.29px;">skynet</a> <a href="/tags/tcp-ip/" style="font-size: 10px;">tcp/ip</a> <a href="/tags/tool/" style="font-size: 11.43px;">tool</a> <a href="/tags/unity/" style="font-size: 10px;">unity</a>
+    <a href="/tags/c-c/" style="font-size: 15.71px;">c/c++</a> <a href="/tags/erlang/" style="font-size: 20px;">erlang</a> <a href="/tags/firefly/" style="font-size: 11.43px;">firefly</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/kbengine/" style="font-size: 11.43px;">kbengine</a> <a href="/tags/lua/" style="font-size: 17.14px;">lua</a> <a href="/tags/multi-thread/" style="font-size: 12.86px;">multi-thread</a> <a href="/tags/ngserver/" style="font-size: 18.57px;">ngserver</a> <a href="/tags/python/" style="font-size: 12.86px;">python</a> <a href="/tags/skynet/" style="font-size: 14.29px;">skynet</a> <a href="/tags/tcp-ip/" style="font-size: 12.86px;">tcp/ip</a> <a href="/tags/tool/" style="font-size: 11.43px;">tool</a> <a href="/tags/unity/" style="font-size: 10px;">unity</a>
   </div>
 </div>
 

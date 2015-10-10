@@ -32,7 +32,7 @@
 		
 		<div class="header-div">
 		    <h1><a href="/", style="font-family:Fantasy">wudaijun&#39;s blog</a></h1>
-		    <h2><a href="/">写下来的才是实在货</a></h2>
+		    <h2><a href="/">thinking... writing...</a></h2>
 		</div>
 	</div>
 	<div class = "alignright col-two">
@@ -67,28 +67,28 @@
   <div class="post-content">
     <header>
         <div class="icon"></div>
-        <time datetime="2014-10-29T16:00:00.000Z"><a href="/2014/10/30/ngserver-session/">2014-10-30</a></time>
+        <time datetime="2014-10-30T16:00:00.000Z"><a href="/2014/10/ngserver-service/">2014-10-31</a></time>
         
   
-    <h1 class="title"><a href="/2014/10/30/ngserver-session/">NGServer Session设计</a></h1>
+    <h1 class="title"><a href="/2014/10/ngserver-service/">NGServer Service框架</a></h1>
   
 
     </header>
     <div class="entry">
       
-        <p>在网络编程模型中，一个Session代表一次会话，主要维护网络数据的发送和接收。对外提供发送数据和处理数据的接口。一个高效的Session主要通过缓冲和异步来提高IO效率。NGServer的Session运用双缓冲和boost::asio的异步机制，很好地做到了这一点。</p>
+        <p>NGServer的核心概念便是服务(Service)，它对逻辑层表现为一个线程，处理各种特定的相关业务。如日志服务(LogService)，数据库服务(DBService)，登录服务(LoginService)。服务之间通过消息进行交互。Service实际上并不是一个独立线程，Service与线程是一种”多对多”的关系。即所有的Service通过ServiceManager来管理，后者维护一个线程池，并将线程池与”服务池”以某种调度方式关联，让线程充分被利用。</p>
       
     </div>
     <footer>
 <!--        -->
         
           <div class="alignleft">
-            <a href="/2014/10/30/ngserver-session/#more" class="more-link">Read More</a>
+            <a href="/2014/10/ngserver-service/#more" class="more-link">Read More</a>
           </div>
         
         
         <div class="alignright">
-          <a href="/2014/10/30/ngserver-session/#comment" class="comment-link">Comments</a>
+          <a href="/2014/10/ngserver-service/#comment" class="comment-link">Comments</a>
         </div>
         
 <!--        -->
@@ -107,10 +107,90 @@
   <div class="post-content">
     <header>
         <div class="icon"></div>
-        <time datetime="2014-09-19T16:00:00.000Z"><a href="/2014/09/20/ngserver-startpage/">2014-09-20</a></time>
+        <time datetime="2014-10-30T16:00:00.000Z"><a href="/2014/10/ngserver-player/">2014-10-31</a></time>
         
   
-    <h1 class="title"><a href="/2014/09/20/ngserver-startpage/">NGServer 简介</a></h1>
+    <h1 class="title"><a href="/2014/10/ngserver-player/">NGServer Session -&gt; Player</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>在服务器中，一般都有一个代表客户端或玩家的类，用来处理一些相关逻辑并保存必要数据。也就是NGServer中的Player类，在网络模型中，一般一个Player对应一次会话(Session)，因此在很多服务器模型中，客户端类直接从Session类派生，这样客户端可以直接通过父类Session的接口发送数据，并且通过实现Sessoin的虚函数对数据进行处理。这种模型的好处在于简单，客户端类能够完全控制网络IO，并且对IO事件进行及时地处理。比如连接断开，那么客户端类可以通过实现Session的OnClose()函数完成一些业务逻辑上的处理，比如保存用户数据。而这种编程模型，将客户端和网络会话的耦合性提到了最高：Client is a Session。方便的同时，很大程度上限制了模块的可拓展性，比如客户端的断线重连，由于这种继承关系，导致Session在销毁的同时必然导致Client”逻辑上”的断线，这样玩家重连的时候，数据只能重新加载，建立新的Session和Client。这种情况还会发生在客户端异处登录时，原有客户端被挤下线的同时，逻辑上的数据也丢失了，而新的客户端将重新加载数据。除了断线重连之外，该模型还会造成不必要的编译依赖。因此我们需要将逻辑上的客户端和底层的网络Session解耦。</p>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2014/10/ngserver-player/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2014/10/ngserver-player/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2014-10-29T16:00:00.000Z"><a href="/2014/10/ngserver-session/">2014-10-30</a></time>
+        
+  
+    <h1 class="title"><a href="/2014/10/ngserver-session/">NGServer Session设计</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>在网络编程模型中，一个Session代表一次会话，主要维护网络数据的发送和接收。对外提供发送数据和处理数据的接口。一个高效的Session主要通过缓冲和异步来提高IO效率。NGServer的Session运用双缓冲和boost::asio的异步机制，很好地做到了这一点。</p>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2014/10/ngserver-session/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2014/10/ngserver-session/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2014-09-19T16:00:00.000Z"><a href="/2014/09/ngserver-startpage/">2014-09-20</a></time>
+        
+  
+    <h1 class="title"><a href="/2014/09/ngserver-startpage/">NGServer 简介</a></h1>
   
 
     </header>
@@ -123,12 +203,12 @@
 <!--        -->
         
           <div class="alignleft">
-            <a href="/2014/09/20/ngserver-startpage/#more" class="more-link">Read More</a>
+            <a href="/2014/09/ngserver-startpage/#more" class="more-link">Read More</a>
           </div>
         
         
         <div class="alignright">
-          <a href="/2014/09/20/ngserver-startpage/#comment" class="comment-link">Comments</a>
+          <a href="/2014/09/ngserver-startpage/#comment" class="comment-link">Comments</a>
         </div>
         
 <!--        -->
@@ -179,7 +259,7 @@
 	
   
 	
-		<li><a href="/categories/network/">network</a><small>1</small></li>
+		<li><a href="/categories/network/">network</a><small>3</small></li>
 	
   
 	
@@ -194,7 +274,7 @@
 		<li><a href="/categories/unity/">unity</a><small>1</small></li>
 	
    -->
-     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/unity/">unity</a><span class="category-list-count">1</span></li></ul> 
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/unity/">unity</a><span class="category-list-count">1</span></li></ul> 
 </div>
  
 
@@ -202,7 +282,7 @@
   
   <div class="widget tag">
     <h3 class="title">归档</h3>
-	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">2015年10月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">2015年09月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">2015年08月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">2015年07月</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">2015年06月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">2015年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">2015年04月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">2015年03月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2015年02月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">2015年01月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">2014年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">2014年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">2014年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">2014年09月</a><span class="archive-list-count">1</span></li></ul>
+	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">2015年10月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">2015年09月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">2015年08月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">2015年07月</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">2015年06月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">2015年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">2015年04月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">2015年03月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2015年02月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">2015年01月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">2014年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">2014年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">2014年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">2014年09月</a><span class="archive-list-count">1</span></li></ul>
   </div>
 
 
@@ -210,7 +290,7 @@
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/c-c/" style="font-size: 15.71px;">c/c++</a> <a href="/tags/erlang/" style="font-size: 20px;">erlang</a> <a href="/tags/firefly/" style="font-size: 11.43px;">firefly</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/kbengine/" style="font-size: 11.43px;">kbengine</a> <a href="/tags/lua/" style="font-size: 17.14px;">lua</a> <a href="/tags/multi-thread/" style="font-size: 12.86px;">multi-thread</a> <a href="/tags/ngserver/" style="font-size: 18.57px;">ngserver</a> <a href="/tags/python/" style="font-size: 12.86px;">python</a> <a href="/tags/skynet/" style="font-size: 14.29px;">skynet</a> <a href="/tags/tcp-ip/" style="font-size: 10px;">tcp/ip</a> <a href="/tags/tool/" style="font-size: 11.43px;">tool</a> <a href="/tags/unity/" style="font-size: 10px;">unity</a>
+    <a href="/tags/c-c/" style="font-size: 15.71px;">c/c++</a> <a href="/tags/erlang/" style="font-size: 20px;">erlang</a> <a href="/tags/firefly/" style="font-size: 11.43px;">firefly</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/kbengine/" style="font-size: 11.43px;">kbengine</a> <a href="/tags/lua/" style="font-size: 17.14px;">lua</a> <a href="/tags/multi-thread/" style="font-size: 12.86px;">multi-thread</a> <a href="/tags/ngserver/" style="font-size: 18.57px;">ngserver</a> <a href="/tags/python/" style="font-size: 12.86px;">python</a> <a href="/tags/skynet/" style="font-size: 14.29px;">skynet</a> <a href="/tags/tcp-ip/" style="font-size: 12.86px;">tcp/ip</a> <a href="/tags/tool/" style="font-size: 11.43px;">tool</a> <a href="/tags/unity/" style="font-size: 10px;">unity</a>
   </div>
 </div>
 

@@ -1,0 +1,314 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Firefly 学习(二) | wudaijun&#39;s blog</title>
+  <meta name="author" content="wudaijun">
+  
+  <meta name="description" content="一. GlobalObject每个节点(即一个FFServer)对应一个GlobalObject，存放该节点的节点信息和分布式信息。GlobalObject中包含多种组件，FFServer根据节点配置信息决定为节点创建哪些组件。这样分布式配置更为灵活，一个节点可以单一职责，也可以多种职责。GlobalObject包含的组件主要有：
+
+netfactory: 前端节点，对应netport字段，监听和管理客户端连接。
+root: 分布式根节点，对应字段rootport
+remote: 分布式子节点，对应字段remoteport
+db: 数据库节点
+
+简单介绍一下netfactory, root, remote 这三个组件，已经远程调用的实现机制。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Firefly 学习(二)"/>
+  <meta property="og:site_name" content="wudaijun&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <meta name="wumiiVerification" content="fb50a101-84fe-4ca2-91a7-ae8cf792978b" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+
+<body>
+  <header id="header" class="inner"><div class= "header-content">
+	<div class = "alignleft col-one">
+		
+			<img src = "/assets/avatar/avatar.png">
+		
+		<div class="header-div">
+		    <h1><a href="/", style="font-family:Fantasy">wudaijun&#39;s blog</a></h1>
+		    <h2><a href="/">thinking... writing...</a></h2>
+		</div>
+	</div>
+	<div class = "alignright col-two">
+		
+			<img src = "/assets/avatar/hello.jpg">
+		
+	</div>
+	<div class="clearfix"></div>
+</div>
+
+<div class= "header-nav">
+	<div id="main-nav" class="alignleft">
+	    
+	      <a href="/">首页</a>
+	    
+	      <a href="/archives">归档</a>
+	    
+	</div>
+	<div id="sub-nav" class="alignright">
+	    
+	      <a href="/about">关于我</a>
+	    
+	</div>
+	<div class="clearfix"></div>
+</div>
+</header>
+  
+      <div id="content" class="inner">
+  		<div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2015-06-02T16:00:00.000Z"><a href="/2015/06/firefly-study2/">2015-06-03</a></time>
+        
+  
+    <h1 class="title">Firefly 学习(二)</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <div id="toc" class="toc-article">
+	<div class="toc-title">目录</div>
+	<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一-_GlobalObject"><span class="toc-text">一. GlobalObject</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-_前端节点netfactory："><span class="toc-text">1. 前端节点netfactory：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-_分布式根节点root"><span class="toc-text">2. 分布式根节点root</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-_分布式子节点remote"><span class="toc-text">3. 分布式子节点remote</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-_Service装饰器"><span class="toc-text">二. Service装饰器</span></a></li></ol>
+</div>
+      
+        <h2 id="一-_GlobalObject">一. GlobalObject</h2><p>每个节点(即一个FFServer)对应一个GlobalObject，存放该节点的节点信息和分布式信息。GlobalObject中包含多种组件，FFServer根据节点配置信息决定为节点创建哪些组件。这样分布式配置更为灵活，一个节点可以单一职责，也可以多种职责。GlobalObject包含的组件主要有：</p>
+<ul>
+<li>netfactory: 前端节点，对应netport字段，监听和管理客户端连接。</li>
+<li>root: 分布式根节点，对应字段rootport</li>
+<li>remote: 分布式子节点，对应字段remoteport</li>
+<li>db: 数据库节点</li>
+</ul>
+<p>简单介绍一下netfactory, root, remote 这三个组件，已经远程调用的实现机制。</p>
+<a id="more"></a>
+<h3 id="1-_前端节点netfactory：">1. 前端节点netfactory：</h3><p>前端节点netfactory为LibrateFactory(netconnect/protoc.py)，firefly网络层使用twisted，LibrateFactory即为twisted的协议工厂，同时也是网络层到逻辑层的纽带。LibrateFactory有如下成员：</p>
+<ul>
+<li>connmanager: <ul>
+<li>功能: 管理所有Connection，建立ConnID(transport.sessionno)到Conn的映射。</li>
+<li>实现: ConnectionManager(netconnection/manager.py)</li>
+</ul>
+</li>
+<li>dataprotocl: <ul>
+<li>功能: 消息编解码器，完成消息的编解码，提供pack/unpack/getHeadlength等接口。</li>
+<li>实现: DataPackProtoc(netconnection/datapack.py)</li>
+</ul>
+</li>
+<li>protocol: <ul>
+<li>功能: 负责处理收到的字节数据，解决粘包半包问题等，通过DataPackProtoc拿到消息ID(command)和消息数据(request)，调用<code>factory.doDataReceived(self, command, requeset)</code>将消息传给netfactory统一处理。</li>
+<li>实现: LibrateProtocol(netconnection/protoc.py)</li>
+</ul>
+</li>
+<li>service:<ul>
+<li>功能: netfactory上挂载的Service，也就是从网络层到逻辑层的入口，逻辑层在这个Service通道中注册响应函数，netfactory会在收到消息(<code>doDataReceived</code>)时，通过<code>service.callTarget(commandID, conn, data)</code>将消息交由service处理。 </li>
+<li>实现: 目前的netfactory上挂载的是netservice，netservice默认为CommandService(utils/services.py)</li>
+</ul>
+</li>
+</ul>
+<p>值得一提的是，LibrateProtocol在处理收到的字节流时(<code>dataHandleCoroutine</code>)，利用yield机制非常简洁高效地完成消息解码工作，使解码函数看起来只是在一个<code>while True</code>循环中，无需多次调用，也自然无需保存状态。当外部数据到达时，通过<code>send(data)</code>即可将数据送入dataHandleCoroutine，后者yield返回即可拿到data继续工作了。</p>
+<p>另外，LibrateProtocol解析完一条消息后，通过调用<code>factory.doDataReceived</code>将消息交给netfactory，也就是交给逻辑层，由于LibrateProtocol并不知道逻辑层何时返回，因此<code>factory.doDataReceived</code>是一个异步调用，它返回一个Deffer对象，LibrateProtocol注册callback为写回函数<code>safeToWriteData</code>，当逻辑层返回处理结果时，即可将数据线程安全地响应给客户端。这个Deffer对象可以是响应函数(如netservice:handle_100)返回的，如果响应函数没有返回Deffer而是直接返回的响应数据response，将由<code>service.callTarget</code>创建一个Deffer，并且回调deffer.callback(response)，如果响应函数返回None，那么表示这个请求消息没有响应，<code>service.callTarget</code>直接返回None，LibrateProtocol也无需再为其注册<code>safeToWriteData</code>函数了。</p>
+<p>注意，整个过程都是在单线程中跑的(reactor)，firefly中的每个节点都使用一个reactor，netfactory在FFServer(server/server.py)中传给reactor（如果该节点配置了netport），在FFServer启动时会启动reactor。</p>
+<h3 id="2-_分布式根节点root">2. 分布式根节点root</h3><p>firefly使用twisted透明代理(Perspective Broker, 简称PB, 参见<a href="1">twisted官方文档</a>)，屏蔽了分布式节点之间的通信机制和细节。在FFServer中，firefly为每一个根节点(具备rootport字段)创建一个PBRoot对象，PBRoot代表分布式根节点，它包含两个构件:</p>
+<ul>
+<li><p>childmanager:</p>
+<ul>
+<li>功能: 管理该根节点下面的所有子节点对象(Child对象)，Child主要包含子节点名和子节点的远程调用对象的引用(通过它调用<code>callRemote(函数名，参数)</code>即可调用子节点函数，剩下的细节将由twisted透明代理来完成)。</li>
+<li>实现: ChildManager(distributed/manager.py)</li>
+</ul>
+</li>
+<li><p>service:</p>
+<ul>
+<li>功能: 和netfactory一样，service用于挂载本节点提供的接口(用于其它节点调用)，firefly所有的节点都抽象出一个service用于管理本节点的接口，除了netfactory的netservice以外，其它节点的service均为Service对象，Service对象根据函数名而不是commandID来调用接口。</li>
+<li>实现: Service(utils/services.py) </li>
+</ul>
+</li>
+</ul>
+<p>子节点在连接到根节点时，由子节点发起一个takeProxy的远程调用，参数为子节点名和其远程调用对象(继承自twisted.spread.pb.Referenceble)，触发PBRoot的remote_takeProxy，该函数记录该子节点和其远程调用对象)。之后根节点PBRoot可通过<code>callChild(子节点名，函数名，参数)</code>调用子节点函数。关键代码如下:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PBRoot</span><span class="params">(pb.Root)</span>:</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,dnsmanager = ChildsManager<span class="params">()</span>)</span>:</span></span><br><span class="line">        self.service = <span class="keyword">None</span></span><br><span class="line">        self.childsmanager = dnsmanager</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 远程调用: 初始化子节点</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">remote_takeProxy</span><span class="params">(self,name,transport)</span>:</span></span><br><span class="line">        log.msg(<span class="string">'node [%s] takeProxy ready'</span>%name)</span><br><span class="line">        child = Child(name,name)</span><br><span class="line">        self.childsmanager.addChild(child)</span><br><span class="line">        child.setTransport(transport)</span><br><span class="line">        self.doChildConnect(name, transport)</span><br><span class="line">        </span><br><span class="line">    <span class="comment"># 远程调用: 调用本节点上实现的响应函数    </span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">remote_callTarget</span><span class="params">(self,command,*args,**kw)</span>:</span></span><br><span class="line">        data = self.service.callTarget(command,*args,**kw)</span><br><span class="line">        <span class="keyword">return</span> data</span><br><span class="line">        </span><br><span class="line">    <span class="comment"># 调用子节点方法</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">callChild</span><span class="params">(self,key,*args,**kw)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self.childsmanager.callChild(key,*args,**kw)</span><br></pre></td></tr></table></figure>
+<h4 id="3-_分布式子节点remote">3. 分布式子节点remote</h4><p>FFServer为每一个子节点(具备remoteport字段)创建N个RemoteObject对象(N为其根节点个数，即remoteport字段的元素个数)，globalobject.remote是一个map，通过remote[根节点名]可以得到连接到指定根节点的RemoteObject。为每一个根节点都创建一个RemoteObject的好处是：同样一个子节点，可以对不同的根节点提供不同的接口。</p>
+<p>RemoteObject包含如下构件:</p>
+<ul>
+<li>_reference:<ul>
+<li>功能: 这就是前面提到的远程调用对象，继承自<code>twisted.spread.pb.Referenceble</code>，因此它支持远程调用，即callRemote方法。前提是要将该对象传给根节点。</li>
+<li>实现: ProxyReference(distributed/reference.py)</li>
+</ul>
+</li>
+<li>_factory: PBClientFactory实例，用于获取跟节点的远程调用对象(getRootOBject)</li>
+<li>_name: 节点名字</li>
+</ul>
+<p>在<code>RemoteObject.connect(self, addr)</code>中，子节点连接到根节点时，需要先远程调用根节点的takeProxy函数，并将_reference和_name传给该函数作为参数，如此根节点的childmanager会记下该子节点及其远程调用对象。关键代码如下:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RemoteObject</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="string">'''远程调用对象'''</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,name)</span>:</span></span><br><span class="line">        self._name = name</span><br><span class="line">        self._factory = pb.PBClientFactory()</span><br><span class="line">        self._reference = ProxyReference()</span><br><span class="line">        self._addr = <span class="keyword">None</span></span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">connect</span><span class="params">(self,addr)</span>:</span></span><br><span class="line">        <span class="string">'''初始化远程调用对象'''</span></span><br><span class="line">        self._addr = addr</span><br><span class="line">        reactor.connectTCP(addr[<span class="number">0</span>], addr[<span class="number">1</span>], self._factory)</span><br><span class="line">        self.takeProxy()</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">reconnect</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="string">'''重新连接'''</span></span><br><span class="line">        self.connect(self._addr)</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">addServiceChannel</span><span class="params">(self,service)</span>:</span></span><br><span class="line">        <span class="string">'''设置引用对象'''</span></span><br><span class="line">        self._reference.addService(service)</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">takeProxy</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="string">'''向远程服务端发送代理通道对象</span><br><span class="line">        '''</span></span><br><span class="line">        deferedRemote = self._factory.getRootObject()</span><br><span class="line">        deferedRemote.addCallback(callRemote,<span class="string">'takeProxy'</span>,self._name,self._reference)</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">callRemote</span><span class="params">(self,commandId,*args,**kw)</span>:</span></span><br><span class="line">        <span class="string">'''远程调用'''</span></span><br><span class="line">        deferedRemote = self._factory.getRootObject()</span><br><span class="line">        <span class="keyword">return</span> deferedRemote.addCallback(callRemote,<span class="string">'callTarget'</span>,commandId,*args,**kw)</span><br></pre></td></tr></table></figure>
+<h2 id="二-_Service装饰器">二. Service装饰器</h2><p>至此，除了db和master节点之外，普通分布式节点已经能够正常通讯并且实现远程调用，由于netfactory, root, remote每个组件都抽离出了service用于挂载响应函数，因此firefly在server/globalobject.py中，实现了几个简单的装饰器：netserviceHandle remoteserviceHandle rootserviceHandle，分别用于挂载netfactory，root，remote的响应函数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">netserviceHandle</span><span class="params">(target)</span>:</span></span><br><span class="line">    GlobalObject().netfactory.service.mapTarget(target)</span><br><span class="line">        </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">rootserviceHandle</span><span class="params">(target)</span>:</span></span><br><span class="line">    GlobalObject().root.service.mapTarget(target)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">remoteserviceHandle</span>:</span></span><br><span class="line">	<span class="string">''' remoteserviceHandle装饰器需要一个参数，指出该接口提供给哪一个根节点使用</span><br><span class="line">    def __init__(self,remotename):</span><br><span class="line">        self.remotename = remotename</span><br><span class="line">        </span><br><span class="line">   	def __call__(self,target):</span><br><span class="line">       GlobalObject().remote[self.remotename]._reference._service.mapTarget(target)</span></span><br></pre></td></tr></table></figure>
+<p>这样客户端不用再知道关于globalobject的实现细节，用起来就像上一篇博客中的例子一样简单，暴露给用户globalobject组件只有root和remote，用于实现子节点和父节点之间的远程调用。</p>
+
+      
+    </div>
+    <footer>
+<!--        -->
+        
+  
+  <div class="categories">
+    <a href="/categories/gameserver/">gameserver</a>
+  </div>
+
+        
+  
+  <div class="tags">
+    <a href="/tags/firefly/">firefly</a>, <a href="/tags/python/">python</a>
+  </div>
+
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+<!--   <h1 class="title">留言</h1> -->
+
+
+    <!-- 多说评论框 start -->
+<div class="ds-thread" data-thread-key="2015/06/firefly-study2/" data-title="Firefly 学习(二)" data-url="http://wudaijun.com/2015/06/firefly-study2/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wudaijun"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共JS代码 end -->
+
+
+  
+</section>
+
+
+
+</div></div>
+  		<aside id="sidebar" class="alignright">
+   <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:wudaijun.com">
+  </form>
+</div> 
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+<!--   
+	
+		<li><a href="/categories/c-c/">c/c++</a><small>5</small></li>
+	
+  
+	
+		<li><a href="/categories/erlang/">erlang</a><small>12</small></li>
+	
+  
+	
+		<li><a href="/categories/gameserver/">gameserver</a><small>18</small></li>
+	
+  
+	
+		<li><a href="/categories/lua/">lua</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/network/">network</a><small>3</small></li>
+	
+  
+	
+		<li><a href="/categories/python/">python</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/tool/">tool</a><small>3</small></li>
+	
+  
+	
+		<li><a href="/categories/unity/">unity</a><small>1</small></li>
+	
+   -->
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/unity/">unity</a><span class="category-list-count">1</span></li></ul> 
+</div>
+ 
+
+
+  
+  <div class="widget tag">
+    <h3 class="title">归档</h3>
+	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">2015年10月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">2015年09月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">2015年08月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">2015年07月</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">2015年06月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">2015年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">2015年04月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">2015年03月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2015年02月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">2015年01月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">2014年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">2014年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">2014年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">2014年09月</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/c-c/" style="font-size: 15.71px;">c/c++</a> <a href="/tags/erlang/" style="font-size: 20px;">erlang</a> <a href="/tags/firefly/" style="font-size: 11.43px;">firefly</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/kbengine/" style="font-size: 11.43px;">kbengine</a> <a href="/tags/lua/" style="font-size: 17.14px;">lua</a> <a href="/tags/multi-thread/" style="font-size: 12.86px;">multi-thread</a> <a href="/tags/ngserver/" style="font-size: 18.57px;">ngserver</a> <a href="/tags/python/" style="font-size: 12.86px;">python</a> <a href="/tags/skynet/" style="font-size: 14.29px;">skynet</a> <a href="/tags/tcp-ip/" style="font-size: 12.86px;">tcp/ip</a> <a href="/tags/tool/" style="font-size: 11.43px;">tool</a> <a href="/tags/unity/" style="font-size: 10px;">unity</a>
+  </div>
+</div>
+
+</aside>
+           <div class="clearfix"></div>
+      </div>
+  	
+   <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2015 wudaijun
+  
+</div>
+<div class="alignright">
+	<a href="https://github.com/pengloo53/light-ch">Hexo theme</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="http://libs.baidu.com/jquery/2.1.1/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+	<script>
+	var _hmt = _hmt || [];
+	(function() {
+	  var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?380ce5c81e06b297c4a75c0c66825c3d";
+	  var s = document.getElementsByTagName("script")[0]; 
+	  s.parentNode.insertBefore(hm, s);
+	})();
+	</script>
+
+
+<div id="toTop">
+	<a href="#">▲</a>
+	<a href="#footer">▼</a>
+</div>
+<!--  -->
+
+
+</body>
+</html>

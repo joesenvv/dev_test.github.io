@@ -1,0 +1,267 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Erlang mongodb | wudaijun&#39;s blog</title>
+  <meta name="author" content="wudaijun">
+  
+  <meta name="description" content="erlang mongodb驱动地址: https://github.com/comtihon/mongodb-erlang
+1. 存取
+首先，该驱动不支持将List和Integer作为Key，事实上，它将erlang中List看做数组而不是字符串：
+mongo:insert(Connection, Collection, {&quot;key1&quot;, value1})      % ERROR
+mongo:insert(Connection, Collection, {1, value1})           % ERROR
+
+mongo:insert(Connection, Collection, {key1, value1})        % OK
+mongo:insert(Connection, Collection, {&amp;lt;&amp;lt;&quot;key1&quot;&quot;&amp;gt;&amp;gt;, value1}) % OK">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Erlang mongodb"/>
+  <meta property="og:site_name" content="wudaijun&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <meta name="wumiiVerification" content="fb50a101-84fe-4ca2-91a7-ae8cf792978b" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+
+<body>
+  <header id="header" class="inner"><div class= "header-content">
+	<div class = "alignleft col-one">
+		
+			<img src = "/assets/avatar/avatar.png">
+		
+		<div class="header-div">
+		    <h1><a href="/", style="font-family:Fantasy">wudaijun&#39;s blog</a></h1>
+		    <h2><a href="/">thinking... writing...</a></h2>
+		</div>
+	</div>
+	<div class = "alignright col-two">
+		
+			<img src = "/assets/avatar/hello.jpg">
+		
+	</div>
+	<div class="clearfix"></div>
+</div>
+
+<div class= "header-nav">
+	<div id="main-nav" class="alignleft">
+	    
+	      <a href="/">首页</a>
+	    
+	      <a href="/archives">归档</a>
+	    
+	</div>
+	<div id="sub-nav" class="alignright">
+	    
+	      <a href="/about">关于我</a>
+	    
+	</div>
+	<div class="clearfix"></div>
+</div>
+</header>
+  
+      <div id="content" class="inner">
+  		<div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2015-07-02T16:00:00.000Z"><a href="/2015/07/erlang-mongodb/">2015-07-03</a></time>
+        
+  
+    <h1 class="title">Erlang mongodb</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <div id="toc" class="toc-article">
+	<div class="toc-title">目录</div>
+	
+</div>
+      
+        <p>erlang mongodb驱动地址: <a href="https://github.com/comtihon/mongodb-erlang" target="_blank" rel="external">https://github.com/comtihon/mongodb-erlang</a></p>
+<p><strong>1. 存取</strong></p>
+<p>首先，该驱动不支持将List和Integer作为Key，事实上，它将erlang中List看做数组而不是字符串：</p>
+<pre><code>mongo:<span class="operator"><span class="keyword">insert</span>(<span class="keyword">Connection</span>, Collection, {<span class="string">"key1"</span>, value1})      % <span class="keyword">ERROR</span>
+mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span>, Collection, {<span class="number">1</span>, value1})           % <span class="keyword">ERROR</span>
+
+mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span>, Collection, {key1, value1})        % OK
+mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span>, Collection, {&lt;&lt;<span class="string">"key1""&gt;&gt;, value1}) % OK</span></span>
+</code></pre><a id="more"></a>
+<p>其次，我们在存List作为Value时，实际上存入mongodb的是一个整数数组：</p>
+<pre><code>mongo:<span class="operator"><span class="keyword">insert</span>(<span class="keyword">Connection</span>, Collection, {key1, <span class="string">"abc"</span>}) % <span class="keyword">in</span> mongdb: {<span class="string">"key1"</span>:[<span class="number">97</span>,<span class="number">98</span>,<span class="number">99</span>]}
+
+以下方式可将<span class="keyword">Value</span>正确保存为字符串:
+mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span>, Collection, {key1, abc})
+mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span>, Collection, {key1, bson:utf8(<span class="string">"abc"</span>)})
+mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span>, Collection, {key1, &lt;&lt;<span class="string">"abc"</span>&gt;&gt;})</span>
+</code></pre><p>而在游戏开发逻辑中，我们市场会遇到integer作为key的的情况，因此就需要在Mongodb的存取层做一次转换，落地时integer_to_atom，加载时尝试atom_to_integer(需要捕获异常)。</p>
+<p><strong>2. 转换</strong></p>
+<p>从mongodb读出的数据是bson格式的：{key1, value1, key2, {key21, value21}, …}`，需要执行到逻辑层数据结构的转换，比如逻辑层将mongodb的一个Doc对应一个Dict，则需要完成Bson到Dict之间的转换：</p>
+<figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">dict_to_bson<span class="function"><span class="params">(Dict)</span> -&gt;</span></span><br><span class="line">  List = <span class="attribute">dict</span>:to_list(Dict),</span><br><span class="line">  parse_list(List, []).</span><br><span class="line"></span><br><span class="line">parse_list<span class="function"><span class="params">([], List)</span> -&gt;</span></span><br><span class="line">  <span class="attribute">bson</span>:<span class="built_in">document</span>(List);</span><br><span class="line">parse_list<span class="function"><span class="params">([&#123;Key, Val&#125; | RestList], List)</span> -&gt;</span></span><br><span class="line">  DBKey = dbkey(Key),</span><br><span class="line">  <span class="keyword">case</span> <span class="keyword">catch</span> <span class="attribute">dict</span>:is_empty(Val) <span class="keyword">of</span></span><br><span class="line">    &#123;<span class="string">'EXIT'</span>, &#123;function_clause, _R&#125;&#125;<span class="function"> -&gt;</span></span><br><span class="line">      parse_list(RestList, [&#123;DBKey, Val&#125; | List]);</span><br><span class="line">    _<span class="function"> -&gt;</span></span><br><span class="line">      ParsedList = dict_to_bson(Val),</span><br><span class="line">      parse_list(RestList, [&#123;DBKey, ParsedList&#125; | List])</span><br><span class="line">  end.</span><br><span class="line"></span><br><span class="line">% <span class="number">1</span><span class="function"> -&gt;</span> <span class="string">'1'</span></span><br><span class="line">dbkey<span class="function"><span class="params">(Key)</span> <span class="title">when</span> <span class="title">is_integer</span><span class="params">(Key)</span> -&gt;</span></span><br><span class="line">  <span class="attribute">misc</span>:integer_to_atom(Key);</span><br><span class="line">dbkey<span class="function"><span class="params">(Key)</span> -&gt;</span></span><br><span class="line">  Key.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">bson_to_dict<span class="function"><span class="params">(Doc)</span> -&gt;</span></span><br><span class="line">  FieldList = <span class="attribute">bson</span>:fields(Doc),</span><br><span class="line">  parse_fields(FieldList, <span class="attribute">dict</span>:<span class="keyword">new</span>()).</span><br><span class="line"></span><br><span class="line">parse_fields<span class="function"><span class="params">([], Dict)</span> -&gt;</span> Dict;</span><br><span class="line">parse_fields<span class="function"><span class="params">([&#123;Key, Val&#125; | RestFields], Dict)</span> -&gt;</span></span><br><span class="line">  NewDict = <span class="attribute">dict</span>:store(dictkey(Key), Val, Dict),</span><br><span class="line">  parse_fields(RestFields, NewDict).</span><br><span class="line"></span><br><span class="line">% <span class="string">'1'</span><span class="function"> -&gt;</span> <span class="number">1</span></span><br><span class="line">dictkey<span class="function"><span class="params">(Key)</span> <span class="title">when</span> <span class="title">is_atom</span><span class="params">(Key)</span> -&gt;</span></span><br><span class="line">  <span class="keyword">case</span> <span class="keyword">catch</span> <span class="attribute">misc</span>:atom_to_integer(Key) <span class="keyword">of</span></span><br><span class="line">    &#123;<span class="string">'EXIT'</span>, &#123;badarg, _R&#125;&#125;<span class="function"> -&gt;</span> Key;</span><br><span class="line">    DictKey<span class="function"> -&gt;</span> DictKey</span><br><span class="line">  end;</span><br><span class="line">dictkey<span class="function"><span class="params">(Key)</span> -&gt;</span></span><br><span class="line">  Key.</span><br></pre></td></tr></table></figure>
+<p>上面的转换并不是完美的，对于dict_to_bson，可以深度递归解析出完整的Bson，而对于bson_to_dict，只能解析最外一层，因为对于一个bson格式tuple，你无法判断逻辑层是使用为dict还是bson tuple本身，除非和逻辑层有这样一种约定: 应用层使用的dict中的key不能是tuple，这样bson_to_dict中，只要看到tuple，就转换为dict。否则只能自定义二级Bson解析。</p>
+
+      
+    </div>
+    <footer>
+<!--        -->
+        
+  
+  <div class="categories">
+    <a href="/categories/erlang/">erlang</a>
+  </div>
+
+        
+  
+  <div class="tags">
+    <a href="/tags/erlang/">erlang</a>
+  </div>
+
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+<!--   <h1 class="title">留言</h1> -->
+
+
+    <!-- 多说评论框 start -->
+<div class="ds-thread" data-thread-key="2015/07/erlang-mongodb/" data-title="Erlang mongodb" data-url="http://wudaijun.com/2015/07/erlang-mongodb/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wudaijun"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共JS代码 end -->
+
+
+  
+</section>
+
+
+
+</div></div>
+  		<aside id="sidebar" class="alignright">
+   <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:wudaijun.com">
+  </form>
+</div> 
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+<!--   
+	
+		<li><a href="/categories/c-c/">c/c++</a><small>5</small></li>
+	
+  
+	
+		<li><a href="/categories/erlang/">erlang</a><small>12</small></li>
+	
+  
+	
+		<li><a href="/categories/gameserver/">gameserver</a><small>18</small></li>
+	
+  
+	
+		<li><a href="/categories/lua/">lua</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/network/">network</a><small>3</small></li>
+	
+  
+	
+		<li><a href="/categories/python/">python</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/tool/">tool</a><small>3</small></li>
+	
+  
+	
+		<li><a href="/categories/unity/">unity</a><small>1</small></li>
+	
+   -->
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/unity/">unity</a><span class="category-list-count">1</span></li></ul> 
+</div>
+ 
+
+
+  
+  <div class="widget tag">
+    <h3 class="title">归档</h3>
+	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">2015年10月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">2015年09月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">2015年08月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">2015年07月</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">2015年06月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">2015年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">2015年04月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">2015年03月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2015年02月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">2015年01月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">2014年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">2014年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">2014年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">2014年09月</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/c-c/" style="font-size: 15.71px;">c/c++</a> <a href="/tags/erlang/" style="font-size: 20px;">erlang</a> <a href="/tags/firefly/" style="font-size: 11.43px;">firefly</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/kbengine/" style="font-size: 11.43px;">kbengine</a> <a href="/tags/lua/" style="font-size: 17.14px;">lua</a> <a href="/tags/multi-thread/" style="font-size: 12.86px;">multi-thread</a> <a href="/tags/ngserver/" style="font-size: 18.57px;">ngserver</a> <a href="/tags/python/" style="font-size: 12.86px;">python</a> <a href="/tags/skynet/" style="font-size: 14.29px;">skynet</a> <a href="/tags/tcp-ip/" style="font-size: 12.86px;">tcp/ip</a> <a href="/tags/tool/" style="font-size: 11.43px;">tool</a> <a href="/tags/unity/" style="font-size: 10px;">unity</a>
+  </div>
+</div>
+
+</aside>
+           <div class="clearfix"></div>
+      </div>
+  	
+   <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2015 wudaijun
+  
+</div>
+<div class="alignright">
+	<a href="https://github.com/pengloo53/light-ch">Hexo theme</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="http://libs.baidu.com/jquery/2.1.1/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+	<script>
+	var _hmt = _hmt || [];
+	(function() {
+	  var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?380ce5c81e06b297c4a75c0c66825c3d";
+	  var s = document.getElementsByTagName("script")[0]; 
+	  s.parentNode.insertBefore(hm, s);
+	})();
+	</script>
+
+
+<div id="toTop">
+	<a href="#">▲</a>
+	<a href="#footer">▼</a>
+</div>
+<!--  -->
+
+
+</body>
+</html>
