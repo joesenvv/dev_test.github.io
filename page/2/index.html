@@ -67,6 +67,47 @@
   <div class="post-content">
     <header>
         <div class="icon"></div>
+        <time datetime="2015-08-05T16:00:00.000Z"><a href="/2015/08/erlang-server-design1-cluster-server/">2015-08-06</a></time>
+        
+  
+    <h1 class="title"><a href="/2015/08/erlang-server-design1-cluster-server/">开发笔记(1) cluster server</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="设计原则">设计原则</h2><p>无单点，高可用性，强大的热更支持。</p>
+<h2 id="集群">集群</h2><p>整个服务器可能有很多node，node可根据其职责来划分，如player_node，master_node，pvp_node，每种node可有多个。其中master_node负责连接和管理所有node，新加入的node只需和master_node连接，即加入了整个集群。</p>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2015/08/erlang-server-design1-cluster-server/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2015/08/erlang-server-design1-cluster-server/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
         <time datetime="2015-07-23T16:00:00.000Z"><a href="/2015/07/kbengine-study2/">2015-07-24</a></time>
         
   
@@ -227,54 +268,6 @@ Loginapp:reqCreateAccount
         
         <div class="alignright">
           <a href="/2015/07/rebar-hotcode/#comment" class="comment-link">Comments</a>
-        </div>
-        
-<!--        -->
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-
-    <article class="post">
-  
-  <div class="post-content">
-    <header>
-        <div class="icon"></div>
-        <time datetime="2015-07-02T16:00:00.000Z"><a href="/2015/07/erlang-mongodb/">2015-07-03</a></time>
-        
-  
-    <h1 class="title"><a href="/2015/07/erlang-mongodb/">Erlang mongodb</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>erlang mongodb驱动地址: <a href="https://github.com/comtihon/mongodb-erlang">https://github.com/comtihon/mongodb-erlang</a></p>
-<p><strong>1. 存取</strong></p>
-<p>首先，该驱动不支持将List和Integer作为Key，事实上，它将erlang中List看做数组而不是字符串：</p>
-<pre><code>mongo:<span class="operator"><span class="keyword">insert</span>(<span class="keyword">Connection</span>, Collection, {<span class="string">"key1"</span>, value1})      % <span class="keyword">ERROR</span>
-mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span>, Collection, {<span class="number">1</span>, value1})           % <span class="keyword">ERROR</span>
-
-mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span>, Collection, {key1, value1})        % OK
-mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span>, Collection, {&lt;&lt;<span class="string">"key1""&gt;&gt;, value1}) % OK</span></span>
-</code></pre>
-      
-    </div>
-    <footer>
-<!--        -->
-        
-          <div class="alignleft">
-            <a href="/2015/07/erlang-mongodb/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-        <div class="alignright">
-          <a href="/2015/07/erlang-mongodb/#comment" class="comment-link">Comments</a>
         </div>
         
 <!--        -->
@@ -557,7 +550,7 @@ mongo:<span class="keyword">insert</span>(<span class="keyword">Connection</span
   
   <div class="widget tag">
     <h3 class="title">归档</h3>
-	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">2015年10月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">2015年09月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">2015年08月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">2015年07月</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">2015年06月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">2015年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">2015年04月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">2015年03月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2015年02月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">2015年01月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">2014年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">2014年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">2014年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">2014年09月</a><span class="archive-list-count">1</span></li></ul>
+	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">2015年11月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">2015年10月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">2015年09月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">2015年08月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">2015年07月</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">2015年06月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">2015年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">2015年04月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">2015年03月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2015年02月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">2015年01月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">2014年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">2014年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">2014年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">2014年09月</a><span class="archive-list-count">1</span></li></ul>
   </div>
 
 
