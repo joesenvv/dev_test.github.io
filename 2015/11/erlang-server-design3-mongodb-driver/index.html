@@ -9,7 +9,16 @@
   <meta name="description" content="erlang mongodb驱动地址: https://github.com/comtihon/mongodb-erlang
 先说说mongodb-erlang驱动的一些特性：
 
-支持atom和binary作为Key，atom最终是转换为binary进行存储的，而在读取时，驱动并不会将对应binar">
+支持atom和binary作为Key，atom最终是转换为binary进行存储的，而在读取时，驱动并不会将对应binary转换为atom(它也不知道怎么转)
+不支持integer，string(对erlang来说是字符串，对mongodb来说是数组)作为Key
+支持atom，binary，integer作为值，这三者的存取是透明的，不需要特殊转换，在mongodb中，atom被存为Symbol(xxx)
+支持string作为值，但实际上存的是字符数组，如果想存字符串，应使用binary
+目前最新的mongodb-erlang驱动使用erlang map来存储doc(之前版本用的是bson list)
+
+基于游戏服务器的需求，我们希望：
+
+mongodb driver能够支持integer作为key
+从模型到对象的转换是透明的，无需我们关心">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -99,6 +108,7 @@
 <li>mongodb driver能够支持integer作为key</li>
 <li>从模型到对象的转换是透明的，无需我们关心</li>
 </ul>
+<a id="more"></a>
 <p>之前我们服务器逻辑中的数据模型是Dict，而mongodb-erlang使用的是bson-list来表示文档，在此之上做了一些比较繁杂转换。自mongodb-erlang支持map之后，我们也将数据结构由dict改为了map(PS: 非直观的是，map的效率不比dict差，参见<a href="https://github.com/wudaijun/Code/blob/master/erlang/map_test.erl" target="_blank" rel="external">测试代码</a>)，如此我们需要对驱动读取的map的key value做一些类型转换。为了达到以上两点，我们对mongodb-erlang驱动做了些更改：</p>
 <ol>
 <li><p>修改mongodb-erlang的依赖<a href="https://github.com/comtihon/bson-erlang" target="_blank" rel="external">bson-erlang</a>，在src/bson_binary.erl中添加对integer key的存储支持：</p>
