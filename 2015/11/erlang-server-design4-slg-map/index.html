@@ -3,13 +3,15 @@
 <head>
   <meta charset="utf-8">
   
-  <title>tool | wudaijun&#39;s blog</title>
+  <title>开发笔记(4) SLG 地图 | wudaijun&#39;s blog</title>
   <meta name="author" content="wudaijun">
+  
+  <meta name="description" content="数据组织我们将地图上的数据分为动态数据(行军)和静态数据(点数据)，因为行军过程不会对地图上的点造成影响(飞行)，并且不考虑实时碰撞，因此行军的逻辑是非常轻的，将其剥离出地图点数据，处理起来会更简单。也就是说，行军是地图上特殊的一类事件，而不是动态的点。">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  
+  <meta property="og:title" content="开发笔记(4) SLG 地图"/>
   <meta property="og:site_name" content="wudaijun&#39;s blog"/>
 
   
@@ -61,98 +63,98 @@
 </header>
   
       <div id="content" class="inner">
-  		<div id="main-col" class="alignleft"><div id="wrapper">
-
-<h2 class="archive-title category">tool</h2>
-
-
-  <div class="archive">
-     
-      <article class="post">
-        <div class="post-content">
-          <header>
-            <div class="icon"></div>
-            <time datetime="2015-09-18T16:00:00.000Z"><a href="/2015/09/use-hexo-rebuild-blog/">2015-09-19</a></time>
-            
-              <h1 class="title"><a href="/2015/09/use-hexo-rebuild-blog/">博客开始使用Hexo</a></h1>
-            
-<!--             
+  		<div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
   
-  <div class="tags">
-    <a href="/tags/tool/">tool</a>
-  </div>
- -->
-          </header>
-          <div class='archive-tags'>
-            
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2015-11-13T10:18:15.000Z"><a href="/2015/11/erlang-server-design4-slg-map/">2015-11-13</a></time>
+        
   
-  <div class="tags">
-    <a href="/tags/tool/">tool</a>
-  </div>
+    <h1 class="title">开发笔记(4) SLG 地图</h1>
+  
 
-          </div>
-        </div>
-      </article>
-     
-      <article class="post">
-        <div class="post-content">
-          <header>
-            <div class="icon"></div>
-            <time datetime="2015-05-18T16:00:00.000Z"><a href="/2015/05/wordpress-setup/">2015-05-19</a></time>
-            
-              <h1 class="title"><a href="/2015/05/wordpress-setup/">WordPress搭建历程</a></h1>
-            
-<!--             
-  
-  <div class="tags">
-    <a href="/tags/tool/">tool</a>
-  </div>
- -->
-          </header>
-          <div class='archive-tags'>
-            
-  
-  <div class="tags">
-    <a href="/tags/tool/">tool</a>
-  </div>
-
-          </div>
-        </div>
-      </article>
-     
-      <article class="post">
-        <div class="post-content">
-          <header>
-            <div class="icon"></div>
-            <time datetime="2015-04-16T16:00:00.000Z"><a href="/2015/04/git-study/">2015-04-17</a></time>
-            
-              <h1 class="title"><a href="/2015/04/git-study/">Git 基础知识</a></h1>
-            
-<!--             
-  
-  <div class="tags">
-    <a href="/tags/git/">git</a>
-  </div>
- -->
-          </header>
-          <div class='archive-tags'>
-            
-  
-  <div class="tags">
-    <a href="/tags/git/">git</a>
-  </div>
-
-          </div>
-        </div>
-      </article>
+    </header>
+    <div class="entry">
       
+        <div id="toc" class="toc-article">
+	<div class="toc-title">目录</div>
+	<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#数据组织"><span class="toc-text">数据组织</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据同步"><span class="toc-text">数据同步</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#主动拉取"><span class="toc-text">主动拉取</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#实时推送"><span class="toc-text">实时推送</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#行军设计"><span class="toc-text">行军设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#模块设计"><span class="toc-text">模块设计</span></a></li></ol>
+</div>
+      
+        <h3 id="数据组织">数据组织</h3><p>我们将地图上的数据分为动态数据(行军)和静态数据(点数据)，因为行军过程不会对地图上的点造成影响(飞行)，并且不考虑实时碰撞，因此行军的逻辑是非常轻的，将其剥离出地图点数据，处理起来会更简单。也就是说，行军是地图上特殊的一类事件，而不是动态的点。</p>
+<a id="more"></a>
+<h3 id="数据同步">数据同步</h3><h4 id="主动拉取">主动拉取</h4><p>主动拉取是指玩家在拖动屏幕时，能够看到地图上实时的点信息和行军信息。</p>
+<ul>
+<li><p>静态数据：最简单的处理，将玩家屏幕的中心点周围一定范围(&gt;=玩家屏幕大小)的点信息，发送给客户端，但这样有一个问题，玩家稍微移动屏幕(中心点变动)，都会导致频繁的请求和数据包，因此我们需要一定程度的”缓冲和限制”来避免频繁的请求。在这个基础上，我们在地图上建立了块(Block)这个概念，一个Block大概可以看做玩家屏幕大小的一个区块，玩家在拖动屏幕中，只有屏幕中心点跨Block了，才发送拉取数据请求，而每次拉取，服务器会将以该Block为中心的九宫格Blocks都发送给客户端，用于客户端平滑过渡。</p>
+</li>
+<li><p>动态数据：目前只考虑行军，在行军建立时，算出行军所经历的所有Block，将行军这个事件挂在这些Block上，当玩家拉取该Block的数据时，取出这些行军信息，发送客户端。客户端根据行军上面的时间戳等信息，推算出行军当前位置。</p>
+</li>
+</ul>
+<h4 id="实时推送">实时推送</h4><p>实时推送，是指玩家在屏幕上不进行任何操作，也能看到屏幕所在范围地图上发生的实时信息。这是通过视口(ViewPort)来实现的，视口是一个抽象的概念，可以看做玩家屏幕，玩家视口挂在哪个Block上，玩家就能实时收到该Block上的变化通知，默认情况下，玩家的视口挂载在主城所在的位置，随着玩家屏幕拖送，玩家的视口也会挂载在不同Block上。在服务器上，视口可以简单表示为PlayerId。</p>
+<ul>
+<li>当一个点数据变动时，底层会自动通知它所在Block上所有的玩家(视口)</li>
+<li>新建行军时，底层会实时通知相关Block，并且将该事件ID挂在Block事件队列上。当有新视口挂载在这些Block上时，将得到通知</li>
+<li>行军结束后，通知相关Block，并且将事件ID从相关Block事件队列上移除</li>
+<li>当玩家离开地图后，清除玩家视口信息</li>
+</ul>
+<h3 id="行军设计">行军设计</h3><p>一个典型的场景是，玩家选定一支队伍，然后派出行军，采矿/战斗/XXX，回城。在这上面，最开始我们的设计是，行军是队伍的一种状态，是队伍信息的一部分，行军抵达，只是队伍状态由行军转换为了采矿/战斗，这样实际上行军和队伍是一个东西。这样后来在分离出其它玩家/NPC的行军信息时就会很困难。</p>
+<p>最后我们将行军单独抽了出来，行军可以承载任何类型的可移动单位，行军和可移动单位相互索引，这样行军本身只携带很少量的信息，并且到达目的地之后就会被删除。</p>
+<h3 id="模块设计">模块设计</h3><p>两个模块分别用于管理点和行军，外加共用底层模块来管理Block并支撑数据同步。Block模块需要维护三个映射: <code>Player2Blocks</code>，<code>Block2Players</code>，<code>Block2Events</code>，显然，在这套机制上，一个玩家是可以有多个视口的。</p>
+<p>由于将数据同步机制做在了底层，因此优化的空间是比较大的。对于操作地图点的API，可以给出一个sync选项，用于标明是否需要底层自动通知，这样上层在操作多个点时，可以在修改完之后一并通知。对于事件信息，可以优先将消息发送给事件相关的玩家(如行军所属玩家和行军的目标玩家)等。</p>
+
+      
+    </div>
+    <footer>
+<!--        -->
+        
+  
+  <div class="categories">
+    <a href="/categories/erlang/">erlang</a>
   </div>
+
+        
   
-<nav id="pagination">
+  <div class="tags">
+    <a href="/tags/erlang/">erlang</a>
+  </div>
+
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+<!--   <h1 class="title">留言</h1> -->
+
+
+    <!-- 多说评论框 start -->
+<div class="ds-thread" data-thread-key="2015/11/erlang-server-design4-slg-map/" data-title="开发笔记(4) SLG 地图" data-url="http://wudaijun.com/2015/11/erlang-server-design4-slg-map/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wudaijun"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共JS代码 end -->
+
+
   
-  
-  <div class="clearfix"></div>
-</nav></div></div>
+</section>
+
+
+
+</div></div>
   		<aside id="sidebar" class="alignright">
    <div class="search">
   <form action="//google.com/search" method="get" accept-charset="utf-8">
