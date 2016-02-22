@@ -6,7 +6,9 @@
   <title>Unity 动画系统小记 | wudaijun&#39;s blog</title>
   <meta name="author" content="wudaijun">
   
-  <meta name="description" content="如果动画包含多层，要在初始化时设置动画层权重。
+  <meta name="description" content="校正：本文对动画系统理解上有很大的偏差和局限性，关于更详细正确的理解可参见：
+http://blog.csdn.net/cubesky/article/details/39478207
+动画系统如果动画包含多层，要在初始化时设置动画层权重。
 通常情况下，在我们操作角色时，脚本根据玩家输入，设置动画的行进速度(可平滑过度)，由动画的Blend Tree来做到角色走和跑之间的平滑过渡，并且将动画的实际位移作用于角色模型上。也就是说，由动画控制前进(走，跑)，脚本直接控制转向(rigidbody.MoveRotation)。模型只需提供Walk和Run两个动画片段即可，但需要导入位移信息。
 Animator有个比较有用的选项，用于通过脚本而不是动画来控制模型移动。
 Apply Root Motion：是否将动画的位移，转向作用于实际模型之上。即模型的运动(Position，Rotation的变化)是由动画控制还是脚本控制。">
@@ -82,10 +84,12 @@ Apply Root Motion：是否将动画的位移，转向作用于实际模型之上
       
         <div id="toc" class="toc-article">
 	<div class="toc-title">目录</div>
-	
+	<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#动画系统"><span class="toc-text">动画系统</span></a></li></ol>
 </div>
       
-        <p>如果动画包含多层，要在初始化时设置动画层权重。</p>
+        <p>校正：本文对动画系统理解上有很大的偏差和局限性，关于更详细正确的理解可参见：</p>
+<p><a href="http://blog.csdn.net/cubesky/article/details/39478207" target="_blank" rel="external">http://blog.csdn.net/cubesky/article/details/39478207</a></p>
+<h3 id="动画系统">动画系统</h3><p>如果动画包含多层，要在初始化时设置动画层权重。</p>
 <p>通常情况下，在我们操作角色时，脚本根据玩家输入，设置动画的行进速度(可平滑过度)，由动画的Blend Tree来做到角色走和跑之间的平滑过渡，并且将动画的实际位移作用于角色模型上。也就是说，由动画控制前进(走，跑)，脚本直接控制转向(<code>rigidbody.MoveRotation</code>)。模型只需提供<code>Walk</code>和<code>Run</code>两个动画片段即可，但需要导入位移信息。</p>
 <p>Animator有个比较有用的选项，用于通过脚本而不是动画来控制模型移动。</p>
 <p><code>Apply Root Motion</code>：是否将动画的位移，转向作用于实际模型之上。即模型的运动(Position，Rotation的变化)是由动画控制还是脚本控制。</p>
@@ -203,10 +207,10 @@ var duoshuoQuery = {short_name:"wudaijun"};
 	
   
 	
-		<li><a href="/categories/unity/">unity</a><small>1</small></li>
+		<li><a href="/categories/unity/">unity</a><small>2</small></li>
 	
    -->
-     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/unity/">unity</a><span class="category-list-count">1</span></li></ul> 
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/unity/">unity</a><span class="category-list-count">2</span></li></ul> 
 </div>
  
 
@@ -214,7 +218,7 @@ var duoshuoQuery = {short_name:"wudaijun"};
   
   <div class="widget tag">
     <h3 class="title">归档</h3>
-	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">2016年02月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">2016年01月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">2015年12月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">2015年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">2015年10月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">2015年09月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">2015年08月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">2015年07月</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">2015年06月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">2015年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">2015年04月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">2015年03月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2015年02月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">2015年01月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">2014年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">2014年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">2014年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">2014年09月</a><span class="archive-list-count">1</span></li></ul>
+	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">2016年02月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">2016年01月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">2015年12月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">2015年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">2015年10月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">2015年09月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">2015年08月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">2015年07月</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">2015年06月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">2015年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">2015年04月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">2015年03月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2015年02月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">2015年01月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">2014年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">2014年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">2014年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">2014年09月</a><span class="archive-list-count">1</span></li></ul>
   </div>
 
 
@@ -222,7 +226,7 @@ var duoshuoQuery = {short_name:"wudaijun"};
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/c-c/" style="font-size: 15.71px;">c/c++</a> <a href="/tags/erlang/" style="font-size: 20px;">erlang</a> <a href="/tags/firefly/" style="font-size: 11.43px;">firefly</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/kbengine/" style="font-size: 11.43px;">kbengine</a> <a href="/tags/lua/" style="font-size: 17.14px;">lua</a> <a href="/tags/multi-thread/" style="font-size: 12.86px;">multi-thread</a> <a href="/tags/ngserver/" style="font-size: 18.57px;">ngserver</a> <a href="/tags/python/" style="font-size: 12.86px;">python</a> <a href="/tags/skynet/" style="font-size: 14.29px;">skynet</a> <a href="/tags/tcp-ip/" style="font-size: 12.86px;">tcp/ip</a> <a href="/tags/tool/" style="font-size: 11.43px;">tool</a> <a href="/tags/unity/" style="font-size: 10px;">unity</a>
+    <a href="/tags/c-c/" style="font-size: 15.71px;">c/c++</a> <a href="/tags/erlang/" style="font-size: 20px;">erlang</a> <a href="/tags/firefly/" style="font-size: 11.43px;">firefly</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/kbengine/" style="font-size: 11.43px;">kbengine</a> <a href="/tags/lua/" style="font-size: 17.14px;">lua</a> <a href="/tags/multi-thread/" style="font-size: 12.86px;">multi-thread</a> <a href="/tags/ngserver/" style="font-size: 18.57px;">ngserver</a> <a href="/tags/python/" style="font-size: 12.86px;">python</a> <a href="/tags/skynet/" style="font-size: 14.29px;">skynet</a> <a href="/tags/tcp-ip/" style="font-size: 12.86px;">tcp/ip</a> <a href="/tags/tool/" style="font-size: 11.43px;">tool</a> <a href="/tags/unity/" style="font-size: 11.43px;">unity</a>
   </div>
 </div>
 
