@@ -76,8 +76,8 @@
     </header>
     <div class="entry">
       
-        <h3 id="漫反射贴图(Diffuse_Mapping)">漫反射贴图(Diffuse Mapping)</h3><p>漫反射贴图反映出物体表面在光照射下的颜色和强度，表现出物体的固有色以及纹理。是物体最基础的贴图。</p>
-<h3 id="高光贴图(Specular_Mapping)">高光贴图(Specular Mapping)</h3><p>高光贴图表现物体在受到直接光照时，其不同部分的反射强度(如金属，皮肤，布料反射不同量的光线)，用于区别不同材质的光照属性。它可以附在其它贴图的alpha通道中导入。</p>
+        <h3 id="漫反射贴图(Diffuse_Mapping)">漫反射贴图(Diffuse Mapping)</h3><p>漫反射贴图反映出物体表面在漫反射下的颜色和强度，表现出物体的固有色以及纹理。是物体最基础的贴图。通常也可以直接理解为纹理。</p>
+<h3 id="高光贴图(Specular_Mapping)">高光贴图(Specular Mapping)</h3><p>高光贴图表现物体表面的光照属性，包括镜面反射强度，光泽度，以及菲涅耳衍射强度，决定物体在强光下，表面不同材质(布料，金属，皮肤等)的光照表现。一些高光贴图只包含镜面反射强度信息，每个像素只需要8位，即使用一个通道。</p>
       
     </div>
     <footer>
@@ -246,7 +246,7 @@
     </header>
     <div class="entry">
       
-        <p>简单介绍一下Erlang常用数据结构的内部实现和特性，主要参考<a href="http://www.erlang.org/download_release/29">Erlang OTP 18.0</a>源码，和网上很多优秀博客(参见附录)，原创并不多，整理了一些自己项目中常用到的。</p>
+        <p>简单介绍一下Erlang常用数据结构的内部实现和特性，主要参考<a href="https://github.com/erlang/otp/tree/maint-18">Erlang OTP 18.0</a>源码，和网上很多优秀博客(参见附录)，原创并不多，整理了一些自己项目中常用到的。</p>
 <p>Erlang虚拟机使用一个字(64/32位)来表示所有类型的数据，即Eterm。具体的实施方案通过占用Eterm的后几位作为类型标签，然后根据标签类型来解释剩余位的用途。这个标签是多层级的，最外层占用两位，有三种类型：</p>
 <ul>
 <li>01: list，剩下62位是指向列表Cons的指针</li>

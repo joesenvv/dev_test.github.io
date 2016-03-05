@@ -6,8 +6,8 @@
   <title>3D贴图基础 | wudaijun&#39;s blog</title>
   <meta name="author" content="wudaijun">
   
-  <meta name="description" content="漫反射贴图(Diffuse Mapping)漫反射贴图反映出物体表面在光照射下的颜色和强度，表现出物体的固有色以及纹理。是物体最基础的贴图。
-高光贴图(Specular Mapping)高光贴图表现物体在受到直接光照时，其不同部分的反射强度(如金属，皮肤，布料反射不同量的光线)，用于区别不同材质的光照属性。它可以附在其它贴图的alpha通道中导入。">
+  <meta name="description" content="漫反射贴图(Diffuse Mapping)漫反射贴图反映出物体表面在漫反射下的颜色和强度，表现出物体的固有色以及纹理。是物体最基础的贴图。通常也可以直接理解为纹理。
+高光贴图(Specular Mapping)高光贴图表现物体表面的光照属性，包括镜面反射强度，光泽度，以及菲涅耳衍射强度，决定物体在强光下，表面不同材质(布料，金属，皮肤等)的光照表现。一些高光贴图只包含镜面反射强度信息，每个像素只需要8位，即使用一个通道。">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -80,24 +80,32 @@
       
         <div id="toc" class="toc-article">
 	<div class="toc-title">目录</div>
-	<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#漫反射贴图(Diffuse_Mapping)"><span class="toc-text">漫反射贴图(Diffuse Mapping)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#高光贴图(Specular_Mapping)"><span class="toc-text">高光贴图(Specular Mapping)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#凹凸贴图(Bump_Mapping)"><span class="toc-text">凹凸贴图(Bump Mapping)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#法线贴图(Normal_Mapping)"><span class="toc-text">法线贴图(Normal Mapping)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#高度贴图(High_Mapping)"><span class="toc-text">高度贴图(High Mapping)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#位移贴图(Displacement_Mapping)"><span class="toc-text">位移贴图(Displacement Mapping)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#环境贴图(Environment_Mapping)"><span class="toc-text">环境贴图(Environment Mapping)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#更多参考"><span class="toc-text">更多参考</span></a></li></ol>
+	<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#漫反射贴图(Diffuse_Mapping)"><span class="toc-text">漫反射贴图(Diffuse Mapping)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#高光贴图(Specular_Mapping)"><span class="toc-text">高光贴图(Specular Mapping)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#法线贴图(Normal_Mapping)"><span class="toc-text">法线贴图(Normal Mapping)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#视差贴图(Parallax_Mapping)"><span class="toc-text">视差贴图(Parallax Mapping)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#置换贴图(Displacement_Mapping)"><span class="toc-text">置换贴图(Displacement Mapping)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#环境贴图(Environment_Mapping)"><span class="toc-text">环境贴图(Environment Mapping)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#光照贴图(Light_Mapping)"><span class="toc-text">光照贴图(Light Mapping)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实例效果"><span class="toc-text">实例效果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#更多参考"><span class="toc-text">更多参考</span></a></li></ol>
 </div>
       
-        <h3 id="漫反射贴图(Diffuse_Mapping)">漫反射贴图(Diffuse Mapping)</h3><p>漫反射贴图反映出物体表面在光照射下的颜色和强度，表现出物体的固有色以及纹理。是物体最基础的贴图。</p>
-<h3 id="高光贴图(Specular_Mapping)">高光贴图(Specular Mapping)</h3><p>高光贴图表现物体在受到直接光照时，其不同部分的反射强度(如金属，皮肤，布料反射不同量的光线)，用于区别不同材质的光照属性。它可以附在其它贴图的alpha通道中导入。</p>
+        <h3 id="漫反射贴图(Diffuse_Mapping)">漫反射贴图(Diffuse Mapping)</h3><p>漫反射贴图反映出物体表面在漫反射下的颜色和强度，表现出物体的固有色以及纹理。是物体最基础的贴图。通常也可以直接理解为纹理。</p>
+<h3 id="高光贴图(Specular_Mapping)">高光贴图(Specular Mapping)</h3><p>高光贴图表现物体表面的光照属性，包括镜面反射强度，光泽度，以及菲涅耳衍射强度，决定物体在强光下，表面不同材质(布料，金属，皮肤等)的光照表现。一些高光贴图只包含镜面反射强度信息，每个像素只需要8位，即使用一个通道。</p>
 <a id="more"></a>
-<h3 id="凹凸贴图(Bump_Mapping)">凹凸贴图(Bump Mapping)</h3><p>有了漫发射和高光贴图，我们有了一个明暗有致的模型，但是对于一些有细微凹凸不平的材质来说，我们可能在建模的时候忽略了这些细节，而我们由想要得到其细节的光照效果。要么我们就需要一个更细致的模型，要么就使用凹凸贴图。凹凸贴图的主要实现方式有：法线贴图，高度贴图，以及视差贴图。</p>
 <h3 id="法线贴图(Normal_Mapping)">法线贴图(Normal Mapping)</h3><p>法线贴图保存了物体表面每个像素点的法线向量：</p>
 <p><img src="/assets/image/unity/normal_map_vector.jpg" alt=""><br><img src="/assets/image/unity/normal_map_vector.jpg" alt=""></p>
 <p>这样，将大小为1的光源向量与法线向量相乘，得到的值越接近于0，表面越暗，越接近于1，表面越亮。要保存所有点的法线向量，需要保存[x,y,z]三元组，这正好可以作为RGB值放到一张图片中，因此就有了法线”贴图”，虽然它表现为一张图片，但实际上只是存放向量信息的载体。</p>
 <p>有了法线贴图，我们既避免了复杂模型带来的运算和内存占用，又实现了比较细节的光照效果，突出了模型的细节。</p>
-<h3 id="高度贴图(High_Mapping)">高度贴图(High Mapping)</h3><p>导入模型表面每个点的高度信息，用于实现和法线贴图类似的凹凸效果。这个高度信息只用于光影表现，不会作用于模型平面。</p>
+<h3 id="视差贴图(Parallax_Mapping)">视差贴图(Parallax Mapping)</h3><p>视差贴图技术和法线贴图差不多，但它有着不同的原则。和法线贴图一样视差贴图能够极大提升表面细节，使之具有深度感。它根据储存在纹理中的几何信息对顶点进行位移或偏移。但是这种偏移只用于光影表现，不作用于实际模型轮廓。一种实现的方式通过高度贴图(High Mapping)保存纹理中顶点的高度信息。</p>
 <p><img src="/assets/image/unity/bump_map.png" alt=""></p>
-<h3 id="位移贴图(Displacement_Mapping)">位移贴图(Displacement Mapping)</h3><p>前面提到的位图都是在不改变模型平面的前提下，来表现物品更多的细节。而位移贴图是保存物体表面每个像素点的深度信息，在GPU上最终作用于模型表面，进行曲面细分，从而实现粗糙或者凹凸的效果。这种消耗仍然要比我们直接导入更细致的模型小得多。位移贴度和高光贴图一样，可以作为alpha通道导入。</p>
+<h3 id="置换贴图(Displacement_Mapping)">置换贴图(Displacement Mapping)</h3><p>又叫位移贴图，替换贴图可以通过一种向量贴图的方式来实现，这个向量贴图并不像普通贴图那样改变物体表面的颜色，而是改变物体表面点的位置。它不像法线贴图和视差贴图，因为这些技术都是在制造凹凸效果的假象，而位移映射是真正通过贴图的方式制造出凹凸的表面。它必须要配合切面细分算法，增加渲染的多边形数目来制造出细节的效果。因此它是同类贴图中消耗最大的。</p>
 <p><img src="/assets/image/unity/displacement_map.jpg" alt=""></p>
-<h3 id="环境贴图(Environment_Mapping)">环境贴图(Environment Mapping)</h3><p>又叫反射贴图，把反射对象当作一个虚拟眼睛，生成一张虚拟的纹理图，然后把该纹理图映射到反射对象上，得到的图像就是该场景的一个影像。反射贴图主要实现的功能是：使物体表面能显示出真实场景的影像。主要有球面环境贴图和立方体环境贴图两种：</p>
+<h3 id="环境贴图(Environment_Mapping)">环境贴图(Environment Mapping)</h3><p>又叫反射贴图，把反射对象当作一个虚拟眼睛，生成一张虚拟的纹理图，然后把该纹理图映射到反射对象上，得到的图像就是该场景的一个影像。反射贴图主要实现的功能是：使物体表面能显示出真实场景的影像，而又无需逐个渲染场景中的物体。环境贴图根据反射对象的不同，主要分为三种：球面环境贴图，立方体环境贴图和双曲面环境贴图。</p>
 <p><img src="/assets/image/unity/reflect_map.png" alt=""></p>
-<h3 id="更多参考">更多参考</h3><p>环境贴图：<a href="http://www.twinklingstar.cn/2014/1322/environment-mapping/" target="_blank" rel="external">http://www.twinklingstar.cn/2014/1322/environment-mapping/</a><br>Wiki中的各种贴图：<a href="https://zh.wikipedia.org/wiki/%E4%BD%8D%E7%A7%BB%E8%B4%B4%E5%9B%BE" target="_blank" rel="external">https://zh.wikipedia.org/wiki/%E4%BD%8D%E7%A7%BB%E8%B4%B4%E5%9B%BE</a></p>
+<h3 id="光照贴图(Light_Mapping)">光照贴图(Light Mapping)</h3><p>光照贴图针对于模型周围光照作用于模型效果的一个快照，以避免实时计算光照效果和阴影效果。这通常用在对静态物体(如墙面，箱子)的渲染优化，如Unity中可通过烘焙得到光照贴图。</p>
+<h3 id="实例效果">实例效果</h3><p><img src="/assets/image/unity/diffuse_specular.png" alt="" title="Caption"><br>漫反射+高光贴图</p>
+<p><img src="/assets/image/unity/diffuse_env.png" alt="" title="Caption"><br>漫反射+环境贴图</p>
+<p><img src="/assets/image/unity/diffuse_normal_env.png" alt="" title="Caption"><br>漫反射+法线+环境贴图</p>
+<h3 id="更多参考">更多参考</h3><ol>
+<li>环境贴图：<a href="http://www.twinklingstar.cn/2014/1322/environment-mapping/" target="_blank" rel="external">http://www.twinklingstar.cn/2014/1322/environment-mapping/</a></li>
+<li>Wiki中的各种贴图：<a href="https://zh.wikipedia.org/wiki/%E4%BD%8D%E7%A7%BB%E8%B4%B4%E5%9B%BE" target="_blank" rel="external">https://zh.wikipedia.org/wiki/%E4%BD%8D%E7%A7%BB%E8%B4%B4%E5%9B%BE</a></li>
+<li>Learn OpenGL: <a href="https://learnopengl-cn.readthedocs.org/zh/latest/" target="_blank" rel="external">https://learnopengl-cn.readthedocs.org/zh/latest/</a></li>
+<li>GTA5中的贴图运用：<a href="http://www.adriancourreges.com/blog/2015/11/02/gta-v-graphics-study/" target="_blank" rel="external">http://www.adriancourreges.com/blog/2015/11/02/gta-v-graphics-study/</a></li>
+</ol>
 
       
     </div>
