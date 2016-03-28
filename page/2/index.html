@@ -322,28 +322,28 @@
   <div class="post-content">
     <header>
         <div class="icon"></div>
-        <time datetime="2015-09-15T16:00:00.000Z"><a href="/2015/09/erlang-server-design2-pvp-battle/">2015-09-16</a></time>
+        <time datetime="2015-09-15T16:00:00.000Z"><a href="/2015/09/erlang-server-design2-erlang-lua-battle/">2015-09-16</a></time>
         
   
-    <h1 class="title"><a href="/2015/09/erlang-server-design2-pvp-battle/">开发笔记(2) pvp server</a></h1>
+    <h1 class="title"><a href="/2015/09/erlang-server-design2-erlang-lua-battle/">开发笔记(2) 服务器Lua战斗</a></h1>
   
 
     </header>
     <div class="entry">
       
-        <h3 id="PVP简介">PVP简介</h3><p>接<a href="http://wudaijun.com/2015/08/erlang-server-design1/">这里</a>，由于是大服机制，每个player_server可以跑在任何player_node上，那么逻辑上的小服并不以一个node实际存在，而仅仅是player上的一个字段，对应的每个逻辑小服需要有个pvp_server进程用于维护pvp，也就是竞技场，由于pvp_server要维护排行榜逻辑，因此每个逻辑小服是只能对应一个pvp_server的。</p>
+        <p>服务器战斗系统是自动战斗的，没有玩家实际操作，因此实际上是一份客户端的Lua战斗代码，这里讨论如何在Erlang中植入Lua代码。</p>
       
     </div>
     <footer>
 <!--        -->
         
           <div class="alignleft">
-            <a href="/2015/09/erlang-server-design2-pvp-battle/#more" class="more-link">Read More</a>
+            <a href="/2015/09/erlang-server-design2-erlang-lua-battle/#more" class="more-link">Read More</a>
           </div>
         
         
         <div class="alignright">
-          <a href="/2015/09/erlang-server-design2-pvp-battle/#comment" class="comment-link">Comments</a>
+          <a href="/2015/09/erlang-server-design2-erlang-lua-battle/#comment" class="comment-link">Comments</a>
         </div>
         
 <!--        -->
