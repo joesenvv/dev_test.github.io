@@ -67,28 +67,28 @@
   <div class="post-content">
     <header>
         <div class="icon"></div>
-        <time datetime="2015-01-10T16:00:00.000Z"><a href="/2015/01/false-sharing/">2015-01-11</a></time>
+        <time datetime="2015-01-13T16:00:00.000Z"><a href="/2015/01/lua-coroutine/">2015-01-14</a></time>
         
   
-    <h1 class="title"><a href="/2015/01/false-sharing/">false sharing</a></h1>
+    <h1 class="title"><a href="/2015/01/lua-coroutine/">lua协程</a></h1>
   
 
     </header>
     <div class="entry">
       
-        <p>在多核的CPU架构中，每一个核心core都会有自己的缓存行(cache line)，因此如果一个变量如果同时存在不同的核心的cache line时，就会出现伪共享（false sharing)的问题。此时如果一个核心修改了该变量，该修改需要同步到其它核心的缓存。</p>
+        <p>协程是一种用户级的非抢占式线程。用户级是指它的切换和调度由用户控制，非抢占指一个协程只有在其挂起(yield)或者协程结束才会返回。协程和C线程一样，有自己的堆栈，自己的局部变量，自己的指令指针，并且和其它协程共享全局变量等信息。用户可以实现自己调度协程，这主要得益于yield函数可以自动保存协程当前上下文，这样当挂起的协程被唤醒(resume)时，会从yield处继续向下执行，看起来就像是一个”可以返回多次的函数”。协程还有一个强大的功能就是可通过resume/yield来交换数据，这样使得它可以用于异步回调：当执行异步代码时，切换协程，执行完成后，再切换回来(附带异步执行结果)。由于切换都是用户控制的，在同一时刻只有一个协同程序在运行(这也是和传统线程最大的区别之一)，因此无需考虑同步和加锁的问题。</p>
       
     </div>
     <footer>
 <!--        -->
         
           <div class="alignleft">
-            <a href="/2015/01/false-sharing/#more" class="more-link">Read More</a>
+            <a href="/2015/01/lua-coroutine/#more" class="more-link">Read More</a>
           </div>
         
         
         <div class="alignright">
-          <a href="/2015/01/false-sharing/#comment" class="comment-link">Comments</a>
+          <a href="/2015/01/lua-coroutine/#comment" class="comment-link">Comments</a>
         </div>
         
 <!--        -->
@@ -130,6 +130,46 @@
         
         <div class="alignright">
           <a href="/2015/01/skynet-luaservice/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2015-01-10T16:00:00.000Z"><a href="/2015/01/false-sharing/">2015-01-11</a></time>
+        
+  
+    <h1 class="title"><a href="/2015/01/false-sharing/">false sharing</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>在多核的CPU架构中，每一个核心core都会有自己的缓存行(cache line)，因此如果一个变量如果同时存在不同的核心的cache line时，就会出现伪共享（false sharing)的问题。此时如果一个核心修改了该变量，该修改需要同步到其它核心的缓存。</p>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2015/01/false-sharing/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2015/01/false-sharing/#comment" class="comment-link">Comments</a>
         </div>
         
 <!--        -->
@@ -228,46 +268,6 @@
   <div class="post-content">
     <header>
         <div class="icon"></div>
-        <time datetime="2014-12-11T16:00:00.000Z"><a href="/2014/12/ngserver-playersession/">2014-12-12</a></time>
-        
-  
-    <h1 class="title"><a href="/2014/12/ngserver-playersession/">NGServer 加入PlayerSession</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <h2 id="PlayerSession类">PlayerSession类</h2><p>在之前的网络底层设计中，Player和Session之间通过组合实现弱关联，但仍然有个诟病：Player类和Session类在网络连接到来时一并创建了。这样后面在做断线重连的时候，会有两个Player。而事实上LoginService只管登录认证，登录认证的时候并不需要创建Player类，因此可以延迟Player的创建，将其放在MapService中。而这之前LoginService的登录认证也需要用户的一些基本信息。基于这些，实现了PlayerSession类：</p>
-      
-    </div>
-    <footer>
-<!--        -->
-        
-          <div class="alignleft">
-            <a href="/2014/12/ngserver-playersession/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-        <div class="alignright">
-          <a href="/2014/12/ngserver-playersession/#comment" class="comment-link">Comments</a>
-        </div>
-        
-<!--        -->
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-
-    <article class="post">
-  
-  <div class="post-content">
-    <header>
-        <div class="icon"></div>
         <time datetime="2014-12-11T16:00:00.000Z"><a href="/2014/12/shared_ptr-reference/">2014-12-12</a></time>
         
   
@@ -290,6 +290,46 @@
         
         <div class="alignright">
           <a href="/2014/12/shared_ptr-reference/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2014-12-11T16:00:00.000Z"><a href="/2014/12/ngserver-playersession/">2014-12-12</a></time>
+        
+  
+    <h1 class="title"><a href="/2014/12/ngserver-playersession/">NGServer 加入PlayerSession</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="PlayerSession类">PlayerSession类</h2><p>在之前的网络底层设计中，Player和Session之间通过组合实现弱关联，但仍然有个诟病：Player类和Session类在网络连接到来时一并创建了。这样后面在做断线重连的时候，会有两个Player。而事实上LoginService只管登录认证，登录认证的时候并不需要创建Player类，因此可以延迟Player的创建，将其放在MapService中。而这之前LoginService的登录认证也需要用户的一些基本信息。基于这些，实现了PlayerSession类：</p>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2014/12/ngserver-playersession/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2014/12/ngserver-playersession/#comment" class="comment-link">Comments</a>
         </div>
         
 <!--        -->
@@ -422,46 +462,6 @@
 
 
 
-
-    <article class="post">
-  
-  <div class="post-content">
-    <header>
-        <div class="icon"></div>
-        <time datetime="2014-10-30T16:00:00.000Z"><a href="/2014/10/ngserver-service/">2014-10-31</a></time>
-        
-  
-    <h1 class="title"><a href="/2014/10/ngserver-service/">NGServer Service框架</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>NGServer的核心概念便是服务(Service)，它对逻辑层表现为一个线程，处理各种特定的相关业务。如日志服务(LogService)，数据库服务(DBService)，登录服务(LoginService)。服务之间通过消息进行交互。Service实际上并不是一个独立线程，Service与线程是一种”多对多”的关系。即所有的Service通过ServiceManager来管理，后者维护一个线程池，并将线程池与”服务池”以某种调度方式关联，让线程充分被利用。</p>
-      
-    </div>
-    <footer>
-<!--        -->
-        
-          <div class="alignleft">
-            <a href="/2014/10/ngserver-service/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-        <div class="alignright">
-          <a href="/2014/10/ngserver-service/#comment" class="comment-link">Comments</a>
-        </div>
-        
-<!--        -->
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
  
 <nav id="pagination">
   
@@ -506,6 +506,10 @@
 	
   
 	
+		<li><a href="/categories/other/">other</a><small>1</small></li>
+	
+  
+	
 		<li><a href="/categories/python/">python</a><small>1</small></li>
 	
   
@@ -517,7 +521,7 @@
 		<li><a href="/categories/unity/">unity</a><small>3</small></li>
 	
    -->
-     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/unity/">unity</a><span class="category-list-count">3</span></li></ul> 
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/unity/">unity</a><span class="category-list-count">3</span></li></ul> 
 </div>
  
 
@@ -525,7 +529,7 @@
   
   <div class="widget tag">
     <h3 class="title">归档</h3>
-	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">2016年03月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">2016年02月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">2016年01月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">2015年12月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">2015年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">2015年10月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">2015年09月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">2015年08月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">2015年07月</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">2015年06月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">2015年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">2015年04月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">2015年03月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2015年02月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">2015年01月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">2014年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">2014年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">2014年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">2014年09月</a><span class="archive-list-count">1</span></li></ul>
+	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">2016年04月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">2016年03月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">2016年02月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">2016年01月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">2015年12月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">2015年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">2015年10月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">2015年09月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">2015年08月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">2015年07月</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">2015年06月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">2015年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">2015年04月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">2015年03月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2015年02月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">2015年01月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">2014年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">2014年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">2014年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">2014年09月</a><span class="archive-list-count">1</span></li></ul>
   </div>
 
 
@@ -533,7 +537,7 @@
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/c-c/" style="font-size: 15.71px;">c/c++</a> <a href="/tags/erlang/" style="font-size: 20px;">erlang</a> <a href="/tags/firefly/" style="font-size: 11.43px;">firefly</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/kbengine/" style="font-size: 11.43px;">kbengine</a> <a href="/tags/lua/" style="font-size: 17.14px;">lua</a> <a href="/tags/multi-thread/" style="font-size: 12.86px;">multi-thread</a> <a href="/tags/ngserver/" style="font-size: 18.57px;">ngserver</a> <a href="/tags/python/" style="font-size: 12.86px;">python</a> <a href="/tags/skynet/" style="font-size: 14.29px;">skynet</a> <a href="/tags/tcp-ip/" style="font-size: 12.86px;">tcp/ip</a> <a href="/tags/tool/" style="font-size: 11.43px;">tool</a> <a href="/tags/unity/" style="font-size: 12.86px;">unity</a>
+    <a href="/tags/c-c/" style="font-size: 15.71px;">c/c++</a> <a href="/tags/erlang/" style="font-size: 20px;">erlang</a> <a href="/tags/firefly/" style="font-size: 11.43px;">firefly</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/kbengine/" style="font-size: 11.43px;">kbengine</a> <a href="/tags/lua/" style="font-size: 17.14px;">lua</a> <a href="/tags/multi-thread/" style="font-size: 12.86px;">multi-thread</a> <a href="/tags/ngserver/" style="font-size: 18.57px;">ngserver</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/python/" style="font-size: 12.86px;">python</a> <a href="/tags/skynet/" style="font-size: 14.29px;">skynet</a> <a href="/tags/tcp-ip/" style="font-size: 12.86px;">tcp/ip</a> <a href="/tags/tool/" style="font-size: 11.43px;">tool</a> <a href="/tags/unity/" style="font-size: 12.86px;">unity</a>
   </div>
 </div>
 
