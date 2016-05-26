@@ -3,15 +3,20 @@
 <head>
   <meta charset="utf-8">
   
-  <title>NGServer 加入PlayerSession | wudaijun&#39;s blog</title>
+  <title>Erlang实践(2) 线上调试 | wudaijun&#39;s blog</title>
   <meta name="author" content="wudaijun">
   
-  <meta name="description" content="PlayerSession类在之前的网络底层设计中，Player和Session之间通过组合实现弱关联，但仍然有个诟病：Player类和Session类在网络连接到来时一并创建了。这样后面在做断线重连的时候，会有两个Player。而事实上LoginService只管登录认证，登录认证的时候并不需要创建Player类，因此可以延迟Player的创建，将其放在MapService中。而这之前LoginService的登录认证也需要用户的一些基本信息。基于这些，实现了PlayerSession类：">
+  <meta name="description" content="接入远程节点的几种方法
+JCL任务切换或remsh启动参数：
+erl -setcookie abc -name node_2@127.0.0.1 -remsh node_1@127.0.0.1
+
+通过erl_call实现shell脚本与Erlang节点的简单交互:
+erl_call -s -a &#39;erlang memory &#39; -name node_1@127.0.0.1 -c abc">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="NGServer 加入PlayerSession"/>
+  <meta property="og:title" content="Erlang实践(2) 线上调试"/>
   <meta property="og:site_name" content="wudaijun&#39;s blog"/>
 
   
@@ -68,10 +73,10 @@
   <div class="post-content">
     <header>
         <div class="icon"></div>
-        <time datetime="2014-12-11T16:00:00.000Z"><a href="/2014/12/ngserver-playersession/">2014-12-12</a></time>
+        <time datetime="2016-05-25T16:00:00.000Z"><a href="/2016/05/erlang-debug-online/">2016-05-26</a></time>
         
   
-    <h1 class="title">NGServer 加入PlayerSession</h1>
+    <h1 class="title">Erlang实践(2) 线上调试</h1>
   
 
     </header>
@@ -79,16 +84,93 @@
       
         <div id="toc" class="toc-article">
 	<div class="toc-title">目录</div>
-	<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#PlayerSession类"><span class="toc-text">PlayerSession类</span></a></li></ol>
+	<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#接入远程节点的几种方法"><span class="toc-text">接入远程节点的几种方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#状态监控"><span class="toc-text">状态监控</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#内存"><span class="toc-text">内存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CPU"><span class="toc-text">CPU</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#进程"><span class="toc-text">进程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#第三方工具"><span class="toc-text">第三方工具</span></a></li></ol>
 </div>
       
-        <h2 id="PlayerSession类">PlayerSession类</h2><p>在之前的网络底层设计中，Player和Session之间通过组合实现弱关联，但仍然有个诟病：Player类和Session类在网络连接到来时一并创建了。这样后面在做断线重连的时候，会有两个Player。而事实上LoginService只管登录认证，登录认证的时候并不需要创建Player类，因此可以延迟Player的创建，将其放在MapService中。而这之前LoginService的登录认证也需要用户的一些基本信息。基于这些，实现了PlayerSession类：</p>
+        <h2 id="接入远程节点的几种方法">接入远程节点的几种方法</h2><ol>
+<li><p>JCL任务切换或remsh启动参数：</p>
+<pre><code>erl -setcookie abc -name node_2@<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> -remsh node_1@<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>
+</code></pre></li>
+<li><p>通过<a href="http://erlang.org/doc/man/erl_call.html" target="_blank" rel="external">erl_call</a>实现shell脚本与Erlang节点的简单交互:</p>
+<pre><code>erl_call <span class="operator">-s</span> <span class="operator">-a</span> <span class="string">'erlang memory '</span> -name node_1@<span class="number">127.0</span>.<span class="number">0.1</span> -c abc
+</code></pre></li>
+</ol>
 <a id="more"></a>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> PlayerSession : <span class="keyword">public</span> Session</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    PlayerSession(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;Socket&gt; socket, <span class="keyword">int32_t</span> conn_id);</span><br><span class="line">    ~PlayerSession();</span><br><span class="line"></span><br><span class="line">	<span class="comment">// .....</span></span><br><span class="line">	</span><br><span class="line">    <span class="comment">// 网络数据解码</span></span><br><span class="line">    <span class="keyword">int32_t</span> Decode(<span class="keyword">const</span> <span class="keyword">char</span>* data, <span class="keyword">int32_t</span> len);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 发送消息</span></span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> MsgT&gt;</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">SendMsg</span><span class="params">(MsgId msgid, MsgT&amp; t)</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// ....</span></span><br><span class="line">	</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">int32_t</span> _sid = <span class="number">0</span>;       <span class="comment">// 所属服务ID</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;Player&gt; _playerToken; <span class="comment">// 玩家指针</span></span><br><span class="line">    SessionState _state = kSessionState_None;   <span class="comment">// 会话状态</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> _owner;       <span class="comment">// 登录用户名</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>解码将在PlayerSession而不是Player中完成，在登录完成之前，LoginService通过PlayerSession与玩家交互，在登录验证完成之后，LoginService将玩家登录信息和PlayerSession一并发送到MapService，MapService完成对Player的创建，并于PlayerSession建立关联：</p>
-<figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">void MapServi<span class="number">ce::</span>OnPlayerLogin(SS_PlayerLogin&amp; msg)</span><br><span class="line">&#123;</span><br><span class="line">    PlayerSessionPtr session = msg.session<span class="comment">;</span></span><br><span class="line">    if (session == nullptr)</span><br><span class="line">        return<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">    int64_t playerid = msg.login_info.playerid<span class="comment">;</span></span><br><span class="line">    // 创建 Player 并与PlayerSession关联</span><br><span class="line">    PlayerPtr player = st<span class="number">d::</span>make_shared&lt;Player&gt;(playerid, session)<span class="comment">;</span></span><br><span class="line">    player-&gt;SetMapService(dynamic_pointer_cast&lt;MapService&gt;(shared_from_this()))<span class="comment">;</span></span><br><span class="line">    session-&gt;SetPlayerToken(player)<span class="comment">;</span></span><br><span class="line">    session-&gt;SetSid(GetSid())<span class="comment">; </span></span><br><span class="line">    </span><br><span class="line">    AddPlayer(player)<span class="comment">;</span></span><br><span class="line">    </span><br><span class="line">    // 向数据库加载玩家信息</span><br><span class="line">    // ...</span><br><span class="line">    S2D_LoadPlayer loadmsg<span class="comment">;</span></span><br><span class="line">    loadmsg.playerid = playerid<span class="comment">;</span></span><br><span class="line">    SendToDB(playerid, kS2D_LoadPlayer, loadmsg)<span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>之后客户端业务逻辑上与MapService交互，在GameService::Process(UserMessage*)解码时提取出_playerToken，即可通过Player类完成业务逻辑。</p>
-<p>加入了PlayerSession之后，消息注册回调机制也更复杂了一些，为了方便管理，这些注册和回调均放在GameService中。</p>
+<ol>
+<li><p>通过ssh服务连接Erlang节点：</p>
+<pre><code>---------- <span class="variable">Server</span>:  -----------
+$ <span class="function_or_atom">mkdir</span> /<span class="function_or_atom">tmp</span>/<span class="function_or_atom">ssh</span>
+$ <span class="function_or_atom">ssh</span>-<span class="function_or_atom">keygen</span> -<span class="function_or_atom">t</span> <span class="function_or_atom">rsa</span> -<span class="function_or_atom">f</span> /<span class="function_or_atom">tmp</span>/<span class="function_or_atom">ssh</span>/<span class="function_or_atom">ssh_host_rsa_key</span>
+$ <span class="function_or_atom">ssh</span>-<span class="function_or_atom">keygen</span> -<span class="function_or_atom">t</span> <span class="function_or_atom">rsa1</span> -<span class="function_or_atom">f</span> /<span class="function_or_atom">tmp</span>/<span class="function_or_atom">ssh</span>/<span class="function_or_atom">ssh_host_key</span>
+$ <span class="function_or_atom">ssh</span>-<span class="function_or_atom">keygen</span> -<span class="function_or_atom">t</span> <span class="function_or_atom">dsa</span> -<span class="function_or_atom">f</span> /<span class="function_or_atom">tmp</span>/<span class="function_or_atom">ssh</span>/<span class="function_or_atom">ssh_host_dsa_key</span>
+$ <span class="function_or_atom">erl</span>
+<span class="prompt">1&gt; </span><span class="function_or_atom">application:ensure_all_started</span>(<span class="function_or_atom">ssh</span>).
+{<span class="ok">ok</span>,[<span class="function_or_atom">crypto</span>,<span class="function_or_atom">asn1</span>,<span class="function_or_atom">public_key</span>,<span class="function_or_atom">ssh</span>]}
+<span class="prompt">2&gt; </span><span class="function_or_atom">ssh:daemon</span>(<span class="number">8989</span>, [{<span class="function_or_atom">system_dir</span>, <span class="string">"/tmp/ssh"</span>},
+<span class="prompt">2&gt; </span>{<span class="function_or_atom">user_dir</span>, <span class="string">"/home/ferd/.ssh"</span>}]).
+{<span class="ok">ok</span>,&lt;<span class="number">0.52</span>.<span class="number">0</span>&gt;}
+
+---------- <span class="variable">Client</span> -------------
+$ <span class="function_or_atom">ssh</span> -<span class="function_or_atom">p</span> <span class="number">8989</span> <span class="function_or_atom">ferd</span>@<span class="number">127.0</span>.<span class="number">0.1</span>
+<span class="variable">Eshell</span> <span class="variable">Vx</span>.<span class="function_or_atom">x</span>.<span class="function_or_atom">x</span> (<span class="function_or_atom">abort</span> <span class="function_or_atom">with</span> ^<span class="variable">G</span>)
+<span class="number">1</span>&gt;
+</code></pre></li>
+</ol>
+<h2 id="状态监控">状态监控</h2><h3 id="内存">内存</h3><p>通过<code>erlang:memory()</code>可以查看整个Erlang虚拟机的内存使用情况。</p>
+<h3 id="CPU">CPU</h3><p>Erlang的CPU使用情况是比较难衡量的，由于Erlang虚拟机内部复杂的调度机制，通过<code>top/htop</code>得到的系统进程级的CPU占用率参考性是有限的，即使一个空闲的Erlang虚拟机，调度线程的忙等也会占用一定的CPU。</p>
+<p>因此Erlang内部提供了一些更有用的测量参考，通过<code>erlang:statistics(scheduler_wall_time)</code>可以获得调度器钟表时间：</p>
+<pre><code>&gt; erlang:system_flag(scheduler_wall_time, <span class="literal">true</span>).
+<span class="literal">false</span>
+&gt; erlang:statistics(scheduler_wall_time).
+[&lt;!--￼<span class="number">0</span>--&gt;) -&gt;     
+{I, (A1 - A0)/(T1 - T0)} end, lists:zip(Ts0,Ts1)).    
+[{<span class="number">1</span>,<span class="number">0.01723977154806915</span>},    
+ {<span class="number">2</span>,<span class="number">8.596423007719012e-5</span>},    
+ {<span class="number">3</span>,<span class="number">2.8416950342830393e-6</span>},    
+ {<span class="number">4</span>,<span class="number">1.3440177144802423e-6</span>}
+}]
+</code></pre><h3 id="进程">进程</h3><p>通过<code>length(processes())</code>/<code>length(ports())</code>统计虚拟机当前进程和端口数量。</p>
+<p>关于指定进程的详细信息，都可以通过<code>erlang:process_info(Pid, Key)</code>获得，其中比较有用的Key有：</p>
+<ul>
+<li>dictionary:             进程字典中所有的数据项</li>
+<li>registerd_name:     注册的名字</li>
+<li>status:                进程状态，包含: <ul>
+<li>waiting: 等待消息中</li>
+<li>running: 运行中</li>
+<li>runnable: 准备就绪，尚未被调度  </li>
+<li>exiting: 进程已结束，但未被完全清除</li>
+<li>garbage_collecting: GC中</li>
+<li>suspended: 挂起中</li>
+</ul>
+</li>
+<li>links:                 所有链接进程</li>
+<li>monitored_by:        所有监控当前进程的进程</li>
+<li>monitors:            所有被当前进程监控的进程</li>
+<li>trap_exit:            是否捕获exit信号</li>
+<li>current_function:    当前进程执行的函数，{M, F, A}</li>
+<li>current_location:    进程在模块中的位置，{M, F, A, [{file, FileName}, {line, Num}]}</li>
+<li>current_stacktrace:  以current_location的格式列出堆栈跟踪信息</li>
+<li>initial_call:            进程初始入口函数，如spawn时的入口函数，{M, F, A}</li>
+<li>memory:            进程占用的内存大小(包含所有堆，栈等)，以bytes为单位</li>
+<li>message_queue_len: 进程邮箱中的待处理消息个数</li>
+<li>messages:            返回进程邮箱中的所有消息，该调用之前务必通过message_queue_len确认消息条数，否则消息过多时，调用非常危险</li>
+<li>reductions:            进程<a href="http://www.cnblogs.com/zhengsyao/p/how_erlang_does_scheduling_translation.html" target="_blank" rel="external">规约</a>数</li>
+</ul>
+<p>获取端口信息，可调用<code>erlang:port_info/2</code>。</p>
+<p>关于OTP进程，Erlang提供了更为丰富的调试模块，如<a href="http://erlang.org/doc/man/sys.html" target="_blank" rel="external">sys</a>，其中部分常用函数：</p>
+<ul>
+<li>sys:log_to_file(Pid, FileName)：    将指定进程收到的所有事件信息打印到指定文件</li>
+<li>sys:get_state(Pid)：                获取OTP进程的State</li>
+<li>sys:statistics(Pid, Flag):            Flag: true/false/get 打开/关闭/获取进程信息统计</li>
+<li>sys:install/remove                可为指定进程动态挂载和卸载通用事件处理函数</li>
+<li>sys:suspend/resume:            挂起/恢复指定进程</li>
+<li>sys:terminate(Pid, Reason):        向指定进程发消息，终止该进程</li>
+</ul>
+<h2 id="第三方工具">第三方工具</h2><ul>
+<li>更多测量CPU和性能的工具和模块：<a href="http://www.erlang.org/doc/man/eprof.html" target="_blank" rel="external">eprof</a>，<a href="http://www.erlang.org/doc/man/fprof.html" target="_blank" rel="external">fprof</a>，<a href="https://github.com/proger/eflame" target="_blank" rel="external">eflame</a>。</li>
+<li>learnyousomeerlang作者写的一个库： <a href="https://github.com/ferd/recon" target="_blank" rel="external">recon</a></li>
+<li>Erlang实践红宝书：<a href="hhttp://pan.baidu.com/s/1gfCZBKf" target="_blank" rel="external">Erlang In Anger</a></li>
+</ul>
 
       
     </div>
@@ -97,13 +179,13 @@
         
   
   <div class="categories">
-    <a href="/categories/gameserver/">gameserver</a>
+    <a href="/categories/erlang/">erlang</a>
   </div>
 
         
   
   <div class="tags">
-    <a href="/tags/ngserver/">ngserver</a>
+    <a href="/tags/erlang/">erlang</a>
   </div>
 
         
@@ -119,7 +201,7 @@
 
 
     <!-- 多说评论框 start -->
-<div class="ds-thread" data-thread-key="2014/12/ngserver-playersession/" data-title="NGServer 加入PlayerSession" data-url="http://wudaijun.com/2014/12/ngserver-playersession/"></div>
+<div class="ds-thread" data-thread-key="2016/05/erlang-debug-online/" data-title="Erlang实践(2) 线上调试" data-url="http://wudaijun.com/2016/05/erlang-debug-online/"></div>
 <!-- 多说评论框 end -->
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
