@@ -1,0 +1,300 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>MongoDB 存储引擎 | wudaijun&#39;s blog</title>
+  <meta name="author" content="wudaijun">
+  
+  <meta name="description" content="MongoDB目前支持三种存储引擎：MMAPv1 Storage Engine，In-Memory Storage Engine, WiredTiger Storage Engine。
+MMAPv1 Storage EngineMongoDB3.2之前版本的默认引擎。
+1. 存储原理文档在磁盘中连续存放，文档所占用的磁盘空间包括文档数据所占空间和文档填充(padding)。
+
+摘自：MongoDB MMAPv1内部实现：http://www.mongoing.com/archives/1484">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="MongoDB 存储引擎"/>
+  <meta property="og:site_name" content="wudaijun&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <meta name="wumiiVerification" content="fb50a101-84fe-4ca2-91a7-ae8cf792978b" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+
+<body>
+  <header id="header" class="inner"><div class= "header-content">
+	<div class = "alignleft col-one">
+		
+			<img src = "/assets/avatar/avatar.png">
+		
+		<div class="header-div">
+		    <h1><a href="/", style="font-family:Fantasy">wudaijun&#39;s blog</a></h1>
+		    <h2><a href="/">day day up ...</a></h2>
+		</div>
+	</div>
+	<div class = "alignright col-two">
+		
+			<img src = "/assets/avatar/hello.jpg">
+		
+	</div>
+	<div class="clearfix"></div>
+</div>
+
+<div class= "header-nav">
+	<div id="main-nav" class="alignleft">
+	    
+	      <a href="/">首页</a>
+	    
+	      <a href="/archives">归档</a>
+	    
+	</div>
+	<div id="sub-nav" class="alignright">
+	    
+	      <a href="/about">关于我</a>
+	    
+	</div>
+	<div class="clearfix"></div>
+</div>
+</header>
+  
+      <div id="content" class="inner">
+  		<div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2016-06-24T16:00:00.000Z"><a href="/2016/06/mongodb-storage-engine/">2016-06-25</a></time>
+        
+  
+    <h1 class="title">MongoDB 存储引擎</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <div id="toc" class="toc-article">
+	<div class="toc-title">目录</div>
+	<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MMAPv1_Storage_Engine"><span class="toc-text">MMAPv1 Storage Engine</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-_存储原理"><span class="toc-text">1. 存储原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1_文档移动"><span class="toc-text">1.1 文档移动</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2_padding算法"><span class="toc-text">1.2 padding算法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-并发能力"><span class="toc-text">2.并发能力</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-_故障恢复"><span class="toc-text">3. 故障恢复</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-_内存占用"><span class="toc-text">4. 内存占用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-_遗留问题"><span class="toc-text">5. 遗留问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WiredTiger_Storage_Engine"><span class="toc-text">WiredTiger Storage Engine</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-_并发能力"><span class="toc-text">1. 并发能力</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-_故障恢复"><span class="toc-text">2. 故障恢复</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-_磁盘占用"><span class="toc-text">3. 磁盘占用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-_内存占用-1"><span class="toc-text">4. 内存占用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-_遗留问题-1"><span class="toc-text">5. 遗留问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#In-Memory_Storage_Engine"><span class="toc-text">In-Memory Storage Engine</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考："><span class="toc-text">参考：</span></a></li></ol>
+</div>
+      
+        <p>MongoDB目前支持三种存储引擎：MMAPv1 Storage Engine，In-Memory Storage Engine, WiredTiger Storage Engine。</p>
+<h2 id="MMAPv1_Storage_Engine">MMAPv1 Storage Engine</h2><p>MongoDB3.2之前版本的默认引擎。</p>
+<h3 id="1-_存储原理">1. 存储原理</h3><p>文档在磁盘中连续存放，文档所占用的磁盘空间包括文档数据所占空间和文档填充(padding)。</p>
+<p><img src="assets/image/mongodb/MMAPv1_storage_engine.png" alt=""></p>
+<p>摘自：MongoDB MMAPv1内部实现：<a href="http://www.mongoing.com/archives/1484" target="_blank" rel="external">http://www.mongoing.com/archives/1484</a></p>
+<a id="more"></a>
+<h4 id="1-1_文档移动">1.1 文档移动</h4><p>由于文档在磁盘中连续存放，当文档大小增长时，可能需要重新分配文档空间，并更新索引。这会使写入效率降低，因此通常MongoDB为文档分配的record空间会包括document数据和padding空间。这样减少了文档移动的可能性，提高了写入效率。</p>
+<h4 id="1-2_padding算法">1.2 padding算法</h4><p> 在MongoDB3.0之前，MMAPv1使用填充因子(<a href="&quot;http://openmymind.net/Whats-A-Padding-Factor/&quot;">padding factor</a>)来决定空间分配，填充因子会根据文档移动的频繁度动态调整(初始时为1.0)，当padding factor = 1.5时，MMAPv1将为文档分配<code>sizeof(record) = 1.5 * sizeof(document)</code>的空间，其中<code>0.5*sizeof(document)</code>用作padding。</p>
+<p>padding factor这种方式看起来很智能，但是由于文档的record大小不一，在文档删除或移动之后，文档原来分配的空间很难被再次利用，从而造成了磁盘碎片，这也是MongoDB3.0之前数据占用磁盘空间大的主要原因之一。</p>
+<p>因此在MongoDB3.0之后，不再使用padding factor填充机制，而使用<a href="&quot;https://docs.mongodb.com/manual/core/mmapv1/#power-of-2-sized-allocations&quot;">Power of 2 Sized Allocations</a>，为每个文档分配2的N次方的空间(超过2MB则变为2MB的倍数增长)，这样做既可以减少文档的移动，文档被删除或移动后的空间也可以被有序地组织起来，达成复用(只能被其所在collection的文档复用)。除了Power of 2 Sized Allocations外，MongoDB3.0还提供了<a href="&quot;https://docs.mongodb.com/manual/reference/command/collMod/#noPadding&quot;">no padding</a>分配策略，即只分配文档实际大小的磁盘空间，但应用程序需要确保文档大小不会增长。</p>
+<p>虽然Power of 2 Sized Allocations解决了磁盘碎片的问题，但改进后的MMAPv1引擎仍然在数据库级别分配文件，数据库中的所有集合和索引都混合存储在数据库文件中，并且删除或移动文档后的空间会被保留用以复用，因此磁盘空间无法无法即时自动回收的问题仍然存在(即使drop collection)。</p>
+<h3 id="2-并发能力">2.并发能力</h3><p>在MongoDB3.0之前，只有MMAPv1存储引擎支持，并且只支持Database级的锁，有时候不得不刻意将数据分到多个数据库中提升并发能力。在MongoDB3.0之后，MMAPv1终于支持collection级的并发，并发效率提升了一个档次。参考<a href="&quot;https://docs.mongodb.com/manual/faq/concurrency/&quot;">MongoDB concurrency FAQ</a>。</p>
+<h3 id="3-_故障恢复">3. 故障恢复</h3><p>MongoDB默认记录所有的变更操作日志(<a href="&quot;https://docs.mongodb.com/manual/core/journaling/#journaling-and-the-mmapv1-storage-engine&quot;">journal</a>)并写入磁盘，MongoDB flush变更日志的频率(默认100ms)比flush数据的频率(默认60s)要高，因此journal是MongoDB故障恢复的重要保障。</p>
+<h3 id="4-_内存占用">4. 内存占用</h3><p>由于MMAPv1使用<a href="&quot;http://www.cnblogs.com/huxiao-tee/p/4660352.html&quot;">mmap</a>来将数据库文件映射到内存中，MongoDB总是尽可能的多吃内存，以映射更多的数据文件。并且页面的换入换出基本交给OS控制(MongoDB不建议[修改][MMAPv1 journalflush频率])，因此，将MongoDB部署在更高RAM环境下，是提升性能的最有效的方式之一。</p>
+<h3 id="5-_遗留问题">5. 遗留问题</h3><ul>
+<li>磁盘占用，运维人员可能需要定期的整理数据库(<a href="&quot;https://docs.mongodb.com/manual/reference/command/compact/&quot;">compat</a>，<a href="&quot;https://docs.mongodb.com/manual/reference/command/repairDatabase/&quot;">repairDatabase</a>)</li>
+<li>内存占用，基本是有多少吃多少</li>
+<li>collection级的并发控制仍然偏弱</li>
+</ul>
+<h2 id="WiredTiger_Storage_Engine">WiredTiger Storage Engine</h2><p>MongoDB version3.0中引入，在MongoDB3.2中，已将WiredTiger作为默认存储引擎。</p>
+<h3 id="1-_并发能力">1. 并发能力</h3><p>文档级别的并发支持，WiredTiger通过MVCC实现文档级别的并发控制，即文档级别锁。这就允许多个客户端请求同时更新一个集合内存的多个文档。更多MongoDB并发模型，参见<a href="&quot;https://docs.mongodb.com/manual/faq/concurrency/&quot;">MongoDB concurrency FAQ</a>。</p>
+<h3 id="2-_故障恢复">2. 故障恢复</h3><p>支持checkpoint和journal两种方式进行持久化。</p>
+<p>checkpoint是数据库某一时刻的快照，每60s或超过2GB的变更日志执行一次，在写最新快照时，上一个快照仍然有效，防止MongoDB在快照落地时挂掉，在快照落地完成后，上一个快照将被删除。</p>
+<p>和MMAPv1一样，支持通过变更日志故障恢复，journal可与checkpoint集合使用，提供快速，可靠的数据恢复。可禁用wiredtiger journal，这在一定程度上可以降低系统开支，对于单点MongoDB来说，可能会导致异常关闭时丢失checkpoint之间的数据，对于复制集来说，可靠性稍高一点。在MongoDB3.2之前的版本中，WiredTiger journal默认不会即时刷盘，系统宕机最多会丢失100MB journal数据。在3.2版本中，加入了默认60ms时间间隔刷盘条件。参见官方文档<a href="&quot;https://docs.mongodb.com/manual/core/journaling/#journaling-wiredtiger&quot;">journaling wiredtiger</a>。</p>
+<h3 id="3-_磁盘占用">3. 磁盘占用</h3><p>不同于MMAPv1在数据库级别分配数据文件，WiredTiger将每个collection的数据和索引单独存放，并且会即时回收文档和集合占用空间。</p>
+<p>WiredTiger的另一个两点是支持日志，文档数据块，索引压缩，可配置或关闭压缩算法，大幅度节省了磁盘空间。</p>
+<h3 id="4-_内存占用-1">4. 内存占用</h3><p>WiredTiger支持内存使用容量配置，用户可通过<a href="&quot;https://docs.mongodb.com/manual/reference/configuration-options/#storage.wiredTiger.engineConfig.cacheSizeGB&quot;">WiredTiger CacheSize</a>配置MongoDB WiredTiger所能使用的最大内存，在3.2版本中，该参数默认值为<code>max(60%Ram-1GB, 1GB)</code>。这个内存限制的并不是MongoDB所占用的内存，MongoDB还使用OS文件系统缓存(文件可能是被压缩过的)。</p>
+<h3 id="5-_遗留问题-1">5. 遗留问题</h3><p>相较于MMAPv1，压缩算法和新的存储机制，极大减少了磁盘空间占用，文档级别的并发控制，在多核上吞吐量有明显提升。MongoDB WiredTiger仍然是个吃内存的家伙，虽然可以配置内存最高占用，但更多的内存确实能带来更好的读写效率。</p>
+<h2 id="In-Memory_Storage_Engine">In-Memory Storage Engine</h2><p>纯内存版的MongoDB，限企业版，64bits。简单介绍一下：</p>
+<ul>
+<li>不维护任何磁盘数据，包括配置数据，索引，用户证书，等等，Everything In Memory</li>
+<li>文档级别的并发支持</li>
+<li>在启动时配置最大使用内存，默认1GB，超出使用内存将会报错</li>
+<li>不可落地，不可恢复</li>
+<li>支持分片，复制集</li>
+</ul>
+<p>总结：为啥不用Redis？</p>
+<h2 id="参考：">参考：</h2><ol>
+<li>MongoDB Storage Engine: <a href="https://docs.mongodb.com/manual/core/storage-engines/" target="_blank" rel="external">https://docs.mongodb.com/manual/core/storage-engines/</a></li>
+<li>MongoDB Storage FAQ: <a href="https://docs.mongodb.com/manual/faq/storage/" target="_blank" rel="external">https://docs.mongodb.com/manual/faq/storage/</a></li>
+<li>MongoDB MMAPv1内部实现：    <a href="http://www.mongoing.com/archives/1484" target="_blank" rel="external">http://www.mongoing.com/archives/1484</a></li>
+<li>MongoDB WiredTiger内部实现：<a href="http://www.mongoing.com/archives/2540" target="_blank" rel="external">http://www.mongoing.com/archives/2540</a></li>
+<li>MongoDB存储特性与内部原理： <a href="http://shift-alt-ctrl.iteye.com/blog/2255580" target="_blank" rel="external">http://shift-alt-ctrl.iteye.com/blog/2255580</a></li>
+<li>MongoDB3.0官方性能测试报告：<a href="http://www.mongoing.com/archives/862" target="_blank" rel="external">http://www.mongoing.com/archives/862</a></li>
+</ol>
+
+      
+    </div>
+    <footer>
+<!--        -->
+        
+  
+  <div class="categories">
+    <a href="/categories/database/">database</a>
+  </div>
+
+        
+  
+  <div class="tags">
+    <a href="/tags/mongodb/">mongodb</a>
+  </div>
+
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+<!--   <h1 class="title">留言</h1> -->
+
+
+    <!-- 多说评论框 start -->
+<div class="ds-thread" data-thread-key="2016/06/mongodb-storage-engine/" data-title="MongoDB 存储引擎" data-url="http://wudaijun.com/2016/06/mongodb-storage-engine/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wudaijun"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共JS代码 end -->
+
+
+  
+</section>
+
+
+
+</div></div>
+  		<aside id="sidebar" class="alignright">
+   <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:wudaijun.com">
+  </form>
+</div> 
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+<!--   
+	
+		<li><a href="/categories/c-c/">c/c++</a><small>5</small></li>
+	
+  
+	
+		<li><a href="/categories/database/">database</a><small>3</small></li>
+	
+  
+	
+		<li><a href="/categories/erlang/">erlang</a><small>21</small></li>
+	
+  
+	
+		<li><a href="/categories/gameserver/">gameserver</a><small>19</small></li>
+	
+  
+	
+		<li><a href="/categories/lua/">lua</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/network/">network</a><small>3</small></li>
+	
+  
+	
+		<li><a href="/categories/os/">os</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/other/">other</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/python/">python</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/tool/">tool</a><small>3</small></li>
+	
+  
+	
+		<li><a href="/categories/unity/">unity</a><small>3</small></li>
+	
+   -->
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/database/">database</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/os/">os</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/unity/">unity</a><span class="category-list-count">3</span></li></ul> 
+</div>
+ 
+
+
+  
+  <div class="widget tag">
+    <h3 class="title">归档</h3>
+	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">2016年06月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">2016年05月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">2016年04月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">2016年03月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">2016年02月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">2016年01月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">2015年12月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">2015年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">2015年10月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">2015年09月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">2015年08月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">2015年07月</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">2015年06月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">2015年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">2015年04月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">2015年03月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2015年02月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">2015年01月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">2014年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">2014年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">2014年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">2014年09月</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/c-c/" style="font-size: 15.71px;">c/c++</a> <a href="/tags/distribution/" style="font-size: 14.29px;">distribution</a> <a href="/tags/erlang/" style="font-size: 20px;">erlang</a> <a href="/tags/firefly/" style="font-size: 11.43px;">firefly</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/kbengine/" style="font-size: 11.43px;">kbengine</a> <a href="/tags/lua/" style="font-size: 17.14px;">lua</a> <a href="/tags/mongodb/" style="font-size: 12.86px;">mongodb</a> <a href="/tags/multi-thread/" style="font-size: 12.86px;">multi-thread</a> <a href="/tags/ngserver/" style="font-size: 18.57px;">ngserver</a> <a href="/tags/os/" style="font-size: 10px;">os</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/python/" style="font-size: 12.86px;">python</a> <a href="/tags/skynet/" style="font-size: 14.29px;">skynet</a> <a href="/tags/tcp-ip/" style="font-size: 12.86px;">tcp/ip</a> <a href="/tags/tool/" style="font-size: 11.43px;">tool</a> <a href="/tags/unity/" style="font-size: 12.86px;">unity</a>
+  </div>
+</div>
+
+</aside>
+           <div class="clearfix"></div>
+      </div>
+  	
+   <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2016 wudaijun
+  
+</div>
+<div class="alignright">
+	<a href="https://github.com/pengloo53/light-ch">Hexo theme</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="http://libs.baidu.com/jquery/2.1.1/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+	<script>
+	var _hmt = _hmt || [];
+	(function() {
+	  var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?380ce5c81e06b297c4a75c0c66825c3d";
+	  var s = document.getElementsByTagName("script")[0]; 
+	  s.parentNode.insertBefore(hm, s);
+	})();
+	</script>
+
+
+<div id="toTop">
+	<a href="#">▲</a>
+	<a href="#footer">▼</a>
+</div>
+<!--  -->
+
+
+</body>
+</html>
