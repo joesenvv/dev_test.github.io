@@ -89,7 +89,7 @@ MMAPv1 Storage EngineMongoDB3.2之前版本的默认引擎。
         <p>MongoDB目前支持三种存储引擎：MMAPv1 Storage Engine，In-Memory Storage Engine, WiredTiger Storage Engine。</p>
 <h2 id="MMAPv1_Storage_Engine">MMAPv1 Storage Engine</h2><p>MongoDB3.2之前版本的默认引擎。</p>
 <h3 id="1-_存储原理">1. 存储原理</h3><p>文档在磁盘中连续存放，文档所占用的磁盘空间包括文档数据所占空间和文档填充(padding)。</p>
-<p><img src="assets/image/mongodb/MMAPv1_storage_engine.png" alt=""></p>
+<p><img src="/assets/image/mongodb/MMAPv1_storage_engine.png" alt=""></p>
 <p>摘自：MongoDB MMAPv1内部实现：<a href="http://www.mongoing.com/archives/1484" target="_blank" rel="external">http://www.mongoing.com/archives/1484</a></p>
 <a id="more"></a>
 <h4 id="1-1_文档移动">1.1 文档移动</h4><p>由于文档在磁盘中连续存放，当文档大小增长时，可能需要重新分配文档空间，并更新索引。这会使写入效率降低，因此通常MongoDB为文档分配的record空间会包括document数据和padding空间。这样减少了文档移动的可能性，提高了写入效率。</p>
@@ -99,7 +99,7 @@ MMAPv1 Storage EngineMongoDB3.2之前版本的默认引擎。
 <p>虽然Power of 2 Sized Allocations解决了磁盘碎片的问题，但改进后的MMAPv1引擎仍然在数据库级别分配文件，数据库中的所有集合和索引都混合存储在数据库文件中，并且删除或移动文档后的空间会被保留用以复用，因此磁盘空间无法无法即时自动回收的问题仍然存在(即使drop collection)。</p>
 <h3 id="2-并发能力">2.并发能力</h3><p>在MongoDB3.0之前，只有MMAPv1存储引擎支持，并且只支持Database级的锁，有时候不得不刻意将数据分到多个数据库中提升并发能力。在MongoDB3.0之后，MMAPv1终于支持collection级的并发，并发效率提升了一个档次。参考<a href="&quot;https://docs.mongodb.com/manual/faq/concurrency/&quot;">MongoDB concurrency FAQ</a>。</p>
 <h3 id="3-_故障恢复">3. 故障恢复</h3><p>MongoDB默认记录所有的变更操作日志(<a href="&quot;https://docs.mongodb.com/manual/core/journaling/#journaling-and-the-mmapv1-storage-engine&quot;">journal</a>)并写入磁盘，MongoDB flush变更日志的频率(默认100ms)比flush数据的频率(默认60s)要高，因此journal是MongoDB故障恢复的重要保障。</p>
-<h3 id="4-_内存占用">4. 内存占用</h3><p>由于MMAPv1使用<a href="&quot;http://www.cnblogs.com/huxiao-tee/p/4660352.html&quot;">mmap</a>来将数据库文件映射到内存中，MongoDB总是尽可能的多吃内存，以映射更多的数据文件。并且页面的换入换出基本交给OS控制(MongoDB不建议[修改][MMAPv1 journalflush频率])，因此，将MongoDB部署在更高RAM环境下，是提升性能的最有效的方式之一。</p>
+<h3 id="4-_内存占用">4. 内存占用</h3><p>由于MMAPv1使用<a href="&quot;http://www.cnblogs.com/huxiao-tee/p/4660352.html&quot;">mmap</a>来将数据库文件映射到内存中，MongoDB总是尽可能的多吃内存，以映射更多的数据文件。并且页面的换入换出基本交给OS控制(MongoDB不建议<a href="&quot;https://docs.mongodb.com/manual/core/mmapv1/#journal&quot;">修改</a>flush频率)，因此，将MongoDB部署在更高RAM环境下，是提升性能的最有效的方式之一。</p>
 <h3 id="5-_遗留问题">5. 遗留问题</h3><ul>
 <li>磁盘占用，运维人员可能需要定期的整理数据库(<a href="&quot;https://docs.mongodb.com/manual/reference/command/compact/&quot;">compat</a>，<a href="&quot;https://docs.mongodb.com/manual/reference/command/repairDatabase/&quot;">repairDatabase</a>)</li>
 <li>内存占用，基本是有多少吃多少</li>
