@@ -1,0 +1,338 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>MongoDB 状态监控 | wudaijun&#39;s blog</title>
+  <meta name="author" content="wudaijun">
+  
+  <meta name="description" content="一. 关键指标
+慢查询：当MongoDB处理能力不足时，找出系统中的慢查询，分析原因，看能否通过建立索引或重新设计schema改进
+内存使用：MongoDB吃内存(特别是MMAPv1)，至少要给MongoDB足够的内存存放索引，最理想的情况是能够存放所有数据。当内存占用过高，或者page faults过高时，考虑能不能给MongoDB预留更多的内存。
+磁盘占用：特别是对于MMAPv1，涉及到磁盘占用的因素有很多，不合理的schema(文档频繁移动)或集合/文档的删除都可能会导致磁盘空间利用不足。前期需要设计好schema，后期维护也需要定期整理磁盘数据。
+连接数：MongoDB为每个连接分配一个线程，因此连接是占资源的，并且也不是越多连接越好。合理地控制连接数。
+索引不命中：查看所有查询的索引不命中情况，尽量让所有查询都通过索引
+锁等待：锁等待的原因有很多，连接数过多，操作频繁，慢操作，schema设计过于反范式化等，可从上面的原因针对性解决。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="MongoDB 状态监控"/>
+  <meta property="og:site_name" content="wudaijun&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <meta name="wumiiVerification" content="fb50a101-84fe-4ca2-91a7-ae8cf792978b" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+
+<body>
+  <header id="header" class="inner"><div class= "header-content">
+	<div class = "alignleft col-one">
+		
+			<img src = "/assets/avatar/avatar.png">
+		
+		<div class="header-div">
+		    <h1><a href="/", style="font-family:Fantasy">wudaijun&#39;s blog</a></h1>
+		    <h2><a href="/">day day up ...</a></h2>
+		</div>
+	</div>
+	<div class = "alignright col-two">
+		
+			<img src = "/assets/avatar/hello.jpg">
+		
+	</div>
+	<div class="clearfix"></div>
+</div>
+
+<div class= "header-nav">
+	<div id="main-nav" class="alignleft">
+	    
+	      <a href="/">首页</a>
+	    
+	      <a href="/archives">归档</a>
+	    
+	</div>
+	<div id="sub-nav" class="alignright">
+	    
+	      <a href="/about">关于我</a>
+	    
+	</div>
+	<div class="clearfix"></div>
+</div>
+</header>
+  
+      <div id="content" class="inner">
+  		<div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2016-07-04T16:00:00.000Z"><a href="/2016/07/monitor-mongodb/">2016-07-05</a></time>
+        
+  
+    <h1 class="title">MongoDB 状态监控</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <div id="toc" class="toc-article">
+	<div class="toc-title">目录</div>
+	<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一-_关键指标"><span class="toc-text">一. 关键指标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-_监控工具"><span class="toc-text">二. 监控工具</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-_mongostat"><span class="toc-text">1. mongostat</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-_db-serverStatus()"><span class="toc-text">2. db.serverStatus()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-_Profiler"><span class="toc-text">3. Profiler</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-_db-currentOp()"><span class="toc-text">4. db.currentOp()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-_db-stats()"><span class="toc-text">5. db.stats()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-_db-collStats()"><span class="toc-text">6. db.collStats()</span></a></li></ol></li></ol>
+</div>
+      
+        <h2 id="一-_关键指标">一. 关键指标</h2><ul>
+<li>慢查询：当MongoDB处理能力不足时，找出系统中的慢查询，分析原因，看能否通过建立索引或重新设计schema改进</li>
+<li>内存使用：MongoDB吃内存(特别是MMAPv1)，至少要给MongoDB足够的内存存放索引，最理想的情况是能够存放所有数据。当内存占用过高，或者page faults过高时，考虑能不能给MongoDB预留更多的内存。</li>
+<li>磁盘占用：特别是对于MMAPv1，涉及到磁盘占用的因素有很多，不合理的schema(文档频繁移动)或集合/文档的删除都可能会导致磁盘空间利用不足。前期需要设计好schema，后期维护也需要定期整理磁盘数据。</li>
+<li>连接数：MongoDB为每个连接分配一个线程，因此连接是占资源的，并且也不是越多连接越好。合理地控制连接数。</li>
+<li>索引不命中：查看所有查询的索引不命中情况，尽量让所有查询都通过索引</li>
+<li>锁等待：锁等待的原因有很多，连接数过多，操作频繁，慢操作，schema设计过于反范式化等，可从上面的原因针对性解决。</li>
+</ul>
+<a id="more"></a>
+<h2 id="二-_监控工具">二. 监控工具</h2><h3 id="1-_mongostat">1. mongostat</h3><p>mongodb自带的状态检测工具，按照固定时间间隔(默认1s)获取mongodb的当前运行状态，适用于对临时异常状态的监控：</p>
+<pre><code><span class="comment">// from MongoDB 3.0 MMAPv1</span>
+▶ mongostat
+insert query update <span class="keyword">delete</span> getmore command flushes mapped vsize    res faults qr|qw ar|aw netIn netOut conn     time
+    *<span class="number">0</span>    <span class="number">40</span>      <span class="number">1</span>     *<span class="number">0</span>       <span class="number">0</span>     <span class="number">1</span>|<span class="number">0</span>       <span class="number">0</span>   <span class="number">4.3</span>G <span class="number">11.1</span>G <span class="number">150.0</span>M      <span class="number">0</span>   <span class="number">0</span>|<span class="number">0</span>   <span class="number">0</span>|<span class="number">0</span>    <span class="number">2</span>k    <span class="number">12</span>k  <span class="number">201</span> <span class="number">19</span>:<span class="number">07</span>:<span class="number">04</span>
+    *<span class="number">0</span>    <span class="number">20</span>     *<span class="number">0</span>     *<span class="number">0</span>       <span class="number">0</span>     <span class="number">1</span>|<span class="number">0</span>       <span class="number">0</span>   <span class="number">4.3</span>G <span class="number">11.1</span>G <span class="number">150.0</span>M      <span class="number">0</span>   <span class="number">0</span>|<span class="number">0</span>   <span class="number">0</span>|<span class="number">0</span>    <span class="number">1</span>k    <span class="number">11</span>k  <span class="number">201</span> <span class="number">19</span>:<span class="number">07</span>:<span class="number">05</span>
+    *<span class="number">0</span>    *<span class="number">0</span>      <span class="number">1</span>     *<span class="number">0</span>       <span class="number">0</span>     <span class="number">1</span>|<span class="number">0</span>       <span class="number">0</span>   <span class="number">4.3</span>G <span class="number">11.1</span>G <span class="number">150.0</span>M      <span class="number">0</span>   <span class="number">0</span>|<span class="number">0</span>   <span class="number">0</span>|<span class="number">0</span>  <span class="number">244</span>b    <span class="number">10</span>k  <span class="number">201</span> <span class="number">19</span>:<span class="number">07</span>:<span class="number">06</span>
+    *<span class="number">0</span>    <span class="number">20</span>     *<span class="number">0</span>     *<span class="number">0</span>       <span class="number">0</span>     <span class="number">1</span>|<span class="number">0</span>       <span class="number">0</span>   <span class="number">4.3</span>G <span class="number">11.1</span>G <span class="number">150.0</span>M      <span class="number">0</span>   <span class="number">0</span>|<span class="number">0</span>   <span class="number">0</span>|<span class="number">0</span>    <span class="number">1</span>k    <span class="number">11</span>k  <span class="number">201</span> <span class="number">19</span>:<span class="number">07</span>:<span class="number">07</span>
+    *<span class="number">0</span>    <span class="number">20</span>     *<span class="number">0</span>     *<span class="number">0</span>       <span class="number">0</span>     <span class="number">2</span>|<span class="number">0</span>       <span class="number">0</span>   <span class="number">4.3</span>G <span class="number">11.1</span>G <span class="number">150.0</span>M      <span class="number">0</span>   <span class="number">0</span>|<span class="number">0</span>   <span class="number">0</span>|<span class="number">0</span>    <span class="number">1</span>k    <span class="number">11</span>k  <span class="number">201</span> <span class="number">19</span>:<span class="number">07</span>:<span class="number">08</span>
+</code></pre><p>具体各列的意义都很简单，见官方文档即可。比较重要的字段有：</p>
+<ul>
+<li>res:      常驻内存大小</li>
+<li>mapped:   通过mmap映射数据所占用虚拟内存大小(只对MMAPv1有效)</li>
+<li>vsize:    mongodb进程占用的虚拟内存大小</li>
+<li>faults:   page fault次数，如果持续过高，则可以考虑加内存</li>
+<li>qr/qw:    读取/写入等待队列的大小，如果队列很大，表示MongoDB处理能力跟不上，可以看看是否存在慢操作，或者减缓请求</li>
+<li>conn:     当前连接数，conn也会占用MongoDB资源，合理控制连接数</li>
+<li>idx miss: 索引不命中所占百分比 如果太高则要考虑索引是否设计得不合理</li>
+<li>flushes:  通常为0或1，对于MMAPv1，表示后台刷盘次数(默认60s)，对于WiredTiger，表示执行checkpoint次数(默认60s或2GB journal日志)</li>
+<li>lr/lw:    读取/写入操作等待锁的比例 (New In MongoDB 3.2, Only for MMapv1)</li>
+<li>lrt/lwt:  读取/写入锁的平均获取时间(微妙)</li>
+</ul>
+<p>更多<a href="&quot;https://docs.mongodb.com/manual/reference/program/mongostat/&quot;">参考</a>。</p>
+<h3 id="2-_db-serverStatus()">2. db.serverStatus()</h3><p>返回数据库服务器信息，该命令返回的数据量很大，但执行很快，不会对数据库性能造成影响，其中比较重要的字段有：</p>
+<ul>
+<li>db.serverStatus().mem: 当前数据库内存使用情况</li>
+<li>db.serverStatus().connections: 当前数据库服务器的连接情况</li>
+<li>db.serverStatus().extra_info: 在Linux下，包含page fault次数</li>
+<li>db.serverStatus().locks: 数据库各种类型锁竞态情况</li>
+<li>db.serverStatus().backgroundFlushing: 数据库后台刷盘情况(默认60s)一次，仅针对MMAPv1存储引擎</li>
+</ul>
+<p>更多<a href="&quot;https://docs.mongodb.com/manual/reference/command/serverStatus/&quot;">参考</a>。</p>
+<h3 id="3-_Profiler">3. Profiler</h3><p>主要用于分析查询性能，默认是关闭的，Profiler获取关于查询/写入/命令等操作的详细执行数据，并将这些分析数据写入system.profile集合。Profiler有三个Level：</p>
+<ul>
+<li>Level 0: 意味着关闭Profiler，并不收集任何数据，也是mongod的默认配置。注意mongod总是会将”慢操作”(执行时间超过<a href="&quot;https://docs.mongodb.com/manual/reference/configuration-options/#operationProfiling.slowOpThresholdMs&quot;">slowOpThresholdMs</a>，默认100ms)的操作写入mongod日志(不是system.profile集合)</li>
+<li>Level 1: 只收集所有慢操作的信息，慢操作执行时间可通过<a href="&quot;https://docs.mongodb.com/manual/tutorial/manage-the-database-profiler/#database-profiling-specify-slowms-threshold&quot;">修改slowOpThresholdMs参数</a>指定</li>
+<li>Level 2: 收集所有的数据库操作执行信息</li>
+</ul>
+<p>需要注意，一个操作执行慢，可能是索引不合理，也可能是page fault从磁盘读数据等原因导致。需要进一步分析。</p>
+<p>使用示例：</p>
+<pre><code>&gt; db.setProfilingLevel(<span class="number">2</span>)
+{ <span class="string">"was"</span> : <span class="number">0</span>, <span class="string">"slowms"</span> : <span class="number">100</span>, <span class="string">"ok"</span> : <span class="number">1</span> }
+&gt;
+&gt; db.getProfilingStatus()
+{ <span class="string">"was"</span> : <span class="number">2</span>, <span class="string">"slowms"</span> : <span class="number">100</span> }
+&gt; db.user.insert({<span class="string">"name"</span>:<span class="string">"wdj"</span>})
+WriteResult({ <span class="string">"nInserted"</span> : <span class="number">1</span> })
+&gt; db.system.profile.find()
+{ <span class="string">"op"</span> : <span class="string">"insert"</span>, <span class="string">"ns"</span> : <span class="string">"test.user"</span>, <span class="string">"query"</span> : { <span class="string">"insert"</span> : <span class="string">"user"</span>, <span class="string">"documents"</span> : [ { <span class="string">"_id"</span> : ObjectId(<span class="string">"577e62991fa7b960bb8bf0af"</span>), <span class="string">"name"</span> : <span class="string">"wdj"</span> } ], <span class="string">"ordered"</span> : <span class="literal">true</span> }, <span class="string">"ninserted"</span> : <span class="number">1</span>, <span class="string">"keyUpdates"</span> : <span class="number">0</span>, <span class="string">"writeConflicts"</span> : <span class="number">0</span>, <span class="string">"numYield"</span> : <span class="number">0</span>, <span class="string">"locks"</span> : { <span class="string">"Global"</span> : { <span class="string">"acquireCount"</span> : { <span class="string">"r"</span> : NumberLong(<span class="number">2</span>), <span class="string">"w"</span> : NumberLong(<span class="number">2</span>) } }, <span class="string">"Database"</span> : { <span class="string">"acquireCount"</span> : { <span class="string">"w"</span> : NumberLong(<span class="number">1</span>), <span class="string">"W"</span> : NumberLong(<span class="number">1</span>) } }, <span class="string">"Collection"</span> : { <span class="string">"acquireCount"</span> : { <span class="string">"w"</span> : NumberLong(<span class="number">1</span>), <span class="string">"W"</span> : NumberLong(<span class="number">1</span>) } } }, <span class="string">"responseLength"</span> : <span class="number">25</span>, <span class="string">"protocol"</span> : <span class="string">"op_command"</span>, <span class="string">"millis"</span> : <span class="number">32</span>, <span class="string">"execStats"</span> : {  }, <span class="string">"ts"</span> : ISODate(<span class="string">"2016-07-07T14:09:29.690Z"</span>), <span class="string">"client"</span> : <span class="string">"127.0.0.1"</span>, <span class="string">"allUsers"</span> : [ ], <span class="string">"user"</span> : <span class="string">""</span> }
+&gt;
+</code></pre><p>system.profile集合中，关键字段：op(操作类型), ns(操作集合), ts(操作时间)，millis(执行时间ms),query(操作详情)。</p>
+<p>更多<a href="&quot;https://docs.mongodb.com/manual/tutorial/manage-the-database-profiler/&quot;">参考</a>。</p>
+<h3 id="4-_db-currentOp()">4. db.currentOp()</h3><p>当MongoDB比较繁忙或者在执行比较慢的命令时，可能会阻塞之后的操作(视数据库和操作的并发级别而定)。可通过db.currentOp()来获取当前正在进行的操作，并可通过db.killOp()来干掉它。</p>
+<p>更多<a href="&quot;https://docs.mongodb.com/manual/reference/method/db.currentOp/&quot;">参考</a>。</p>
+<h3 id="5-_db-stats()">5. db.stats()</h3><p>返回对应数据库的信息，包括集合数量，文档总大小，文档平均大小，索引数量，索引大小等静态信息：</p>
+<pre><code>&gt; db.stats()
+{
+        <span class="string">"db"</span> : <span class="string">"test"</span>,
+        <span class="string">"collections"</span> : <span class="number">2</span>,
+        <span class="string">"objects"</span> : <span class="number">3</span>,
+        <span class="string">"avgObjSize"</span> : <span class="number">430</span>,
+        <span class="string">"dataSize"</span> : <span class="number">1290</span>,
+        <span class="string">"storageSize"</span> : <span class="number">49152</span>,
+        <span class="string">"numExtents"</span> : <span class="number">0</span>,
+        <span class="string">"indexes"</span> : <span class="number">1</span>,
+        <span class="string">"indexSize"</span> : <span class="number">16384</span>,
+        <span class="string">"ok"</span> : <span class="number">1</span>
+}
+&gt;
+</code></pre><p>更多<a href="&quot;https://docs.mongodb.com/manual/reference/command/dbStats/&quot;">参考</a>。</p>
+<h3 id="6-_db-collStats()">6. db.collStats()</h3><p>返回集合详细信息.</p>
+<p>更多<a href="&quot;https://docs.mongodb.com/manual/reference/command/collStats/#dbcmd.collStats&quot;">参考</a>。</p>
+
+      
+    </div>
+    <footer>
+<!--        -->
+        
+  
+  <div class="categories">
+    <a href="/categories/database/">database</a>
+  </div>
+
+        
+  
+  <div class="tags">
+    <a href="/tags/mongodb/">mongodb</a>
+  </div>
+
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+<!--   <h1 class="title">留言</h1> -->
+
+
+    <!-- 多说评论框 start -->
+<div class="ds-thread" data-thread-key="2016/07/monitor-mongodb/" data-title="MongoDB 状态监控" data-url="http://wudaijun.com/2016/07/monitor-mongodb/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wudaijun"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共JS代码 end -->
+
+
+  
+</section>
+
+
+
+</div></div>
+  		<aside id="sidebar" class="alignright">
+   <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:wudaijun.com">
+  </form>
+</div> 
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+<!--   
+	
+		<li><a href="/categories/c-c/">c/c++</a><small>5</small></li>
+	
+  
+	
+		<li><a href="/categories/database/">database</a><small>4</small></li>
+	
+  
+	
+		<li><a href="/categories/erlang/">erlang</a><small>21</small></li>
+	
+  
+	
+		<li><a href="/categories/gameserver/">gameserver</a><small>19</small></li>
+	
+  
+	
+		<li><a href="/categories/lua/">lua</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/network/">network</a><small>3</small></li>
+	
+  
+	
+		<li><a href="/categories/os/">os</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/other/">other</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/python/">python</a><small>1</small></li>
+	
+  
+	
+		<li><a href="/categories/tool/">tool</a><small>3</small></li>
+	
+  
+	
+		<li><a href="/categories/unity/">unity</a><small>3</small></li>
+	
+   -->
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/database/">database</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/os/">os</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/unity/">unity</a><span class="category-list-count">3</span></li></ul> 
+</div>
+ 
+
+
+  
+  <div class="widget tag">
+    <h3 class="title">归档</h3>
+	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">2016年07月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">2016年06月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">2016年05月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">2016年04月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">2016年03月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">2016年02月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">2016年01月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">2015年12月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">2015年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">2015年10月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">2015年09月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">2015年08月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">2015年07月</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">2015年06月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">2015年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">2015年04月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">2015年03月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2015年02月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">2015年01月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">2014年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">2014年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">2014年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">2014年09月</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/c-c/" style="font-size: 15.71px;">c/c++</a> <a href="/tags/distribution/" style="font-size: 14.29px;">distribution</a> <a href="/tags/erlang/" style="font-size: 20px;">erlang</a> <a href="/tags/firefly/" style="font-size: 11.43px;">firefly</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/kbengine/" style="font-size: 11.43px;">kbengine</a> <a href="/tags/lua/" style="font-size: 17.14px;">lua</a> <a href="/tags/mongodb/" style="font-size: 14.29px;">mongodb</a> <a href="/tags/multi-thread/" style="font-size: 12.86px;">multi-thread</a> <a href="/tags/ngserver/" style="font-size: 18.57px;">ngserver</a> <a href="/tags/os/" style="font-size: 10px;">os</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/python/" style="font-size: 12.86px;">python</a> <a href="/tags/skynet/" style="font-size: 14.29px;">skynet</a> <a href="/tags/tcp-ip/" style="font-size: 12.86px;">tcp/ip</a> <a href="/tags/tool/" style="font-size: 11.43px;">tool</a> <a href="/tags/unity/" style="font-size: 12.86px;">unity</a>
+  </div>
+</div>
+
+</aside>
+           <div class="clearfix"></div>
+      </div>
+  	
+   <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2016 wudaijun
+  
+</div>
+<div class="alignright">
+	<a href="https://github.com/pengloo53/light-ch">Hexo theme</a>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="http://libs.baidu.com/jquery/2.1.1/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+	<script>
+	var _hmt = _hmt || [];
+	(function() {
+	  var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?380ce5c81e06b297c4a75c0c66825c3d";
+	  var s = document.getElementsByTagName("script")[0]; 
+	  s.parentNode.insertBefore(hm, s);
+	})();
+	</script>
+
+
+<div id="toTop">
+	<a href="#">▲</a>
+	<a href="#footer">▼</a>
+</div>
+<!--  -->
+
+
+</body>
+</html>
