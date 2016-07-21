@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Erlang实践(2) 线上调试 | wudaijun&#39;s blog</title>
+  <title>Erlang实践(2) 状态监控 | wudaijun&#39;s blog</title>
   <meta name="author" content="wudaijun">
   
   <meta name="description" content="接入远程节点的几种方法
@@ -16,7 +16,7 @@ erl_call -s -a &#39;erlang memory &#39; -name node_1@127.0.0.1 -c abc">
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="Erlang实践(2) 线上调试"/>
+  <meta property="og:title" content="Erlang实践(2) 状态监控"/>
   <meta property="og:site_name" content="wudaijun&#39;s blog"/>
 
   
@@ -76,7 +76,7 @@ erl_call -s -a &#39;erlang memory &#39; -name node_1@127.0.0.1 -c abc">
         <time datetime="2016-05-25T16:00:00.000Z"><a href="/2016/05/erlang-debug-online/">2016-05-26</a></time>
         
   
-    <h1 class="title">Erlang实践(2) 线上调试</h1>
+    <h1 class="title">Erlang实践(2) 状态监控</h1>
   
 
     </header>
@@ -84,7 +84,7 @@ erl_call -s -a &#39;erlang memory &#39; -name node_1@127.0.0.1 -c abc">
       
         <div id="toc" class="toc-article">
 	<div class="toc-title">目录</div>
-	<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#接入远程节点的几种方法"><span class="toc-text">接入远程节点的几种方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#状态监控"><span class="toc-text">状态监控</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#内存"><span class="toc-text">内存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CPU"><span class="toc-text">CPU</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#进程"><span class="toc-text">进程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#第三方工具"><span class="toc-text">第三方工具</span></a></li></ol>
+	<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#接入远程节点的几种方法"><span class="toc-text">接入远程节点的几种方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#etop"><span class="toc-text">etop</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#erlang自带模块"><span class="toc-text">erlang自带模块</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#内存"><span class="toc-text">内存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CPU"><span class="toc-text">CPU</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#进程"><span class="toc-text">进程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#recon"><span class="toc-text">recon</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更多资料"><span class="toc-text">更多资料</span></a></li></ol>
 </div>
       
         <h2 id="接入远程节点的几种方法">接入远程节点的几种方法</h2><ol>
@@ -116,7 +116,36 @@ $ <span class="function_or_atom">ssh</span> -<span class="function_or_atom">p</s
 <span class="number">1</span>&gt;
 </code></pre></li>
 </ol>
-<h2 id="状态监控">状态监控</h2><h3 id="内存">内存</h3><p>通过<code>erlang:memory()</code>可以查看整个Erlang虚拟机的内存使用情况。</p>
+<h2 id="etop">etop</h2><p>etop是Erlang提供的类似于top命令，它的输出格式和功能都与top类似，提供了必要的节点信息和进程信息。常用用法：</p>
+<pre><code>% 查看占用CPU最高的进程 每<span class="number">10</span>秒输出一次
+&gt; spawn(fun() -&gt; etop:<span class="built_in">start</span>([{interval,<span class="number">10</span>}, {<span class="built_in">sort</span>, runtime}]) <span class="keyword">end</span>). 
+% 查看占用内存最高的进程 每<span class="number">10</span>秒输出一次 输出进程数量为<span class="number">20</span>
+&gt; spawn(fun() -&gt; etop:<span class="built_in">start</span>([{interval,<span class="number">10</span>}, {<span class="built_in">sort</span>, memory, {<span class="keyword">lines</span>,<span class="number">20</span>}}]) <span class="keyword">end</span>). 
+% 连接远程节点方式一
+&gt; erl -name abcd@<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> -hidden -s etop -output <span class="keyword">text</span> -<span class="built_in">sort</span> memory -<span class="keyword">lines</span> <span class="number">20</span> -node <span class="string">'server_node@127.0.0.1'</span> -setcookie galaxy_server
+% 连接远程节点方式二
+&gt; erl -name abc@<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> -hidden  -setcookie galaxy_server
+&gt; etop:<span class="built_in">start</span>([{node,<span class="string">'server_node@127.0.0.1'</span>}, {output, <span class="keyword">text</span>}, {<span class="keyword">lines</span>, <span class="number">20</span>},  {<span class="built_in">sort</span>, memory}]).
+% 连接远程节点方式三
+&gt; erl -name abc@<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> -setcookie galaxy_server
+&gt;  rpc:call(<span class="string">'server_node@127.0.0.1'</span>, etop, <span class="built_in">start</span>, [[{output, <span class="keyword">text</span>}, {<span class="keyword">lines</span>, <span class="number">20</span>},  {<span class="built_in">sort</span>, memory}]]).
+</code></pre><p>输出样例(截断为前5条)：</p>
+<pre><code>========================================================================================
+ 'def@127.0.0.1'                                                           09:38:01
+ <span class="operator"><span class="keyword">Load</span>:  cpu         <span class="number">0</span>               <span class="keyword">Memory</span>:  total       <span class="number">14212</span>    <span class="built_in">binary</span>         <span class="number">40</span>
+        procs      <span class="number">35</span>                        processes    <span class="number">4398</span>    code         <span class="number">4666</span>
+        runq        <span class="number">0</span>                        atom          <span class="number">198</span>    ets           <span class="number">304</span>
+
+Pid            <span class="keyword">Name</span> <span class="keyword">or</span> <span class="keyword">Initial</span> Func    <span class="keyword">Time</span>    Reds  <span class="keyword">Memory</span>    MsgQ <span class="keyword">Current</span> <span class="keyword">Function</span>
+<span class="comment">----------------------------------------------------------------------------------------</span>
+&lt;<span class="number">6858.7</span><span class="number">.0</span>&gt;     application_controll     <span class="string">'-'</span>    <span class="number">7830</span>  <span class="number">426552</span>       <span class="number">0</span> gen_server:<span class="keyword">loop</span>/<span class="number">6</span>
+&lt;<span class="number">6858.12</span><span class="number">.0</span>&gt;    code_server              <span class="string">'-'</span>  <span class="number">125106</span>  <span class="number">284656</span>       <span class="number">0</span> code_server:<span class="keyword">loop</span>/<span class="number">1</span>
+&lt;<span class="number">6858.33</span><span class="number">.0</span>&gt;    erlang:<span class="keyword">apply</span>/<span class="number">2</span>           <span class="string">'-'</span>   <span class="number">10300</span>  <span class="number">230552</span>       <span class="number">0</span> shell:get_command1/<span class="number">5</span>
+&lt;<span class="number">6858.3</span><span class="number">.0</span>&gt;     erl_prim_loader          <span class="string">'-'</span>  <span class="number">211750</span>  <span class="number">122040</span>       <span class="number">0</span> erl_prim_loader:<span class="keyword">loop</span>
+&lt;<span class="number">6858.0</span><span class="number">.0</span>&gt;     init                     <span class="string">'-'</span>    <span class="number">3775</span>   <span class="number">18600</span>       <span class="number">0</span> init:<span class="keyword">loop</span>/<span class="number">1</span>
+========================================================================================</span>
+</code></pre><p>官方文档：<a href="http://erlang.org/doc/apps/observer/etop_ug.html" target="_blank" rel="external">http://erlang.org/doc/apps/observer/etop_ug.html</a></p>
+<h2 id="erlang自带模块">erlang自带模块</h2><h3 id="内存">内存</h3><p>通过<code>erlang:memory()</code>可以查看整个Erlang虚拟机的内存使用情况。</p>
 <h3 id="CPU">CPU</h3><p>Erlang的CPU使用情况是比较难衡量的，由于Erlang虚拟机内部复杂的调度机制，通过<code>top/htop</code>得到的系统进程级的CPU占用率参考性是有限的，即使一个空闲的Erlang虚拟机，调度线程的忙等也会占用一定的CPU。</p>
 <p>因此Erlang内部提供了一些更有用的测量参考，通过<code>erlang:statistics(scheduler_wall_time)</code>可以获得调度器钟表时间：</p>
 <figure class="highlight erlang-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="prompt">1&gt; </span><span class="function_or_atom">erlang:system_flag</span>(<span class="function_or_atom">scheduler_wall_time</span>, <span class="function_or_atom">true</span>).</span><br><span class="line"><span class="function_or_atom">false</span></span><br><span class="line"><span class="prompt">2&gt; </span><span class="function_or_atom">erlang:statistics</span>(<span class="function_or_atom">scheduler_wall_time</span>).</span><br><span class="line">[&#123;&#123;<span class="number">1</span>,<span class="number">166040393363</span>,<span class="number">9269301338549</span>&#125;,</span><br><span class="line"> &#123;<span class="number">2</span>,<span class="number">40587963468</span>,<span class="number">9269301007667</span>&#125;,</span><br><span class="line"> &#123;<span class="number">3</span>,<span class="number">725727980</span>,<span class="number">9269301004304</span>&#125;,</span><br><span class="line"> <span class="number">4</span>,<span class="number">299688</span>,<span class="number">9269301361357</span>&#125;]</span><br></pre></td></tr></table></figure>
@@ -127,15 +156,7 @@ $ <span class="function_or_atom">ssh</span> -<span class="function_or_atom">p</s
 <ul>
 <li>dictionary:             进程字典中所有的数据项</li>
 <li>registerd_name:     注册的名字</li>
-<li>status:                进程状态，包含: <ul>
-<li>waiting: 等待消息中</li>
-<li>running: 运行中</li>
-<li>runnable: 准备就绪，尚未被调度  </li>
-<li>exiting: 进程已结束，但未被完全清除</li>
-<li>garbage_collecting: GC中</li>
-<li>suspended: 挂起中</li>
-</ul>
-</li>
+<li>status:                进程状态</li>
 <li>links:                 所有链接进程</li>
 <li>monitored_by:        所有监控当前进程的进程</li>
 <li>monitors:            所有被当前进程监控的进程</li>
@@ -159,10 +180,10 @@ $ <span class="function_or_atom">ssh</span> -<span class="function_or_atom">p</s
 <li>sys:suspend/resume:            挂起/恢复指定进程</li>
 <li>sys:terminate(Pid, Reason):        向指定进程发消息，终止该进程</li>
 </ul>
-<h2 id="第三方工具">第三方工具</h2><ul>
-<li>更多测量CPU和性能的工具和模块：<a href="http://www.erlang.org/doc/man/eprof.html" target="_blank" rel="external">eprof</a>，<a href="http://www.erlang.org/doc/man/fprof.html" target="_blank" rel="external">fprof</a>，<a href="https://github.com/proger/eflame" target="_blank" rel="external">eflame</a>。</li>
-<li>learnyousomeerlang作者写的一个库： <a href="https://github.com/ferd/recon" target="_blank" rel="external">recon</a></li>
-<li>Erlang实践红宝书：<a href="hhttp://pan.baidu.com/s/1gfCZBKf" target="_blank" rel="external">Erlang In Anger</a></li>
+<h2 id="recon">recon</h2><p><a href="https://github.com/ferd/recon" target="_blank" rel="external">recon</a>是<a href="http://learnyousomeerlang.com/" target="_blank" rel="external">learn you some erlang</a>的作者写的一个非常强大好用的库，将erlang散布在各个模块的调试函数整合起来，以更易用和可读的方式提供给用户，包含了信息统计，健康状态分析，动态追踪调试等一整套解决方案。并且本身只是一系列的API，放入rebar deps即可attach上节点使用，强烈推荐。</p>
+<p>详细用法参见：<a href="http://ferd.github.io/recon/" target="_blank" rel="external">http://ferd.github.io/recon/</a></p>
+<h2 id="更多资料">更多资料</h2><ul>
+<li>Erlang实践红宝书：<a href="http://pan.baidu.com/s/1gfCZBKf" target="_blank" rel="external">Erlang In Anger</a></li>
 </ul>
 
       
@@ -194,7 +215,7 @@ $ <span class="function_or_atom">ssh</span> -<span class="function_or_atom">p</s
 
 
     <!-- 多说评论框 start -->
-<div class="ds-thread" data-thread-key="2016/05/erlang-debug-online/" data-title="Erlang实践(2) 线上调试" data-url="http://wudaijun.com/2016/05/erlang-debug-online/"></div>
+<div class="ds-thread" data-thread-key="2016/05/erlang-debug-online/" data-title="Erlang实践(2) 状态监控" data-url="http://wudaijun.com/2016/05/erlang-debug-online/"></div>
 <!-- 多说评论框 end -->
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">

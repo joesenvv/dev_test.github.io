@@ -119,7 +119,7 @@ insert query update <span class="keyword">delete</span> getmore command flushes 
 <li>lr/lw:    读取/写入操作等待锁的比例 (New In MongoDB 3.2, Only for MMapv1)</li>
 <li>lrt/lwt:  读取/写入锁的平均获取时间(微妙)</li>
 </ul>
-<p>更多<a href="&quot;https://docs.mongodb.com/manual/reference/program/mongostat/&quot;">参考</a>。</p>
+<p>更多<a href="https://docs.mongodb.com/manual/reference/program/mongostat/" target="_blank" rel="external">参考</a>。</p>
 <h3 id="2-_db-serverStatus()">2. db.serverStatus()</h3><p>返回数据库服务器信息，该命令返回的数据量很大，但执行很快，不会对数据库性能造成影响，其中比较重要的字段有：</p>
 <ul>
 <li>db.serverStatus().mem: 当前数据库内存使用情况</li>
@@ -128,11 +128,11 @@ insert query update <span class="keyword">delete</span> getmore command flushes 
 <li>db.serverStatus().locks: 数据库各种类型锁竞态情况</li>
 <li>db.serverStatus().backgroundFlushing: 数据库后台刷盘情况(默认60s)一次，仅针对MMAPv1存储引擎</li>
 </ul>
-<p>更多<a href="&quot;https://docs.mongodb.com/manual/reference/command/serverStatus/&quot;">参考</a>。</p>
+<p>更多<a href="https://docs.mongodb.com/manual/reference/command/serverStatus/" target="_blank" rel="external">参考</a>。</p>
 <h3 id="3-_Profiler">3. Profiler</h3><p>主要用于分析查询性能，默认是关闭的，Profiler获取关于查询/写入/命令等操作的详细执行数据，并将这些分析数据写入system.profile集合。Profiler有三个Level：</p>
 <ul>
-<li>Level 0: 意味着关闭Profiler，并不收集任何数据，也是mongod的默认配置。注意mongod总是会将”慢操作”(执行时间超过<a href="&quot;https://docs.mongodb.com/manual/reference/configuration-options/#operationProfiling.slowOpThresholdMs&quot;">slowOpThresholdMs</a>，默认100ms)的操作写入mongod日志(不是system.profile集合)</li>
-<li>Level 1: 只收集所有慢操作的信息，慢操作执行时间可通过<a href="&quot;https://docs.mongodb.com/manual/tutorial/manage-the-database-profiler/#database-profiling-specify-slowms-threshold&quot;">修改slowOpThresholdMs参数</a>指定</li>
+<li>Level 0: 意味着关闭Profiler，并不收集任何数据，也是mongod的默认配置。注意mongod总是会将”慢操作”(执行时间超过<a href="https://docs.mongodb.com/manual/reference/configuration-options/#operationProfiling.slowOpThresholdMs" target="_blank" rel="external">slowOpThresholdMs</a>，默认100ms)的操作写入mongod日志(不是system.profile集合)</li>
+<li>Level 1: 只收集所有慢操作的信息，慢操作执行时间可通过<a href="https://docs.mongodb.com/manual/tutorial/manage-the-database-profiler/#database-profiling-specify-slowms-threshold" target="_blank" rel="external">修改slowOpThresholdMs参数</a>指定</li>
 <li>Level 2: 收集所有的数据库操作执行信息</li>
 </ul>
 <p>需要注意，一个操作执行慢，可能是索引不合理，也可能是page fault从磁盘读数据等原因导致。需要进一步分析。</p>
@@ -148,9 +148,9 @@ WriteResult({ <span class="string">"nInserted"</span> : <span class="number">1</
 { <span class="string">"op"</span> : <span class="string">"insert"</span>, <span class="string">"ns"</span> : <span class="string">"test.user"</span>, <span class="string">"query"</span> : { <span class="string">"insert"</span> : <span class="string">"user"</span>, <span class="string">"documents"</span> : [ { <span class="string">"_id"</span> : ObjectId(<span class="string">"577e62991fa7b960bb8bf0af"</span>), <span class="string">"name"</span> : <span class="string">"wdj"</span> } ], <span class="string">"ordered"</span> : <span class="literal">true</span> }, <span class="string">"ninserted"</span> : <span class="number">1</span>, <span class="string">"keyUpdates"</span> : <span class="number">0</span>, <span class="string">"writeConflicts"</span> : <span class="number">0</span>, <span class="string">"numYield"</span> : <span class="number">0</span>, <span class="string">"locks"</span> : { <span class="string">"Global"</span> : { <span class="string">"acquireCount"</span> : { <span class="string">"r"</span> : NumberLong(<span class="number">2</span>), <span class="string">"w"</span> : NumberLong(<span class="number">2</span>) } }, <span class="string">"Database"</span> : { <span class="string">"acquireCount"</span> : { <span class="string">"w"</span> : NumberLong(<span class="number">1</span>), <span class="string">"W"</span> : NumberLong(<span class="number">1</span>) } }, <span class="string">"Collection"</span> : { <span class="string">"acquireCount"</span> : { <span class="string">"w"</span> : NumberLong(<span class="number">1</span>), <span class="string">"W"</span> : NumberLong(<span class="number">1</span>) } } }, <span class="string">"responseLength"</span> : <span class="number">25</span>, <span class="string">"protocol"</span> : <span class="string">"op_command"</span>, <span class="string">"millis"</span> : <span class="number">32</span>, <span class="string">"execStats"</span> : {  }, <span class="string">"ts"</span> : ISODate(<span class="string">"2016-07-07T14:09:29.690Z"</span>), <span class="string">"client"</span> : <span class="string">"127.0.0.1"</span>, <span class="string">"allUsers"</span> : [ ], <span class="string">"user"</span> : <span class="string">""</span> }
 &gt;
 </code></pre><p>system.profile集合中，关键字段：op(操作类型), ns(操作集合), ts(操作时间)，millis(执行时间ms),query(操作详情)。</p>
-<p>更多<a href="&quot;https://docs.mongodb.com/manual/tutorial/manage-the-database-profiler/&quot;">参考</a>。</p>
+<p>更多<a href="https://docs.mongodb.com/manual/tutorial/manage-the-database-profiler/" target="_blank" rel="external">参考</a>。</p>
 <h3 id="4-_db-currentOp()">4. db.currentOp()</h3><p>当MongoDB比较繁忙或者在执行比较慢的命令时，可能会阻塞之后的操作(视数据库和操作的并发级别而定)。可通过db.currentOp()来获取当前正在进行的操作，并可通过db.killOp()来干掉它。</p>
-<p>更多<a href="&quot;https://docs.mongodb.com/manual/reference/method/db.currentOp/&quot;">参考</a>。</p>
+<p>更多<a href="https://docs.mongodb.com/manual/reference/method/db.currentOp/" target="_blank" rel="external">参考</a>。</p>
 <h3 id="5-_db-stats()">5. db.stats()</h3><p>返回对应数据库的信息，包括集合数量，文档总大小，文档平均大小，索引数量，索引大小等静态信息：</p>
 <pre><code>&gt; db.stats()
 {
@@ -166,9 +166,9 @@ WriteResult({ <span class="string">"nInserted"</span> : <span class="number">1</
         <span class="string">"ok"</span> : <span class="number">1</span>
 }
 &gt;
-</code></pre><p>更多<a href="&quot;https://docs.mongodb.com/manual/reference/command/dbStats/&quot;">参考</a>。</p>
+</code></pre><p>更多<a href="https://docs.mongodb.com/manual/reference/command/dbStats/" target="_blank" rel="external">参考</a>。</p>
 <h3 id="6-_db-collStats()">6. db.collStats()</h3><p>返回集合详细信息.</p>
-<p>更多<a href="&quot;https://docs.mongodb.com/manual/reference/command/collStats/#dbcmd.collStats&quot;">参考</a>。</p>
+<p>更多<a href="https://docs.mongodb.com/manual/reference/command/collStats/#dbcmd.collStats" target="_blank" rel="external">参考</a>。</p>
 
       
     </div>
