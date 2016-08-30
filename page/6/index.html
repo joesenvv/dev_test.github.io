@@ -309,46 +309,6 @@
   <div class="post-content">
     <header>
         <div class="icon"></div>
-        <time datetime="2014-12-11T16:00:00.000Z"><a href="/2014/12/ngserver-playersession/">2014-12-12</a></time>
-        
-  
-    <h1 class="title"><a href="/2014/12/ngserver-playersession/">NGServer 加入PlayerSession</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <h2 id="PlayerSession类">PlayerSession类</h2><p>在之前的网络底层设计中，Player和Session之间通过组合实现弱关联，但仍然有个诟病：Player类和Session类在网络连接到来时一并创建了。这样后面在做断线重连的时候，会有两个Player。而事实上LoginService只管登录认证，登录认证的时候并不需要创建Player类，因此可以延迟Player的创建，将其放在MapService中。而这之前LoginService的登录认证也需要用户的一些基本信息。基于这些，实现了PlayerSession类：</p>
-      
-    </div>
-    <footer>
-<!--        -->
-        
-          <div class="alignleft">
-            <a href="/2014/12/ngserver-playersession/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-        <div class="alignright">
-          <a href="/2014/12/ngserver-playersession/#comment" class="comment-link">Comments</a>
-        </div>
-        
-<!--        -->
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-
-    <article class="post">
-  
-  <div class="post-content">
-    <header>
-        <div class="icon"></div>
         <time datetime="2014-12-11T16:00:00.000Z"><a href="/2014/12/shared_ptr-reference/">2014-12-12</a></time>
         
   
@@ -371,6 +331,46 @@
         
         <div class="alignright">
           <a href="/2014/12/shared_ptr-reference/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2014-12-11T16:00:00.000Z"><a href="/2014/12/ngserver-playersession/">2014-12-12</a></time>
+        
+  
+    <h1 class="title"><a href="/2014/12/ngserver-playersession/">NGServer 加入PlayerSession</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="PlayerSession类">PlayerSession类</h2><p>在之前的网络底层设计中，Player和Session之间通过组合实现弱关联，但仍然有个诟病：Player类和Session类在网络连接到来时一并创建了。这样后面在做断线重连的时候，会有两个Player。而事实上LoginService只管登录认证，登录认证的时候并不需要创建Player类，因此可以延迟Player的创建，将其放在MapService中。而这之前LoginService的登录认证也需要用户的一些基本信息。基于这些，实现了PlayerSession类：</p>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2014/12/ngserver-playersession/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2014/12/ngserver-playersession/#comment" class="comment-link">Comments</a>
         </div>
         
 <!--        -->
