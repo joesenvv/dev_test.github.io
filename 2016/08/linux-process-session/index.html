@@ -3,13 +3,21 @@
 <head>
   <meta charset="utf-8">
   
-  <title>第 2 页 | 归档 | wudaijun&#39;s blog</title>
+  <title>Linux进程，进程组，会话 | wudaijun&#39;s blog</title>
   <meta name="author" content="wudaijun">
+  
+  <meta name="description" content="进程组/会话简要概念：
+
+进程组：N(N&amp;gt;=1)个进程的集合，通常在同一作业中关联起来(通过管道)。进程组的ID(PGID)即为进程组组长的PID。进程必定且只能属于一个进程组，只有进程组中一个进程存在，进程组就存在，与组长进程终止与否无关。进程组的概念提出主要是为了进程管理与信号分发
+会话：N(N&amp;gt;=1)个进程组的集合，创建会话的进程叫会话首进程。会话ID即为会话首进程PID
+控制终端：如果会话有控制终端，建立与控制终端连接的会话首进程叫控制进程(通常就是Shell进程)，当前与终端交互的进程组为前台进程组，其余进程组成为后台进程组
+无论合适输入终端的退出键，都会将退出信号发送到前台进程组的所有进程
+如果控制终端断开连接，则将挂掉信号(SIGHUP)发送至控制进程(会话首进程)，SIGHUP信号默认将导致控制进程终止">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  
+  <meta property="og:title" content="Linux进程，进程组，会话"/>
   <meta property="og:site_name" content="wudaijun&#39;s blog"/>
 
   
@@ -61,284 +69,112 @@
 </header>
   
       <div id="content" class="inner">
-  		<div id="main-col" class="alignleft"><div id="wrapper">
+  		<div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2016-08-29T16:00:00.000Z"><a href="/2016/08/linux-process-session/">2016-08-30</a></time>
+        
+  
+    <h1 class="title">Linux进程，进程组，会话</h1>
+  
 
-<h2 class="archive-title">归档</h2>
-
-
-  <div class="archive">
-     
-      <article class="post">
-        <div class="post-content">
-          <header>
-            <div class="icon"></div>
-            <time datetime="2016-04-27T16:00:00.000Z"><a href="/2016/04/erlang-server-design6-distribution-question/">2016-04-28</a></time>
-            
-              <h1 class="title"><a href="/2016/04/erlang-server-design6-distribution-question/">开发笔记(6) 游戏服务器集群常见问题</a></h1>
-            
-<!--             
-  
-  <div class="tags">
-    <a href="/tags/distribution/">distribution</a>, <a href="/tags/erlang/">erlang</a>
-  </div>
- -->
-          </header>
-          <div class='archive-tags'>
-            
-  
-  <div class="tags">
-    <a href="/tags/distribution/">distribution</a>, <a href="/tags/erlang/">erlang</a>
-  </div>
-
-          </div>
-        </div>
-      </article>
-     
-      <article class="post">
-        <div class="post-content">
-          <header>
-            <div class="icon"></div>
-            <time datetime="2016-04-17T16:00:00.000Z"><a href="/2016/04/learning-mistakes/">2016-04-18</a></time>
-            
-              <h1 class="title"><a href="/2016/04/learning-mistakes/">技术学习误区</a></h1>
-            
-<!--             
-  
-  <div class="tags">
-    <a href="/tags/other/">other</a>
-  </div>
- -->
-          </header>
-          <div class='archive-tags'>
-            
-  
-  <div class="tags">
-    <a href="/tags/other/">other</a>
-  </div>
-
-          </div>
-        </div>
-      </article>
-     
-      <article class="post">
-        <div class="post-content">
-          <header>
-            <div class="icon"></div>
-            <time datetime="2016-03-25T16:00:00.000Z"><a href="/2016/03/erlang-distribution-2/">2016-03-26</a></time>
-            
-              <h1 class="title"><a href="/2016/03/erlang-distribution-2/">Erlang 分布式系统(2)</a></h1>
-            
-<!--             
-  
-  <div class="tags">
-    <a href="/tags/distribution/">distribution</a>, <a href="/tags/erlang/">erlang</a>
-  </div>
- -->
-          </header>
-          <div class='archive-tags'>
-            
-  
-  <div class="tags">
-    <a href="/tags/distribution/">distribution</a>, <a href="/tags/erlang/">erlang</a>
-  </div>
-
-          </div>
-        </div>
-      </article>
-     
-      <article class="post">
-        <div class="post-content">
-          <header>
-            <div class="icon"></div>
-            <time datetime="2016-03-16T16:00:00.000Z"><a href="/2016/03/erlang-distribution-1/">2016-03-17</a></time>
-            
-              <h1 class="title"><a href="/2016/03/erlang-distribution-1/">Erlang 分布式系统(1)</a></h1>
-            
-<!--             
-  
-  <div class="tags">
-    <a href="/tags/erlang/">erlang</a>
-  </div>
- -->
-          </header>
-          <div class='archive-tags'>
-            
-  
-  <div class="tags">
-    <a href="/tags/erlang/">erlang</a>
-  </div>
-
-          </div>
-        </div>
-      </article>
-     
-      <article class="post">
-        <div class="post-content">
-          <header>
-            <div class="icon"></div>
-            <time datetime="2016-02-29T16:00:00.000Z"><a href="/2016/03/3d-mapping/">2016-03-01</a></time>
-            
-              <h1 class="title"><a href="/2016/03/3d-mapping/">3D贴图基础</a></h1>
-            
-<!--             
-  
-  <div class="tags">
-    <a href="/tags/unity/">unity</a>
-  </div>
- -->
-          </header>
-          <div class='archive-tags'>
-            
-  
-  <div class="tags">
-    <a href="/tags/unity/">unity</a>
-  </div>
-
-          </div>
-        </div>
-      </article>
-     
-      <article class="post">
-        <div class="post-content">
-          <header>
-            <div class="icon"></div>
-            <time datetime="2016-02-19T16:00:00.000Z"><a href="/2016/02/3d-animation/">2016-02-20</a></time>
-            
-              <h1 class="title"><a href="/2016/02/3d-animation/">3D动画基础</a></h1>
-            
-<!--             
-  
-  <div class="tags">
-    <a href="/tags/unity/">unity</a>
-  </div>
- -->
-          </header>
-          <div class='archive-tags'>
-            
-  
-  <div class="tags">
-    <a href="/tags/unity/">unity</a>
-  </div>
-
-          </div>
-        </div>
-      </article>
-     
-      <article class="post">
-        <div class="post-content">
-          <header>
-            <div class="icon"></div>
-            <time datetime="2016-02-15T16:00:00.000Z"><a href="/2016/02/erlang-thinking-in-rails/">2016-02-16</a></time>
-            
-              <h1 class="title"><a href="/2016/02/erlang-thinking-in-rails/">瞎扯：Erlang thinking in rails</a></h1>
-            
-<!--             
-  
-  <div class="tags">
-    <a href="/tags/erlang/">erlang</a>
-  </div>
- -->
-          </header>
-          <div class='archive-tags'>
-            
-  
-  <div class="tags">
-    <a href="/tags/erlang/">erlang</a>
-  </div>
-
-          </div>
-        </div>
-      </article>
-     
-      <article class="post">
-        <div class="post-content">
-          <header>
-            <div class="icon"></div>
-            <time datetime="2016-01-07T16:00:00.000Z"><a href="/2016/01/erlang-server-design5-server-node/">2016-01-08</a></time>
-            
-              <h1 class="title"><a href="/2016/01/erlang-server-design5-server-node/">开发笔记(5) cluster_server集群优化</a></h1>
-            
-<!--             
-  
-  <div class="tags">
-    <a href="/tags/distribution/">distribution</a>, <a href="/tags/erlang/">erlang</a>
-  </div>
- -->
-          </header>
-          <div class='archive-tags'>
-            
-  
-  <div class="tags">
-    <a href="/tags/distribution/">distribution</a>, <a href="/tags/erlang/">erlang</a>
-  </div>
-
-          </div>
-        </div>
-      </article>
-     
-      <article class="post">
-        <div class="post-content">
-          <header>
-            <div class="icon"></div>
-            <time datetime="2015-12-05T16:00:00.000Z"><a href="/2015/12/erlang-datastructures/">2015-12-06</a></time>
-            
-              <h1 class="title"><a href="/2015/12/erlang-datastructures/">Erlang 常用数据结构实现</a></h1>
-            
-<!--             
-  
-  <div class="tags">
-    <a href="/tags/erlang/">erlang</a>
-  </div>
- -->
-          </header>
-          <div class='archive-tags'>
-            
-  
-  <div class="tags">
-    <a href="/tags/erlang/">erlang</a>
-  </div>
-
-          </div>
-        </div>
-      </article>
-     
-      <article class="post">
-        <div class="post-content">
-          <header>
-            <div class="icon"></div>
-            <time datetime="2015-11-19T16:00:00.000Z"><a href="/2015/11/erlang-map2record/">2015-11-20</a></time>
-            
-              <h1 class="title"><a href="/2015/11/erlang-map2record/">Erlang Map映射到Record</a></h1>
-            
-<!--             
-  
-  <div class="tags">
-    <a href="/tags/erlang/">erlang</a>
-  </div>
- -->
-          </header>
-          <div class='archive-tags'>
-            
-  
-  <div class="tags">
-    <a href="/tags/erlang/">erlang</a>
-  </div>
-
-          </div>
-        </div>
-      </article>
+    </header>
+    <div class="entry">
       
+        <div id="toc" class="toc-article">
+	<div class="toc-title">目录</div>
+	<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#进程组/会话"><span class="toc-text">进程组/会话</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#作业管理："><span class="toc-text">作业管理：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#脱机管理："><span class="toc-text">脱机管理：</span></a></li></ol>
+</div>
+      
+        <h3 id="进程组/会话">进程组/会话</h3><p>简要概念：</p>
+<ul>
+<li>进程组：N(N&gt;=1)个进程的集合，通常在同一作业中关联起来(通过管道)。进程组的ID(PGID)即为进程组组长的PID。进程必定且只能属于一个进程组，只有进程组中一个进程存在，进程组就存在，与组长进程终止与否无关。进程组的概念提出主要是为了进程管理与信号分发</li>
+<li>会话：N(N&gt;=1)个进程组的集合，创建会话的进程叫会话首进程。会话ID即为会话首进程PID</li>
+<li>控制终端：如果会话有控制终端，建立与控制终端连接的会话首进程叫控制进程(通常就是Shell进程)，当前与终端交互的进程组为前台进程组，其余进程组成为后台进程组</li>
+<li>无论合适输入终端的退出键，都会将退出信号发送到前台进程组的所有进程</li>
+<li>如果控制终端断开连接，则将挂掉信号(SIGHUP)发送至控制进程(会话首进程)，SIGHUP信号默认将导致控制进程终止</li>
+</ul>
+<a id="more"></a>
+<p>例如，打开Bash，输入：</p>
+<pre><code>proc1 |<span class="string"> proc2 &amp;
+proc3 </span>|<span class="string"> proc4 </span>|<span class="string"> proc5</span>
+</code></pre><p>进程关系如下图所示：</p>
+<p><img src="/assets/image/linux/linux-session-process.png" alt="" title="进程组，会话和控制终端"></p>
+<h3 id="作业管理：">作业管理：</h3><ul>
+<li>&amp; 将作业放入后台执行，如果没有进行重定向，数据流仍然会输出到前台</li>
+<li>Ctrl-C 强制中断前台当前作业执行</li>
+<li>Ctrl-Z 将作业挂到后台</li>
+<li>jobs -l 查看所有作业，作业ID和其PID</li>
+<li>fg %作业ID 将后台作业拿到前台来处理</li>
+<li>bg %作业ID 将后台作业由挂起变为执行</li>
+<li>kill -signal %作业ID<ul>
+<li>-2: 相当于 Ctrl-C</li>
+<li>-9 强制删除一个作业</li>
+<li>-15 以正常程序方式终止一项作业</li>
+</ul>
+</li>
+</ul>
+<p>作业管理的后台不是系统后台，因此，上述的任务管理依旧与终端有关，当远程连接的终端断开连接时，SIGHUP信号默认将导致改会话上所有的任务都会被中断。</p>
+<h3 id="脱机管理：">脱机管理：</h3><ul>
+<li>nohup: nohup CMD &amp; 将任务放在后台执行，并忽略SIGHUP挂掉信号，但是在人机交互上比较麻烦</li>
+<li>screen: 一个可以在多个进程之间多路复用一个物理终端的窗口管理器，在远端服务器上运行screen，开启一个新会话并执行任务，在终端断开后，任务继续执行，下次登录再attach上screen会话即可，Linux发行版自带</li>
+<li>tmux: 功能类似于screen，但在分屏切换，配置方面更强大，完全可作为本地终端使用</li>
+</ul>
+
+      
+    </div>
+    <footer>
+<!--        -->
+        
+  
+  <div class="categories">
+    <a href="/categories/os/">os</a>
   </div>
+
+        
   
-<nav id="pagination">
+  <div class="tags">
+    <a href="/tags/linux/">linux</a>, <a href="/tags/os/">os</a>
+  </div>
+
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+<!--   <h1 class="title">留言</h1> -->
+
+
+    <!-- 多说评论框 start -->
+<div class="ds-thread" data-thread-key="2016/08/linux-process-session/" data-title="Linux进程，进程组，会话" data-url="http://wudaijun.com/2016/08/linux-process-session/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"wudaijun"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共JS代码 end -->
+
+
   
-    <a href="/archives/" class="alignleft prev">上一页</a>
-  
-  
-    <a href="/archives/page/3/" class="alignright next">下一页</a>
-  
-  <div class="clearfix"></div>
-</nav></div></div>
+</section>
+
+
+
+</div></div>
   		<aside id="sidebar" class="alignright">
    <div class="search">
   <form action="//google.com/search" method="get" accept-charset="utf-8">
