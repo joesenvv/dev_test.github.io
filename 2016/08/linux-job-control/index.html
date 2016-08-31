@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Linux进程，进程组，会话 | wudaijun&#39;s blog</title>
+  <title>Linux 作业管理 | wudaijun&#39;s blog</title>
   <meta name="author" content="wudaijun">
   
   <meta name="description" content="进程组/会话简要概念：
@@ -17,7 +17,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="Linux进程，进程组，会话"/>
+  <meta property="og:title" content="Linux 作业管理"/>
   <meta property="og:site_name" content="wudaijun&#39;s blog"/>
 
   
@@ -74,10 +74,10 @@
   <div class="post-content">
     <header>
         <div class="icon"></div>
-        <time datetime="2016-08-29T16:00:00.000Z"><a href="/2016/08/linux-process-session/">2016-08-30</a></time>
+        <time datetime="2016-08-29T16:00:00.000Z"><a href="/2016/08/linux-job-control/">2016-08-30</a></time>
         
   
-    <h1 class="title">Linux进程，进程组，会话</h1>
+    <h1 class="title">Linux 作业管理</h1>
   
 
     </header>
@@ -85,7 +85,7 @@
       
         <div id="toc" class="toc-article">
 	<div class="toc-title">目录</div>
-	<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#进程组/会话"><span class="toc-text">进程组/会话</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#作业控制信号"><span class="toc-text">作业控制信号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#作业管理："><span class="toc-text">作业管理：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#脱机管理："><span class="toc-text">脱机管理：</span></a></li></ol>
+	<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#进程组/会话"><span class="toc-text">进程组/会话</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#作业控制信号"><span class="toc-text">作业控制信号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#作业管理"><span class="toc-text">作业管理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#脱机管理"><span class="toc-text">脱机管理</span></a></li></ol>
 </div>
       
         <h3 id="进程组/会话">进程组/会话</h3><p>简要概念：</p>
@@ -119,7 +119,8 @@ proc3 </span>|<span class="string"> proc4 </span>|<span class="string"> proc5</s
 [1]  + 44978 suspended (tty <span class="keyword">input</span>)  /usr/<span class="keyword">local</span>/opt/coreutils/libexec/gnubin/<span class="keyword">cat</span> &gt; <span class="keyword">file</span>
 ▶ fg                                                                                                                                                                     
 [1]  + 44978 continued  /usr/<span class="keyword">local</span>/opt/coreutils/libexec/gnubin/<span class="keyword">cat</span> &gt; <span class="keyword">file</span>
-  <span class="comment">// 等待输入...</span>
+Hello World! <span class="comment">// 重新获得终端 读取输入</span>
+[Ctrl+<span class="keyword">D</span>] <span class="comment">// 键入EOF</span>
 </code></pre><p>当后台作业尝试写终端时，默认情况下，后台作业的输出将成功输出到控制终端，但我们可以通过stty命令禁止后台作业向控制终端写，此时终端驱动程序向进程发送SIGTTOU信号：</p>
 <pre><code>▶ <span class="regexp">/usr/</span>local<span class="regexp">/opt/</span>coreutils<span class="regexp">/libexec/</span>gnubin/cat file &amp;
 [<span class="number">1</span>] <span class="number">46166</span>
@@ -136,7 +137,7 @@ Hello World!
 <p>关于SIGTSTP和SIGSTOP的区别，前者通常由键盘产生，可被捕获，当通过Ctrl+Z将前台作业放入后台时，前台作业收到该信号，意思是”从哪儿来到哪儿去”。而SIGSTOP通常由kill产生，不可被捕获或忽略，意思是”在那里待着别动”。两者均可由SIGCONT信号恢复运行。</p>
 <p>对于键盘输入产生的信号，控制进程将信号发送至前台进程组的所有进程。</p>
 <p>作业控制信号间有某些交互，当对一个进程产生四种停止信号(SIGTSTP,SIGSTOP,SIGTTIN,SIGTTOU)中的一种时，对该进程的任意未决SIGCONT信号将被丢弃，同样，当产生SIGCONT信号时，对同一进程的任意停止信号将被丢弃。</p>
-<h3 id="作业管理：">作业管理：</h3><ul>
+<h3 id="作业管理">作业管理</h3><ul>
 <li>&amp; 将作业放入后台执行，如果没有进行重定向，数据流仍然会输出到前台</li>
 <li>Ctrl+C 强制中断前台当前作业执行</li>
 <li>Ctrl+Z 将作业挂到后台</li>
@@ -146,7 +147,7 @@ Hello World!
 <li>kill -signal %作业ID 向指定作业的所有进程发送信号</li>
 </ul>
 <p>作业管理的后台不是系统后台，因此，上述的任务管理依旧与终端有关，当远程连接的终端断开连接时，SIGHUP信号默认将导致改会话上所有的任务都会被中断。</p>
-<h3 id="脱机管理：">脱机管理：</h3><ul>
+<h3 id="脱机管理">脱机管理</h3><ul>
 <li>nohup: nohup CMD &amp; 将任务放在后台执行，并忽略SIGHUP挂掉信号，但是在人机交互上比较麻烦</li>
 <li>screen: 一个可以在多个进程之间多路复用一个物理终端的窗口管理器，在远端服务器上运行screen，开启一个新会话并执行任务，在终端断开后，任务继续执行，下次登录再attach上screen会话即可，Linux发行版自带</li>
 <li>tmux: 功能类似于screen，但在分屏切换，配置方面更强大，完全可作为本地终端使用</li>
@@ -181,7 +182,7 @@ Hello World!
 
 
     <!-- 多说评论框 start -->
-<div class="ds-thread" data-thread-key="2016/08/linux-process-session/" data-title="Linux进程，进程组，会话" data-url="http://wudaijun.com/2016/08/linux-process-session/"></div>
+<div class="ds-thread" data-thread-key="2016/08/linux-job-control/" data-title="Linux 作业管理" data-url="http://wudaijun.com/2016/08/linux-job-control/"></div>
 <!-- 多说评论框 end -->
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
