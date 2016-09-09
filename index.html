@@ -67,6 +67,127 @@
   <div class="post-content">
     <header>
         <div class="icon"></div>
+        <time datetime="2016-09-09T16:00:00.000Z"><a href="/2016/09/erlang-rebar3/">2016-09-10</a></time>
+        
+  
+    <h1 class="title"><a href="/2016/09/erlang-rebar3/">Rebar3 Erlang/OTP构建利器</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h3 id="一-_依赖管理">一. 依赖管理</h3><h4 id="1-_包依赖和源码依赖">1. 包依赖和源码依赖</h4><p>Rebar3支持两种依赖：</p>
+<pre><code><span class="collection">{deps,<span class="collection">[
+  %% 包依赖
+  rebar,
+  <span class="collection">{rebar,<span class="string">"1.0.0"</span>}</span>,
+  <span class="collection">{rebar, <span class="collection">{pkg, rebar_fork}</span>}</span>, % rebar app under a different pkg name
+  <span class="collection">{rebar, <span class="string">"1.0.0"</span>, <span class="collection">{pkg, rebar_fork}</span>}</span>,
+  %% 源码依赖
+  <span class="collection">{rebar, <span class="collection">{git, <span class="string">"git://github.com/erlang/rebar3.git"</span>}</span>}</span>,
+  <span class="collection">{rebar, <span class="collection">{git, <span class="string">"http://github.com/erlang/rebar3.git"</span>}</span>}</span>,
+  <span class="collection">{rebar, <span class="collection">{git, <span class="string">"https://github.com/erlang/rebar3.git"</span>}</span>}</span>,
+  <span class="collection">{rebar, <span class="collection">{git, <span class="string">"git@github.com:erlang/rebar3.git"</span>}</span>}</span>,
+  <span class="collection">{rebar, <span class="collection">{hg, <span class="string">"https://othersite.com/erlang/rebar3"</span>}</span>}</span>,
+  <span class="collection">{rebar, <span class="collection">{git, <span class="string">"git://github.com/erlang/rebar3.git"</span>, <span class="collection">{ref, <span class="string">"aef728"</span>}</span>}</span>}</span>,
+  <span class="collection">{rebar, <span class="collection">{git, <span class="string">"git://github.com/erlang/rebar3.git"</span>, <span class="collection">{branch, <span class="string">"master"</span>}</span>}</span>}</span>,
+  <span class="collection">{rebar, <span class="collection">{git, <span class="string">"git://github.com/erlang/rebar3.git"</span>, <span class="collection">{tag, <span class="string">"3.0.0"</span>}</span>}</span>}</span>
+  ]</span>}</span>
+</code></pre>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2016/09/erlang-rebar3/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2016/09/erlang-rebar3/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
+        <time datetime="2016-09-08T16:00:00.000Z"><a href="/2016/09/go-basic/">2016-09-09</a></time>
+        
+  
+    <h1 class="title"><a href="/2016/09/go-basic/">Go 基础学习</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="一-_类型系统">一. 类型系统</h2><h3 id="1-_slice">1. slice</h3><p>数组切片提供了动态数组的能力，功能和实现都类似于C++ Vector。</p>
+<pre><code><span class="comment">// 初始化一个数组</span>
+var Arr [<span class="number">3</span>]<span class="keyword">int</span> = [<span class="number">3</span>]<span class="keyword">int</span>{<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>}
+
+var Slice1 []<span class="keyword">int</span>
+<span class="comment">// 通过数组初始化切片 得到[1 2]</span>
+Slice1 = Arr[:<span class="number">2</span>]
+<span class="comment">// 直接创建切片 其中size = 5 capacity = 10 尝试访问[size,capacity]之间的元素会得到运行时错误</span>
+Slice2 := make([]<span class="keyword">int</span>, <span class="number">5</span>, <span class="number">10</span>)
+Slice3 := []<span class="keyword">int</span>{<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>}
+<span class="comment">// 从切片创建切片 [:last] 只要last&lt;=capacity 均合法</span>
+Slice4 := Slice2[:<span class="number">8</span>]
+<span class="comment">// 切片拷贝 如果两个切片不一样大 会按照较小的数组切片元素个数拷贝</span>
+<span class="comment">// 这里的拷贝 可以看作是：先置0 再拷贝</span>
+copy(Slice4, Slice3)
+
+<span class="comment">// 遍历切片[0:size] 多返回值简化了迭代</span>
+<span class="keyword">for</span> i, v := range Slice1 {
+    ...
+}
+
+<span class="comment">// 通过append在size后面添加元素 capacity会自动扩展</span>
+<span class="comment">// 同样, 多参数简化了迭代</span>
+Slice3 = append(Slice3, <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>)
+</code></pre>
+      
+    </div>
+    <footer>
+<!--        -->
+        
+          <div class="alignleft">
+            <a href="/2016/09/go-basic/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+        <div class="alignright">
+          <a href="/2016/09/go-basic/#comment" class="comment-link">Comments</a>
+        </div>
+        
+<!--        -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+        <div class="icon"></div>
         <time datetime="2016-08-29T16:00:00.000Z"><a href="/2016/08/linux-job-control/">2016-08-30</a></time>
         
   
@@ -426,95 +547,6 @@
 
 
 
-
-    <article class="post">
-  
-  <div class="post-content">
-    <header>
-        <div class="icon"></div>
-        <time datetime="2016-05-25T16:00:00.000Z"><a href="/2016/05/erlang-debug-online/">2016-05-26</a></time>
-        
-  
-    <h1 class="title"><a href="/2016/05/erlang-debug-online/">Erlang 状态监控</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <h2 id="接入远程节点的几种方法">接入远程节点的几种方法</h2><ol>
-<li><p>JCL任务切换或remsh启动参数：</p>
-<pre><code>erl -setcookie abc -name node_2@<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> -remsh node_1@<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>
-</code></pre></li>
-<li><p>通过<a href="http://erlang.org/doc/man/erl_call.html">erl_call</a>实现shell脚本与Erlang节点的简单交互:</p>
-<pre><code>erl_call <span class="operator">-s</span> <span class="operator">-a</span> <span class="string">'erlang memory '</span> -name node_1@<span class="number">127.0</span>.<span class="number">0.1</span> -c abc
-</code></pre></li>
-</ol>
-      
-    </div>
-    <footer>
-<!--        -->
-        
-          <div class="alignleft">
-            <a href="/2016/05/erlang-debug-online/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-        <div class="alignright">
-          <a href="/2016/05/erlang-debug-online/#comment" class="comment-link">Comments</a>
-        </div>
-        
-<!--        -->
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-
-    <article class="post">
-  
-  <div class="post-content">
-    <header>
-        <div class="icon"></div>
-        <time datetime="2016-05-24T16:00:00.000Z"><a href="/2016/05/erlang-practices/">2016-05-25</a></time>
-        
-  
-    <h1 class="title"><a href="/2016/05/erlang-practices/">Erlang 实践经验</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <h3 id="使用binary而不是lists">使用binary而不是lists</h3><p>所有能用binary的地方都用binary，配置，协议，DB，网络接口，等等，如果驱动或第三方库不能很好地支持binary，就换一个或者重写接口，如果项目一开始就这么做，会在后期省掉很多麻烦。</p>
-<h3 id="不要动态生成_atom">不要动态生成 atom</h3><p>atom不被Erlang GC，在代码中要时刻警惕诸如<code>list(binary)_to_atom/2</code>和<code>binary_to_term/1</code>等动态生成atom的API，特别是这些API的输入源来自于网络或客户端等不可信源，可用<code>list(binary)_to_existing_atom/2</code>和<code>binary_to_term/2</code>替换之，前者只能转换为已经存在的原子，否则会报错，后者功能类似，确保不会生成新的atom，函数引用，Pid等(这些资源都是不会被GC回收的)。</p>
-<p>可通过<code>erlang:memory/0</code>来观察atom内存使用状况。</p>
-      
-    </div>
-    <footer>
-<!--        -->
-        
-          <div class="alignleft">
-            <a href="/2016/05/erlang-practices/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-        <div class="alignright">
-          <a href="/2016/05/erlang-practices/#comment" class="comment-link">Comments</a>
-        </div>
-        
-<!--        -->
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
  
 <nav id="pagination">
   
@@ -545,11 +577,15 @@
 	
   
 	
-		<li><a href="/categories/erlang/">erlang</a><small>21</small></li>
+		<li><a href="/categories/erlang/">erlang</a><small>22</small></li>
 	
   
 	
 		<li><a href="/categories/gameserver/">gameserver</a><small>20</small></li>
+	
+  
+	
+		<li><a href="/categories/go/">go</a><small>1</small></li>
 	
   
 	
@@ -584,7 +620,7 @@
 		<li><a href="/categories/web/">web</a><small>1</small></li>
 	
    -->
-     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/database/">database</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">20</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/os/">os</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/unity/">unity</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web/">web</a><span class="category-list-count">1</span></li></ul> 
+     <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/database/">database</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">22</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">20</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/go/">go</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/os/">os</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/unity/">unity</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web/">web</a><span class="category-list-count">1</span></li></ul> 
 </div>
  
 
@@ -592,7 +628,7 @@
   
   <div class="widget tag">
     <h3 class="title">归档</h3>
-	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">2016年08月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">2016年07月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">2016年06月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">2016年05月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">2016年04月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">2016年03月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">2016年02月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">2016年01月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">2015年12月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">2015年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">2015年10月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">2015年09月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">2015年08月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">2015年07月</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">2015年06月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">2015年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">2015年04月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">2015年03月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2015年02月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">2015年01月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">2014年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">2014年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">2014年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">2014年09月</a><span class="archive-list-count">1</span></li></ul>
+	<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">2016年09月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">2016年08月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">2016年07月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">2016年06月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">2016年05月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">2016年04月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">2016年03月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">2016年02月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">2016年01月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">2015年12月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">2015年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">2015年10月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">2015年09月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">2015年08月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">2015年07月</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">2015年06月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">2015年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">2015年04月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">2015年03月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">2015年02月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">2015年01月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">2014年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">2014年11月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">2014年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">2014年09月</a><span class="archive-list-count">1</span></li></ul>
   </div>
 
 
@@ -600,7 +636,7 @@
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/c-c/" style="font-size: 15.71px;">c/c++</a> <a href="/tags/distribution/" style="font-size: 14.29px;">distribution</a> <a href="/tags/erlang/" style="font-size: 20px;">erlang</a> <a href="/tags/firefly/" style="font-size: 11.43px;">firefly</a> <a href="/tags/gameserver/" style="font-size: 10px;">gameserver</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/kbengine/" style="font-size: 11.43px;">kbengine</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/lua/" style="font-size: 17.14px;">lua</a> <a href="/tags/mongodb/" style="font-size: 14.29px;">mongodb</a> <a href="/tags/multi-thread/" style="font-size: 12.86px;">multi-thread</a> <a href="/tags/ngserver/" style="font-size: 18.57px;">ngserver</a> <a href="/tags/os/" style="font-size: 11.43px;">os</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/python/" style="font-size: 14.29px;">python</a> <a href="/tags/skynet/" style="font-size: 14.29px;">skynet</a> <a href="/tags/tcp-ip/" style="font-size: 12.86px;">tcp/ip</a> <a href="/tags/tool/" style="font-size: 11.43px;">tool</a> <a href="/tags/unity/" style="font-size: 12.86px;">unity</a> <a href="/tags/web/" style="font-size: 10px;">web</a>
+    <a href="/tags/c-c/" style="font-size: 15.71px;">c/c++</a> <a href="/tags/distribution/" style="font-size: 14.29px;">distribution</a> <a href="/tags/erlang/" style="font-size: 20px;">erlang</a> <a href="/tags/firefly/" style="font-size: 11.43px;">firefly</a> <a href="/tags/gameserver/" style="font-size: 10px;">gameserver</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/go/" style="font-size: 10px;">go</a> <a href="/tags/kbengine/" style="font-size: 11.43px;">kbengine</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/lua/" style="font-size: 17.14px;">lua</a> <a href="/tags/mongodb/" style="font-size: 14.29px;">mongodb</a> <a href="/tags/multi-thread/" style="font-size: 12.86px;">multi-thread</a> <a href="/tags/ngserver/" style="font-size: 18.57px;">ngserver</a> <a href="/tags/os/" style="font-size: 11.43px;">os</a> <a href="/tags/other/" style="font-size: 10px;">other</a> <a href="/tags/python/" style="font-size: 14.29px;">python</a> <a href="/tags/skynet/" style="font-size: 14.29px;">skynet</a> <a href="/tags/tcp-ip/" style="font-size: 12.86px;">tcp/ip</a> <a href="/tags/tool/" style="font-size: 11.43px;">tool</a> <a href="/tags/unity/" style="font-size: 12.86px;">unity</a> <a href="/tags/web/" style="font-size: 10px;">web</a>
   </div>
 </div>
 
