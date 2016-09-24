@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <url>
+    <loc>http://wudaijun.com/tags/index.html</loc>
+    
+    <lastmod>2016-09-23T10:11:08.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2016/08/gs-design-concept/</loc>
+    
+    <lastmod>2016-09-21T09:26:16.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2014/12/shared_ptr-reference/</loc>
+    
+    <lastmod>2016-09-20T15:18:27.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/02/cpp-disruptor/</loc>
+    
+    <lastmod>2016-09-20T15:15:51.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2014/12/lua-C/</loc>
+    
+    <lastmod>2016-09-20T14:58:45.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/01/false-sharing/</loc>
+    
+    <lastmod>2016-09-20T14:57:15.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2016/04/erlang-server-design6-distribution-question/</loc>
+    
+    <lastmod>2016-09-20T14:52:48.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2016/09/goa-intro/</loc>
+    
+    <lastmod>2016-09-20T14:52:06.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/01/skynet-luaservice/</loc>
+    
+    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/01/skynet-c-module/</loc>
+    
+    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/02/skynet-socketserver/</loc>
+    
+    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/02/skynet-gateserver/</loc>
+    
+    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/05/firefly-study1/</loc>
+    
+    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/07/kbengine-study2/</loc>
+    
+    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/06/firefly-study2/</loc>
+    
+    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/07/kbengine-study1/</loc>
+    
+    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2016/09/go-basic/</loc>
+    
+    <lastmod>2016-09-14T09:32:01.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2016/09/erlang-rebar3/</loc>
+    
+    <lastmod>2016-09-09T18:17:06.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2016/01/erlang-server-design5-server-node/</loc>
+    
+    <lastmod>2016-09-07T12:13:18.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2016/08/linux-job-control/</loc>
+    
+    <lastmod>2016-08-31T01:39:01.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2016/05/erlang-debug-online/</loc>
+    
+    <lastmod>2016-08-12T02:57:37.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2016/05/erlang-practices/</loc>
+    
+    <lastmod>2016-08-12T02:57:23.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2016/03/erlang-distribution-2/</loc>
+    
+    <lastmod>2016-08-12T02:56:02.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2016/03/erlang-distribution-1/</loc>
+    
+    <lastmod>2016-08-12T02:55:28.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2016/08/web-get-started/</loc>
+    
+    <lastmod>2016-08-11T08:03:49.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2016/06/virtual-memory/</loc>
+    
+    <lastmod>2016-07-12T11:53:47.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2016/06/mongodb-storage-engine/</loc>
+    
+    <lastmod>2016-07-12T11:53:23.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2016/06/mongodb-read-write/</loc>
+    
+    <lastmod>2016-07-12T11:52:22.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2016/07/monitor-mongodb/</loc>
+    
+    <lastmod>2016-07-12T11:50:02.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2016/06/mongodb-sharding/</loc>
+    
+    <lastmod>2016-07-08T05:40:00.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/08/erlang-server-design1-cluster-server/</loc>
+    
+    <lastmod>2016-05-12T12:50:24.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/about/index.html</loc>
+    
+    <lastmod>2016-04-29T03:22:06.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2016/04/learning-mistakes/</loc>
+    
+    <lastmod>2016-04-29T03:20:37.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/09/erlang-server-design2-erlang-lua-battle/</loc>
+    
+    <lastmod>2016-03-26T13:45:56.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/12/erlang-datastructures/</loc>
+    
+    <lastmod>2016-03-11T07:56:23.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2016/03/3d-mapping/</loc>
+    
+    <lastmod>2016-03-05T05:38:38.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2016/02/3d-animation/</loc>
+    
+    <lastmod>2016-02-22T09:39:57.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/10/unity-mecanim/</loc>
+    
+    <lastmod>2016-02-22T01:34:08.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2016/02/erlang-thinking-in-rails/</loc>
+    
+    <lastmod>2016-02-17T02:02:49.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/03/cpp-compile-model/</loc>
+    
+    <lastmod>2015-11-30T02:44:52.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/11/erlang-map2record/</loc>
+    
+    <lastmod>2015-11-20T09:55:38.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/11/erlang-server-design4-slg-map/</loc>
+    
+    <lastmod>2015-11-13T10:18:15.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/11/erlang-server-design3-mongodb-driver/</loc>
+    
+    <lastmod>2015-11-02T13:21:51.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2014/09/ngserver-startpage/</loc>
+    
+    <lastmod>2015-10-28T01:27:36.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2014/10/ngserver-service/</loc>
+    
+    <lastmod>2015-10-10T07:43:43.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/09/erlang-ranch/</loc>
+    
+    <lastmod>2015-10-10T07:41:52.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/08/erlang-port/</loc>
+    
+    <lastmod>2015-10-10T07:41:25.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/10/tcp-notes-3/</loc>
+    
+    <lastmod>2015-10-10T07:27:47.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/10/tcp-notes-2/</loc>
+    
+    <lastmod>2015-10-10T07:24:54.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/10/tcp-notes-1/</loc>
+    
+    <lastmod>2015-10-10T07:19:10.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/09/erlang-process-links/</loc>
+    
+    <lastmod>2015-10-08T02:03:19.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2014/12/ngserver-playersession/</loc>
+    
+    <lastmod>2015-09-22T02:30:04.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2014/11/cpp-constructor/</loc>
+    
+    <lastmod>2015-09-22T02:29:52.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2014/11/ngserver-message-encoder/</loc>
+    
+    <lastmod>2015-09-22T02:29:43.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2014/11/ngserver-message-callback/</loc>
+    
+    <lastmod>2015-09-22T02:29:20.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2014/10/ngserver-player/</loc>
+    
+    <lastmod>2015-09-22T02:29:08.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2014/10/ngserver-session/</loc>
+    
+    <lastmod>2015-09-22T02:29:01.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/07/rebar-hotcode/</loc>
+    
+    <lastmod>2015-09-22T02:26:45.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/07/erlang-superviosr/</loc>
+    
+    <lastmod>2015-09-22T02:25:54.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/03/cpp-rvalue-referrence/</loc>
+    
+    <lastmod>2015-09-22T02:25:54.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/04/erlang-mnesia/</loc>
+    
+    <lastmod>2015-09-22T02:25:54.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/04/git-study/</loc>
+    
+    <lastmod>2015-09-22T02:25:54.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/04/erlang-hotcode/</loc>
+    
+    <lastmod>2015-09-22T02:25:54.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/01/lua-coroutine/</loc>
+    
+    <lastmod>2015-09-22T02:25:54.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/07/c-linker-model/</loc>
+    
+    <lastmod>2015-09-22T02:25:54.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/04/erlang-thinking/</loc>
+    
+    <lastmod>2015-09-22T02:25:54.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/05/erlang-gameserver-persistence/</loc>
+    
+    <lastmod>2015-09-22T02:25:54.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/05/twisted/</loc>
+    
+    <lastmod>2015-09-22T02:25:54.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/09/use-hexo-rebuild-blog/</loc>
+    
+    <lastmod>2015-09-22T02:25:54.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/05/wordpress-setup/</loc>
+    
+    <lastmod>2015-09-22T02:25:54.000Z</lastmod>
+    
+  </url>
+  
+</urlset>
