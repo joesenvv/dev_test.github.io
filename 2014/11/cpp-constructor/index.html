@@ -16,7 +16,7 @@
 <meta property="og:url" content="http://wudaijun.com/2014/11/cpp-constructor/index.html">
 <meta property="og:site_name" content="wudaijun's blog">
 <meta property="og:description" content="本文是《深度探索C++对象模型》的读书笔记，主要根据自己的理解整理一下C++对象构造的实现细节以及其在实际编程中所带来的影响。">
-<meta property="og:updated_time" content="2015-09-22T02:29:52.000Z">
+<meta property="og:updated_time" content="2016-09-24T08:57:15.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="C++ 构造语义">
 <meta name="twitter:description" content="本文是《深度探索C++对象模型》的读书笔记，主要根据自己的理解整理一下C++对象构造的实现细节以及其在实际编程中所带来的影响。">
@@ -143,7 +143,7 @@
 
             
             <nav class="post-toc-wrap" id="post-toc">
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#一-_构造函数"><span class="post-toc-text">一. 构造函数</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#总结"><span class="post-toc-text">总结</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#二-_复制构造函数"><span class="post-toc-text">二. 复制构造函数</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#三-_trivial的一些扩展"><span class="post-toc-text">三. trivial的一些扩展</span></a></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#一-_构造函数"><span class="post-toc-text">一. 构造函数</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#a-_类中有_“带_nontrivial_default_constructor”_的对象成员"><span class="post-toc-text">a. 类中有 “带 nontrivial default constructor” 的对象成员</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#b-_类继承于_“带_nontrivial_default_constructor”_的基类"><span class="post-toc-text">b. 类继承于 “带 nontrivial default constructor” 的基类</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#c-_类中有虚函数(或继承体系中有虚函数)"><span class="post-toc-text">c. 类中有虚函数(或继承体系中有虚函数)</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#d-_类的继承体系中具有虚基类"><span class="post-toc-text">d. 类的继承体系中具有虚基类</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#总结"><span class="post-toc-text">总结</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#二-_复制构造函数"><span class="post-toc-text">二. 复制构造函数</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#三-_trivial的一些扩展"><span class="post-toc-text">三. trivial的一些扩展</span></a></li></ol>
             </nav>
             
         </aside>
@@ -166,16 +166,12 @@
 <figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">A</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="keyword">int</span> _ivalue;</span><br><span class="line">	<span class="keyword">float</span> _fvalue;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <p>对于类A来说，编译器将为其隐式声明的默认构造函数被视为trivial。因为编译器无需在其声明的构造函数中，对A类对象进行任何额外处理。注意，编译器生成的默认构造函数不会对 _ivalue 和 _fvalue 进行初始化。因此在这种情况下，编译器隐式生成的默认构造函数可有可无，视之为”trivial”。</p>
 <p>而对于如下四种情况，编译器隐式生成的默认构造函数(以下简称”隐式构造函数”)是 nontrivial default constructor ：</p>
-<p>####a. 类中有 “带 nontrivial default constructor” 的对象成员</p>
-<p>注意，这里的notrivial default constructor包括<strong>用户定义的任何构造函数</strong>或者<strong>编译器生成的notrivial构造函数</strong>。这实际上是一个递归定义，当类X中有具备notrivial default constructor的对象成员Y _y时，X的隐式构造函数需要调用Y的默认构造函数完成对成员_y的构造。如：</p>
+<h4 id="a-_类中有_“带_nontrivial_default_constructor”_的对象成员">a. 类中有 “带 nontrivial default constructor” 的对象成员</h4><p>注意，这里的notrivial default constructor包括<strong>用户定义的任何构造函数</strong>或者<strong>编译器生成的notrivial构造函数</strong>。这实际上是一个递归定义，当类X中有具备notrivial default constructor的对象成员Y _y时，X的隐式构造函数需要调用Y的默认构造函数完成对成员_y的构造。如：</p>
 <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">class</span> <span class="tag">B</span></span><br><span class="line"><span class="rules">&#123;</span><br><span class="line"><span class="rule"><span class="attribute">private</span>:<span class="value"></span><br><span class="line">	A _a</span></span>;</span><br><span class="line">&#125;</span>;</span><br><span class="line"></span><br><span class="line"><span class="tag">class</span> <span class="tag">C</span></span><br><span class="line"><span class="rules">&#123;</span><br><span class="line"><span class="rule"><span class="attribute">private</span>:<span class="value"></span><br><span class="line">	std::string _str</span></span>;</span><br><span class="line">&#125;</span>;</span><br></pre></td></tr></table></figure>
 <p>我们说类B中的对象成员 A _a “不带default constructor”，因为它只有一个隐式生成的 trivial default constructor。因此B的隐式构造函数中，无需操心对成员_a的构造。因而实际上B的隐式构造函数也被视为trivial(无关紧要)。而对于类C，由于其对象成员类型string具备用户(库作者)声明的默认构造函数，因此string的构造函数是nontrivial，所以编译器在为C合成的默认构造函数中，需要调用string的默认构造函数来为_str初始化，此时C的构造函数便不再是”无关紧要”的，被视为 nontrivial。</p>
-<p>####b. 类继承于 “带 nontrivial default constructor” 的基类</p>
-<p>情形b和情形a类似：当类具有 “带 nontrivial default constructor”的基类时，编译器隐式生成的默认构造函数需要调用基类的默认构造函数确保基类的正确初始化。此时该类构造函数视为nontrivial。</p>
-<p>####c. 类中有虚函数(或继承体系中有虚函数)</p>
-<p>在这种情况下，编译器生成的隐式构造函数需要完成对虚函数表vtable的构造，并且将vtable的指针安插到对象中(通常是头四个字节)。此时的隐式构造函数自然是必不可少(nontrivial)。</p>
-<p>####d. 类的继承体系中具有虚基类</p>
-<p>和情形c一样，编译器需要在合成的构造函数中，对虚基类进行处理(处理方式和虚函数类似，通过一个指针来指向虚基类，以保证虚基类在其继承体系中，只有一份内容)，这样才能保证程序能在运行中正确存取虚基类数据。被视为nontrivial。</p>
+<h4 id="b-_类继承于_“带_nontrivial_default_constructor”_的基类">b. 类继承于 “带 nontrivial default constructor” 的基类</h4><p>情形b和情形a类似：当类具有 “带 nontrivial default constructor”的基类时，编译器隐式生成的默认构造函数需要调用基类的默认构造函数确保基类的正确初始化。此时该类构造函数视为nontrivial。</p>
+<h4 id="c-_类中有虚函数(或继承体系中有虚函数)">c. 类中有虚函数(或继承体系中有虚函数)</h4><p>在这种情况下，编译器生成的隐式构造函数需要完成对虚函数表vtable的构造，并且将vtable的指针安插到对象中(通常是头四个字节)。此时的隐式构造函数自然是必不可少(nontrivial)。</p>
+<h4 id="d-_类的继承体系中具有虚基类">d. 类的继承体系中具有虚基类</h4><p>和情形c一样，编译器需要在合成的构造函数中，对虚基类进行处理(处理方式和虚函数类似，通过一个指针来指向虚基类，以保证虚基类在其继承体系中，只有一份内容)，这样才能保证程序能在运行中正确存取虚基类数据。被视为nontrivial。</p>
 <h4 id="总结">总结</h4><p>编译器隐式声明的默认构造函数，是 trivial or nontrivial，取决于编译器是否需要在构造函数中做一些额外的处理，主要包括对象成员和基类的初始化(取决于对象成员或基类有无nontrivial default constructor)，以及对虚函数和虚基类的处理(取决于在其继承体系中是否有虚函数或虚基类)。这些工作使隐式构造函数不再是可有可无。</p>
 <p>不存在以上四种情况并且没有用户定义的任何构造函数时，隐式构造函数也被称作 implicit trivial default constructors。这类构造函数实际上并不会被编译器合成出来。这也是对 trivial 和 nontrivial 的直观理解。</p>
 <p>而实际上，即使你定义了自己的构造函数，如果类中满足以上四种情形之一，编译器也会将你的构造函数展开，将必要的处理(如vtable的构造)植入到你的构造函数中(一般是你的构造代码之前)。不过仍然请注意，一旦你定义了自己的构造函数，哪怕该函数什么也不做，该类也将被视为具备 nontrivial constrcutor。</p>

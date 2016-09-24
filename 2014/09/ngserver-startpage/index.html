@@ -16,7 +16,7 @@
 <meta property="og:url" content="http://wudaijun.com/2014/09/ngserver-startpage/index.html">
 <meta property="og:site_name" content="wudaijun's blog">
 <meta property="og:description" content="NGServer是一个迷你型C++游戏服务器框架。Github地址：https://github.com/wudaijun/NGServer。">
-<meta property="og:updated_time" content="2015-10-28T01:27:36.000Z">
+<meta property="og:updated_time" content="2016-09-24T08:53:01.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NGServer 简介">
 <meta name="twitter:description" content="NGServer是一个迷你型C++游戏服务器框架。Github地址：https://github.com/wudaijun/NGServer。">
@@ -143,7 +143,7 @@
 
             
             <nav class="post-toc-wrap" id="post-toc">
-            
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#主要特性："><span class="post-toc-text">主要特性：</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#设计原则："><span class="post-toc-text">设计原则：</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#目前缺点："><span class="post-toc-text">目前缺点：</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#更多文档："><span class="post-toc-text">更多文档：</span></a></li></ol>
             </nav>
             
         </aside>
@@ -152,24 +152,21 @@
 
             <div class="post-content" id="post-content" itemprop="postContent">
             <p>NGServer是一个迷你型C++游戏服务器框架。Github地址：<a href="https://github.com/wudaijun/NGServer。" target="_blank" rel="external">https://github.com/wudaijun/NGServer。</a><br><a id="more"></a></p>
-<p>###主要特性：</p>
-<ul>
+<h3 id="主要特性：">主要特性：</h3><ul>
 <li>框架用C++(11)和boost库实现。</li>
 <li>基于单进程多线程。</li>
 <li>框架屏蔽了多线程实现，上层体现为服务(Service)，服务之间通过消息进行通信。</li>
 <li>有比较完善灵活的的消息回调和序列化机制，更方便地实现RPC。</li>
 </ul>
-<p>###设计原则：</p>
-<ul>
+<h3 id="设计原则：">设计原则：</h3><ul>
 <li>尽量小巧灵活，减少第三方库依赖，尽可能使用C++11新特性。</li>
 <li>降低模块之间的耦合性，增强灵活性。</li>
 </ul>
-<p>###目前缺点：</p>
-<ul>
+<h3 id="目前缺点：">目前缺点：</h3><ul>
 <li>当并发很高时，消息分流和拥塞控制做得不是很好。</li>
 <li>服务之间，只支持通过消息异步通信。</li>
 </ul>
-<p>###更多文档：<br>关于NGServer的更详细的系列介绍可以在我的博客找到：<a href="http://wudaijun.com/tags/#NGServer。博客上的文章仅代表最初NGServer的最初设想，可能与Github上的最新代码有差异。">http://wudaijun.com/tags/#NGServer。博客上的文章仅代表最初NGServer的最初设想，可能与Github上的最新代码有差异。</a></p>
+<h3 id="更多文档：">更多文档：</h3><p>关于NGServer的更详细的系列介绍可以在我的博客找到：<a href="http://wudaijun.com/tags/#NGServer。博客上的文章仅代表NGServer的最初设想，可能与Github上的最新代码有差异。">http://wudaijun.com/tags/#NGServer。博客上的文章仅代表NGServer的最初设想，可能与Github上的最新代码有差异。</a></p>
 
 
             
