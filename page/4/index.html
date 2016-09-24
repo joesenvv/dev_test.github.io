@@ -152,8 +152,8 @@
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <h3 id="一-_简介">一. 简介</h3><p><a href="https://github.com/ninenines/ranch">ranch</a>是erlang的一个开源网络库，提供一个高效的监听进程池，并且将数据传输和数据处理分离开来。使用起来非常简单，灵活。关于ranch的更多介绍和使用，参见<a href="https://github.com/ninenines/ranch/tree/master/doc/src">官方文档</a>。<br>
+    
+         一. 简介   ranch 是erlang的一个开源网络库，提供一个高效的监听进程池，并且将数据传输和数据处理分离开来。使用起来非常简单，灵活。关于ranch的更多介绍和使用，参见 官方文档 。 
     
     
         <a href="/2015/09/erlang-ranch/" class="post-more waves-effect waves-button">
@@ -195,8 +195,8 @@
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <p>最近又开始想在博客上实现自己一直想要的摘要功能，然后倒腾jekyll，本来也没有前端基础，就博客系统而言，对我来说，简单就好，能专注写东西。但是发现jekyll偏离了这个宗旨，缺乏成熟的主题机制，可定制性太强，学习成本高。然后发现了这个<a href="https://github.com/pengloo53/Hexo-theme-light_cn">Hexo主题</a>，觉得就是自己想要的功能。最终抛弃了jekyll，投向Hexo。</p>
+    
+         最近又开始想在博客上实现自己一直想要的摘要功能，然后倒腾jekyll，本来也没有前端基础，就博客系统而言，对我来说，简单就好，能专注写东西。但是发现jekyll偏离了这个宗旨，缺乏成熟的主题机制，可定制性太强，学习成本高。然后发现了这个 Hexo主题 ，觉得就是自己想要的功能。最终抛弃了jekyll，投向Hexo。 
     
     
         <a href="/2015/09/use-hexo-rebuild-blog/" class="post-more waves-effect waves-button">
@@ -238,8 +238,8 @@
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <p>服务器战斗系统是自动战斗的，没有玩家实际操作，因此实际上是一份客户端的Lua战斗代码，这里讨论如何在Erlang中植入Lua代码。</p>
+    
+         服务器战斗系统是自动战斗的，没有玩家实际操作，因此实际上是一份客户端的Lua战斗代码，这里讨论如何在Erlang中植入Lua代码。 
     
     
         <a href="/2015/09/erlang-server-design2-erlang-lua-battle/" class="post-more waves-effect waves-button">
@@ -281,8 +281,8 @@
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <p>Erlang虚拟机就像一个操作系统，操作系统可以通过Port与外界交互，完成IO操作。Port就像操作系统的套接字，在Erlang中其行为模式与进程无二，可以收发消息，注册名字等等，只不过它不具有代码执行能力，它是外部程序”伪装”的Erlang进程。Erlang Port可分为两种，一种是普通端口(Ports)，外部程序以操作系统进程的方式独立运行，它通过标准输入输出与Erlang虚拟机交互。另一种是端口驱动(Port Driver)，它以动态链接库的方式内联(linkin)到Erlang虚拟机，作为虚拟机的一部分，与Erlang虚拟机共享一个操作系统进程。除了端口以外，Erlang还可以通过NIF的方式调用外部程序，Erlang使用NIF就像调用普通Erlang函数一样，只不过这个函数是其它语言实现的。</p>
+    
+         Erlang虚拟机就像一个操作系统，操作系统可以通过Port与外界交互，完成IO操作。Port就像操作系统的套接字，在Erlang中其行为模式与进程无二，可以收发消息，注册名字等等，只不过它不具有代码执行能力，它是外部程序”伪装”的Erlang进程。Erlang Port可分为两种，一种是普通端口(Ports)，外部程序以操作系统进程的方式独立运行，它通过标准输入输出与Erlang虚拟机交互。另一种是端口驱动(Port Driver)，它以动态链接库的方式内联(linkin)到Erlang虚拟机，作为虚拟机的一部分，与Erlang虚拟机共享一个操作系统进程。除了端口以外，Erlang还可以通过NIF的方式调用外部程序，Erlang使用NIF就像调用普通Erlang函数一样，只不过这个函数是其它语言实现的。 
     
     
         <a href="/2015/08/erlang-port/" class="post-more waves-effect waves-button">
@@ -324,15 +324,15 @@
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <h3 id="服务发现">服务发现</h3><p>在游戏服务器中，通常有一些功能本身非常内聚，甚至是无状态的，在这种时候，我们应该将其单独地做成一个服务，而不是嵌入到GameServer中，这种思想就是所谓的服务(<a href="http://martinfowler.com/articles/microservices.html#MicroservicesAndSoa">microservice</a>)思想。</p>
-<p>服务发现本身可以看做是一个业务独立的”特殊服务”，它用于逻辑服务的注册/查找/配置信息共享。通常由如下三部分组成：</p>
-<ul>
-<li>一个强一致，高可用的服务存储</li>
-<li>提供服务注册和服务健康状态监控的能力</li>
-<li>提供查找服务，连接服务的能力</li>
-</ul>
-<p>在分布式领域中，服务发现是一个非常实用和通用的组件，并且已经有一些比较成熟的组件，如<a href="https://zookeeper.apache.org/">zookeeper</a>，<a href="https://github.com/coreos/etcd">etcd</a>等。服务发现组件的好处有很多：微服理念，为负载均衡，灾难恢复提供基础。更多应用场景，可参见etcd的<a href="http://www.infoq.com/cn/articles/etcd-interpretation-application-scenario-implement-principle">这篇文章</a>。</p>
+    
+         服务发现  在游戏服务器中，通常有一些功能本身非常内聚，甚至是无状态的，在这种时候，我们应该将其单独地做成一个服务，而不是嵌入到GameServer中，这种思想就是所谓的服务( microservice )思想。 
+ 服务发现本身可以看做是一个业务独立的”特殊服务”，它用于逻辑服务的注册/查找/配置信息共享。通常由如下三部分组成： 
+ 
+ 一个强一致，高可用的服务存储 
+ 提供服务注册和服务健康状态监控的能力 
+ 提供查找服务，连接服务的能力 
+ 
+ 在分布式领域中，服务发现是一个非常实用和通用的组件，并且已经有一些比较成熟的组件，如 zookeeper ， etcd 等。服务发现组件的好处有很多：微服理念，为负载均衡，灾难恢复提供基础。更多应用场景，可参见etcd的 这篇文章 。 
     
     
         <a href="/2015/08/erlang-server-design1-cluster-server/" class="post-more waves-effect waves-button">
@@ -374,14 +374,14 @@
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <h2 id="一-_登录流程">一. 登录流程</h2><p><strong>注册</strong></p>
-<pre><code>Unity3d:CreateAccount
+    
+         一. 登录流程   注册  
+  Unity3d:CreateAccount
 Loginapp:reqCreateAccount 
--<span class="ruby">&gt; <span class="symbol">dbmgr:</span>reqCreateAccount 
-</span>-<span class="ruby">&gt; <span class="constant">Loginapp</span><span class="symbol">:onReqCreateAccountResult</span> 
-</span>-<span class="ruby">&gt; <span class="constant">Client</span><span class="symbol">:onReqCreateAccountResult</span></span>
-</code></pre>
+- &gt;  dbmgr: reqCreateAccount 
+ - &gt;  Loginapp  :onReqCreateAccountResult  
+ - &gt;  Client  :onReqCreateAccountResult  
+  
     
     
         <a href="/2015/07/kbengine-study2/" class="post-more waves-effect waves-button">
@@ -423,13 +423,13 @@ Loginapp:reqCreateAccount
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <h2 id="一-_network部分">一. network部分</h2><p><strong>EndPoint:</strong></p>
-<p>抽象一个Socket及其相关操作，隔离平台相关性。</p>
-<p><strong>TcpPacket:</strong></p>
-<p>代表一个TCP包，这个包只是recv收到的字节流，并不是上层协议中的消息(Message)。</p>
-<p><strong>MsgHandlers:</strong></p>
-<p>每个MessageHandler类对应一个消息的处理。MsgHanders维护MsgId -&gt; MsgHandler的映射。</p>
+    
+         一. network部分   EndPoint:  
+ 抽象一个Socket及其相关操作，隔离平台相关性。 
+  TcpPacket:  
+ 代表一个TCP包，这个包只是recv收到的字节流，并不是上层协议中的消息(Message)。 
+  MsgHandlers:  
+ 每个MessageHandler类对应一个消息的处理。MsgHanders维护MsgId -&gt; MsgHandler的映射。 
     
     
         <a href="/2015/07/kbengine-study1/" class="post-more waves-effect waves-button">
@@ -471,14 +471,14 @@ Loginapp:reqCreateAccount
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <p>链接器的工作主要分为两个阶段：符号解析和重定位。本文简单介绍符号解析过程。</p>
-<p>符号解析的功能是将每个模块符号引用绑定到一个确切的符号定义。</p>
-<h3 id="1-_符号分类">1. 符号分类</h3><ul>
-<li>全局符号：非静态全局变量，非静态函数</li>
-<li>外部符号：定义于其它模块，而被本模块引用的全局变量和函数</li>
-<li>本地符号：静态变量(包括全局和局部)，静态函数</li>
-</ul>
+    
+         链接器的工作主要分为两个阶段：符号解析和重定位。本文简单介绍符号解析过程。 
+ 符号解析的功能是将每个模块符号引用绑定到一个确切的符号定义。 
+ 1. 符号分类  
+ 全局符号：非静态全局变量，非静态函数 
+ 外部符号：定义于其它模块，而被本模块引用的全局变量和函数 
+ 本地符号：静态变量(包括全局和局部)，静态函数 
+ 
     
     
         <a href="/2015/07/c-linker-model/" class="post-more waves-effect waves-button">
@@ -520,9 +520,9 @@ Loginapp:reqCreateAccount
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <p>由于项目开发中早早地用到了<a href="https://github.com/basho/rebar">rebar</a>，虽然rebar在很多方面都比自己构建原生OTP应用更方便，但是每一次修改，都需要重新编译，发布，启动，非常耗费时间，而rebar本身的<a href="https://github.com/rebar/rebar/wiki/Upgrades">upgrade</a>又比较麻烦，是针对于版本发布的，不适合开发测试使用。</p>
-<p>因此找到了一种基于.beam文件更新加载的方法，借鉴自<a href="https://github.com/mochi/mochiweb/blob/master/src/reloader.erl">mochiweb reloader</a>。</p>
+    
+         由于项目开发中早早地用到了 rebar ，虽然rebar在很多方面都比自己构建原生OTP应用更方便，但是每一次修改，都需要重新编译，发布，启动，非常耗费时间，而rebar本身的 upgrade 又比较麻烦，是针对于版本发布的，不适合开发测试使用。 
+ 因此找到了一种基于.beam文件更新加载的方法，借鉴自 mochiweb reloader 。 
     
     
         <a href="/2015/07/rebar-hotcode/" class="post-more waves-effect waves-button">
@@ -564,8 +564,8 @@ Loginapp:reqCreateAccount
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <h3 id="一-_简介">一. 简介</h3><p>Supervisor(监督者)用于监督一个或多个Erlang OTP子进程，Supervisor本身是个behaviour，仅有一个Callback: <code>init/1</code>，该函数返回{ok, {ChildSpecList, RestartStrategy}}。ChildSpecs是ChildSpec列表，</p>
+    
+         一. 简介  Supervisor(监督者)用于监督一个或多个Erlang OTP子进程，Supervisor本身是个behaviour，仅有一个Callback:  init/1 ，该函数返回{ok, {ChildSpecList, RestartStrategy}}。ChildSpecs是ChildSpec列表， 
     
     
         <a href="/2015/07/erlang-superviosr/" class="post-more waves-effect waves-button">

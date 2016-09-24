@@ -152,14 +152,14 @@
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <h3 id="一-_简介">一. 简介</h3><p><a href="https://github.com/goadesign/goa">goa</a>是基于微服务的go语言框架，能够有效帮助开发人员快速开发基于微服务的系统。它通过DSL和代码生成器来生成样板代码和辅助套件(如文档，客户端模块，客户端工具等)。这些生成数据均基于服务的设计描述，goa遵循<strong>单一数据源</strong>(Single Source of Truth, SSOT)原则，任何对设计的改变，都将自动反映到系统各处，</p>
-<p>goa可以分为三个部分：</p>
-<ul>
-<li>goa的设计语言是内置DSL，用于描述微服务的设计</li>
-<li>goa代码生成器，用于根据DSL描述生成代码模块，辅助工具，和文档等</li>
-<li>goa利用生成代码和用户代码来实现一个服务，并提供一个完全可插拨的框架</li>
-</ul>
+    
+         一. 简介   goa 是基于微服务的go语言框架，能够有效帮助开发人员快速开发基于微服务的系统。它通过DSL和代码生成器来生成样板代码和辅助套件(如文档，客户端模块，客户端工具等)。这些生成数据均基于服务的设计描述，goa遵循 单一数据源 (Single Source of Truth, SSOT)原则，任何对设计的改变，都将自动反映到系统各处， 
+ goa可以分为三个部分： 
+ 
+ goa的设计语言是内置DSL，用于描述微服务的设计 
+ goa代码生成器，用于根据DSL描述生成代码模块，辅助工具，和文档等 
+ goa利用生成代码和用户代码来实现一个服务，并提供一个完全可插拨的框架 
+ 
     
     
         <a href="/2016/09/goa-intro/" class="post-more waves-effect waves-button">
@@ -201,25 +201,25 @@
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <h3 id="一-_依赖管理">一. 依赖管理</h3><h4 id="1-_包依赖和源码依赖">1. 包依赖和源码依赖</h4><p>Rebar3支持两种依赖：</p>
-<pre><code><span class="collection">{deps,<span class="collection">[
+    
+         一. 依赖管理  1. 包依赖和源码依赖  Rebar3支持两种依赖： 
+   {deps, [
   %% 包依赖
   rebar,
-  <span class="collection">{rebar,<span class="string">"1.0.0"</span>}</span>,
-  <span class="collection">{rebar, <span class="collection">{pkg, rebar_fork}</span>}</span>, % rebar app under a different pkg name
-  <span class="collection">{rebar, <span class="string">"1.0.0"</span>, <span class="collection">{pkg, rebar_fork}</span>}</span>,
+   {rebar, "1.0.0" } ,
+   {rebar,  {pkg, rebar_fork} } , % rebar app under a different pkg name
+   {rebar,  "1.0.0" ,  {pkg, rebar_fork} } ,
   %% 源码依赖
-  <span class="collection">{rebar, <span class="collection">{git, <span class="string">"git://github.com/erlang/rebar3.git"</span>}</span>}</span>,
-  <span class="collection">{rebar, <span class="collection">{git, <span class="string">"http://github.com/erlang/rebar3.git"</span>}</span>}</span>,
-  <span class="collection">{rebar, <span class="collection">{git, <span class="string">"https://github.com/erlang/rebar3.git"</span>}</span>}</span>,
-  <span class="collection">{rebar, <span class="collection">{git, <span class="string">"git@github.com:erlang/rebar3.git"</span>}</span>}</span>,
-  <span class="collection">{rebar, <span class="collection">{hg, <span class="string">"https://othersite.com/erlang/rebar3"</span>}</span>}</span>,
-  <span class="collection">{rebar, <span class="collection">{git, <span class="string">"git://github.com/erlang/rebar3.git"</span>, <span class="collection">{ref, <span class="string">"aef728"</span>}</span>}</span>}</span>,
-  <span class="collection">{rebar, <span class="collection">{git, <span class="string">"git://github.com/erlang/rebar3.git"</span>, <span class="collection">{branch, <span class="string">"master"</span>}</span>}</span>}</span>,
-  <span class="collection">{rebar, <span class="collection">{git, <span class="string">"git://github.com/erlang/rebar3.git"</span>, <span class="collection">{tag, <span class="string">"3.0.0"</span>}</span>}</span>}</span>
-  ]</span>}</span>
-</code></pre>
+   {rebar,  {git,  "git://github.com/erlang/rebar3.git" } } ,
+   {rebar,  {git,  "http://github.com/erlang/rebar3.git" } } ,
+   {rebar,  {git,  "https://github.com/erlang/rebar3.git" } } ,
+   {rebar,  {git,  "git@github.com:erlang/rebar3.git" } } ,
+   {rebar,  {hg,  "https://othersite.com/erlang/rebar3" } } ,
+   {rebar,  {git,  "git://github.com/erlang/rebar3.git" ,  {ref,  "aef728" } } } ,
+   {rebar,  {git,  "git://github.com/erlang/rebar3.git" ,  {branch,  "master" } } } ,
+   {rebar,  {git,  "git://github.com/erlang/rebar3.git" ,  {tag,  "3.0.0" } } } 
+  ] } 
+  
     
     
         <a href="/2016/09/erlang-rebar3/" class="post-more waves-effect waves-button">
@@ -261,32 +261,32 @@
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <h2 id="一-_类型系统">一. 类型系统</h2><h3 id="1-_slice">1. slice</h3><p>数组切片提供了动态数组的能力，功能和实现都类似于C++ Vector。</p>
-<pre><code><span class="comment">// 初始化一个数组</span>
-var Arr [<span class="number">3</span>]<span class="keyword">int</span> = [<span class="number">3</span>]<span class="keyword">int</span>{<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>}
+    
+         一. 类型系统  1. slice  数组切片提供了动态数组的能力，功能和实现都类似于C++ Vector。 
+   // 初始化一个数组 
+var Arr [ 3 ] int  = [ 3 ] int { 1 , 2 , 3 }
 
-var Slice1 []<span class="keyword">int</span>
-<span class="comment">// 通过数组初始化切片 得到[1 2]</span>
-Slice1 = Arr[:<span class="number">2</span>]
-<span class="comment">// 直接创建切片 其中size = 5 capacity = 10 尝试访问[size,capacity]之间的元素会得到运行时错误</span>
-Slice2 := make([]<span class="keyword">int</span>, <span class="number">5</span>, <span class="number">10</span>)
-Slice3 := []<span class="keyword">int</span>{<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>}
-<span class="comment">// 从切片创建切片 [:last] 只要last&lt;=capacity 均合法</span>
-Slice4 := Slice2[:<span class="number">8</span>]
-<span class="comment">// 切片拷贝 如果两个切片不一样大 会按照较小的数组切片元素个数拷贝</span>
-<span class="comment">// 这里的拷贝 可以看作是：先置0 再拷贝</span>
+var Slice1 [] int 
+ // 通过数组初始化切片 得到[1 2] 
+Slice1 = Arr[: 2 ]
+ // 直接创建切片 其中size = 5 capacity = 10 尝试访问[size,capacity]之间的元素会得到运行时错误 
+Slice2 := make([] int ,  5 ,  10 )
+Slice3 := [] int { 1 , 2 , 3 }
+ // 从切片创建切片 [:last] 只要last&lt;=capacity 均合法 
+Slice4 := Slice2[: 8 ]
+ // 切片拷贝 如果两个切片不一样大 会按照较小的数组切片元素个数拷贝 
+ // 这里的拷贝 可以看作是：先置0 再拷贝 
 copy(Slice4, Slice3)
 
-<span class="comment">// 遍历切片[0:size] 多返回值简化了迭代</span>
-<span class="keyword">for</span> i, v := range Slice1 {
+ // 遍历切片[0:size] 多返回值简化了迭代 
+ for  i, v := range Slice1 {
     ...
 }
 
-<span class="comment">// 通过append在size后面添加元素 capacity会自动扩展</span>
-<span class="comment">// 同样, 多参数简化了迭代</span>
-Slice3 = append(Slice3, <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>)
-</code></pre>
+ // 通过append在size后面添加元素 capacity会自动扩展 
+ // 同样, 多参数简化了迭代 
+Slice3 = append(Slice3,  1 , 2 , 3 , 4 , 5 , 6 , 7 , 8 , 9 )
+  
     
     
         <a href="/2016/09/go-basic/" class="post-more waves-effect waves-button">
@@ -328,15 +328,15 @@ Slice3 = append(Slice3, <span class="number">1</span>,<span class="number">2</sp
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <h3 id="进程组/会话">进程组/会话</h3><p>简要概念：</p>
-<ul>
-<li>进程组：N(N&gt;=1)个进程的集合，通常在同一作业中关联起来(通过管道)。进程组的ID(PGID)即为进程组组长的PID。进程必定且只能属于一个进程组，只有进程组中一个进程存在，进程组就存在，与组长进程终止与否无关。进程组的概念提出主要是为了进程管理与信号分发</li>
-<li>会话：N(N&gt;=1)个进程组的集合，创建会话的进程叫会话首进程。会话ID即为会话首进程PID</li>
-<li>控制终端：如果会话有控制终端，建立与控制终端连接的会话首进程叫控制进程(通常就是Shell进程)，当前与终端交互的进程组为前台进程组，其余进程组成为后台进程组</li>
-<li>无论合适输入终端的退出键，都会将退出信号发送到前台进程组的所有进程</li>
-<li>如果控制终端断开连接，则将挂掉信号(SIGHUP)发送至控制进程(会话首进程)，SIGHUP信号默认将导致控制进程终止</li>
-</ul>
+    
+         进程组/会话  简要概念： 
+ 
+ 进程组：N(N&gt;=1)个进程的集合，通常在同一作业中关联起来(通过管道)。进程组的ID(PGID)即为进程组组长的PID。进程必定且只能属于一个进程组，只有进程组中一个进程存在，进程组就存在，与组长进程终止与否无关。进程组的概念提出主要是为了进程管理与信号分发 
+ 会话：N(N&gt;=1)个进程组的集合，创建会话的进程叫会话首进程。会话ID即为会话首进程PID 
+ 控制终端：如果会话有控制终端，建立与控制终端连接的会话首进程叫控制进程(通常就是Shell进程)，当前与终端交互的进程组为前台进程组，其余进程组成为后台进程组 
+ 无论合适输入终端的退出键，都会将退出信号发送到前台进程组的所有进程 
+ 如果控制终端断开连接，则将挂掉信号(SIGHUP)发送至控制进程(会话首进程)，SIGHUP信号默认将导致控制进程终止 
+ 
     
     
         <a href="/2016/08/linux-job-control/" class="post-more waves-effect waves-button">
@@ -378,11 +378,11 @@ Slice3 = append(Slice3, <span class="number">1</span>,<span class="number">2</sp
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <p>关于GS设计的一些心得，纯属个人理解。</p>
-<h3 id="解耦&amp;复用">解耦&amp;复用</h3><p>解耦主要的目的是让系统组件可以独立变化，各个组件之间有边界(函数/模块/Actor/进程)，组件之间遵循某种调用约定(函数调用，RPC等)，这样整个系统职能清晰可控，对于调试，重构都有很大帮助。</p>
-<p>我更愿意称复用为去除重复，做到复用容易，做到没有重复和冗余难，从逻辑上来说，就是DRY原则，从数据上来说，避免不必要的数据冗余，因为冗余的代价是不一致。</p>
-<p>复用和解耦是软件设计的两个重要设计目标，面向对象的继承，多态，以及大部分的设计模式都围绕这两个核心，用以构造职责清晰，易于测试维护的系统。</p>
+    
+         关于GS设计的一些心得，纯属个人理解。 
+ 解耦&amp;复用  解耦主要的目的是让系统组件可以独立变化，各个组件之间有边界(函数/模块/Actor/进程)，组件之间遵循某种调用约定(函数调用，RPC等)，这样整个系统职能清晰可控，对于调试，重构都有很大帮助。 
+ 我更愿意称复用为去除重复，做到复用容易，做到没有重复和冗余难，从逻辑上来说，就是DRY原则，从数据上来说，避免不必要的数据冗余，因为冗余的代价是不一致。 
+ 复用和解耦是软件设计的两个重要设计目标，面向对象的继承，多态，以及大部分的设计模式都围绕这两个核心，用以构造职责清晰，易于测试维护的系统。 
     
     
         <a href="/2016/08/gs-design-concept/" class="post-more waves-effect waves-button">
@@ -424,13 +424,13 @@ Slice3 = append(Slice3, <span class="number">1</span>,<span class="number">2</sp
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <p>一些简单的web学习笔记，用于在需要时快速搭建一个可用的网站。</p>
-<h3 id="基础知识">基础知识</h3><ul>
-<li>HTML: 通过一套标记标签，定义网页的内容</li>
-<li>CSS:  通过选择器和层叠次序，定义网页的布局</li>
-<li>JavaScript: 通过可编程的文档对象模型(DOM)和事件响应，定义网页的行为</li>
-</ul>
+    
+         一些简单的web学习笔记，用于在需要时快速搭建一个可用的网站。 
+ 基础知识  
+ HTML: 通过一套标记标签，定义网页的内容 
+ CSS:  通过选择器和层叠次序，定义网页的布局 
+ JavaScript: 通过可编程的文档对象模型(DOM)和事件响应，定义网页的行为 
+ 
     
     
         <a href="/2016/08/web-get-started/" class="post-more waves-effect waves-button">
@@ -472,15 +472,15 @@ Slice3 = append(Slice3, <span class="number">1</span>,<span class="number">2</sp
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <h2 id="一-_关键指标">一. 关键指标</h2><ul>
-<li>慢查询：当MongoDB处理能力不足时，找出系统中的慢查询，分析原因，看能否通过建立索引或重新设计schema改进</li>
-<li>内存使用：MongoDB吃内存(特别是MMAPv1)，至少要给MongoDB足够的内存存放索引，最理想的情况是能够存放所有数据。当内存占用过高，或者page faults过高时，考虑能不能给MongoDB预留更多的内存。</li>
-<li>磁盘占用：特别是对于MMAPv1，涉及到磁盘占用的因素有很多，不合理的schema(文档频繁移动)或集合/文档的删除都可能会导致磁盘空间利用不足。前期需要设计好schema，后期维护也需要定期整理磁盘数据。</li>
-<li>连接数：MongoDB为每个连接分配一个线程，因此连接是占资源的，并且也不是越多连接越好。合理地控制连接数。</li>
-<li>索引不命中：查看所有查询的索引不命中情况，尽量让所有查询都通过索引</li>
-<li>锁等待：锁等待的原因有很多，连接数过多，操作频繁，慢操作，schema设计过于反范式化等，可从上面的原因针对性解决。</li>
-</ul>
+    
+         一. 关键指标  
+ 慢查询：当MongoDB处理能力不足时，找出系统中的慢查询，分析原因，看能否通过建立索引或重新设计schema改进 
+ 内存使用：MongoDB吃内存(特别是MMAPv1)，至少要给MongoDB足够的内存存放索引，最理想的情况是能够存放所有数据。当内存占用过高，或者page faults过高时，考虑能不能给MongoDB预留更多的内存。 
+ 磁盘占用：特别是对于MMAPv1，涉及到磁盘占用的因素有很多，不合理的schema(文档频繁移动)或集合/文档的删除都可能会导致磁盘空间利用不足。前期需要设计好schema，后期维护也需要定期整理磁盘数据。 
+ 连接数：MongoDB为每个连接分配一个线程，因此连接是占资源的，并且也不是越多连接越好。合理地控制连接数。 
+ 索引不命中：查看所有查询的索引不命中情况，尽量让所有查询都通过索引 
+ 锁等待：锁等待的原因有很多，连接数过多，操作频繁，慢操作，schema设计过于反范式化等，可从上面的原因针对性解决。 
+ 
     
     
         <a href="/2016/07/monitor-mongodb/" class="post-more waves-effect waves-button">
@@ -522,15 +522,15 @@ Slice3 = append(Slice3, <span class="number">1</span>,<span class="number">2</sp
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <p>前几天又翻了翻《深入理解计算机系统》，相比几年前刚看这本书有了更多的理解，这也许就是一本好书的价值吧。因此尝试提炼和总结出对自己有用的东西，把书读薄。其中也加了一些自己的理解和查阅的相关资料。</p>
-<h2 id="虚拟存储器的意义">虚拟存储器的意义</h2><p>虚拟存储器提供了三个重要的能力：</p>
-<ul>
-<li>将主存看作是存储在磁盘上的高速缓存，并根据需要在磁盘和主存中传送数据，高效地运用主存</li>
-<li>为每个进程提供一致性的地址空间，简化了存储器管理</li>
-<li>保护每个进程的地址空间不被其它进程破坏</li>
-</ul>
-<p>下面分别从这三个方面来谈虚拟存储器</p>
+    
+         前几天又翻了翻《深入理解计算机系统》，相比几年前刚看这本书有了更多的理解，这也许就是一本好书的价值吧。因此尝试提炼和总结出对自己有用的东西，把书读薄。其中也加了一些自己的理解和查阅的相关资料。 
+ 虚拟存储器的意义  虚拟存储器提供了三个重要的能力： 
+ 
+ 将主存看作是存储在磁盘上的高速缓存，并根据需要在磁盘和主存中传送数据，高效地运用主存 
+ 为每个进程提供一致性的地址空间，简化了存储器管理 
+ 保护每个进程的地址空间不被其它进程破坏 
+ 
+ 下面分别从这三个方面来谈虚拟存储器 
     
     
         <a href="/2016/06/virtual-memory/" class="post-more waves-effect waves-button">
@@ -572,12 +572,12 @@ Slice3 = append(Slice3, <span class="number">1</span>,<span class="number">2</sp
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <p>MongoDB目前支持三种存储引擎：MMAPv1 Storage Engine，In-Memory Storage Engine, WiredTiger Storage Engine。</p>
-<h2 id="MMAPv1_Storage_Engine">MMAPv1 Storage Engine</h2><p>MongoDB3.2之前版本的默认引擎。</p>
-<h3 id="1-_存储原理">1. 存储原理</h3><p>文档在磁盘中连续存放，文档所占用的磁盘空间包括文档数据所占空间和文档填充(padding)。</p>
-<p><img src="/assets/image/mongodb/MMAPv1_storage_engine.png" alt=""></p>
-<p>摘自：MongoDB MMAPv1内部实现：<a href="http://www.mongoing.com/archives/1484">http://www.mongoing.com/archives/1484</a></p>
+    
+         MongoDB目前支持三种存储引擎：MMAPv1 Storage Engine，In-Memory Storage Engine, WiredTiger Storage Engine。 
+ MMAPv1 Storage Engine  MongoDB3.2之前版本的默认引擎。 
+ 1. 存储原理  文档在磁盘中连续存放，文档所占用的磁盘空间包括文档数据所占空间和文档填充(padding)。 
+   
+ 摘自：MongoDB MMAPv1内部实现： http://www.mongoing.com/archives/1484  
     
     
         <a href="/2016/06/mongodb-storage-engine/" class="post-more waves-effect waves-button">
@@ -619,15 +619,15 @@ Slice3 = append(Slice3, <span class="number">1</span>,<span class="number">2</sp
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <h2 id="一-_查询">一. 查询</h2><h3 id="1-1_“多段式”查询">1.1 “多段式”查询</h3><p>当执行find操作的时候，只是返回一个游标，并不立即查询数据库，这样在执行之前可以给查询附加额外选项。几乎所有游标对象的方法都返回游标本身，因此可以按任意顺序组成方法链。以下查询是等价的：</p>
-<pre><code>&gt; <span class="tag">var</span> <span class="attribute">cursor</span> = db<span class="class">.foo</span><span class="class">.find</span>().<span class="function"><span class="title">sort</span><span class="params">({<span class="string">"x"</span>:<span class="number">1</span>})</span></span>.<span class="function"><span class="title">limit</span><span class="params">(<span class="number">1</span>)</span></span>.<span class="function"><span class="title">skip</span><span class="params">(<span class="number">10</span>)</span></span>
-&gt; <span class="tag">var</span> <span class="attribute">cursor</span> = db<span class="class">.foo</span><span class="class">.find</span>().<span class="function"><span class="title">limit</span><span class="params">(<span class="number">1</span>)</span></span>.<span class="function"><span class="title">sort</span><span class="params">({<span class="string">"x"</span>:<span class="number">1</span>})</span></span>.<span class="function"><span class="title">skip</span><span class="params">(<span class="number">10</span>)</span></span>
-&gt; <span class="tag">var</span> <span class="attribute">cursor</span> = db<span class="class">.foo</span><span class="class">.find</span>().<span class="function"><span class="title">skip</span><span class="params">(<span class="number">10</span>)</span></span>.<span class="function"><span class="title">limit</span><span class="params">(<span class="number">1</span>)</span></span>.<span class="function"><span class="title">sort</span><span class="params">({<span class="string">"x"</span>:<span class="number">1</span>})</span></span>
-</code></pre><p>此时，我们只是构造了一个查询，并没有执行实际操作，当我们执行：</p>
-<pre><code>&gt; <span class="attribute">cursor</span>.<span class="function"><span class="title">hasNext</span><span class="params">()</span></span>
-</code></pre><p>这时，查询被发往服务器，sell立即获取第一个块(前101个文档或前1M数据，取其小者)，这样下次调用next或hasNext时，就不必再次向服务器发起一次查询。客户端用完了第一组结果，shell会再次向服务器获取下一组结果(大小不超过4MB)， 直至结果全部返回。可通过<a href="https://docs.mongodb.com/manual/reference/method/cursor.batchSize/#cursor.batchSize">batchSize</a>设置游标返回的块的文档数量。</p>
-<p>注：如果在shell中，没有将返回的游标赋给一个var，shell将自动迭代游标20次，显示出前20调记录。</p>
+    
+         一. 查询  1.1 “多段式”查询  当执行find操作的时候，只是返回一个游标，并不立即查询数据库，这样在执行之前可以给查询附加额外选项。几乎所有游标对象的方法都返回游标本身，因此可以按任意顺序组成方法链。以下查询是等价的： 
+  &gt;  var   cursor  = db .foo  .find ().  sort  ({ "x" : 1 })  .  limit  ( 1 )  .  skip  ( 10 )  
+&gt;  var   cursor  = db .foo  .find ().  limit  ( 1 )  .  sort  ({ "x" : 1 })  .  skip  ( 10 )  
+&gt;  var   cursor  = db .foo  .find ().  skip  ( 10 )  .  limit  ( 1 )  .  sort  ({ "x" : 1 })  
+   此时，我们只是构造了一个查询，并没有执行实际操作，当我们执行： 
+  &gt;  cursor .  hasNext  ()  
+   这时，查询被发往服务器，sell立即获取第一个块(前101个文档或前1M数据，取其小者)，这样下次调用next或hasNext时，就不必再次向服务器发起一次查询。客户端用完了第一组结果，shell会再次向服务器获取下一组结果(大小不超过4MB)， 直至结果全部返回。可通过 batchSize 设置游标返回的块的文档数量。 
+ 注：如果在shell中，没有将返回的游标赋给一个var，shell将自动迭代游标20次，显示出前20调记录。 
     
     
         <a href="/2016/06/mongodb-read-write/" class="post-more waves-effect waves-button">

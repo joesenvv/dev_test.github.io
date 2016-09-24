@@ -152,15 +152,15 @@
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <h2 id="一-_GlobalObject">一. GlobalObject</h2><p>每个节点(即一个FFServer)对应一个GlobalObject，存放该节点的节点信息和分布式信息。GlobalObject中包含多种组件，FFServer根据节点配置信息决定为节点创建哪些组件。这样分布式配置更为灵活，一个节点可以单一职责，也可以多种职责。GlobalObject包含的组件主要有：</p>
-<ul>
-<li>netfactory: 前端节点，对应netport字段，监听和管理客户端连接。</li>
-<li>root: 分布式根节点，对应字段rootport</li>
-<li>remote: 分布式子节点，对应字段remoteport</li>
-<li>db: 数据库节点</li>
-</ul>
-<p>简单介绍一下netfactory, root, remote 这三个组件，已经远程调用的实现机制。</p>
+    
+         一. GlobalObject  每个节点(即一个FFServer)对应一个GlobalObject，存放该节点的节点信息和分布式信息。GlobalObject中包含多种组件，FFServer根据节点配置信息决定为节点创建哪些组件。这样分布式配置更为灵活，一个节点可以单一职责，也可以多种职责。GlobalObject包含的组件主要有： 
+ 
+ netfactory: 前端节点，对应netport字段，监听和管理客户端连接。 
+ root: 分布式根节点，对应字段rootport 
+ remote: 分布式子节点，对应字段remoteport 
+ db: 数据库节点 
+ 
+ 简单介绍一下netfactory, root, remote 这三个组件，已经远程调用的实现机制。 
     
     
         <a href="/2015/06/firefly-study2/" class="post-more waves-effect waves-button">
@@ -202,8 +202,8 @@
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <p>前几天学习firefly游戏服务器框架，其底层用twisted实现，twisted是一个比较出名的python异步回调框架，将reactor回调模式运用到极致，并且也对传统回调所面临的一些问题提出了很好的解决方案。</p>
+    
+         前几天学习firefly游戏服务器框架，其底层用twisted实现，twisted是一个比较出名的python异步回调框架，将reactor回调模式运用到极致，并且也对传统回调所面临的一些问题提出了很好的解决方案。 
     
     
         <a href="/2015/05/twisted/" class="post-more waves-effect waves-button">
@@ -245,8 +245,8 @@
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <h2 id="一-_简介">一. 简介</h2><p>firefly是一款python开发的开源游戏服务器框架，基于分布式，底层使用twisted。</p>
+    
+         一. 简介  firefly是一款python开发的开源游戏服务器框架，基于分布式，底层使用twisted。 
     
     
         <a href="/2015/05/firefly-study1/" class="post-more waves-effect waves-button">
@@ -288,8 +288,8 @@
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <p>记录一下搭建wordpress博客的过程，做备忘之用，仅供参考。</p>
+    
+         记录一下搭建wordpress博客的过程，做备忘之用，仅供参考。 
     
     
         <a href="/2015/05/wordpress-setup/" class="post-more waves-effect waves-button">
@@ -331,8 +331,8 @@
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <p>游戏服务器中用得最多的就是gen_server，比如游戏中的Player进程，由于gen_server提供的完善的进程设施，我们无需过多地担心进程崩溃而造成的数据丢失的问题(至少还有个terminate用于做善后工作)。因此在进行数据写回时，可以通过定时写回的机制来减轻数据库负担。这一点也是C服务器望尘莫及的。</p>
+    
+         游戏服务器中用得最多的就是gen_server，比如游戏中的Player进程，由于gen_server提供的完善的进程设施，我们无需过多地担心进程崩溃而造成的数据丢失的问题(至少还有个terminate用于做善后工作)。因此在进行数据写回时，可以通过定时写回的机制来减轻数据库负担。这一点也是C服务器望尘莫及的。 
     
     
         <a href="/2015/05/erlang-gameserver-persistence/" class="post-more waves-effect waves-button">
@@ -374,8 +374,8 @@
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <p>接触Erlang不到两个月时间，之前一直用C++开发。Erlang这门语言确实带给我更多的思考。</p>
+    
+         接触Erlang不到两个月时间，之前一直用C++开发。Erlang这门语言确实带给我更多的思考。 
     
     
         <a href="/2015/04/erlang-thinking/" class="post-more waves-effect waves-button">
@@ -417,8 +417,8 @@
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <p>erlang 热更是指在erlang系统不停止运行的情况下，对模块代码进行更新的特性，这也是erlang最神奇的特性之一。特别适用于游戏服务器，做活动更新，漏洞修复等。</p>
+    
+         erlang 热更是指在erlang系统不停止运行的情况下，对模块代码进行更新的特性，这也是erlang最神奇的特性之一。特别适用于游戏服务器，做活动更新，漏洞修复等。 
     
     
         <a href="/2015/04/erlang-hotcode/" class="post-more waves-effect waves-button">
@@ -460,8 +460,8 @@
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <p>之前工作中一直用svn，虽然也在git上写一些代码，但也仅限于 <code>add commit push</code> 这几个命令，一直没有对git比较系统的学习，花了半天多时间，学习整理了一些自己觉得比较实用的东西，大部分都是摘抄，仅供自己学习备忘之用，完整系统的介绍可参见附录。</p>
+    
+         之前工作中一直用svn，虽然也在git上写一些代码，但也仅限于  add commit push  这几个命令，一直没有对git比较系统的学习，花了半天多时间，学习整理了一些自己觉得比较实用的东西，大部分都是摘抄，仅供自己学习备忘之用，完整系统的介绍可参见附录。 
     
     
         <a href="/2015/04/git-study/" class="post-more waves-effect waves-button">
@@ -503,8 +503,8 @@
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <p>mnesia是erlang提供的一个基于分布式的数据库管理系统。它的分布式和erlang一样都是”天生的”。集群，备份，主从这些在mnesia上面都非常简单。</p>
+    
+         mnesia是erlang提供的一个基于分布式的数据库管理系统。它的分布式和erlang一样都是”天生的”。集群，备份，主从这些在mnesia上面都非常简单。 
     
     
         <a href="/2015/04/erlang-mnesia/" class="post-more waves-effect waves-button">
@@ -546,8 +546,8 @@
 
     <div class="post-content" id="post-content" itemprop="postContent" >
 
-     
-        <p>C++继承了C的编译模型，而C是一门古老的语言，它的编译链接模型受限于当时的硬件条件限制，并且该模型也足够用于简洁的C。而C++继承了这些机制之后，引发了更为复杂的一些问题。</p>
+    
+         C++继承了C的编译模型，而C是一门古老的语言，它的编译链接模型受限于当时的硬件条件限制，并且该模型也足够用于简洁的C。而C++继承了这些机制之后，引发了更为复杂的一些问题。 
     
     
         <a href="/2015/03/cpp-compile-model/" class="post-more waves-effect waves-button">
