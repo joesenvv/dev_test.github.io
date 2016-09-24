@@ -713,7 +713,7 @@ Hello World!
     <link href="http://wudaijun.com/2016/08/gs-design-concept/"/>
     <id>http://wudaijun.com/2016/08/gs-design-concept/</id>
     <published>2016-08-14T16:00:00.000Z</published>
-    <updated>2016-09-24T16:59:08.000Z</updated>
+    <updated>2016-09-24T17:03:08.000Z</updated>
     
     <content type="html"><![CDATA[<p>关于GS设计的一些体会，纯属个人理解。</p>
 <h2 id="一-_系统结构">一. 系统结构</h2><p>解耦是在做系统设计时，最应该铭记于心的原则，解耦的目的是让<strong>系统组件可以独立变化</strong>，构建易于理解，测试，维护的系统。</p>
@@ -5209,7 +5209,7 @@ sum, diff = clib.<span class="function"><span class="title">addsub</span><span c
     <link href="http://wudaijun.com/2014/09/ngserver-startpage/"/>
     <id>http://wudaijun.com/2014/09/ngserver-startpage/</id>
     <published>2014-09-19T16:00:00.000Z</published>
-    <updated>2016-09-24T08:52:12.000Z</updated>
+    <updated>2016-09-24T08:53:01.000Z</updated>
     
     <content type="html"><![CDATA[<p>NGServer是一个迷你型C++游戏服务器框架。Github地址：<a href="https://github.com/wudaijun/NGServer。" target="_blank" rel="external">https://github.com/wudaijun/NGServer。</a><br><a id="more"></a></p>
 <h3 id="主要特性：">主要特性：</h3><ul>
