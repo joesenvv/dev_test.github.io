@@ -3853,7 +3853,7 @@ reset_single(Name)</span>
     <link href="http://wudaijun.com/2015/04/erlang-hotcode/"/>
     <id>http://wudaijun.com/2015/04/erlang-hotcode/</id>
     <published>2015-04-20T16:00:00.000Z</published>
-    <updated>2015-09-22T02:25:54.000Z</updated>
+    <updated>2016-10-11T05:55:55.000Z</updated>
     
     <content type="html"><![CDATA[<p>erlang 热更是指在erlang系统不停止运行的情况下，对模块代码进行更新的特性，这也是erlang最神奇的特性之一。特别适用于游戏服务器，做活动更新，漏洞修复等。</p>
 <a id="more"></a>
@@ -3929,8 +3929,7 @@ reset_single(Name)</span>
 <span class="variable">Upgrading</span> <span class="variable">Code</span>
 <span class="variable">Upgrade</span> <span class="variable">Completed</span>. <span class="variable">Now</span> <span class="function_or_atom">verson</span>: <span class="number">2.0</span>
 <span class="function_or_atom">update</span>
-</code></pre><p>##四. 参考</p>
-<ul>
+</code></pre><h2 id="四-_参考">四. 参考</h2><ul>
 <li><a href="http://learnyousomeerlang.com/designing-a-concurrent-application#hot-code-loving" target="_blank" rel="external">http://learnyousomeerlang.com/designing-a-concurrent-application#hot-code-loving</a></li>
 <li><a href="http://www.erlang.org/doc/reference_manual/code_loading.html#id86381" target="_blank" rel="external">http://www.erlang.org/doc/reference_manual/code_loading.html#id86381</a></li>
 </ul>
