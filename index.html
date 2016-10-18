@@ -125,6 +125,50 @@
       <ul class="post-list">
   
     <li class="post-list-item">
+        <article id="post-erlang-server-design7-cluster-bug-note"
+  class="article article-type-post" itemprop="blogPost">
+     
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2016/10/erlang-server-design7-cluster-bug-note/">开发笔记(7) 记线上一次回档BUG</a>
+    </h3>
+  
+
+
+
+    <div class="post-meta">
+        <time datetime="2016-10-16T16:00:00.000Z" itemprop="datePublished" class="post-time">
+  2016-10-17
+</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/gameserver/">gameserver</a></li></ul>
+
+
+
+    </div>
+
+    <div class="post-content" id="post-content" itemprop="postContent" >
+
+    
+         问题描述  有十几个玩家报告被回档，几小时到一两天不等 
+ 问题背景  在我们的 集群架构 中，集群有若干GS节点，每个GS节点可部署N个GS服务器，整个集群所有的玩家进程注册于cluster，我们通过为每个服开一个player_mgr来维护单服玩家状态，player_mgr维护{player_id, agent_pid, player_pid}三元组，用户处理多点登录，单服逻辑，离线玩家LRU等。cluster本身只提供服务注册/注销，如果做服务替换(如agent)，确保服务的唯一性(如player)应该由外部逻辑来确保，cluster并不知晓内部各种服务的特性。player进程启动/终止时，会向player_mgr和cluster分别注册/注销自己。 
+    
+    
+        <a href="/2016/10/erlang-server-design7-cluster-bug-note/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/distribution/">distribution</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/erlang/">erlang</a></li></ul>
+
+</article>
+
+    </li>
+  
+    <li class="post-list-item">
         <article id="post-goa-intro"
   class="article article-type-post" itemprop="blogPost">
      
@@ -583,56 +627,6 @@ Slice3 = append(Slice3,  1 , 2 , 3 , 4 , 5 , 6 , 7 , 8 , 9 )
     
     
         <a href="/2016/06/mongodb-storage-engine/" class="post-more waves-effect waves-button">
-            阅读全文...
-        </a>
-    </div>
-    
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mongodb/">mongodb</a></li></ul>
-
-</article>
-
-    </li>
-  
-    <li class="post-list-item">
-        <article id="post-mongodb-read-write"
-  class="article article-type-post" itemprop="blogPost">
-     
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2016/06/mongodb-read-write/">MongoDB 读写要点</a>
-    </h3>
-  
-
-
-
-    <div class="post-meta">
-        <time datetime="2016-06-22T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2016-06-23
-</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/database/">database</a></li></ul>
-
-
-
-    </div>
-
-    <div class="post-content" id="post-content" itemprop="postContent" >
-
-    
-         一. 查询  1.1 “多段式”查询  当执行find操作的时候，只是返回一个游标，并不立即查询数据库，这样在执行之前可以给查询附加额外选项。几乎所有游标对象的方法都返回游标本身，因此可以按任意顺序组成方法链。以下查询是等价的： 
-  &gt;  var   cursor  = db .foo  .find ().  sort  ({ "x" : 1 })  .  limit  ( 1 )  .  skip  ( 10 )  
-&gt;  var   cursor  = db .foo  .find ().  limit  ( 1 )  .  sort  ({ "x" : 1 })  .  skip  ( 10 )  
-&gt;  var   cursor  = db .foo  .find ().  skip  ( 10 )  .  limit  ( 1 )  .  sort  ({ "x" : 1 })  
-   此时，我们只是构造了一个查询，并没有执行实际操作，当我们执行： 
-  &gt;  cursor .  hasNext  ()  
-   这时，查询被发往服务器，sell立即获取第一个块(前101个文档或前1M数据，取其小者)，这样下次调用next或hasNext时，就不必再次向服务器发起一次查询。客户端用完了第一组结果，shell会再次向服务器获取下一组结果(大小不超过4MB)， 直至结果全部返回。可通过 batchSize 设置游标返回的块的文档数量。 
- 注：如果在shell中，没有将返回的游标赋给一个var，shell将自动迭代游标20次，显示出前20调记录。 
-    
-    
-        <a href="/2016/06/mongodb-read-write/" class="post-more waves-effect waves-button">
             阅读全文...
         </a>
     </div>
