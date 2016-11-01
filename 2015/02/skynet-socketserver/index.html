@@ -3,6 +3,8 @@
 <head>
   <meta charset="utf-8">
   
+  
+  
   <title>skynet socketserver | wudaijun&#39;s blog | Coding is Funny</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
@@ -25,60 +27,74 @@
   
   <meta name="summary" content="&lt;h3 id=&quot;1-_异步IO&quot;&gt;1. 异步IO&lt;/h3&gt;&lt;p&gt;skynet用C编写的sokcet模块使用异步回调机制，通过lualib-src/lua-socket.c导出为socketdriver模块。skynet socket C API使用的异步回调方式是：在启动socket时，记录当前服务handle，之后该socket上面的消息(底层使用epoll机制)通过skynet消息的方式发往该服务。这里的当前服务指的是socket启动时所在的服务，对于被请求方来说，为调用&lt;code&gt;socketdriver.start(id)&lt;/code&gt;的服务，对于请求方来说，为调用&lt;code&gt;socketdriver.connect(addr,port)&lt;/code&gt;的服务。skynet不使用套接字fd在上层传播，因为在某些系统上fd的复用会导致上层遇到麻烦，skynet socket C API为每个fd分配一个ID，是自增不重复的。&lt;/p&gt;">
   <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
 </head>
 
 <body>
   <div id="loading" class="active"></div>
 
-  <nav id="menu" class="hide" >
-   <div class="inner flex-row-vertical">
-  <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
-      <i class="icon icon-lg icon-close"></i>
-  </a>
-  <div class="brand-wrap">
-    <div class="brand">
-      <a href="/" class="avatar"><img src="/favicon.png"></a>
-      <hgroup class="introduce">
-        <h5 class="nickname">wudaijun</h5>
-        <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
-      </hgroup>
+  <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <hgroup class="introduce">
+          <h5 class="nickname">wudaijun</h5>
+          <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
+        </hgroup>
+      </div>
     </div>
-  </div>
-  <div class="scroll-wrap flex-col">
-    <ul class="nav">
-      
-          <li class="waves-block waves-effect">
-            <a href="/"  >
-              <i class="icon icon-lg icon-home"></i>
-              Home
-            </a>
-          </li>
-      
-          <li class="waves-block waves-effect">
-            <a href="/archives"  >
-              <i class="icon icon-lg icon-archives"></i>
-              Archives
-            </a>
-          </li>
-      
-          <li class="waves-block waves-effect">
-            <a href="/tags"  >
-              <i class="icon icon-lg icon-tags"></i>
-              Tags
-            </a>
-          </li>
-      
-          <li class="waves-block waves-effect">
-            <a href="https://github.com/wudaijun" target="_blank" >
-              <i class="icon icon-lg icon-github"></i>
-              Github
-            </a>
-          </li>
-      
-    </ul>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://blog.csdn.net/wudaijun" target="_blank" >
+                <i class="icon icon-lg icon-contao"></i>
+                CSDN
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/wudaijun" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
 
-    <footer class="footer">
+      <footer class="footer">
   <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
   <p>wudaijun&#39;s blog &copy; 2016</p>
   <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
@@ -86,10 +102,9 @@
   <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
 </footer>
 
+    </div>
   </div>
-</div>
-
-  </nav>
+</aside>
   <main id="main">
     <header class="top-header" id="header">
     <div class="flex-row">
@@ -102,55 +117,59 @@
             <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
                 <i class="icon icon-lg icon-chevron-left"></i>
             </a>
-            <input type="text" id="key" class="search-input " autocomplete="off" placeholder="输入感兴趣的关键字">
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
             <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
                 <i class="icon icon-lg icon-search"></i>
             </a>
         </div>
         
         
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
     </div>
 </header>
-<header class="content-header">
-  <div class="container">
-    <h1 class="author">skynet socketserver</h1>
-    <h5 class="subtitle">
+<header class="content-header post-header">
+
+    <div class="container">
+        <h1 class="title">skynet socketserver</h1>
         
-            <time datetime="2015-02-12T16:00:00.000Z" itemprop="datePublished" class="page-time">
+        
+
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-_异步IO"><span class="post-toc-number">1.</span> <span class="post-toc-text">1. 异步IO</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#socket_poll"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">socket poll</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#socket_server_poll"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">socket_server_poll</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#skynet_socket_poll"><span class="post-toc-number">1.3.</span> <span class="post-toc-text">skynet_socket_poll</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-_lua层封装"><span class="post-toc-number">2.</span> <span class="post-toc-text">2. lua层封装</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-_消息分包"><span class="post-toc-number">3.</span> <span class="post-toc-text">3. 消息分包</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-skynet-socketserver" 
+  class="post-article article-type-post" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">skynet socketserver</h1>
+        <div class="post-meta">
+            <time datetime="2015-02-12T16:00:00.000Z" itemprop="datePublished" class="post-time">
   2015-02-13
 </time>
 
-
+            
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/gameserver/">gameserver</a></li></ul>
 
-        
-    </h5>
-  </div>
-</header>
 
-    <div class="container body-wrap">
-      <article id="post-skynet-socketserver" 
-  class="article article-type-post" itemprop="blogPost">
-    <div class="post-meta flex-row">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/lua/">lua</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/skynet/">skynet</a></li></ul>
 
-    </div>
-    <div class="post-body">
-        <aside class="post-widget" id="post-widget">
-
-            
-
-            
-            <nav class="post-toc-wrap" id="post-toc">
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-_异步IO"><span class="post-toc-text">1. 异步IO</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#socket_poll"><span class="post-toc-text">socket poll</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#socket_server_poll"><span class="post-toc-text">socket_server_poll</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#skynet_socket_poll"><span class="post-toc-text">skynet_socket_poll</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-_lua层封装"><span class="post-toc-text">2. lua层封装</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-_消息分包"><span class="post-toc-text">3. 消息分包</span></a></li></ol>
-            </nav>
-            
-        </aside>
-
-        <div class="post-main">
-
-            <div class="post-content" id="post-content" itemprop="postContent">
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
             <h3 id="1-_异步IO">1. 异步IO</h3><p>skynet用C编写的sokcet模块使用异步回调机制，通过lualib-src/lua-socket.c导出为socketdriver模块。skynet socket C API使用的异步回调方式是：在启动socket时，记录当前服务handle，之后该socket上面的消息(底层使用epoll机制)通过skynet消息的方式发往该服务。这里的当前服务指的是socket启动时所在的服务，对于被请求方来说，为调用<code>socketdriver.start(id)</code>的服务，对于请求方来说，为调用<code>socketdriver.connect(addr,port)</code>的服务。skynet不使用套接字fd在上层传播，因为在某些系统上fd的复用会导致上层遇到麻烦，skynet socket C API为每个fd分配一个ID，是自增不重复的。</p>
 <a id="more"></a>
 <p>socket C API 的核心是三个poll:</p>
@@ -167,21 +186,78 @@
 <p>其余type类型”open”，”error”, “close”分别对应于socket_message中的SOCKET_ACCEPT SOCKET_ERROR SOCKET_CLOSE事件。netpack的使用者可以通过filter返回的type来进行事件处理。</p>
 <p>netpack会尽可能多地分包，交给上层。并且通过一个哈希表保存每个套接字ID对应的粘包，在下次数据到达时，取出上次留下的粘包数据，重新分包。</p>
 
+        </div>
+        
+        <blockquote class="post-copyright">
+            <div class="content">
+               这里写留言或版权声明：<a href="/2015/02/skynet-socketserver/" target="_blank" rel="external">http://wudaijun.com/2015/02/skynet-socketserver/</a>
+            </div>
+            <footer>
+                <a href="http://wudaijun.com">
+                    <img src="/favicon.png" alt="wudaijun">
+                    wudaijun
+                </a>
+            </footer>
+        </blockquote>
+
+        
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/lua/">lua</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/skynet/">skynet</a></li></ul>
+
 
             
-            
-            <blockquote>
-                <p>
-                本文地址：
-                <a href="http://wudaijun.com/2015/02/skynet-socketserver/" target="_blank" rel="external">http://wudaijun.com/2015/02/skynet-socketserver/</a>
-                </p>
-                <footer><cite><a href="http://wudaijun.com">@wudaijun's blog</a></cite></footer>
-            </blockquote>
+            <div class="post-share-wrap">
+                <div class="post-share" id="post-share">
+    <div class="tit">分享到：</div>
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
+          豆
+        </a>
+      </li>
+    </ul>
+ </div>
+
+                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
+                    <i class="icon icon-share-alt icon-lg"></i>
+                </a>
             </div>
             
-<nav class="post-nav">
+
+        </div>
+    </div>   
+
+    
+<nav class="post-nav flex-row flex-justify-between">
   
-    <div class="waves-block waves-effect prev fl">
+    <div class="waves-block waves-effect prev">
       <a href="/2015/02/skynet-gateserver/" id="post-prev" class="post-nav-link">
         <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
         <h4 class="title">skynet gateserver</h4>
@@ -190,7 +266,7 @@
   
 
   
-    <div class="waves-block waves-effect next fr">
+    <div class="waves-block waves-effect next">
       <a href="/2015/02/cpp-disruptor/" id="post-next" class="post-nav-link">
         <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
         <h4 class="title">c++ disruptor 无锁消息队列</h4>
@@ -201,50 +277,81 @@
 
 
             
-            
+    
 <div class="duoshuo">
-	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="skynet-socketserver" data-title="skynet socketserver" data-url="http://wudaijun.com/2015/02/skynet-socketserver/index.html"></div>
-	<!-- 多说评论框 end -->
-	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
-	<script type="text/javascript">
-	var duoshuoQuery = {short_name:"wudaijun"};
-	(function() {
-		var ds = document.createElement('script');
-		ds.type = 'text/javascript';ds.async = true;
-		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-		ds.charset = 'UTF-8';
-		(document.getElementsByTagName('head')[0] 
-		 || document.getElementsByTagName('body')[0]).appendChild(ds);
-	})();
-	</script>
-	<!-- 多说公共JS代码 end -->
+	<div class="ds-thread" data-thread-key="skynet-socketserver" data-title="skynet socketserver" data-url="http://wudaijun.com/2015/02/skynet-socketserver/"></div>
 </div>
+<script src="/js/embed.min.js?v=1.1.4"></script>
+<script src="//cdn.bootcss.com/marked/0.3.6/marked.min.js" async="async"></script>
+<script>
+var duoshuoQuery = {short_name:'wudaijun', theme: 'none'}
+</script>
 
 
 
 
-
-        </div>
-    </div>
 </article>
-    </div>
+
+
+</div>
   </main>
-<div class="mask" id="mask"></div>
+  <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
+<script>
+var BLOG_SHARE = {
+    title: "skynet socketserver",
+    pic: "/favicon.png",
+    summary: document.getElementsByName('summary')[0].content,
+    url: "http://wudaijun.com/2015/02/skynet-socketserver/"
+};
+</script>
+<div class="global-share" id="global-share">
+    <div class="tit">分享到：</div>
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
+          豆
+        </a>
+      </li>
+    </ul>
+ </div>
 
 
-<script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-
-<script src="/js/main.js" type="text/javascript"></script>
+  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script src="/js/main.min.js?v=1.1.4"></script>
 
 
 
 <div class="search-panel" id="search-panel">
     <ul class="search-result" id="search-result"></ul>
 </div>
-<script type="text/template" id="search-tpl">
+<template id="search-tpl">
 <li class="item">
     <a href="/{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
@@ -256,9 +363,9 @@
         </div>
     </a>
 </li>
-</script>
+</template>
 
-<script src="/js/search.js" type="text/javascript"></script>
+<script src="/js/search.min.js?v=1.1.4"></script>
 
 
 

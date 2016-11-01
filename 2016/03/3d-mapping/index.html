@@ -3,6 +3,8 @@
 <head>
   <meta charset="utf-8">
   
+  
+  
   <title>3D贴图基础 | wudaijun&#39;s blog | Coding is Funny</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
@@ -37,60 +39,74 @@
   <meta name="summary" content="&lt;h3 id=&quot;漫反射贴图(Diffuse_Mapping)&quot;&gt;漫反射贴图(Diffuse Mapping)&lt;/h3&gt;&lt;p&gt;漫反射贴图反映出物体表面在漫反射下的颜色和强度，表现出物体的固有色以及纹理。是物体最基础的贴图。通常也可以直接理解为纹理。&lt;/p&gt;
 &lt;h3 id=&quot;高光贴图(Specular_Mapping)&quot;&gt;高光贴图(Specular Mapping)&lt;/h3&gt;&lt;p&gt;高光贴图表现物体表面的光照属性，包括镜面反射强度，光泽度，以及菲涅耳衍射强度，决定物体在强光下，表面不同材质(布料，金属，皮肤等)的光照表现。一些高光贴图只包含镜面反射强度信息，每个像素只需要8位，即使用一个通道。&lt;/p&gt;">
   <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
 </head>
 
 <body>
   <div id="loading" class="active"></div>
 
-  <nav id="menu" class="hide" >
-   <div class="inner flex-row-vertical">
-  <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
-      <i class="icon icon-lg icon-close"></i>
-  </a>
-  <div class="brand-wrap">
-    <div class="brand">
-      <a href="/" class="avatar"><img src="/favicon.png"></a>
-      <hgroup class="introduce">
-        <h5 class="nickname">wudaijun</h5>
-        <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
-      </hgroup>
+  <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <hgroup class="introduce">
+          <h5 class="nickname">wudaijun</h5>
+          <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
+        </hgroup>
+      </div>
     </div>
-  </div>
-  <div class="scroll-wrap flex-col">
-    <ul class="nav">
-      
-          <li class="waves-block waves-effect">
-            <a href="/"  >
-              <i class="icon icon-lg icon-home"></i>
-              Home
-            </a>
-          </li>
-      
-          <li class="waves-block waves-effect">
-            <a href="/archives"  >
-              <i class="icon icon-lg icon-archives"></i>
-              Archives
-            </a>
-          </li>
-      
-          <li class="waves-block waves-effect">
-            <a href="/tags"  >
-              <i class="icon icon-lg icon-tags"></i>
-              Tags
-            </a>
-          </li>
-      
-          <li class="waves-block waves-effect">
-            <a href="https://github.com/wudaijun" target="_blank" >
-              <i class="icon icon-lg icon-github"></i>
-              Github
-            </a>
-          </li>
-      
-    </ul>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://blog.csdn.net/wudaijun" target="_blank" >
+                <i class="icon icon-lg icon-contao"></i>
+                CSDN
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/wudaijun" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
 
-    <footer class="footer">
+      <footer class="footer">
   <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
   <p>wudaijun&#39;s blog &copy; 2016</p>
   <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
@@ -98,10 +114,9 @@
   <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
 </footer>
 
+    </div>
   </div>
-</div>
-
-  </nav>
+</aside>
   <main id="main">
     <header class="top-header" id="header">
     <div class="flex-row">
@@ -114,55 +129,59 @@
             <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
                 <i class="icon icon-lg icon-chevron-left"></i>
             </a>
-            <input type="text" id="key" class="search-input " autocomplete="off" placeholder="输入感兴趣的关键字">
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
             <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
                 <i class="icon icon-lg icon-search"></i>
             </a>
         </div>
         
         
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
     </div>
 </header>
-<header class="content-header">
-  <div class="container">
-    <h1 class="author">3D贴图基础</h1>
-    <h5 class="subtitle">
+<header class="content-header post-header">
+
+    <div class="container">
+        <h1 class="title">3D贴图基础</h1>
         
-            <time datetime="2016-02-29T16:00:00.000Z" itemprop="datePublished" class="page-time">
+        
+
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#漫反射贴图(Diffuse_Mapping)"><span class="post-toc-number">1.</span> <span class="post-toc-text">漫反射贴图(Diffuse Mapping)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#高光贴图(Specular_Mapping)"><span class="post-toc-number">2.</span> <span class="post-toc-text">高光贴图(Specular Mapping)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#法线贴图(Normal_Mapping)"><span class="post-toc-number">3.</span> <span class="post-toc-text">法线贴图(Normal Mapping)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#视差贴图(Parallax_Mapping)"><span class="post-toc-number">4.</span> <span class="post-toc-text">视差贴图(Parallax Mapping)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#置换贴图(Displacement_Mapping)"><span class="post-toc-number">5.</span> <span class="post-toc-text">置换贴图(Displacement Mapping)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#环境贴图(Environment_Mapping)"><span class="post-toc-number">6.</span> <span class="post-toc-text">环境贴图(Environment Mapping)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#光照贴图(Light_Mapping)"><span class="post-toc-number">7.</span> <span class="post-toc-text">光照贴图(Light Mapping)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#实例效果"><span class="post-toc-number">8.</span> <span class="post-toc-text">实例效果</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#更多参考"><span class="post-toc-number">9.</span> <span class="post-toc-text">更多参考</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-3d-mapping" 
+  class="post-article article-type-post" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">3D贴图基础</h1>
+        <div class="post-meta">
+            <time datetime="2016-02-29T16:00:00.000Z" itemprop="datePublished" class="post-time">
   2016-03-01
 </time>
 
-
+            
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/unity/">unity</a></li></ul>
 
-        
-    </h5>
-  </div>
-</header>
 
-    <div class="container body-wrap">
-      <article id="post-3d-mapping" 
-  class="article article-type-post" itemprop="blogPost">
-    <div class="post-meta flex-row">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/unity/">unity</a></li></ul>
 
-    </div>
-    <div class="post-body">
-        <aside class="post-widget" id="post-widget">
-
-            
-
-            
-            <nav class="post-toc-wrap" id="post-toc">
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#漫反射贴图(Diffuse_Mapping)"><span class="post-toc-text">漫反射贴图(Diffuse Mapping)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#高光贴图(Specular_Mapping)"><span class="post-toc-text">高光贴图(Specular Mapping)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#法线贴图(Normal_Mapping)"><span class="post-toc-text">法线贴图(Normal Mapping)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#视差贴图(Parallax_Mapping)"><span class="post-toc-text">视差贴图(Parallax Mapping)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#置换贴图(Displacement_Mapping)"><span class="post-toc-text">置换贴图(Displacement Mapping)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#环境贴图(Environment_Mapping)"><span class="post-toc-text">环境贴图(Environment Mapping)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#光照贴图(Light_Mapping)"><span class="post-toc-text">光照贴图(Light Mapping)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#实例效果"><span class="post-toc-text">实例效果</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#更多参考"><span class="post-toc-text">更多参考</span></a></li></ol>
-            </nav>
-            
-        </aside>
-
-        <div class="post-main">
-
-            <div class="post-content" id="post-content" itemprop="postContent">
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
             <h3 id="漫反射贴图(Diffuse_Mapping)">漫反射贴图(Diffuse Mapping)</h3><p>漫反射贴图反映出物体表面在漫反射下的颜色和强度，表现出物体的固有色以及纹理。是物体最基础的贴图。通常也可以直接理解为纹理。</p>
 <h3 id="高光贴图(Specular_Mapping)">高光贴图(Specular Mapping)</h3><p>高光贴图表现物体表面的光照属性，包括镜面反射强度，光泽度，以及菲涅耳衍射强度，决定物体在强光下，表面不同材质(布料，金属，皮肤等)的光照表现。一些高光贴图只包含镜面反射强度信息，每个像素只需要8位，即使用一个通道。</p>
 <a id="more"></a>
@@ -187,21 +206,78 @@
 <li>GTA5中的贴图运用：<a href="http://www.adriancourreges.com/blog/2015/11/02/gta-v-graphics-study/" target="_blank" rel="external">http://www.adriancourreges.com/blog/2015/11/02/gta-v-graphics-study/</a></li>
 </ol>
 
+        </div>
+        
+        <blockquote class="post-copyright">
+            <div class="content">
+               这里写留言或版权声明：<a href="/2016/03/3d-mapping/" target="_blank" rel="external">http://wudaijun.com/2016/03/3d-mapping/</a>
+            </div>
+            <footer>
+                <a href="http://wudaijun.com">
+                    <img src="/favicon.png" alt="wudaijun">
+                    wudaijun
+                </a>
+            </footer>
+        </blockquote>
+
+        
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/unity/">unity</a></li></ul>
+
 
             
-            
-            <blockquote>
-                <p>
-                本文地址：
-                <a href="http://wudaijun.com/2016/03/3d-mapping/" target="_blank" rel="external">http://wudaijun.com/2016/03/3d-mapping/</a>
-                </p>
-                <footer><cite><a href="http://wudaijun.com">@wudaijun's blog</a></cite></footer>
-            </blockquote>
+            <div class="post-share-wrap">
+                <div class="post-share" id="post-share">
+    <div class="tit">分享到：</div>
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
+          豆
+        </a>
+      </li>
+    </ul>
+ </div>
+
+                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
+                    <i class="icon icon-share-alt icon-lg"></i>
+                </a>
             </div>
             
-<nav class="post-nav">
+
+        </div>
+    </div>   
+
+    
+<nav class="post-nav flex-row flex-justify-between">
   
-    <div class="waves-block waves-effect prev fl">
+    <div class="waves-block waves-effect prev">
       <a href="/2016/03/erlang-distribution-1/" id="post-prev" class="post-nav-link">
         <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
         <h4 class="title">Erlang 分布式系统(1)</h4>
@@ -210,7 +286,7 @@
   
 
   
-    <div class="waves-block waves-effect next fr">
+    <div class="waves-block waves-effect next">
       <a href="/2016/02/3d-animation/" id="post-next" class="post-nav-link">
         <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
         <h4 class="title">3D动画基础</h4>
@@ -221,50 +297,81 @@
 
 
             
-            
+    
 <div class="duoshuo">
-	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="3d-mapping" data-title="3D贴图基础" data-url="http://wudaijun.com/2016/03/3d-mapping/index.html"></div>
-	<!-- 多说评论框 end -->
-	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
-	<script type="text/javascript">
-	var duoshuoQuery = {short_name:"wudaijun"};
-	(function() {
-		var ds = document.createElement('script');
-		ds.type = 'text/javascript';ds.async = true;
-		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-		ds.charset = 'UTF-8';
-		(document.getElementsByTagName('head')[0] 
-		 || document.getElementsByTagName('body')[0]).appendChild(ds);
-	})();
-	</script>
-	<!-- 多说公共JS代码 end -->
+	<div class="ds-thread" data-thread-key="3d-mapping" data-title="3D贴图基础" data-url="http://wudaijun.com/2016/03/3d-mapping/"></div>
 </div>
+<script src="/js/embed.min.js?v=1.1.4"></script>
+<script src="//cdn.bootcss.com/marked/0.3.6/marked.min.js" async="async"></script>
+<script>
+var duoshuoQuery = {short_name:'wudaijun', theme: 'none'}
+</script>
 
 
 
 
-
-        </div>
-    </div>
 </article>
-    </div>
+
+
+</div>
   </main>
-<div class="mask" id="mask"></div>
+  <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
+<script>
+var BLOG_SHARE = {
+    title: "3D贴图基础",
+    pic: "/favicon.png",
+    summary: document.getElementsByName('summary')[0].content,
+    url: "http://wudaijun.com/2016/03/3d-mapping/"
+};
+</script>
+<div class="global-share" id="global-share">
+    <div class="tit">分享到：</div>
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
+          豆
+        </a>
+      </li>
+    </ul>
+ </div>
 
 
-<script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-
-<script src="/js/main.js" type="text/javascript"></script>
+  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script src="/js/main.min.js?v=1.1.4"></script>
 
 
 
 <div class="search-panel" id="search-panel">
     <ul class="search-result" id="search-result"></ul>
 </div>
-<script type="text/template" id="search-tpl">
+<template id="search-tpl">
 <li class="item">
     <a href="/{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
@@ -276,9 +383,9 @@
         </div>
     </a>
 </li>
-</script>
+</template>
 
-<script src="/js/search.js" type="text/javascript"></script>
+<script src="/js/search.min.js?v=1.1.4"></script>
 
 
 
