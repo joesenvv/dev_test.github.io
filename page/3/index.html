@@ -154,6 +154,55 @@
     <ul class="post-list">
     
         <li class="post-list-item">
+            <article id="post-3d-animation"
+  class="article-card article-type-post" itemprop="blogPost">
+     
+    <div class="post-meta">
+        <time datetime="2016-02-19T16:00:00.000Z" itemprop="datePublished" class="post-time">
+  2016-02-20
+</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/unity/">unity</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2016/02/3d-animation/">3D动画基础</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent" >
+
+    
+        顶点动画3D动画本质上是模型的顶点轨迹，因此要记录一段动画，最原始的办法就是记录动画过程中所有的顶点信息。但由于肉眼的识别速度和GPU的处理能力都有限，因此有了桢(frame)的概念，帧是模型特定姿态的一个快照。为了进一步减少动画桢的内存占用，我们可以从动画的轨迹中提出中关键帧，保存每一个关键帧的模型网格信息，由引擎来得到平滑的动画效果(关键帧过渡)，在关键帧之间平滑过渡的帧叫过渡帧或插值桢。
+    
+    
+        <a href="/2016/02/3d-animation/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/unity/">unity</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item">
             <article id="post-erlang-thinking-in-rails"
   class="article-card article-type-post" itemprop="blogPost">
      
@@ -631,60 +680,6 @@ tcp_tw_reuse: 复用正在TIME_WAIT状态的端口
     <div class="post-footer">
         
 	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tcp-ip/">tcp/ip</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item">
-            <article id="post-unity-mecanim"
-  class="article-card article-type-post" itemprop="blogPost">
-     
-    <div class="post-meta">
-        <time datetime="2015-10-02T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2015-10-03
-</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/unity/">unity</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2015/10/unity-mecanim/">Unity 动画系统小记</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent" >
-
-    
-        校正：本文对动画系统理解上有很大的偏差和局限性，关于更详细正确的理解可参见：
-http://blog.csdn.net/cubesky/article/details/39478207
-动画系统如果动画包含多层，要在初始化时设置动画层权重。
-通常情况下，在我们操作角色时，脚本根据玩家输入，设置动画的行进速度(可平滑过度)，由动画的Blend Tree来做到角色走和跑之间的平滑过渡，并且将动画的实际位移作用于角色模型上。也就是说，由动画控制前进(走，跑)，脚本直接控制转向(rigidbody.MoveRotation)。模型只需提供Walk和Run两个动画片段即可，但需要导入位移信息。
-Animator有个比较有用的选项，用于通过脚本而不是动画来控制模型移动。
-Apply Root Motion：是否将动画的位移，转向作用于实际模型之上。即模型的运动(Position，Rotation的变化)是由动画控制还是脚本控制。
-    
-    
-        <a href="/2015/10/unity-mecanim/" class="post-more waves-effect waves-button">
-            阅读全文...
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/unity/">unity</a></li></ul>
 
     </div>
     

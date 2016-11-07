@@ -154,6 +154,58 @@
     <ul class="post-list">
     
         <li class="post-list-item">
+            <article id="post-docker-basic"
+  class="article-card article-type-post" itemprop="blogPost">
+     
+    <div class="post-meta">
+        <time datetime="2016-10-31T16:00:00.000Z" itemprop="datePublished" class="post-time">
+  2016-11-01
+</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Tool/">Tool</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2016/11/docker-basic/">Docker 学习</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent" >
+
+    
+        一. 理解 DockerDocker是一种轻量级的虚拟化方案，虚拟化本身可以从两个角度来理解：
+
+隔离性：可传统的虚拟机类似，资源隔离(进程，网络，文件系统等)可用于更好地利用物理机。Docker本身虚拟化的开销非常小，这也是它相对于传统虚拟机最大的优势
+一致性：同样一份虚拟机镜像，可以部署在不同的平台和物理机上，并且内部的环境，文件，配置是一致的，这在当前多样化的平台，日益复杂的配置/部署流程，以及团队和团队间的协作中，有着重要的意义。想象一下，当你用Docker提交代码时，你做的事情跟以前是完全不同的。在以前我们只是把代码提交上去，而在Docker中我们把整台计算机（虚拟机）提交上去。为什么Docker这么火，就是因为它帮助开发者很简单的就让自己的开发环境跟生产环境一致。环境的标准化，意味着目录、路径、配置文件、储存用户名密码的方式、访问权限、域名等种种细节的一致和差异处理的标准化。
+    
+    
+        <a href="/2016/11/docker-basic/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item">
             <article id="post-erlang-server-design7-cluster-bug-note"
   class="article-card article-type-post" itemprop="blogPost">
      
@@ -660,59 +712,6 @@ JavaScript: 通过可编程的文档对象模型(DOM)和事件响应，定义网
     <div class="post-footer">
         
 	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/os/">os</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item">
-            <article id="post-mongodb-storage-engine"
-  class="article-card article-type-post" itemprop="blogPost">
-     
-    <div class="post-meta">
-        <time datetime="2016-06-24T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2016-06-25
-</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/database/">database</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2016/06/mongodb-storage-engine/">MongoDB 存储引擎</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent" >
-
-    
-        MongoDB目前支持三种存储引擎：MMAPv1 Storage Engine，In-Memory Storage Engine, WiredTiger Storage Engine。
-MMAPv1 Storage EngineMongoDB3.2之前版本的默认引擎。
-1. 存储原理文档在磁盘中连续存放，文档所占用的磁盘空间包括文档数据所占空间和文档填充(padding)。
-
-摘自：MongoDB MMAPv1内部实现：http://www.mongoing.com/archives/1484
-    
-    
-        <a href="/2016/06/mongodb-storage-engine/" class="post-more waves-effect waves-button">
-            阅读全文...
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mongodb/">mongodb</a></li></ul>
 
     </div>
     
