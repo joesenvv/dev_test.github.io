@@ -154,6 +154,56 @@
     <ul class="post-list">
     
         <li class="post-list-item">
+            <article id="post-tcp-notes-1"
+  class="article-card article-type-post" itemprop="blogPost">
+     
+    <div class="post-meta">
+        <time datetime="2015-10-06T16:00:00.000Z" itemprop="datePublished" class="post-time">
+  2015-10-07
+</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/network/">network</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2015/10/tcp-notes-1/">TCP复习笔记(一) 连接的建立与终止</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent" >
+
+    
+        一. TCP首部
+首部长度以4字节为单位，4位首部长度最多可表示60字节，其中有20字节的固定长度。由于封装在在一个IP报文中，并且可根据首部长度得到数据起始位置，因此TCP首部没有数据或总长度字段，这和IP首部不一样，IP首部同时有首部长度和总长度字段，前者用于得到数据起始位置，后者用于得到结束位置，因为以太网要求桢的数据部分最小长度为46字节，IP报文小于46字节将在后面添加Padding，因此需要总长度来区分哪些是数据，哪些是Padding。这一点对TCP来说不存在，因为得到IP报文数据的结束位置，也就得到了TCP数据的结束位置：
+    
+    
+        <a href="/2015/10/tcp-notes-1/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tcp-ip/">tcp/ip</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item">
             <article id="post-unity-mecanim"
   class="article-card article-type-post" itemprop="blogPost">
      
@@ -616,66 +666,12 @@ MsgHandlers:
 
         </li>
     
-        <li class="post-list-item">
-            <article id="post-c-linker-model"
-  class="article-card article-type-post" itemprop="blogPost">
-     
-    <div class="post-meta">
-        <time datetime="2015-07-19T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2015-07-20
-</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/c-c/">c/c++</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2015/07/c-linker-model/">C链接模型_符号解析</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent" >
-
-    
-        链接器的工作主要分为两个阶段：符号解析和重定位。本文简单介绍符号解析过程。
-符号解析的功能是将每个模块符号引用绑定到一个确切的符号定义。
-1. 符号分类
-全局符号：非静态全局变量，非静态函数
-外部符号：定义于其它模块，而被本模块引用的全局变量和函数
-本地符号：静态变量(包括全局和局部)，静态函数
-    
-    
-        <a href="/2015/07/c-linker-model/" class="post-more waves-effect waves-button">
-            阅读全文...
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c-c/">c/c++</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
     </ul>
 
     
 <nav id="page-nav">
     <div class="inner">
-    <a class="extend prev" rel="prev" href="/page/3/">上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/5/">下一页</a>
+    <a class="extend prev" rel="prev" href="/page/3/">上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/5/">下一页</a>
     </div>
 </nav>
 

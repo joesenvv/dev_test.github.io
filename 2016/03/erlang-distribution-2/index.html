@@ -18,7 +18,7 @@
 异步通信模型，屏蔽底层通讯细节(Erlang进程间/系统进程间/物理机间)，将本地代码扩展为分布式程序非常容易
 透明的通信协议，完善的序列化/反序列化支持
 完善的监控能力：监督(supervisor), 监视(monitor), 链接(link)等
-其它分布式组件：如global,epmd, mnesi">
+其它分布式组件：如global,epmd,mnesia">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Erlang 分布式系统(2)">
 <meta property="og:url" content="http://wudaijun.com/2016/03/erlang-distribution-2/index.html">
@@ -29,8 +29,8 @@
 异步通信模型，屏蔽底层通讯细节(Erlang进程间/系统进程间/物理机间)，将本地代码扩展为分布式程序非常容易
 透明的通信协议，完善的序列化/反序列化支持
 完善的监控能力：监督(supervisor), 监视(monitor), 链接(link)等
-其它分布式组件：如global,epmd, mnesi">
-<meta property="og:updated_time" content="2016-08-12T02:56:02.000Z">
+其它分布式组件：如global,epmd,mnesia">
+<meta property="og:updated_time" content="2016-11-10T13:24:26.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Erlang 分布式系统(2)">
 <meta name="twitter:description" content="一. 分布式ErlangErlang为分布式提供的基础设施
@@ -39,7 +39,7 @@
 异步通信模型，屏蔽底层通讯细节(Erlang进程间/系统进程间/物理机间)，将本地代码扩展为分布式程序非常容易
 透明的通信协议，完善的序列化/反序列化支持
 完善的监控能力：监督(supervisor), 监视(monitor), 链接(link)等
-其它分布式组件：如global,epmd, mnesi">
+其它分布式组件：如global,epmd,mnesia">
   
     <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
   
@@ -49,7 +49,7 @@
 &lt;li&gt;异步通信模型，屏蔽底层通讯细节(Erlang进程间/系统进程间/物理机间)，将本地代码扩展为分布式程序非常容易&lt;/li&gt;
 &lt;li&gt;透明的通信协议，完善的序列化/反序列化支持&lt;/li&gt;
 &lt;li&gt;完善的监控能力：监督(supervisor), 监视(monitor), 链接(link)等&lt;/li&gt;
-&lt;li&gt;其它分布式组件：如global,epmd, mnesia等&lt;/li&gt;
+&lt;li&gt;其它分布式组件：如global,epmd,mnesia等&lt;/li&gt;
 &lt;/ol&gt;">
   <link rel="shortcut icon" href="/favicon.ico">
   <link rel="stylesheet" href="/css/style.css?v=1.1.4">
@@ -174,7 +174,7 @@
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#一-_分布式Erlang"><span class="post-toc-number">1.</span> <span class="post-toc-text">一. 分布式Erlang</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#二-_Erlang分布式基础"><span class="post-toc-number">2.</span> <span class="post-toc-text">二. Erlang分布式基础</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-_Erlang_node"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">1. Erlang node</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-_cookie"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">2. cookie</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-_hidden_node"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">3. hidden node</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-_net_kernel"><span class="post-toc-number">2.4.</span> <span class="post-toc-text">4. net_kernel</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-_epmd"><span class="post-toc-number">2.5.</span> <span class="post-toc-text">5. epmd</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6-_global"><span class="post-toc-number">2.6.</span> <span class="post-toc-text">6. global</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#全局锁"><span class="post-toc-number">2.6.1.</span> <span class="post-toc-text">全局锁</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#全局名字管理"><span class="post-toc-number">2.6.2.</span> <span class="post-toc-text">全局名字管理</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#维护全联通网络"><span class="post-toc-number">2.6.3.</span> <span class="post-toc-text">维护全联通网络</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#7-_mnesia"><span class="post-toc-number">2.7.</span> <span class="post-toc-text">7. mnesia</span></a></li></ol></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#一-_分布式Erlang"><span class="post-toc-text">一. 分布式Erlang</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#二-_Erlang分布式基础"><span class="post-toc-text">二. Erlang分布式基础</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-_Erlang_node"><span class="post-toc-text">1. Erlang node</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-_cookie"><span class="post-toc-text">2. cookie</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-_hidden_node"><span class="post-toc-text">3. hidden node</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-_net_kernel"><span class="post-toc-text">4. net_kernel</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-_epmd"><span class="post-toc-text">5. epmd</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6-_global"><span class="post-toc-text">6. global</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#全局锁"><span class="post-toc-text">全局锁</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#全局名字管理"><span class="post-toc-text">全局名字管理</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#维护全联通网络"><span class="post-toc-text">维护全联通网络</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#7-_mnesia"><span class="post-toc-text">7. mnesia</span></a></li></ol></li></ol>
         </nav>
     </aside>
     
@@ -201,7 +201,7 @@
 <li>异步通信模型，屏蔽底层通讯细节(Erlang进程间/系统进程间/物理机间)，将本地代码扩展为分布式程序非常容易</li>
 <li>透明的通信协议，完善的序列化/反序列化支持</li>
 <li>完善的监控能力：监督(supervisor), 监视(monitor), 链接(link)等</li>
-<li>其它分布式组件：如global,epmd, mnesia等</li>
+<li>其它分布式组件：如global,epmd,mnesia等</li>
 </ol>
 <a id="more"></a>
 <h2 id="二-_Erlang分布式基础">二. Erlang分布式基础</h2><h3 id="1-_Erlang_node">1. Erlang node</h3><p>一个Erlang分布式系统由多个Erlang节点(node)组成，每一个节点即为一个Erlang虚拟机，这些节点可以彼此通信。不同节点节点上Pid之间通信(link,monitor等)，是完全透明的。</p>
@@ -210,7 +210,32 @@
 <h3 id="2-_cookie">2. cookie</h3><p>cookie是Erlang节点连接时的简单验证机制，只有具有相同cookie的节点才能连接。通过<code>-setcookie</code>选项或<code>erlang:set_cookie/2</code>设置cookie，后者可以为一个节点设置多个cookie，在连接不同的节点时使用不同的cookie，连接到多个集群中。如果没有指定，将使用<code>~/.erlang.cookie</code>中的字符串作为cookie。由于cookie是明文的，并且共享于所有节点，更像是一种分隔集群的方式，而不是一种安全机制。</p>
 <h3 id="3-_hidden_node">3. hidden node</h3><p>通过为节点启动参数<code>-hidden</code>，让一个节点成为hidden节点，hidden节点与其它节点的连接不会扩展，它们必须被显示建立。通过<code>nodes(hidden)</code>或<code>nodes(connected)</code>才能看到与本节点连接的hidden节点。</p>
 <h3 id="4-_net_kernel">4. net_kernel</h3><p>net_kernel管理节点之间的连接，通过<code>-sname</code>或<code>-name</code>启动参数或在代码中调用<code>net_kernel:start/1</code>可以启动net_kernel进程。net_kernel默认会在引用到其它节点时(如rpc:call/5, spawn/4, link/1等)，自动与该节点建立连接，通过<code>-dist_auto_connect false</code>选项可以关闭这种行为，如此只能通过<code>net_kernel:connect_node/1</code>手动显式地建立连接。</p>
-<h3 id="5-_epmd">5. epmd</h3><p>epmd(Erlang Port Mapper Daemon)是Erlang节点所在主机上的守护进程，Erlang节点通过epmd进程来维护集群中节点名字到节点物理地址的映射，epmd会在主机上第一个Erlang分布式节点启动时自动后台启动。</p>
+<h3 id="5-_epmd">5. epmd</h3><p>epmd(Erlang Port Mapper Daemon)是Erlang节点所在主机上的守护进程，它维护本机上所有Erlang节点名到节点地址(Host:Port)的映射。</p>
+<p>epmd会在主机上第一个Erlang分布式节点启动时自动后台启动，默认监听4369端口。当分布式节点启动时，VM会监听一个端口(可通过<code>inet_dist_listen_min</code>和<code>inet_dist_listen_max</code>限制端口范围)用于接收其它节点连接请求，之后节点会将节点名(@前半部分)和监听地址发给epmd进程，当节点和epmd进程断开TCP连接后，epmd会注销该节点地址信息。</p>
+<p>当节点A(<code>node_a@myhost1</code>)尝试连接节点B(<code>node_b@myhost2</code>)时，节点A会先向myhost2上的empd进程(<code>myhost2:4369</code>)根据节点B名字(nodeb)查询节点监听地址，之后再连接这个监听地址和B节点通信。</p>
+<p>默认配置下，epmd在物理机上的监听端口为4369，这意味着：</p>
+<ol>
+<li>因为是周知端口，所以通过查询目标机器上的4369，就可以知道这个机器上节点的情况。</li>
+<li>在同一机器可能会部署不同的Erlang集群，希望不要互相干扰。</li>
+<li>防火墙不允许过4369端口，或者不在开放端口之列表。</li>
+</ol>
+<p>我们可以指定epmd监听端口：</p>
+<pre><code><span class="comment">// 单独启动epmd进程</span>
+empd -daemon -port <span class="number">5000</span>
+<span class="comment">// epmd随分布式节点启动而自动启动时，也可指定epmd的启动方案</span>
+erl -name hello -epmd <span class="string">"epmd -port 5001 -daemon"</span> -epmd_port <span class="number">5001</span>
+</code></pre><p>可以在虚拟机启动时，通过<code>-epmd_port</code>(或<code>ERL_EPMD_PORT</code>环境变量)指定要连接的epmd端口：</p>
+<pre><code><span class="comment">// 通过启动选项</span>
+erl -name hello -epmd_port <span class="number">5000</span>
+<span class="comment">// 通过环境变量</span>
+ERL_EPMD_PORT=<span class="number">5000</span> erl -name hello
+</code></pre><p>需要注意的是，一旦节点采用定制的epmd port，那么节点在连接其它节点的时候，也将使用定制的epmd端口访问epmd。因此，<strong>同一个集群的epmd端口必须是一致的</strong>。</p>
+<p>参考：</p>
+<ol>
+<li><a href="http://erlang.org/doc/man/epmd.html" target="_blank" rel="external">http://erlang.org/doc/man/epmd.html</a></li>
+<li><a href="http://www.cnblogs.com/me-sa/p/erlang-epmd.html" target="_blank" rel="external">http://www.cnblogs.com/me-sa/p/erlang-epmd.html</a></li>
+<li><a href="http://erlang.org/doc/apps/erts/erl\_dist\_protocol.html" target="_blank" rel="external">http://erlang.org/doc/apps/erts/erl\_dist\_protocol.html</a></li>
+</ol>
 <h3 id="6-_global">6. global</h3><p>global模块功能主要通过global_name_server进程完成，该进程在节点启动时启动。global模块主要包含如下功能：</p>
 <h4 id="全局锁">全局锁</h4><p>global模块提供全局锁功能，可以在集群内对某个资源进行访问控制，当某个节点尝试lock某个资源时，global_name_server会muticall集群中所有节点上的global_name_server进程，只要其中一个节点上操作失败，本次lock也会失败，并引发下次重试或整个操作的失败。</p>
 <p>global模块会在当前所有known(<code>nodes()</code>)节点中推选出一个Boss节点(简单通过<code>lists:max(Nodes)</code>选出)，在设置全局锁时，会先尝试在Boss节点上上锁，再对其它节点上锁，这样保证全局资源的唯一性，又不需要单独设置中心节点。</p>

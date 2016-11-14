@@ -154,6 +154,62 @@
     <ul class="post-list">
     
         <li class="post-list-item">
+            <article id="post-virtual-memory"
+  class="article-card article-type-post" itemprop="blogPost">
+     
+    <div class="post-meta">
+        <time datetime="2016-06-29T16:00:00.000Z" itemprop="datePublished" class="post-time">
+  2016-06-30
+</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/os/">os</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2016/06/virtual-memory/">虚拟存储器</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent" >
+
+    
+        前几天又翻了翻《深入理解计算机系统》，相比几年前刚看这本书有了更多的理解，这也许就是一本好书的价值吧。因此尝试提炼和总结出对自己有用的东西，把书读薄。其中也加了一些自己的理解和查阅的相关资料。
+虚拟存储器的意义虚拟存储器提供了三个重要的能力：
+
+将主存看作是存储在磁盘上的高速缓存，并根据需要在磁盘和主存中传送数据，高效地运用主存
+为每个进程提供一致性的地址空间，简化了存储器管理
+保护每个进程的地址空间不被其它进程破坏
+
+下面分别从这三个方面来谈虚拟存储器
+    
+    
+        <a href="/2016/06/virtual-memory/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/os/">os</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item">
             <article id="post-mongodb-storage-engine"
   class="article-card article-type-post" itemprop="blogPost">
      
@@ -555,7 +611,7 @@ erl_call -s -a 'erlang memory ' -name node_1@127.0.0.1 -c abc
 异步通信模型，屏蔽底层通讯细节(Erlang进程间/系统进程间/物理机间)，将本地代码扩展为分布式程序非常容易
 透明的通信协议，完善的序列化/反序列化支持
 完善的监控能力：监督(supervisor), 监视(monitor), 链接(link)等
-其它分布式组件：如global,epmd, mnesia等
+其它分布式组件：如global,epmd,mnesia等
     
     
         <a href="/2016/03/erlang-distribution-2/" class="post-more waves-effect waves-button">
@@ -623,62 +679,12 @@ erl_call -s -a 'erlang memory ' -name node_1@127.0.0.1 -c abc
 
         </li>
     
-        <li class="post-list-item">
-            <article id="post-3d-mapping"
-  class="article-card article-type-post" itemprop="blogPost">
-     
-    <div class="post-meta">
-        <time datetime="2016-02-29T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2016-03-01
-</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/unity/">unity</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2016/03/3d-mapping/">3D贴图基础</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent" >
-
-    
-        漫反射贴图(Diffuse Mapping)漫反射贴图反映出物体表面在漫反射下的颜色和强度，表现出物体的固有色以及纹理。是物体最基础的贴图。通常也可以直接理解为纹理。
-高光贴图(Specular Mapping)高光贴图表现物体表面的光照属性，包括镜面反射强度，光泽度，以及菲涅耳衍射强度，决定物体在强光下，表面不同材质(布料，金属，皮肤等)的光照表现。一些高光贴图只包含镜面反射强度信息，每个像素只需要8位，即使用一个通道。
-    
-    
-        <a href="/2016/03/3d-mapping/" class="post-more waves-effect waves-button">
-            阅读全文...
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/unity/">unity</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
     </ul>
 
     
 <nav id="page-nav">
     <div class="inner">
-    <a class="extend prev" rel="prev" href="/">上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/3/">下一页</a>
+    <a class="extend prev" rel="prev" href="/">上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/3/">下一页</a>
     </div>
 </nav>
 

@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://wudaijun.com/"/>
-  <updated>2016-11-07T08:12:28.000Z</updated>
+  <updated>2016-11-14T08:42:20.000Z</updated>
   <id>http://wudaijun.com/</id>
   
   <author>
@@ -16,11 +16,205 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>探索Docker在Erlang集群中的应用</title>
+    <link href="http://wudaijun.com/2016/11/docker-erlang/"/>
+    <id>http://wudaijun.com/2016/11/docker-erlang/</id>
+    <published>2016-11-04T16:00:00.000Z</published>
+    <updated>2016-11-14T08:42:20.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>接<a href="http://0.0.0.0:4444/2016/11/docker-basic/" target="_blank" rel="external">上篇</a>，结合Erlang，对Docker的实际应用进一步理解。并探索将Docker应用到Erlang集群的方案。</p>
+<h2 id="简单Docker交互">简单Docker交互</h2><p>下面是个简单的echo server：</p>
+<pre><code>-<span class="built_in">module</span>(server_echo).
+-<span class="keyword">export</span>([start/<span class="number">0</span>]).
+
+start<span class="function"><span class="params">()</span> -&gt;</span>
+     <span class="attribute">io</span>:format(<span class="string">"SERVER Trying to bind to port 2345\n"</span>),
+     {ok, Listen} = <span class="attribute">gen_tcp</span>:listen(<span class="number">2345</span>, [ binary
+                                         , {packet, <span class="number">0</span>}
+                                         , {reuseaddr, <span class="literal">true</span>}
+                                         , {active, <span class="literal">true</span>}
+                                         ]),
+     <span class="attribute">io</span>:format(<span class="string">"SERVER Listening on port 2345\n"</span>),
+     accept(Listen).
+
+ accept<span class="function"><span class="params">(Listen)</span> -&gt;</span>
+     {ok, Socket} = <span class="attribute">gen_tcp</span>:accept(Listen),
+     WorkerPid = spawn<span class="function"><span class="params">(fun() -&gt; echo(Socket) end)</span>,
+     <span class="title">gen_tcp</span>:<span class="title">controlling_process</span><span class="params">(Socket, WorkerPid)</span>,
+     <span class="title">accept</span><span class="params">(Listen)</span>.
+
+ <span class="title">echo</span><span class="params">(Socket)</span> -&gt;</span>
+     receive
+         {tcp, Socket, Bin}<span class="function"> -&gt;</span>
+             <span class="attribute">io</span>:format(<span class="string">"SERVER Received: ~p\n"</span>, [Bin]),
+             <span class="attribute">gen_tcp</span>:send(Socket, Bin),
+             echo(Socket);
+         {tcp_closed, Socket}<span class="function"> -&gt;</span>
+             <span class="attribute">io</span>:format(<span class="string">"SERVER: The client closed the connection\n"</span>)
+     end.
+</code></pre><p>简单起见，我们直接用<code>telnet</code>命令对echo server进行测试。现在，考虑如何在Docker容器中运行echo server。</p>
+<a id="more"></a>
+<h3 id="容器中运行">容器中运行</h3><pre><code><span class="function_or_atom">sudo</span> <span class="function_or_atom">docker</span> <span class="function_or_atom">run</span> -<span class="function_or_atom">it</span> --<span class="function_or_atom">rm</span> -<span class="function_or_atom">v</span> ~/<span class="function_or_atom">docker</span>:/<span class="function_or_atom">code</span> -<span class="function_or_atom">w</span> /<span class="function_or_atom">code</span> <span class="function_or_atom">erlang</span> <span class="function_or_atom">erl</span>
+<span class="variable">Erlang</span>/<span class="variable">OTP</span> <span class="number">19</span> [<span class="function_or_atom">erts</span>-<span class="number">8.1</span>] [<span class="function_or_atom">source</span>] [<span class="number">64</span>-<span class="function_or_atom">bit</span>] [<span class="function_or_atom">smp</span>:<span class="number">4</span>:<span class="number">4</span>] [<span class="function_or_atom">async</span>-<span class="function_or_atom">threads</span>:<span class="number">10</span>] [<span class="function_or_atom">hipe</span>] [<span class="function_or_atom">kernel</span>-<span class="function_or_atom">poll:false</span>]
+
+<span class="variable">Eshell</span> <span class="variable">V8</span>.<span class="number">1</span>  (<span class="function_or_atom">abort</span> <span class="function_or_atom">with</span> ^<span class="variable">G</span>)
+<span class="prompt">1&gt; </span><span class="function_or_atom">c</span>(<span class="function_or_atom">server_echo</span>).
+{<span class="ok">ok</span>,<span class="function_or_atom">server_echo</span>}
+<span class="prompt">2&gt; </span><span class="function_or_atom">server_echo:start</span>().
+<span class="variable">SERVER</span> <span class="variable">Trying</span> <span class="function_or_atom">to</span> <span class="function_or_atom">bind</span> <span class="function_or_atom">to</span> <span class="function_or_atom">port</span> <span class="number">2345</span>
+<span class="variable">SERVER</span> <span class="variable">Listening</span> <span class="function_or_atom">on</span> <span class="function_or_atom">port</span> <span class="number">2345</span>
+</code></pre><p>在<code>docker run</code>中，我们将本地代码路径挂载到容器的/code目录，并且将/code作为容器的工作目录，此后对本地代码的修改，将直接反映在容器中，而无需拷贝。运行容器后会进入erl shell，并且当前路径(/code)即为本地代码路径(~/docker)，之后编译运行server即可。</p>
+<h3 id="宿主机访问容器">宿主机访问容器</h3><p>如下方案可以让宿主机能访问容器端口：</p>
+<ul>
+<li>在<code>docker run</code>中指定<code>-p 2345:2345</code>导出2345端口，之后访问宿主机的2345端口等同于访问容器2345端口</li>
+<li>在<code>docker run</code>中指定<code>--network host</code>使容器和宿主机共享网络栈，IP和端口</li>
+<li>通过<code>docker inspect</code>查询容器IP地址(如:<code>172.17.0.2</code>)，可在宿主机上通过该IP访问容器</li>
+</ul>
+<h3 id="容器之间访问">容器之间访问</h3><p>容器间交互方式主要有三种：</p>
+<ul>
+<li>通过<code>docker inspect</code>得到容器IP地址，通过IP地址进行容器间的交互</li>
+<li>通过<code>docker run</code>中指定<code>--network container:&lt;name or id&gt;</code>，将新创建的容器与一个已经存在的容器的共享网络栈，IP和端口</li>
+<li>通过<code>docker run</code>的<code>--link &lt;name or id&gt;</code>选项链接两个容器，之后可以将容器名或容器ID作为Hostname来访问容器，注意<code>--link</code>选项仅在<code>--network bridge</code>下有效</li>
+</ul>
+<h3 id="定义Dockerfile">定义Dockerfile</h3><p>前面我是通过挂载目录的方式将本地代码映射到容器中，这种方式在本地开发中比较方便，但是在项目部署或环境配置比较复杂时，我们需要通过Dockerfile来构建自己的镜像(而不是基于官方Erlang镜像)，初始化项目环境，就本例而言，Dockerfile非常简单：</p>
+<pre><code><span class="built_in">FROM</span> erlang
+
+<span class="built_in">RUN</span> <span class="bash">mkdir code
+</span>
+<span class="built_in">COPY</span> <span class="bash">server_echo.erl code/server_echo.erl
+</span>
+<span class="built_in">RUN</span> <span class="bash"><span class="built_in">cd</span> code &amp;&amp; erlc server_echo.erl
+</span>
+<span class="built_in">WORKDIR</span> <span class="bash">/code
+</span>
+<span class="built_in">ENTRYPOINT</span> <span class="bash">[<span class="string">"erl"</span>, <span class="string">"-noshell"</span>, <span class="string">"-run"</span>, <span class="string">"server_echo"</span>, <span class="string">"start"</span>]</span>
+</code></pre><h2 id="Erlang多节点通信">Erlang多节点通信</h2><h3 id="再谈Erlang分布式通信">再谈Erlang分布式通信</h3><p>Erlang的分布式节点有自己的通信机制，这套通信机制对上层用户是透明的，我们只需一个节点名(<code>node@host</code>)，即可访问这个节点，而无需关心这个节点是在本机上还是在其它主机上。在这之上封装的Pid，进一步地屏蔽了节点内进程和跨节点进程的差异。</p>
+<p>在<a href="http://wudaijun.com/2016/03/erlang-distribution-2/">Erlang分布式系统(2)</a>中，我提到了Erlang的分布式设施，其中epmd扮演着重要的角色：它维护了本机上所有节点的节点名到节点监听地址的映射，并且由于epmd进程本身的监听端口在集群内是周知的(默认为4369)，因此可以根据节点名<code>node@host</code>得到节点所在主机上epmd的监听地址(<code>host:4369</code>)，进而从epmd进程上查询到节点名<code>node</code>所监听的地址，实现节点间通信。</p>
+<h3 id="在同主机不同容器中部署集群">在同主机不同容器中部署集群</h3><p>现在回到Docker，我们先尝试在同一个主机，不同容器上建立集群：</p>
+<pre><code># 容器<span class="tag">A</span> 启动后通过<span class="tag">docker</span> <span class="tag">inspect</span>查询得到<span class="tag">IP</span>地址: <span class="tag">172</span><span class="class">.17</span><span class="class">.0</span><span class="class">.2</span>
+<span class="tag">sudo</span> <span class="tag">docker</span> <span class="tag">run</span> <span class="tag">-it</span> <span class="tag">erlang</span> /<span class="tag">bin</span>/<span class="tag">bash</span>
+<span class="tag">root</span>@<span class="tag">4453d880b5a5</span>:/# <span class="tag">erl</span> <span class="tag">-name</span> <span class="tag">n1</span>@<span class="tag">172</span><span class="class">.17</span><span class="class">.0</span><span class="class">.2</span> <span class="tag">-setcookie</span> <span class="tag">123</span>
+<span class="tag">Eshell</span> <span class="tag">V8</span><span class="class">.1</span>  (abort with ^G)
+(n1<span class="variable">@172</span>.<span class="number">17.0</span>.<span class="number">2</span>)<span class="tag">1</span>&gt; 
+
+# 容器<span class="tag">B</span> 启动后通过<span class="tag">docker</span> <span class="tag">inspect</span>查询得到<span class="tag">IP</span>地址: <span class="tag">172</span><span class="class">.17</span><span class="class">.0</span><span class="class">.4</span>
+<span class="tag">sudo</span> <span class="tag">docker</span> <span class="tag">run</span> <span class="tag">-it</span> <span class="tag">erlang</span> /<span class="tag">bin</span>/<span class="tag">bash</span>
+<span class="tag">root</span>@<span class="tag">dd0f30178036</span>:/# <span class="tag">erl</span> <span class="tag">-name</span> <span class="tag">n2</span>@<span class="tag">172</span><span class="class">.17</span><span class="class">.0</span><span class="class">.4</span> <span class="tag">-setcookie</span> <span class="tag">123</span>
+<span class="tag">Eshell</span> <span class="tag">V8</span><span class="class">.1</span>  (abort with ^G)
+(n2<span class="variable">@172</span>.<span class="number">17.0</span>.<span class="number">4</span>)<span class="tag">1</span>&gt; <span class="tag">net_kernel</span><span class="pseudo">:connect_node</span>(<span class="string">'n1@172.17.0.2'</span>).
+<span class="tag">true</span>
+(n2<span class="variable">@172</span>.<span class="number">17.0</span>.<span class="number">4</span>)<span class="tag">2</span>&gt; <span class="tag">nodes</span>().
+<span class="attr_selector">['n1@172.17.0.2']</span>
+</code></pre><p>和在宿主机上一样，我们可以直接通过容器IP架设集群。这里使用的是<code>-name node@host</code>指定的longname，而如果使用shortname：</p>
+<pre><code># 容器<span class="tag">A</span>
+<span class="tag">root</span>@<span class="tag">4453d880b5a5</span>:/# <span class="tag">erl</span> <span class="tag">-sname</span> <span class="tag">n1</span> <span class="tag">-setcookie</span> <span class="tag">123</span>
+<span class="tag">Eshell</span> <span class="tag">V8</span><span class="class">.1</span>  (abort with ^G)
+(n1<span class="variable">@4453d880b5a5</span>)<span class="tag">1</span>&gt;
+
+# 容器<span class="tag">B</span>
+<span class="tag">root</span>@<span class="tag">dd0f30178036</span>:/# <span class="tag">erl</span> <span class="tag">-sname</span> <span class="tag">n2</span> <span class="tag">-setcookie</span> <span class="tag">123</span>
+<span class="tag">Eshell</span> <span class="tag">V8</span><span class="class">.1</span>  (abort with ^G)
+(n2<span class="variable">@dd0f30178036</span>)<span class="tag">1</span>&gt; <span class="tag">net_kernel</span><span class="pseudo">:connect_node</span>(<span class="string">'n1@4453d880b5a5'</span>).
+<span class="tag">false</span>
+</code></pre><p>在shortname方案中，我们并不能通过nodename访问节点，本质上是因为<code>n2</code>节点不能通过<code>4453d880b5a5:4369</code>访问到<code>n1</code>节点所在主机上的epmd进程。我们测试一下网络环境：</p>
+<pre><code><span class="preprocessor"># 通过容器A名字ping</span>
+ping <span class="number">4453</span>d880b5a5
+ping: unknown host
+
+<span class="preprocessor"># 直接ping容器A IP</span>
+ping <span class="number">172.17</span><span class="number">.0</span><span class="number">.2</span>
+PING <span class="number">172.17</span><span class="number">.0</span><span class="number">.2</span> (<span class="number">172.17</span><span class="number">.0</span><span class="number">.2</span>): <span class="number">56</span> data bytes
+<span class="number">64</span> bytes from <span class="number">172.17</span><span class="number">.0</span><span class="number">.2</span>: icmp_seq=<span class="number">0</span> ttl=<span class="number">64</span> time=<span class="number">0.099</span> ms
+<span class="number">64</span> bytes from <span class="number">172.17</span><span class="number">.0</span><span class="number">.2</span>: icmp_seq=<span class="number">1</span> ttl=<span class="number">64</span> time=<span class="number">0.089</span> ms
+</code></pre><p>发现是hostname解析出了问题，容器链接来解决这个问题：</p>
+<pre><code># 重新启动容器<span class="tag">B</span> 并链接到容器<span class="tag">A</span>
+<span class="tag">docker</span> <span class="tag">run</span> <span class="tag">-it</span> <span class="tag">--link</span> <span class="tag">4453d880b5a5</span> <span class="tag">erlang</span> /<span class="tag">bin</span>/<span class="tag">bash</span>
+<span class="tag">root</span>@<span class="tag">7692c8c71218</span>:/# <span class="tag">erl</span> <span class="tag">-sname</span> <span class="tag">n2</span> <span class="tag">-setcookie</span> <span class="tag">123</span>
+<span class="tag">Eshell</span> <span class="tag">V8</span><span class="class">.1</span>  (abort with ^G)
+(n2<span class="variable">@dd0f30178036</span>)<span class="tag">1</span>&gt; <span class="tag">net_kernel</span><span class="pseudo">:connect_node</span>(<span class="string">'n1@4453d880b5a5'</span>).
+<span class="tag">true</span>
+</code></pre><p>有个有趣的问题是，当容器B link了容器A，那么容器B能通过容器A的Id或名字访问容器B，而反过来，容器A却不能以同样的方式访问容器B。也就是说link是单向的，这同样可以通过ping来验证。</p>
+<h3 id="在不同的主机上部署集群">在不同的主机上部署集群</h3><p>在不同的主机上部署集群，问题开始变得复杂：</p>
+<ol>
+<li>不同的主机上的Docker容器处于不同的子网(一台主机对应一个子网)，因此不同主机上的容器不能直接访问，需要先发布(publish)Erlang节点监听端口</li>
+<li>Erlang节点在Docker容器中的监听地址是由Erlang VM启动时分配的，因此我们无法在启动容器时就获知Erlang节点监听端口(从而发布该端口)</li>
+<li>假定我们预配置了Erlang节点的监听端口xxx，如果我们使用<code>-p xxx:xxx</code>将可能导致端口争用(亦即一台物理机只能运行一个Docker容器)，如果我们使用<code>-p xxx</code>将该端口发布到主机任意一个端口，那么这个发布的主机端口，将只能通过Docker Daemon获取到(命令行下可通过<code>docker port</code>查看)</li>
+<li>再来看epmd，每个Docker容器中都会跑一个epmd进程，它记录的是节点名到<strong>节点在容器中的监听地址</strong>，因此，epmd本身返回的地址是不能直接被其它主机上的节点使用的</li>
+</ol>
+<h4 id="Erlang_In_Docker">Erlang In Docker</h4><p>基于上面的种种限制，有人给出了一套解决方案：<a href="https://github.com/Random-Liu/Erlang-In-Docker" target="_blank" rel="external">Erlang In Docker</a>。这套方案对Erlang集群做了如下制约：</p>
+<ol>
+<li>每个Docker容器只能运行一个Erlang节点</li>
+<li>预配置Erlang节点的监听端口</li>
+<li>Erlang节点名格式为<code>DockerContainerID@HostIP</code></li>
+<li>使用Docker Daemon而不是epmd来获取节点监听端口</li>
+</ol>
+<p>这套方案的核心思路是用Docker Daemon替换epmd做节点监听的服务发现，原因有二：</p>
+<ul>
+<li>Docker Daemon运行于主机同级网络中</li>
+<li>维护了容器端口和主机端口的映射关系</li>
+</ul>
+<p>如果节点A想要访问节点B，则节点A需要提供：</p>
+<ul>
+<li>节点B所在主机地址: Host</li>
+<li>节点B所在主机上Docker Daemon的监听端口: DaemonPort</li>
+<li>节点B所在容器ID: ContainerID</li>
+<li>节点B在所在容器中的监听端口: Port0</li>
+</ul>
+<p>之后就可以通过Docker Daemon(<code>Host:DaemonPort</code>)查询到<code>ContainerID</code>容器的<code>Port0</code>端口在主机上对应的发布端口<code>Port1</code>，之后节点A即可通过<code>Host:Port1</code>与节点B通信。</p>
+<p>然而节点A只有节点B的名字，要在节点B中编码这四条信息是非常困难的，因此Erlang In Docker的做法是，预配置Port0(12345)和DaemonPort(4243)，剩下的主机地址和容器ID则编码在节点名中：<code>DockerContainerID@HostIP</code>。</p>
+<p>EID代码并不复杂，得益于Erlang可替换的分布式通信协议，EID只自定义了<code>eid_tcp_dist</code>(替换默认的<code>inet_tcp_dist</code>模块)和dpmd(通过与Docker Daemon交互模拟epmd的功能)两个模块。</p>
+<h4 id="总结">总结</h4><p>将Erlang应用到Docker上比较困难的主要原因是Erlang已经提供了非常完备的分布式设施(参见<a href="http://wudaijun.com/2016/03/erlang-distribution-2/">Erlang分布式系统(2)</a>)，并且这一套对上层都是透明的。EID这套方案看起来限制很多，但细想也没多大问题，具体还要看在生产环境中的表现，目前我比较顾虑它的通信效率(NAT)和<code>eid_tcp_dist</code>是否足够健壮。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;接&lt;a href=&quot;http://0.0.0.0:4444/2016/11/docker-basic/&quot;&gt;上篇&lt;/a&gt;，结合Erlang，对Docker的实际应用进一步理解。并探索将Docker应用到Erlang集群的方案。&lt;/p&gt;
+&lt;h2 id=&quot;简单Docker交互&quot;&gt;简单Docker交互&lt;/h2&gt;&lt;p&gt;下面是个简单的echo server：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;-&lt;span class=&quot;built_in&quot;&gt;module&lt;/span&gt;(server_echo).
+-&lt;span class=&quot;keyword&quot;&gt;export&lt;/span&gt;([start/&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;]).
+
+start&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt; -&amp;gt;&lt;/span&gt;
+     &lt;span class=&quot;attribute&quot;&gt;io&lt;/span&gt;:format(&lt;span class=&quot;string&quot;&gt;&quot;SERVER Trying to bind to port 2345\n&quot;&lt;/span&gt;),
+     {ok, Listen} = &lt;span class=&quot;attribute&quot;&gt;gen_tcp&lt;/span&gt;:listen(&lt;span class=&quot;number&quot;&gt;2345&lt;/span&gt;, [ binary
+                                         , {packet, &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;}
+                                         , {reuseaddr, &lt;span class=&quot;literal&quot;&gt;true&lt;/span&gt;}
+                                         , {active, &lt;span class=&quot;literal&quot;&gt;true&lt;/span&gt;}
+                                         ]),
+     &lt;span class=&quot;attribute&quot;&gt;io&lt;/span&gt;:format(&lt;span class=&quot;string&quot;&gt;&quot;SERVER Listening on port 2345\n&quot;&lt;/span&gt;),
+     accept(Listen).
+
+ accept&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;params&quot;&gt;(Listen)&lt;/span&gt; -&amp;gt;&lt;/span&gt;
+     {ok, Socket} = &lt;span class=&quot;attribute&quot;&gt;gen_tcp&lt;/span&gt;:accept(Listen),
+     WorkerPid = spawn&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;params&quot;&gt;(fun() -&amp;gt; echo(Socket) end)&lt;/span&gt;,
+     &lt;span class=&quot;title&quot;&gt;gen_tcp&lt;/span&gt;:&lt;span class=&quot;title&quot;&gt;controlling_process&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(Socket, WorkerPid)&lt;/span&gt;,
+     &lt;span class=&quot;title&quot;&gt;accept&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(Listen)&lt;/span&gt;.
+
+ &lt;span class=&quot;title&quot;&gt;echo&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(Socket)&lt;/span&gt; -&amp;gt;&lt;/span&gt;
+     receive
+         {tcp, Socket, Bin}&lt;span class=&quot;function&quot;&gt; -&amp;gt;&lt;/span&gt;
+             &lt;span class=&quot;attribute&quot;&gt;io&lt;/span&gt;:format(&lt;span class=&quot;string&quot;&gt;&quot;SERVER Received: ~p\n&quot;&lt;/span&gt;, [Bin]),
+             &lt;span class=&quot;attribute&quot;&gt;gen_tcp&lt;/span&gt;:send(Socket, Bin),
+             echo(Socket);
+         {tcp_closed, Socket}&lt;span class=&quot;function&quot;&gt; -&amp;gt;&lt;/span&gt;
+             &lt;span class=&quot;attribute&quot;&gt;io&lt;/span&gt;:format(&lt;span class=&quot;string&quot;&gt;&quot;SERVER: The client closed the connection\n&quot;&lt;/span&gt;)
+     end.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;简单起见，我们直接用&lt;code&gt;telnet&lt;/code&gt;命令对echo server进行测试。现在，考虑如何在Docker容器中运行echo server。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="tool" scheme="http://wudaijun.com/categories/tool/"/>
+    
+    
+      <category term="docker" scheme="http://wudaijun.com/tags/docker/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Docker 学习</title>
     <link href="http://wudaijun.com/2016/11/docker-basic/"/>
     <id>http://wudaijun.com/2016/11/docker-basic/</id>
     <published>2016-10-31T16:00:00.000Z</published>
-    <updated>2016-11-07T08:12:28.000Z</updated>
+    <updated>2016-11-10T07:18:12.000Z</updated>
     
     <content type="html"><![CDATA[<h2 id="一-_理解_Docker">一. 理解 Docker</h2><p>Docker是一种轻量级的虚拟化方案，虚拟化本身可以从两个角度来理解：</p>
 <ul>
@@ -64,17 +258,25 @@ docker start/stop <span class="comment">[OPTIONS]</span> <span class="keyword">C
 docker rm <span class="keyword">CONTAINER</span>
 // 把后台容器调到前端
 docker attach <span class="comment">[OPTIONS]</span> <span class="keyword">CONTAINER</span>
+// 查询容器的详细信息，也可用于镜像
+docker inspect <span class="comment">[OPTIONS]</span> <span class="keyword">CONTAINER</span>/IMAGE
 // 在容器内执行指定命令 如:  docker exec -it <span class="keyword">CONTAINER</span> bash
 docker exec <span class="comment">[OPTIONS]</span> <span class="keyword">CONTAINER</span> COMMAND <span class="comment">[ARG...]</span>
 也可使用第三方工具如nsenter来进入容器
 </code></pre><h3 id="2-_网络模式">2. 网络模式</h3><p>以Docker为平台部署服务器时，最应该理解透彻的便是网络配置，因此单独拿出来说一下。</p>
 <p>通过<code>docker run</code>的<code>--network</code>选项可配置容器的网络模式，Docker提供了多种网络工作模式：</p>
 <ul>
-<li>none 模式(<code>--network=none</code>)：不为Docker容器进行任何网络配置，容器将不能访问任何外部的路由(容器内部仍然有loopback接口)，与外部只能通过文件IO和标准输入输出交互。</li>
-<li>bridge 模式(<code>--netwok=bridge</code>)：默认设置，此模式下，容器有自己的独立的Network Namespace。bridge模式的详细实现可参考<a href="http://www.infoq.com/cn/articles/docker-source-code-analysis-part7" target="_blank" rel="external">Docker源码分析(七)：Docker Container网络(上)</a>，简单来说，Docker在宿主机上虚拟了一个子网络，宿主机上所有容器均在这个子网络中获取IP，这个子网通过网桥挂在宿主机网络上。Docker通过NAT技术确保容器可与宿主机外部网络交互。</li>
-<li>host 模式(<code>--network=host</code>)：与宿主机共用网络栈，IP和端口，容器本身看起来就像是个普通的进程，它暴露的端口可直接通过宿主机访问。相比于bridge模式，host模式有显著的性能优势(因为走的是宿主机的网络栈，而不是docker deamon为容器虚拟的网络栈)。</li>
-<li>container 模式(<code>--network=container:&lt;name|id&gt;</code>)：和host模式类似，新创建的容器将与已经存在的一个容器共享IP，端口和网络栈。两个容器之间可通过localhost进行通信。</li>
+<li>none 模式(<code>--network none</code>)：不为Docker容器进行任何网络配置，容器将不能访问任何外部的路由(容器内部仍然有loopback接口)，与外部只能通过文件IO和标准输入输出交互。</li>
+<li>bridge 模式(<code>--netwok bridge</code>)：默认设置，此模式下，容器有自己的独立的Network Namespace。bridge模式的详细实现可参考<a href="http://www.infoq.com/cn/articles/docker-source-code-analysis-part7" target="_blank" rel="external">Docker源码分析(七)：Docker Container网络(上)</a>，简单来说，Docker在宿主机上虚拟了一个子网络，宿主机上所有容器均在这个子网络中获取IP，这个子网通过网桥挂在宿主机网络上。Docker通过NAT技术确保容器可与宿主机外部网络交互。</li>
+<li>host 模式(<code>--network host</code>)：与宿主机共用网络栈，IP和端口，容器本身看起来就像是个普通的进程，它暴露的端口可直接通过宿主机访问。相比于bridge模式，host模式有显著的性能优势(因为走的是宿主机的网络栈，而不是docker deamon为容器虚拟的网络栈)。</li>
+<li>container 模式(<code>--network container:&lt;name|id&gt;</code>)：和host模式类似，新创建的容器将与已经存在的一个容器共享IP，端口和网络栈。两个容器之间可通过localhost进行通信。</li>
 </ul>
+<p>这里再提一下bridge模式，在bridge模式下，一个宿主机上的所有容器都在一个子网中(通常是<code>172.17.0.1/16</code>)，同一个宿主机上的容器之间，以及容器与宿主机之间可以直接通过IP交互。而对于宿主机之外的网络：</p>
+<ul>
+<li>容器访问外部网络时，会在宿主机上分配一个可用端口，通过这个端口做SNAT转换(将容器IP:Port换为宿主机IP:Port)，再向外部网络发出请求。当外部响应到达时，Docker再根据这一层端口映射关系，将响应路由给容器IP:Port</li>
+<li>外部网络要访问容器Port0，需要先将Port0与宿主机Port1绑定(外部网络无法直接访问宿主机二级网络)，将宿主机IP:Port1暴露给外部网络，外部网络请求到达宿主机时，会进行DNAT转换(将宿主机IP:Port1换为容器IP:Port0)</li>
+</ul>
+<p>归根结底，Docker容器在bridge模式下不具有一个公有IP，即和宿主机的eth0不处于同一个网段。导致的结果是宿主机以外的世界不能直接和容器进行通信。虽然NAT模式经过中间处理实现了这一点，但是NAT模式仍然存在问题与不便，如：容器均需要在宿主机上竞争端口，容器内部服务的访问者需要使用服务发现获知服务的外部端口等。另外NAT模式由于是在三层网络上的实现手段，故肯定会影响网络的传输效率。</p>
 <p>其它容器网络配置选项参见<code>docker run --help</code>以及<a href="https://docs.docker.com/engine/reference/run/" target="_blank" rel="external">Docker run Reference</a>。</p>
 <h2 id="三-_Docker_镜像">三. Docker 镜像</h2><h3 id="1-_Dockerfile">1. Dockerfile</h3><p>Docker的镜像通过一个Dockerfile构建，我们可以通过编Dockerfile来创建自定义镜像：</p>
 <pre><code><span class="comment"># 这是注释</span>
@@ -1790,7 +1992,7 @@ Pid            <span class="keyword">Name</span> <span class="keyword">or</span>
     <link href="http://wudaijun.com/2016/03/erlang-distribution-2/"/>
     <id>http://wudaijun.com/2016/03/erlang-distribution-2/</id>
     <published>2016-03-25T16:00:00.000Z</published>
-    <updated>2016-08-12T02:56:02.000Z</updated>
+    <updated>2016-11-10T13:24:26.000Z</updated>
     
     <content type="html"><![CDATA[<h2 id="一-_分布式Erlang">一. 分布式Erlang</h2><p>Erlang为分布式提供的基础设施</p>
 <ol>
@@ -1798,7 +2000,7 @@ Pid            <span class="keyword">Name</span> <span class="keyword">or</span>
 <li>异步通信模型，屏蔽底层通讯细节(Erlang进程间/系统进程间/物理机间)，将本地代码扩展为分布式程序非常容易</li>
 <li>透明的通信协议，完善的序列化/反序列化支持</li>
 <li>完善的监控能力：监督(supervisor), 监视(monitor), 链接(link)等</li>
-<li>其它分布式组件：如global,epmd, mnesia等</li>
+<li>其它分布式组件：如global,epmd,mnesia等</li>
 </ol>
 <a id="more"></a>
 <h2 id="二-_Erlang分布式基础">二. Erlang分布式基础</h2><h3 id="1-_Erlang_node">1. Erlang node</h3><p>一个Erlang分布式系统由多个Erlang节点(node)组成，每一个节点即为一个Erlang虚拟机，这些节点可以彼此通信。不同节点节点上Pid之间通信(link,monitor等)，是完全透明的。</p>
@@ -1807,7 +2009,32 @@ Pid            <span class="keyword">Name</span> <span class="keyword">or</span>
 <h3 id="2-_cookie">2. cookie</h3><p>cookie是Erlang节点连接时的简单验证机制，只有具有相同cookie的节点才能连接。通过<code>-setcookie</code>选项或<code>erlang:set_cookie/2</code>设置cookie，后者可以为一个节点设置多个cookie，在连接不同的节点时使用不同的cookie，连接到多个集群中。如果没有指定，将使用<code>~/.erlang.cookie</code>中的字符串作为cookie。由于cookie是明文的，并且共享于所有节点，更像是一种分隔集群的方式，而不是一种安全机制。</p>
 <h3 id="3-_hidden_node">3. hidden node</h3><p>通过为节点启动参数<code>-hidden</code>，让一个节点成为hidden节点，hidden节点与其它节点的连接不会扩展，它们必须被显示建立。通过<code>nodes(hidden)</code>或<code>nodes(connected)</code>才能看到与本节点连接的hidden节点。</p>
 <h3 id="4-_net_kernel">4. net_kernel</h3><p>net_kernel管理节点之间的连接，通过<code>-sname</code>或<code>-name</code>启动参数或在代码中调用<code>net_kernel:start/1</code>可以启动net_kernel进程。net_kernel默认会在引用到其它节点时(如rpc:call/5, spawn/4, link/1等)，自动与该节点建立连接，通过<code>-dist_auto_connect false</code>选项可以关闭这种行为，如此只能通过<code>net_kernel:connect_node/1</code>手动显式地建立连接。</p>
-<h3 id="5-_epmd">5. epmd</h3><p>epmd(Erlang Port Mapper Daemon)是Erlang节点所在主机上的守护进程，Erlang节点通过epmd进程来维护集群中节点名字到节点物理地址的映射，epmd会在主机上第一个Erlang分布式节点启动时自动后台启动。</p>
+<h3 id="5-_epmd">5. epmd</h3><p>epmd(Erlang Port Mapper Daemon)是Erlang节点所在主机上的守护进程，它维护本机上所有Erlang节点名到节点地址(Host:Port)的映射。</p>
+<p>epmd会在主机上第一个Erlang分布式节点启动时自动后台启动，默认监听4369端口。当分布式节点启动时，VM会监听一个端口(可通过<code>inet_dist_listen_min</code>和<code>inet_dist_listen_max</code>限制端口范围)用于接收其它节点连接请求，之后节点会将节点名(@前半部分)和监听地址发给epmd进程，当节点和epmd进程断开TCP连接后，epmd会注销该节点地址信息。</p>
+<p>当节点A(<code>node_a@myhost1</code>)尝试连接节点B(<code>node_b@myhost2</code>)时，节点A会先向myhost2上的empd进程(<code>myhost2:4369</code>)根据节点B名字(nodeb)查询节点监听地址，之后再连接这个监听地址和B节点通信。</p>
+<p>默认配置下，epmd在物理机上的监听端口为4369，这意味着：</p>
+<ol>
+<li>因为是周知端口，所以通过查询目标机器上的4369，就可以知道这个机器上节点的情况。</li>
+<li>在同一机器可能会部署不同的Erlang集群，希望不要互相干扰。</li>
+<li>防火墙不允许过4369端口，或者不在开放端口之列表。</li>
+</ol>
+<p>我们可以指定epmd监听端口：</p>
+<pre><code><span class="comment">// 单独启动epmd进程</span>
+empd -daemon -port <span class="number">5000</span>
+<span class="comment">// epmd随分布式节点启动而自动启动时，也可指定epmd的启动方案</span>
+erl -name hello -epmd <span class="string">"epmd -port 5001 -daemon"</span> -epmd_port <span class="number">5001</span>
+</code></pre><p>可以在虚拟机启动时，通过<code>-epmd_port</code>(或<code>ERL_EPMD_PORT</code>环境变量)指定要连接的epmd端口：</p>
+<pre><code><span class="comment">// 通过启动选项</span>
+erl -name hello -epmd_port <span class="number">5000</span>
+<span class="comment">// 通过环境变量</span>
+ERL_EPMD_PORT=<span class="number">5000</span> erl -name hello
+</code></pre><p>需要注意的是，一旦节点采用定制的epmd port，那么节点在连接其它节点的时候，也将使用定制的epmd端口访问epmd。因此，<strong>同一个集群的epmd端口必须是一致的</strong>。</p>
+<p>参考：</p>
+<ol>
+<li><a href="http://erlang.org/doc/man/epmd.html" target="_blank" rel="external">http://erlang.org/doc/man/epmd.html</a></li>
+<li><a href="http://www.cnblogs.com/me-sa/p/erlang-epmd.html" target="_blank" rel="external">http://www.cnblogs.com/me-sa/p/erlang-epmd.html</a></li>
+<li><a href="http://erlang.org/doc/apps/erts/erl\_dist\_protocol.html" target="_blank" rel="external">http://erlang.org/doc/apps/erts/erl\_dist\_protocol.html</a></li>
+</ol>
 <h3 id="6-_global">6. global</h3><p>global模块功能主要通过global_name_server进程完成，该进程在节点启动时启动。global模块主要包含如下功能：</p>
 <h4 id="全局锁">全局锁</h4><p>global模块提供全局锁功能，可以在集群内对某个资源进行访问控制，当某个节点尝试lock某个资源时，global_name_server会muticall集群中所有节点上的global_name_server进程，只要其中一个节点上操作失败，本次lock也会失败，并引发下次重试或整个操作的失败。</p>
 <p>global模块会在当前所有known(<code>nodes()</code>)节点中推选出一个Boss节点(简单通过<code>lists:max(Nodes)</code>选出)，在设置全局锁时，会先尝试在Boss节点上上锁，再对其它节点上锁，这样保证全局资源的唯一性，又不需要单独设置中心节点。</p>
@@ -1855,7 +2082,7 @@ Pid            <span class="keyword">Name</span> <span class="keyword">or</span>
 &lt;li&gt;异步通信模型，屏蔽底层通讯细节(Erlang进程间/系统进程间/物理机间)，将本地代码扩展为分布式程序非常容易&lt;/li&gt;
 &lt;li&gt;透明的通信协议，完善的序列化/反序列化支持&lt;/li&gt;
 &lt;li&gt;完善的监控能力：监督(supervisor), 监视(monitor), 链接(link)等&lt;/li&gt;
-&lt;li&gt;其它分布式组件：如global,epmd, mnesia等&lt;/li&gt;
+&lt;li&gt;其它分布式组件：如global,epmd,mnesia等&lt;/li&gt;
 &lt;/ol&gt;
     
     </summary>
