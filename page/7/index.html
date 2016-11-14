@@ -399,55 +399,6 @@
         </li>
     
         <li class="post-list-item">
-            <article id="post-ngserver-message-callback"
-  class="article-card article-type-post" itemprop="blogPost">
-     
-    <div class="post-meta">
-        <time datetime="2014-11-04T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2014-11-05
-</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/gameserver/">gameserver</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2014/11/ngserver-message-callback/">NGServer 消息的注册与回调</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent" >
-
-    
-        在前面Service框架的介绍中，提到在GameService的ProcessMsg(UserMessage*)和ProcessMsg(InsideMessage*)中，都完成了消息的回调处理。消息响应函数的注册是在服务初始化(Init())中完成的。需要注册和回调的消息有InsideMessage和UserMessage，对于InsideMessage，响应函数只有一种形式：即为响应服务的成员函数。而对于UserMessage，由于UserMessage有Player指针，响应函数则会有多种形式：
-    
-    
-        <a href="/2014/11/ngserver-message-callback/" class="post-more waves-effect waves-button">
-            阅读全文...
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ngserver/">ngserver</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item">
             <article id="post-ngserver-message-encoder"
   class="article-card article-type-post" itemprop="blogPost">
      
@@ -482,6 +433,55 @@
     
     
         <a href="/2014/11/ngserver-message-encoder/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ngserver/">ngserver</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item">
+            <article id="post-ngserver-message-callback"
+  class="article-card article-type-post" itemprop="blogPost">
+     
+    <div class="post-meta">
+        <time datetime="2014-11-04T16:00:00.000Z" itemprop="datePublished" class="post-time">
+  2014-11-05
+</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/gameserver/">gameserver</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2014/11/ngserver-message-callback/">NGServer 消息的注册与回调</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent" >
+
+    
+        在前面Service框架的介绍中，提到在GameService的ProcessMsg(UserMessage*)和ProcessMsg(InsideMessage*)中，都完成了消息的回调处理。消息响应函数的注册是在服务初始化(Init())中完成的。需要注册和回调的消息有InsideMessage和UserMessage，对于InsideMessage，响应函数只有一种形式：即为响应服务的成员函数。而对于UserMessage，由于UserMessage有Player指针，响应函数则会有多种形式：
+    
+    
+        <a href="/2014/11/ngserver-message-callback/" class="post-more waves-effect waves-button">
             阅读全文...
         </a>
     </div>
