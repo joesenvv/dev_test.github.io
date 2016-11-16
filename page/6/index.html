@@ -233,7 +233,8 @@
     <div class="post-content" id="post-content" itemprop="postContent" >
 
     
-        mnesia是erlang提供的一个基于分布式的数据库管理系统。它的分布式和erlang一样都是”天生的”。集群，备份，主从这些在mnesia上面都非常简单。
+        mnesia是基于Erlang的分布式数据库管理系统，是Erlang OTP的重要组件。
+基础特性1. 分布式的etsmnesia数据库被组织为一个表的集合，每个表由记录(通常被定义为Erlang Record)构成，表本身也包含一些属性，如类型，位置和持久性。这种表集合和记录的概念，和ets表很类似。事实上，mnesia中的数据在节点内就是以ets表存储的。因此，mnesia实际上是一个分布式的ets。
     
     
         <a href="/2015/04/erlang-mnesia/" class="post-more waves-effect waves-button">
