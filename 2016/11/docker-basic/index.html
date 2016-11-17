@@ -24,7 +24,7 @@
 
 隔离性：可传统的虚拟机类似，资源隔离(进程，网络，文件系统等)可用于更好地利用物理机。Docker本身虚拟化的开销非常小，这也是它相对于传统虚拟机最大的优势
 一致性：同样一份虚拟机镜像，可以部署在不同的平台和物理机上，并且内部的环境，文件，配置是一致的，这在当前多样化的平台，日益复杂的配置/部署流程，">
-<meta property="og:updated_time" content="2016-11-10T07:18:12.000Z">
+<meta property="og:updated_time" content="2016-11-17T08:43:29.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Docker 学习">
 <meta name="twitter:description" content="一. 理解 DockerDocker是一种轻量级的虚拟化方案，虚拟化本身可以从两个角度来理解：
@@ -162,7 +162,7 @@
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#一-_理解_Docker"><span class="post-toc-text">一. 理解 Docker</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#二-_Docker_容器"><span class="post-toc-text">二. Docker 容器</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-_容器操作"><span class="post-toc-text">1. 容器操作</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-_网络模式"><span class="post-toc-text">2. 网络模式</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#三-_Docker_镜像"><span class="post-toc-text">三. Docker 镜像</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-_Dockerfile"><span class="post-toc-text">1. Dockerfile</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#FROM"><span class="post-toc-text">FROM</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#RUN"><span class="post-toc-text">RUN</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#CMD"><span class="post-toc-text">CMD</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#ENTRYPOINT"><span class="post-toc-text">ENTRYPOINT</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#其它命令"><span class="post-toc-text">其它命令</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-_docker_build_原理"><span class="post-toc-text">2. docker build 原理</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-_docker_build_示例"><span class="post-toc-text">3. docker build 示例</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#四-_参考"><span class="post-toc-text">四. 参考</span></a></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#一-_理解_Docker"><span class="post-toc-text">一. 理解 Docker</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#二-_Docker_容器"><span class="post-toc-text">二. Docker 容器</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-_容器操作"><span class="post-toc-text">1. 容器操作</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-_网络模式"><span class="post-toc-text">2. 网络模式</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#三-_Docker_镜像"><span class="post-toc-text">三. Docker 镜像</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-_Dockerfile"><span class="post-toc-text">1. Dockerfile</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#FROM"><span class="post-toc-text">FROM</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#RUN"><span class="post-toc-text">RUN</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#CMD"><span class="post-toc-text">CMD</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#ENTRYPOINT"><span class="post-toc-text">ENTRYPOINT</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#其它命令"><span class="post-toc-text">其它命令</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-_docker_build_原理"><span class="post-toc-text">2. docker build 原理</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#docker_commit"><span class="post-toc-text">docker commit</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#build_cache"><span class="post-toc-text">build cache</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-_docker_build_示例"><span class="post-toc-text">3. docker build 示例</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#四-_参考"><span class="post-toc-text">四. 参考</span></a></li></ol>
         </nav>
     </aside>
     
@@ -205,9 +205,9 @@
 <li><code>-t</code>：为容器分配一个伪终端，通常于-i一起使用</li>
 <li><code>-i</code>：以交互模式运行容器，如果开了-i而没有指定-t，可以通过管道与容器交互</li>
 <li><code>-v</code>：为容器挂载目录，冒号前为宿主机目录，其后为容器目录</li>
-<li><code>-p</code>： [主机:port:port]:端口映射</li>
+<li><code>-p</code>： [hip:]hport:cport 端口映射，将容器端口绑定到指定主机端口</li>
 <li><code>--name</code>：为容器命名</li>
-<li><code>--link</code>：连接其它容器，组成一个局域网</li>
+<li><code>--link</code>：链接到其它容器，之后可通过容器ID或容器名访问该容器(只针对bridge)</li>
 <li><code>--ip</code>：指定容器的IP</li>
 <li><code>--network</code>：配置容器的网络</li>
 <li><code>--rm</code>：当容器退出时，删除容器</li>
@@ -243,7 +243,7 @@ docker exec <span class="comment">[OPTIONS]</span> <span class="keyword">CONTAIN
 <li>容器访问外部网络时，会在宿主机上分配一个可用端口，通过这个端口做SNAT转换(将容器IP:Port换为宿主机IP:Port)，再向外部网络发出请求。当外部响应到达时，Docker再根据这一层端口映射关系，将响应路由给容器IP:Port</li>
 <li>外部网络要访问容器Port0，需要先将Port0与宿主机Port1绑定(外部网络无法直接访问宿主机二级网络)，将宿主机IP:Port1暴露给外部网络，外部网络请求到达宿主机时，会进行DNAT转换(将宿主机IP:Port1换为容器IP:Port0)</li>
 </ul>
-<p>归根结底，Docker容器在bridge模式下不具有一个公有IP，即和宿主机的eth0不处于同一个网段。导致的结果是宿主机以外的世界不能直接和容器进行通信。虽然NAT模式经过中间处理实现了这一点，但是NAT模式仍然存在问题与不便，如：容器均需要在宿主机上竞争端口，容器内部服务的访问者需要使用服务发现获知服务的外部端口等。另外NAT模式由于是在三层网络上的实现手段，故肯定会影响网络的传输效率。</p>
+<p>归根结底，Docker容器在bridge模式下不具有一个公有IP，即和宿主机的eth0不处于同一个网段。导致的结果是宿主机以外的世界不能直接和容器进行通信。虽然NAT模式经过中间处理实现了这一点，但是NAT模式仍然存在问题与不便，如：容器均需要在宿主机上竞争端口，容器内部服务的访问者需要使用服务发现获知服务的外部端口等。另外NAT模式会一定程度的影响网络传输效率。</p>
 <p>其它容器网络配置选项参见<code>docker run --help</code>以及<a href="https://docs.docker.com/engine/reference/run/" target="_blank" rel="external">Docker run Reference</a>。</p>
 <h2 id="三-_Docker_镜像">三. Docker 镜像</h2><h3 id="1-_Dockerfile">1. Dockerfile</h3><p>Docker的镜像通过一个Dockerfile构建，我们可以通过编Dockerfile来创建自定义镜像：</p>
 <pre><code><span class="comment"># 这是注释</span>
@@ -294,18 +294,33 @@ CMD [<span class="string">"echo"</span>, <span class="string">"hello"</span>]
 <p>和CMD一样，ENTRYPOINT在Dockerfile中最多只能生效一个，如果定义了多个，只有最后一个生效，在docker run中可通过<code>docker run --entrypoint</code>覆盖ENTRYPOINT。</p>
 <p>CMD和ENTRYPOINT的区别：CMD和ENTRYPOINT都可用于设置容器执行入口，但CMD会被<code>docker run &lt;image&gt;</code>后的参数覆盖；而ENTRYPOINT会将其当成参数附加给其指定的命令（不会对命令覆盖）。另外CMD还可以单独作为ENTRYPOINT的所接命令的可选参数。如果容器是Execuatble的，通常用法是，用ENTRYPOINT定义不常变动的执行入口和参数(exec格式)，用CMD提供额外默认参数(exec格式)，再用<code>docker run &lt;image&gt;</code>提供的参数来覆盖CMD。另外，ENTRYPOINT指定的入口也可以是shell script，用于实现更灵活的容器交互。</p>
 <p>ENTRYPOINT，CMD，RUN在定义时，均推荐使用Json数组方式。参见<a href="https://docs.docker.com/engine/userguide/eng-image/dockerfile_best-practices" target="_blank" rel="external">Dockerfile Best Practices</a></p>
-<h4 id="其它命令">其它命令</h4><pre><code><span class="built_ins">ENV</span>：定义环境变量，该变量可被后续其它指令引用，并且在生成的容器中同样有效
-<span class="built_in">ADD</span> <span class="bash">：src dst 将本地文件拷贝到镜像，src可以是文件路径或URL，ADD支持自动解压tar文件
-</span><span class="built_in">COPY</span> <span class="bash">：和ADD类似，但不支持URL并且不能自动解压
-</span><span class="built_in">EXPOSE</span> : port, 指定容器在运行时监听的端口
-<span class="built_in">WORKDIR</span> <span class="bash">:path, 指定容器的工作目录(启动之后的当前目录)
-</span><span class="built_in">VOLUME</span> <span class="bash">:[path], 在容器中设置一个挂载点，用于挂载宿主机或其它容器的目录 </span>
+<h4 id="其它命令">其它命令</h4><pre><code><span class="attribute">ENV</span>: <span class="string">定义环境变量，该变量可被后续其它指令引用，并且在生成的容器中同样有效</span>
+<span class="attribute">ADD</span>: <span class="string">src dst 将本地文件拷贝到镜像，src可以是文件路径或URL，ADD支持自动解压tar文件</span>
+<span class="attribute">COPY</span>: <span class="string">和ADD类似，但不支持URL并且不能自动解压</span>
+<span class="attribute">EXPOSE</span>: <span class="string">port, 指定容器在运行时监听的端口</span>
+<span class="attribute">WORKDIR</span>: <span class="string">path, 指定容器的工作目录(启动之后的当前目录)</span>
+<span class="attribute">VOLUME</span>: <span class="string">[path], 在容器中设置一个挂载点，用于挂载宿主机或其它容器的目录 </span>
 </code></pre><p>关于Dockerfile的语法参考<a href="https://docs.docker.com/engine/reference/builder/" target="_blank" rel="external">Dockerfile Reference</a>。</p>
-<h3 id="2-_docker_build_原理">2. docker build 原理</h3><p>写好Dockerfile之后，通过<code>docker build</code>即可构建镜像：</p>
+<h3 id="2-_docker_build_原理">2. docker build 原理</h3><p><code>docker build</code>的核心机制包括<code>docker commit</code>和<code>build cache</code>两部分。</p>
+<h4 id="docker_commit">docker commit</h4><p>写好Dockerfile之后，通过<code>docker build</code>即可构建镜像：</p>
 <pre><code>docker build -t 镜像名<span class="string">[:tag]</span>  Dockerfile所在目录或URL
 </code></pre><p><code>docker build</code>将按照指令顺序来逐层构建镜像，每一条指令的执行结果将会commit为一个新的镜像层，并用于下一条指令。理解镜像层和commit的概念，是理解Docker镜像构建的关键。</p>
-<p>镜像是被一层一层地”commit”上去的，而commit操作本身是由Docker容器执行的。<code>docker build</code>在执行一条指令时，会根据当前镜像层启动一个容器，Docker会在容器的层级文件系统最上层建立一层空的可读可写层(镜像层的内容对于容器来说是readonly的)，之后Docker容器执行指令，将执行结果写入可读可写层，最后再通过<code>docker commit</code>命令将可读可写层提交为一个新的镜像层。</p>
-<p>Docker镜像层与镜像层之间是存在层级关系的，<code>docker build</code>会为Dockerfile每一条指令建立(commit)一个镜像层，并最终产生一个带标签(tag)的镜像，之前Dockerfile指令得到的镜像层(不会在构建完成后删除)是这个含标签镜像的祖先镜像。可以将这种关系想象为链表，这样做的好处是最大化地复用镜像。不同的镜像之间可以共享镜像层，并且重新build镜像时，之前已经build好并且指令未变更的镜像可直接复用。</p>
+<p>镜像是被一层一层地”commit”上去的，而commit操作本身是由Docker容器执行的。<code>docker build</code>在执行一条指令时，会根据当前镜像层启动一个容器，Docker会在容器的层级文件系统最上层建立一层空的可读可写层(镜像层的内容对于容器来说是readonly的)，之后Docker容器执行指令，将执行结果写入可读可写层(并更新镜像Json文件)，最后再通过<code>docker commit</code>命令将可读可写层提交为一个新的镜像层。</p>
+<p>Docker镜像层与镜像层之间是存在层级关系的，<code>docker build</code>会为Dockerfile每一条指令建立(commit)一个镜像层，并最终产生一个带标签(tag)的镜像，之前Dockerfile指令得到的镜像层(不会在构建完成后删除)是这个含标签镜像的祖先镜像。这样做的好处是最大化地复用镜像，不同的镜像之间可以共享镜像层，组成树形的镜像层级关系。</p>
+<h4 id="build_cache">build cache</h4><p>在<code>docker build</code>过程中，如果发现本地有镜像与即将构建出来的镜像层一致时，则使用已有镜像作为Cache，充当本次构建的结果。从而加快build过程，并且避免构建重复的镜像。</p>
+<p>那么docker是如何知道当前尚未构建的镜像的形态，并且与本地镜像进行比较呢？</p>
+<p>Docker镜像由镜像文件系统内容和镜像Json文件两部分构成，前者即为<code>docker commit</code>提交的可读可写层，而镜像Json文件的作用为：</p>
+<ul>
+<li>记录镜像的父子关系，以及父子间的差异信息</li>
+<li>弥补镜像本身以及镜像到容器转换所需的额外信息</li>
+</ul>
+<p>比如镜像Json文件中记录了当前镜像的父镜像，以及当前镜像与父镜像的差异(比如执行了哪条指令)，<code>docker build</code>则在这个基础上进行预测：</p>
+<ul>
+<li>判断已有镜像和目标镜像(当前正在构建的镜像)是父镜像ID是否相同</li>
+<li>评估已有镜像的Json文件(如执行了那条命令，有何变动)，与目标镜像是否匹配</li>
+</ul>
+<p>如果条件满足，则可将已有镜像作为目标镜像的Cache，当然这种机制是并不完善的，比如当你执行的指令有外部动态依赖，此时可通过<code>docker build --no-cache</code>禁止使用Cache。</p>
+<p>另外，基于build cache的机制，我们在写Dockerfile的时候，应该将静态安装，配置命令等尽可能放在Dockerfile前面，这样才能最大程度地利用cache，加快build过程。因为一旦Dockerfile前面有指令更新了并导致新的镜像层生成，那么该指令之后的镜像层cache也就完全失效了(树结构长辈节点更新了，子节点当然就不一样了)。</p>
 <h3 id="3-_docker_build_示例">3. docker build 示例</h3><p>Dcokerfile:</p>
 <pre><code>FROM ubuntu:14.04
 # 创建一个100M的文件 /<span class="keyword">test</span>
@@ -363,7 +378,7 @@ du: cannot access './<span class="keyword">proc</span>/<span class="number">1</s
 du: cannot access './<span class="keyword">proc</span>/<span class="number">1</span>/fd/<span class="number">4</span>': <span class="type">No</span> such file <span class="keyword">or</span> directory
 du: cannot access './<span class="keyword">proc</span>/<span class="number">1</span>/fdinfo/<span class="number">4</span>': <span class="type">No</span> such file <span class="keyword">or</span> directory
 <span class="number">296</span>M    .
-</code></pre><p>我们的容器大小只是近300M，因此镜像大小和容器大小有着本质的区别，Docker镜像的大小并不等于容器中文件系统内容的大小。</p>
+</code></pre><p>我们的容器大小只是近300M，因此Docker镜像的大小和容器中文件系统内容的大小是两个概念。镜像的大小等于其包含的所有镜像层之和，并且由于镜像层共享技术的存在(比如我们再构建一个基于ubuntu14:04的镜像，将直接复用本地已有的ubuntu镜像层)，极大节省了磁盘空间。</p>
 <h2 id="四-_参考">四. 参考</h2><ol>
 <li><a href="https://docs.docker.com/engine/userguide/eng-image/dockerfile_best-practices" target="_blank" rel="external">Dockerfile Best Practices</a></li>
 <li><a href="https://docs.docker.com/engine/reference/builder/" target="_blank" rel="external">Dockerfile Reference</a></li>
