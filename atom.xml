@@ -3436,7 +3436,7 @@ critic2() -&gt;
     <link href="http://wudaijun.com/2015/08/erlang-server-design1-cluster-server/"/>
     <id>http://wudaijun.com/2015/08/erlang-server-design1-cluster-server/</id>
     <published>2015-08-05T16:00:00.000Z</published>
-    <updated>2016-05-12T12:50:24.000Z</updated>
+    <updated>2016-11-21T08:49:46.000Z</updated>
     
     <content type="html"><![CDATA[<h3 id="服务发现">服务发现</h3><p>在游戏服务器中，通常有一些功能本身非常内聚，甚至是无状态的，在这种时候，我们应该将其单独地做成一个服务，而不是嵌入到GameServer中，这种思想就是所谓的服务(<a href="http://martinfowler.com/articles/microservices.html#MicroservicesAndSoa" target="_blank" rel="external">microservice</a>)思想。</p>
 <p>服务发现本身可以看做是一个业务独立的”特殊服务”，它用于逻辑服务的注册/查找/配置信息共享。通常由如下三部分组成：</p>
@@ -3463,6 +3463,28 @@ critic2() -&gt;
 <pre><code>-record(cluster_(<span class="typedef"><span class="keyword">type</span>)_process, <span class="container">{id, node, pid, share}</span>).</span>
 </code></pre><p>通过share字段，可以获取到节点当前的状态信息，比如当前负载，这样做负载均衡就比较容易了，将服务创建的任务分发到当前负载较轻的节点即可。</p>
 <h4 id="服务监控，灾难恢复">服务监控，灾难恢复</h4><p>对于关键的服务或者是无状态的服务，可以通过master来监控其状态，在其不可用时，对其进行选择性恢复。比如当某服务所在物理机断电或断网，此时上面的服务都来不及注销自己，通过<code>monitor_node/2</code>，master会在数次心跳检测失败后，收到<code>nodedown</code>消息，此时master节点可以代为注销失联结节点上所有服务，并且决定这些服务是否需要重建在其它节点上。</p>
+<h3 id="注意事项">注意事项</h3><h4 id="一致性问题">一致性问题</h4><ul>
+<li>如果不使用事务，服务A可能覆写/误删服务B</li>
+<li>服务注册信息同步到其它节点的时间差，可能导致的不同步(服务的写入者无论是服务的发起方还是服务本身，都会存在这个问题)。</li>
+</ul>
+<p>解决方案：</p>
+<ol>
+<li><p>使用事务</p>
+<p> 这是最”简单”的方案，主要是性能问题，特别是游戏的波峰时段，这种延迟会扩散</p>
+</li>
+<li><p>串行化服务管理</p>
+<p> 将服务的查找或者是注册/注销，交由一个Proxy来做(经由某种分组规则ServerId)，则可使用脏读写，避免一致性问题。但是会有单点，并且弱化了分布式的特性。</p>
+</li>
+<li><p>服务查询</p>
+<p> 将表不添加本地拷贝，直接使用remote类型表进行访问(事务)，在本节点对Pid进行保存，采用某种机制来确保缓存Pid的正确性(如monitor)</p>
+</li>
+<li><p>退化ETS</p>
+<p> 将一些频繁访问和使用的服务退化为ETS(特别是player和agent)，主要目的是减轻mnesia压力(28原则)，使mnesia可以安全的使用事务。但这部分服务也失去了使用mnesia的优势，个人觉得不如方案3。</p>
+</li>
+</ol>
+<h4 id="全联通问题">全联通问题</h4><p>mnesia必须建立在全联通网络上，在节点数量超过10个时，就需要关注这个问题了。</p>
+<p>解决方案：</p>
+<p>可为节点分组(如5个一组)，设定代理节点，由代理节点组成mnesia集群。</p>
 ]]></content>
     
     <summary type="html">
