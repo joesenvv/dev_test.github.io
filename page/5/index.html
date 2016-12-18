@@ -154,6 +154,60 @@
     <ul class="post-list">
     
         <li class="post-list-item">
+            <article id="post-kbengine-study1"
+  class="article-card article-type-post" itemprop="blogPost">
+     
+    <div class="post-meta">
+        <time datetime="2015-07-22T16:00:00.000Z" itemprop="datePublished" class="post-time">
+  2015-07-23
+</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/gameserver/">gameserver</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2015/07/kbengine-study1/">kbengine 源码导读(一) 网络底层</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent" >
+
+    
+        一. network部分EndPoint:
+抽象一个Socket及其相关操作，隔离平台相关性。
+TcpPacket:
+代表一个TCP包，这个包只是recv收到的字节流，并不是上层协议中的消息(Message)。
+MsgHandlers:
+每个MessageHandler类对应一个消息的处理。MsgHanders维护MsgId -&gt; MsgHandler的映射。
+    
+    
+        <a href="/2015/07/kbengine-study1/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kbengine/">kbengine</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item">
             <article id="post-c-linker-model"
   class="article-card article-type-post" itemprop="blogPost">
      
@@ -593,55 +647,6 @@ db: 数据库节点
     
     
         <a href="/2015/04/erlang-thinking/" class="post-more waves-effect waves-button">
-            阅读全文...
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/erlang/">erlang</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item">
-            <article id="post-erlang-hotcode"
-  class="article-card article-type-post" itemprop="blogPost">
-     
-    <div class="post-meta">
-        <time datetime="2015-04-20T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2015-04-21
-</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2015/04/erlang-hotcode/">Erlang 热更新</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent" >
-
-    
-        erlang 热更是指在erlang系统不停止运行的情况下，对模块代码进行更新的特性，这也是erlang最神奇的特性之一。特别适用于游戏服务器，做活动更新，漏洞修复等。
-    
-    
-        <a href="/2015/04/erlang-hotcode/" class="post-more waves-effect waves-button">
             阅读全文...
         </a>
     </div>

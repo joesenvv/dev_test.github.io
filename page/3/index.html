@@ -154,6 +154,56 @@
     <ul class="post-list">
     
         <li class="post-list-item">
+            <article id="post-erlang-distribution-1"
+  class="article-card article-type-post" itemprop="blogPost">
+     
+    <div class="post-meta">
+        <time datetime="2016-03-16T16:00:00.000Z" itemprop="datePublished" class="post-time">
+  2016-03-17
+</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2016/03/erlang-distribution-1/">Erlang 分布式系统(1)</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent" >
+
+    
+        一. 分布式计算的八大谬论1. 网络总是可靠的在分布式系统中，你可能最容易犯下的错误就是认为远程节点是永远可用的，尽管这可以通过添加更多的硬件(比如主从)来实现，但这也带来了冗余性。网络可能随时因为断电，硬件故障，自然因素，人为因素等不可用，在这种情况下，保证你的程序能够在远程节点或者第三方服务不可用时，能够正常运行是非常重要的。Erlang除了能够监测到外部服务失去连接(或者不能响应)之外，没有任何的其它措施，毕竟，除了你自己以外，谁也不知道某个组件有多重要。
+注意，Erlang跨节点的monitor和link操作是比较危险的，因为一旦远程节点不可用，将触发关于该节点所有的远程monitor和link，这可能会引起一场网络风暴，给系统带来意料之外的高负载。在不可靠的网络上构建可靠的分布式应用，需要你随时准备面临这种突发状况，并且保证系统能够继续正常稳定地工作。
+    
+    
+        <a href="/2016/03/erlang-distribution-1/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/erlang/">erlang</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item">
             <article id="post-3d-mapping"
   class="article-card article-type-post" itemprop="blogPost">
      
@@ -617,62 +667,6 @@ accept()：从listen backlog队列中取出一个已经建立(已完成三次握
     
     
         <a href="/2015/10/tcp-notes-3/" class="post-more waves-effect waves-button">
-            阅读全文...
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tcp-ip/">tcp/ip</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item">
-            <article id="post-tcp-notes-2"
-  class="article-card article-type-post" itemprop="blogPost">
-     
-    <div class="post-meta">
-        <time datetime="2015-10-08T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2015-10-09
-</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/network/">network</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2015/10/tcp-notes-2/">TCP复习笔记(二) TCP服务器参见问题和参数设置</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent" >
-
-    
-        TCP核心参数关于TCP核心参数，参见：https://www.frozentux.net/ipsysctl-tutorial/chunkyhtml/tcpvariables.html
-其中比较重要的有：
-
-tcp_syn_retries: 三次握手中，发出的SYN未得到响应时，超时重传SYN包的次数
-tcp_synack_retries: 三次握手中最后一个ACK未收到时，超时重传SYN-ACK包的次数
-tcp_max_syn_backlog: 服务器端SYN队列大小
-tcp_abort_on_overflow: 当服务器忙不过来时(listen backlog满了)，发送RST包重置连接
-tcp_tw_reuse: 复用正在TIME_WAIT状态的端口
-    
-    
-        <a href="/2015/10/tcp-notes-2/" class="post-more waves-effect waves-button">
             阅读全文...
         </a>
     </div>

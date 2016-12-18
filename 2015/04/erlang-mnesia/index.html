@@ -20,7 +20,7 @@
 <meta property="og:site_name" content="wudaijun's blog">
 <meta property="og:description" content="mnesia是基于Erlang的分布式数据库管理系统，是Erlang OTP的重要组件。
 基础特性1. 分布式的etsmnesia数据库被组织为一个表的集合，每个表由记录(通常被定义为Erlang Record)构成，表本身也包含一些属性，如类型，位置和持久性。这种表集合和记录的概念，和ets表很类似。事实上，mnesia中的数据在节点内就是以ets表存储的。因此，mnesia实际上是一个分布式的">
-<meta property="og:updated_time" content="2016-11-16T17:30:31.000Z">
+<meta property="og:updated_time" content="2016-11-25T10:38:39.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Erlang mnesia">
 <meta name="twitter:description" content="mnesia是基于Erlang的分布式数据库管理系统，是Erlang OTP的重要组件。
@@ -257,6 +257,7 @@
 <li>在新节点动态加入集群的过程中，如果新节点mnesia已经启动，启动的节点会尝试将其表定义与其它节点带来的表定义合并。这也应用于模式表自身的定义</li>
 <li>mnesia会同步集群中节点上所有的表信息，如果某节点需要自己本地维护一张表而不希望共享该表，可以在创建表时指定<code>local_content</code>属性。该类型的表表名对mnesia可见，但每个节点写入的数据不会被同步，即每个节点都只能看到自己写入的数据</li>
 <li>mnesia后台同步时，会形成一个全联通网络(即使集群节点都是hidden节点)</li>
+<li>如果新加入节点和已有集群的schema表都是disc_copies，则会merge schema failed</li>
 </ul>
 <h2 id="特性总结">特性总结</h2><p>mneisa的优势:</p>
 <ul>

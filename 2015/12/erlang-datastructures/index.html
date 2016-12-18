@@ -24,8 +24,9 @@ Erlang虚拟机使用一个字(64/32位)来表示所有类型的数据，即Eter
 Erlang虚拟机使用一个字(64/32位)来表示所有类型的数据，即Eterm。具体的实施方案通过占用Eterm的后几位作为类型标签，然后根据标签类型来解释剩余位的用途。这个标签是多层级的，最外层占用两位，有三种类型：
 
 01">
+<meta property="og:image" content="http://wudaijun.com/assets/image/erlang/erlang_lists_sample.png">
 <meta property="og:image" content="http://wudaijun.com/assets/image/erlang/erlang_tuple_format.png">
-<meta property="og:updated_time" content="2016-03-11T07:56:23.000Z">
+<meta property="og:updated_time" content="2016-12-18T07:09:48.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Erlang 常用数据结构实现">
 <meta name="twitter:description" content="简单介绍一下Erlang常用数据结构的内部实现和特性，主要参考Erlang OTP 18.0源码，和网上很多优秀博客(参见附录)，原创并不多，整理了一些自己项目中常用到的。
@@ -166,7 +167,7 @@ Erlang虚拟机使用一个字(64/32位)来表示所有类型的数据，即Eter
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#一-_常用类型"><span class="post-toc-text">一. 常用类型</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1-Pid/Port"><span class="post-toc-text">1.Pid/Port</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#2-_atom"><span class="post-toc-text">2. atom</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#3-_list"><span class="post-toc-text">3. list</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#4-_tuple"><span class="post-toc-text">4. tuple</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#二-_复合类型"><span class="post-toc-text">二. 复合类型</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1-_record"><span class="post-toc-text">1. record</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#2-_map"><span class="post-toc-text">2. map</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#3-_array"><span class="post-toc-text">3. array</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#三-_参考"><span class="post-toc-text">三. 参考</span></a></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#一-_常用类型"><span class="post-toc-text">一. 常用类型</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1-Pid/Port"><span class="post-toc-text">1.Pid/Port</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#2-_atom"><span class="post-toc-text">2. atom</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#3-_lists"><span class="post-toc-text">3. lists</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#4-_tuple"><span class="post-toc-text">4. tuple</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#二-_复合类型"><span class="post-toc-text">二. 复合类型</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1-_record"><span class="post-toc-text">1. record</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#2-_map"><span class="post-toc-text">2. map</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#3-_array"><span class="post-toc-text">3. array</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#三-_参考"><span class="post-toc-text">三. 参考</span></a></li></ol>
         </nav>
     </aside>
     
@@ -199,7 +200,7 @@ Erlang虚拟机使用一个字(64/32位)来表示所有类型的数据，即Eter
 <p>对于二三级标签的细分和编码，一般我们无需知道这些具体的底层细节，对于我们常用的类型，以下几点是值得注意的：</p>
 <h3 id="一-_常用类型">一. 常用类型</h3><h4 id="1-Pid/Port">1.Pid/Port</h4><p>本地进程Pid可直接用立即数表示，但当将Pid发往其它node时，Erlang会自动将为Pid加上本地节点信息，并打包为一个boxed对象，占用6个字。另外，Erlang需要维护Pid表，每个条目占8个字节，当进程数量过大时，Pid表将占用大量内存，Erlang默认可以使用18位有效位来表示Pid，可通过+P参数调节，最大值为28，此时Pid表占用内存为2G</p>
 <h4 id="2-_atom">2. atom</h4><p>atom用立即数表示，依赖于高效的哈希和索引表，Erlang的atom比较像整数一样高效，但是atom表是不回收的，并且默认最大值为1024*1024，超过这个限制Erlang虚拟机将会崩溃，可通过+t参数调整该上限。</p>
-<h4 id="3-_list">3. list</h4><p>列表以标签01标识，剩余62位指向列表的Cons单元，Cons是[Head|Tail]的组合，在内存中体现为两个相邻的Eterm，Head可以是任何类型的Eterm，Tail是列表类型的Eterm。因此形如<code>L2 = [Elem|L1]</code>的操作，实际上构造了一个新的Cons，其中Head是Elem Eterm，Tail是L1 Eterm，然后将L2的Eterm指向了这个新的Cons，因此L2即代表了这个新的列表。对于<code>[Elem|L2] = L1</code>，实际上是提出了L1 Eterm指向的Cons，将Head部分赋给Elem，Tail部分赋给L2，注意Tail本身就是个List的Eterm，因此list是单向列表，并且构造和提取操作是很高效的。需要再次注意的是，Erlang所有类型的Eterm本身只占用一个字大小。这也是诸如list,tuple能够容纳任意类型的基础。</p>
+<h4 id="3-_lists">3. lists</h4><p>列表以标签01标识，剩余62位指向列表的Cons单元，Cons是[Head|Tail]的组合，在内存中体现为两个相邻的Eterm，Head可以是任何类型的Eterm，Tail是列表类型的Eterm。因此形如<code>L2 = [Elem|L1]</code>的操作，实际上构造了一个新的Cons，其中Head是Elem Eterm，Tail是L1 Eterm，然后将L2的Eterm指向了这个新的Cons，因此L2即代表了这个新的列表。对于<code>[Elem|L2] = L1</code>，实际上是提出了L1 Eterm指向的Cons，将Head部分赋给Elem，Tail部分赋给L2，注意Tail本身就是个List的Eterm，因此list是单向列表，并且构造和提取操作是很高效的。需要再次注意的是，Erlang所有类型的Eterm本身只占用一个字大小。这也是诸如list,tuple能够容纳任意类型的基础。</p>
 <p>Erlang中进程内对对象的重复引用只需占用一份对象内存(只是Eterm本身一个字的拷贝)，但是在对象跨进程时，对象会被展开，执行速深度拷贝：</p>
 <pre><code><span class="variable">Eshell</span> <span class="variable">V7</span>.<span class="number">0.2</span>  (<span class="function_or_atom">abort</span> <span class="function_or_atom">with</span> ^<span class="variable">G</span>)
 <span class="prompt">1&gt; </span><span class="variable">L1</span> = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>].
@@ -217,7 +218,9 @@ Erlang虚拟机使用一个字(64/32位)来表示所有类型的数据，即Eter
 <span class="prompt">7&gt; </span><span class="variable">P1</span> <span class="exclamation_mark">!</span> <span class="variable">L2</span>.                      <span class="comment">% 在跨进程时，对象被展开 执行深度拷贝</span>
 <span class="number">24</span>
 [[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>],[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>],[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]]
-</code></pre><h4 id="4-_tuple">4. tuple</h4><p>tuple属于boxed对象的一种，每个boxed对象都有一个对象头(header)，boxed Eterm即指向这个header，这个header里面包含具体的boxed对象类型，如tuple的header末6位为000000，前面的位数为tuple的size：</p>
+</code></pre><p>此时L1, L2的内存布局如下：</p>
+<p><img src="/assets/image/erlang/erlang_lists_sample.png" alt=""></p>
+<h4 id="4-_tuple">4. tuple</h4><p>tuple属于boxed对象的一种，每个boxed对象都有一个对象头(header)，boxed Eterm即指向这个header，这个header里面包含具体的boxed对象类型，如tuple的header末6位为000000，前面的位数为tuple的size：</p>
 <p><img src="/assets/image/erlang/erlang_tuple_format.png" alt=""></p>
 <p>tuple实际上就是一个有头部的数组，其包含的Eterm在内存中紧凑排列，tuple的操作效率和数组是一致的。</p>
 <p>list和tuple是erlang中用得最多的数据结构，也是其它一些数据结构的基础，如record，map，摘下几个关于list，tuple操作的常用函数，便于加深对结构的理解：</p>
