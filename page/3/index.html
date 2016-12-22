@@ -440,14 +440,14 @@ Model层不能访问Controller层
     <div class="post-content" id="post-content" itemprop="postContent" >
 
     
-        简单介绍一下Erlang常用数据结构的内部实现和特性，主要参考Erlang OTP 18.0源码，和网上很多优秀博客(参见附录)，原创并不多，整理了一些自己项目中常用到的。
+        简单介绍一下Erlang常用数据结构的内部实现和特性，主要参考Erlang OTP 18.0源码，和网上很多优秀博客(参见附录)，整理了一些自己项目中常用到的。
 Erlang虚拟机使用一个字(64/32位)来表示所有类型的数据，即Eterm。具体的实施方案通过占用Eterm的后几位作为类型标签，然后根据标签类型来解释剩余位的用途。这个标签是多层级的，最外层占用两位，有三种类型：
 
 01: list，剩下62位是指向列表Cons的指针
 10: boxed对象，即复杂对象，剩余62位指向boxed对象的对象头。包括元组，大整数，外部Pid/Port等
 11: immediate立即数，即可以在一个字中表示的小型对象，包括小整数，本地Pid/Port，Atom，NIL等
 
-这三种类型是Erlang类型的大框架，前两者是可以看做是引用类型，立即数相当于是值类型，但无论对于哪种类型，Erlang Eterm均用一个字表示所有数据结构，理解这一点是很重要的。
+这三种类型是Erlang类型的大框架，前两者是可以看做是引用类型，立即数相当于是值类型，但无论对于哪种类型，Erlang Eterm本身只占用一个字，理解这一点是很重要的。
     
     
         <a href="/2015/12/erlang-datastructures/" class="post-more waves-effect waves-button">
