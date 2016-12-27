@@ -154,6 +154,56 @@
     <ul class="post-list">
     
         <li class="post-list-item">
+            <article id="post-skynet-luaservice"
+  class="article-card article-type-post" itemprop="blogPost">
+     
+    <div class="post-meta">
+        <time datetime="2015-01-10T16:00:00.000Z" itemprop="datePublished" class="post-time">
+  2015-01-11
+</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/gameserver/">gameserver</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2015/01/skynet-luaservice/">skynet lua服务</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent" >
+
+    
+        C模块的导出从skynet核心模块来看，它只认得C服务，每个服务被编译为动态库，在需要时由skynet加载。skynet提供发送消息和注册回调函数的接口，并保证消息的正确到达，并调用目标服务回调函数。其它东西，如消息调度，线程池等，对于用户来说都是透明的。
+skynet服务可以由lua编写，因此skynet将C模块核心接口通过skynet/lualib-src/lua-skynet.c导出为 skynet.so提供给lua使用。在lua层，通过skynet/lualib/skynet.lua加载C模块(require &quot;skynet.core&quot;)完成对C API的封装。主要涉及lua服务的加载和退出，消息的发送，回调函数的注册等。用户定义的lua服务通过require &quot;skynet&quot;的接口即可完成服务的注册，启动和退出等。关于skynet lua api可以参见skynet wiki。
+    
+    
+        <a href="/2015/01/skynet-luaservice/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/lua/">lua</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/skynet/">skynet</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item">
             <article id="post-false-sharing"
   class="article-card article-type-post" itemprop="blogPost">
      
@@ -574,55 +624,6 @@
     
     
         <a href="/2014/10/ngserver-service/" class="post-more waves-effect waves-button">
-            阅读全文...
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ngserver/">ngserver</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item">
-            <article id="post-ngserver-player"
-  class="article-card article-type-post" itemprop="blogPost">
-     
-    <div class="post-meta">
-        <time datetime="2014-10-30T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2014-10-31
-</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/gameserver/">gameserver</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2014/10/ngserver-player/">NGServer Session -&gt; Player</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent" >
-
-    
-        在服务器中，一般都有一个代表客户端或玩家的类，用来处理一些相关逻辑并保存必要数据。也就是NGServer中的Player类，在网络模型中，一般一个Player对应一次会话(Session)，因此在很多服务器模型中，客户端类直接从Session类派生，这样客户端可以直接通过父类Session的接口发送数据，并且通过实现Sessoin的虚函数对数据进行处理。这种模型的好处在于简单，客户端类能够完全控制网络IO，并且对IO事件进行及时地处理。比如连接断开，那么客户端类可以通过实现Session的OnClose()函数完成一些业务逻辑上的处理，比如保存用户数据。而这种编程模型，将客户端和网络会话的耦合性提到了最高：Client is a Session。方便的同时，很大程度上限制了模块的可拓展性，比如客户端的断线重连，由于这种继承关系，导致Session在销毁的同时必然导致Client”逻辑上”的断线，这样玩家重连的时候，数据只能重新加载，建立新的Session和Client。这种情况还会发生在客户端异处登录时，原有客户端被挤下线的同时，逻辑上的数据也丢失了，而新的客户端将重新加载数据。除了断线重连之外，该模型还会造成不必要的编译依赖。因此我们需要将逻辑上的客户端和底层的网络Session解耦。
-    
-    
-        <a href="/2014/10/ngserver-player/" class="post-more waves-effect waves-button">
             阅读全文...
         </a>
     </div>

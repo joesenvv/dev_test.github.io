@@ -154,6 +154,55 @@
     <ul class="post-list">
     
         <li class="post-list-item">
+            <article id="post-erlang-thinking"
+  class="article-card article-type-post" itemprop="blogPost">
+     
+    <div class="post-meta">
+        <time datetime="2015-04-21T16:00:00.000Z" itemprop="datePublished" class="post-time">
+  2015-04-22
+</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2015/04/erlang-thinking/">Erlang 随想</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent" >
+
+    
+        接触Erlang不到两个月时间，之前一直用C++开发。Erlang这门语言确实带给我更多的思考。
+    
+    
+        <a href="/2015/04/erlang-thinking/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/erlang/">erlang</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item">
             <article id="post-erlang-hotcode"
   class="article-card article-type-post" itemprop="blogPost">
      
@@ -583,56 +632,6 @@
     <div class="post-footer">
         
 	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/lua/">lua</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item">
-            <article id="post-skynet-luaservice"
-  class="article-card article-type-post" itemprop="blogPost">
-     
-    <div class="post-meta">
-        <time datetime="2015-01-10T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2015-01-11
-</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/gameserver/">gameserver</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2015/01/skynet-luaservice/">skynet lua服务</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent" >
-
-    
-        C模块的导出从skynet核心模块来看，它只认得C服务，每个服务被编译为动态库，在需要时由skynet加载。skynet提供发送消息和注册回调函数的接口，并保证消息的正确到达，并调用目标服务回调函数。其它东西，如消息调度，线程池等，对于用户来说都是透明的。
-skynet服务可以由lua编写，因此skynet将C模块核心接口通过skynet/lualib-src/lua-skynet.c导出为 skynet.so提供给lua使用。在lua层，通过skynet/lualib/skynet.lua加载C模块(require &quot;skynet.core&quot;)完成对C API的封装。主要涉及lua服务的加载和退出，消息的发送，回调函数的注册等。用户定义的lua服务通过require &quot;skynet&quot;的接口即可完成服务的注册，启动和退出等。关于skynet lua api可以参见skynet wiki。
-    
-    
-        <a href="/2015/01/skynet-luaservice/" class="post-more waves-effect waves-button">
-            阅读全文...
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/lua/">lua</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/skynet/">skynet</a></li></ul>
 
     </div>
     

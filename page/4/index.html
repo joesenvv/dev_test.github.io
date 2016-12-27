@@ -154,6 +154,62 @@
     <ul class="post-list">
     
         <li class="post-list-item">
+            <article id="post-tcp-notes-3"
+  class="article-card article-type-post" itemprop="blogPost">
+     
+    <div class="post-meta">
+        <time datetime="2015-10-10T16:00:00.000Z" itemprop="datePublished" class="post-time">
+  2015-10-11
+</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/network/">network</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2015/10/tcp-notes-3/">TCP复习笔记(三) TCP套接字</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent" >
+
+    
+        主要流程服务器端套接字的主要流程：
+
+socket()：创建一个主动套接字
+bind()：为套接字绑定一个本地协议地址和端口(这一步不是必须)
+listen()：将套接字改为被动套接字，如果套接字没有绑定端口，为套接字选择一个临时端口，此时TCP状态机等待SYN包的到达
+accept()：从listen backlog队列中取出一个已经建立(已完成三次握手)的连接
+
+而对于客户端来说，只需要知道服务器IP,Port，直接connect()即可，客户端一般无需主动调用bind()绑定端口，因为客户端不关心它的本地端口，connect()会为其选择一个临时端口。
+    
+    
+        <a href="/2015/10/tcp-notes-3/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tcp-ip/">tcp/ip</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item">
             <article id="post-tcp-notes-2"
   class="article-card article-type-post" itemprop="blogPost">
      
@@ -607,60 +663,6 @@ Apply Root Motion：是否将动画的位移，转向作用于实际模型之上
     <div class="post-footer">
         
 	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/distribution/">distribution</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/erlang/">erlang</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item">
-            <article id="post-kbengine-study2"
-  class="article-card article-type-post" itemprop="blogPost">
-     
-    <div class="post-meta">
-        <time datetime="2015-07-23T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2015-07-24
-</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/gameserver/">gameserver</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2015/07/kbengine-study2/">kbengine 源码导读(二) 加载流程</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent" >
-
-    
-        一. 登录流程注册
-Unity3d:CreateAccount
-Loginapp:reqCreateAccount 
--&gt; dbmgr:reqCreateAccount 
--&gt; Loginapp:onReqCreateAccountResult 
--&gt; Client:onReqCreateAccountResult
-    
-    
-        <a href="/2015/07/kbengine-study2/" class="post-more waves-effect waves-button">
-            阅读全文...
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kbengine/">kbengine</a></li></ul>
 
     </div>
     

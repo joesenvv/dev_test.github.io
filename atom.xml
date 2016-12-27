@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://wudaijun.com/"/>
-  <updated>2016-12-18T07:10:56.000Z</updated>
+  <updated>2016-12-27T09:05:15.000Z</updated>
   <id>http://wudaijun.com/</id>
   
   <author>
@@ -14,6 +14,71 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Erlang 内存问题诊断</title>
+    <link href="http://wudaijun.com/2016/12/erlang-memory-debug/"/>
+    <id>http://wudaijun.com/2016/12/erlang-memory-debug/</id>
+    <published>2016-12-25T16:00:00.000Z</published>
+    <updated>2016-12-27T09:05:15.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>通过<code>erlang:memory()</code>查看节点内存占用总览，需要通过静态和动态两个维度对内存进行考核：</p>
+<ul>
+<li>静态: 各类内存占用比例，是否有某种类的内存占用了节点总内存的绝大部分</li>
+<li>动态: 各类内存增长特性，如增长速度，或是否长期增长而不回收(atom除外)</li>
+</ul>
+<p>找出有疑似内存泄露的种类后，再进行下一步分析</p>
+<h3 id="atom">atom</h3><p>atom不会被GC，这意味着我们应该对atom内存增长更加重视而不是忽略。在编写代码时，尽量避免动态生成atom，因为一旦你的输入源不可靠或受到攻击(特别针对网络消息)，atom内存增长可能导致节点crash。可以考虑将atom生成函数替换为更安全的版本：</p>
+<pre><code>list_to_atom/<span class="number">1</span> -&gt; list_to_existing_atom/<span class="number">1</span>
+binary_to_atom/<span class="number">2</span> -&gt; binary_to_existing_atom/<span class="number">2</span>
+<span class="function"><span class="title">binary_to_term</span><span class="params">(Bin)</span></span> -&gt; <span class="function"><span class="title">binary_to_term</span><span class="params">(Bin,[safe])</span></span>
+</code></pre><h3 id="ets">ets</h3><p>ets内存占用通常是由于表过大，通过<code>ets:i().</code>查看ets表条目数，大小，占用内存等。</p>
+<h3 id="process">process</h3><p>进程内存占用过高可能有两方面原因，进程数量过大和进程占用内存过高。针对于前者，首先找出那些没有被链接或监控的”孤儿进程”：</p>
+<pre><code>[<span class="name">P</span> || <span class="name">P</span>&lt;-<span class="atom">processes</span>(),
+    [{<span class="name">_</span>,<span class="name">Ls</span>},{<span class="name">_</span>,<span class="name">Ms</span>}] &lt;- [<span class="atom">process_info</span>(<span class="name">P</span>,[<span class="atom">links</span>,<span class="atom">monitors</span>])],
+    []==<span class="name">Ls</span>,[]==<span class="name">Ms</span>].
+</code></pre><p>或通过<code>supervisor:count_children/1</code>查看sup下进程数量和状态。</p>
+<p>而如果是进程所占内存过高，则可将内存占用最高的几个进程找出来进行检查:</p>
+<pre><code>recon:proc_count(memory, <span class="number">10</span>). % 打印占用内存最高的<span class="number">10</span>个进程
+recon:proc_count(message_queue_len, <span class="number">10</span>). % 打印消息队列最长的<span class="number">10</span>个进程
+</code></pre><h3 id="binary">binary</h3><p>erlang binary大致上分为两种，heap binary(&lt;=64字节)和refc binary(&gt;64字节)，分别位于进程堆和全局堆上，进程通过ProBin持有refc binary的引用，当refc binary引用计数为0时，被GC。关于binary的详细实现，参考<a href="http://wudaijun.com/2015/12/erlang-datastructures/">Erlang常用数据结构实现</a>。</p>
+<p>recon提供的关于binary问题检测的函数有：</p>
+<pre><code>% 打印出引用的refc binary内存最高的<span class="keyword">N</span>个进程
+recon:proc_count(binary_memory, <span class="keyword">N</span>)
+% 对所有进程执行GC 打印出GC前后ProcBin个数减少数量最多的<span class="keyword">N</span>个进程
+recon:bin_leak(<span class="keyword">N</span>)
+</code></pre><p>以上两个函数，通常可以找出有问题的进程，然后针对进程的业务逻辑和上下文进行优化。通常来说，针对于refc binary，有如下思路：</p>
+<ul>
+<li>每过一段时间手动GC(高效，不优雅)</li>
+<li>如果只持有大binary中的一小段，用<code>binary:copy/1-2</code>(减少refc binary引用)</li>
+<li>将涉及大binary的工作移到临时一次性进程中，做完工作就死亡(变相的手动GC)</li>
+<li>对非活动进程使用hibernate调用(该调用将进程挂起，执行GC并清空调用栈，在收到消息时再唤醒)</li>
+</ul>
+<p>一种典型地binary泄露情形发生在当一个生命周期很长的中间件当作控制和传递大型refc binary消息的请求控制器或消息路由器时，因为ProcBin仅仅只是个引用，因此它们成本很低而且在中间件进程中需要花很长的时间去触发GC，所以即使除了中间件其他所有进程都已经GC了某个refc binary对应的ProcBin，该refc binary也需要保留在共享堆里。因此中间件进程成为了主要的泄漏源。</p>
+<p>针对这种情况，有如下解决方案：</p>
+<ul>
+<li>避免中间件接触到refc binary，由中间件进程返回目标进程的Pid，由原始调用者来进行binary转发</li>
+<li>调整中间件进程的GC频率(fullsweep_after)</li>
+</ul>
+<h3 id="driver/nif">driver/nif</h3><p>另一部分非Erlang虚拟机管制的内存通常来自于第三方Driver或NIF，要确认是否是这部分内存出了问题，可通过<code>recon_alloc:memory(allocated).</code>和OS所报告的内存占用进行对比，可以大概得到C Driver或NIF分配的内存，再根据该部分内存的增长情况和占用比例来判断是否出现问题。</p>
+<p>如果是纯C，那么内存使用应该是相对稳定并且可预估的，如果还挂接了Lua这类动态语言，调试起来要麻烦一些，在我们的服务器中，Lua部分是无状态的，可以直接重新加载Lua虚拟机。其它的调试手段，则要透过Lua层面的GC机制去解决问题了。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;通过&lt;code&gt;erlang:memory()&lt;/code&gt;查看节点内存占用总览，需要通过静态和动态两个维度对内存进行考核：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;静态: 各类内存占用比例，是否有某种类的内存占用了节点总内存的绝大部分&lt;/li&gt;
+&lt;li&gt;动态: 各类内存增长特性，如增长
+    
+    </summary>
+    
+      <category term="erlang" scheme="http://wudaijun.com/categories/erlang/"/>
+    
+    
+      <category term="erlang" scheme="http://wudaijun.com/tags/erlang/"/>
+    
+  </entry>
   
   <entry>
     <title>Erlang Unicode编码</title>
@@ -2452,7 +2517,7 @@ ERL_EPMD_PORT=<span class="number">5000</span> erl -name hello
     <link href="http://wudaijun.com/2015/12/erlang-datastructures/"/>
     <id>http://wudaijun.com/2015/12/erlang-datastructures/</id>
     <published>2015-12-05T16:00:00.000Z</published>
-    <updated>2016-12-22T06:47:37.000Z</updated>
+    <updated>2016-12-27T03:54:24.000Z</updated>
     
     <content type="html"><![CDATA[<p>简单介绍一下Erlang常用数据结构的内部实现和特性，主要参考<a href="https://github.com/erlang/otp/tree/maint-18" target="_blank" rel="external">Erlang OTP 18.0</a>源码，和网上很多优秀博客(参见附录)，整理了一些自己项目中常用到的。</p>
 <p>Erlang虚拟机使用一个字(64/32位)来表示所有类型的数据，即Eterm。具体的实施方案通过占用Eterm的后几位作为类型标签，然后根据标签类型来解释剩余位的用途。这个标签是多层级的，最外层占用两位，有三种类型：</p>
@@ -2546,8 +2611,9 @@ ERL_EPMD_PORT=<span class="number">5000</span> erl -name hello
 <p>要注意的是，sub binary只引用proc binary(通过orig)，而不直接引用refc binary，因此图中refc binary的refc字段仍然为1。只要sub binary还有效，对应的proc binary便不会被GC，refc binary的计数也就不为0。</p>
 <h4 id="bit_string">bit string</h4><p>当我们通过如<code>&lt;&lt;2:3,3:6&gt;&gt;</code>的位语法构建binary时，将得到<code>&lt;&lt;65,1:1&gt;&gt;</code>这种非字节对齐的数据，即二进制流，在Erlang中被称为bitstring，Erlang的bitstring基于ErlSubBin结构实现，此时bitsize为最后一个字节的有效位数，size为有效字节数(不包括未填满的最后一个字节)，对虚拟机底层来说，sub bianry和bit string是同一种数据结构。</p>
 <h4 id="binary追加构造优化">binary追加构造优化</h4><p>在通过<code>C = &lt;&lt;A/binary,B/binary&gt;&gt;</code>追加构造binary时，最自然的做法应当是创建足够空间的C(heap or refc)，再将A和B的数据拷贝进去，但Erlang对binary的优化不止于此，它使用refc binary的预留空间，通过追加的方式提高大binary和频繁追加的效率。</p>
-<pre><code><span class="comment"><figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">Bin0</span> = &lt;&lt;<span class="number">0</span>&gt;&gt;,                    <span class="comment">%% 创建一个heap binary Bin0</span></span><br><span class="line"><span class="variable">Bin1</span> = &lt;&lt;<span class="variable">Bin0</span>/binary,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&gt;&gt;,    <span class="comment">%% 追加目标不是refc binary，创建一个refc binary，预留256字节空间，用Bin0初始化，并追加1,2,3</span></span><br><span class="line"><span class="variable">Bin2</span> = &lt;&lt;<span class="variable">Bin1</span>/binary,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>&gt;&gt;,    <span class="comment">%% 追加目标为refc binary且有预留空间 直接追加4,5,6</span></span><br><span class="line"><span class="variable">Bin3</span> = &lt;&lt;<span class="variable">Bin2</span>/binary,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>&gt;&gt;,    <span class="comment">%% 同样，将7,8,9追加refc binary预留空间</span></span><br><span class="line"><span class="variable">Bin4</span> = &lt;&lt;<span class="variable">Bin1</span>/binary,<span class="number">17</span>&gt;&gt;,       <span class="comment">%% 此时不能直接追加，否则会覆盖Bin2内容，虚拟机会通过某种机制发现这一点，然后将Bin1拷贝到新的refc binary，再执行追加</span></span><br><span class="line"><span class="tuple">&#123;<span class="variable">Bin4</span>,<span class="variable">Bin3</span>&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">% 通过erts_get_internal_state/1可以获取binary状态</span></span><br><span class="line"><span class="comment">% 对应函数源码位于erl_bif_info.c erts_debug_get_internal_state_1</span></span><br><span class="line"><span class="function"><span class="title">f</span><span class="params">()</span> -&gt;</span></span><br><span class="line">	<span class="variable">B0</span> = &lt;&lt;<span class="number">0</span>&gt;&gt;,</span><br><span class="line">	<span class="function_name">erts_debug:set_internal_state</span>(available_internal_state,true), <span class="comment">% 打开内部状态获取接口 同一个进程只需执行一次</span></span><br><span class="line">	<span class="function_name">f2</span>(<span class="variable">B0</span>). <span class="comment">% 通过参数传递B0 是为了避免虚拟机优化 直接构造B1为heap binary</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">f2</span><span class="params">(<span class="variable">B0</span>)</span> -&gt;</span></span><br><span class="line">  <span class="function_name">io:format</span>(<span class="string">"B0: ~p~n"</span>, [<span class="function_name">erts_debug:get_internal_state</span>(<span class="tuple">&#123;binary_info,<span class="variable">B0</span>&#125;</span>)]),</span><br><span class="line">  <span class="variable">B1</span> = &lt;&lt;<span class="variable">B0</span>/binary, <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&gt;&gt;,</span><br><span class="line">  <span class="function_name">io:format</span>(<span class="string">"B1: ~p~n"</span>, [<span class="function_name">erts_debug:get_internal_state</span>(<span class="tuple">&#123;binary_info,<span class="variable">B1</span>&#125;</span>)]),</span><br><span class="line">  <span class="variable">B2</span> = &lt;&lt;<span class="variable">B1</span>/binary, <span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>&gt;&gt;,</span><br><span class="line">  <span class="function_name">io:format</span>(<span class="string">"B2: ~p~n"</span>, [<span class="function_name">erts_debug:get_internal_state</span>(<span class="tuple">&#123;binary_info,<span class="variable">B2</span>&#125;</span>)]),</span><br><span class="line">  ok.</span><br><span class="line"></span><br><span class="line"><span class="comment">% get_internal_state(&#123;binary_info, B&#125;)返回格式:</span></span><br><span class="line"><span class="comment">% proc binary：&#123;refc_binary, pb_size, &#123;binary, orig_size&#125;, pb_flags&#125;</span></span><br><span class="line"><span class="comment">% heap binary：heap_binary</span></span><br><span class="line"><span class="variable">B0</span>: heap_binary</span><br><span class="line"><span class="variable">B1</span>: <span class="tuple">&#123;refc_binary,<span class="number">4</span>,<span class="tuple">&#123;binary,<span class="number">256</span>&#125;</span>,<span class="number">3</span>&#125;</span></span><br><span class="line"><span class="variable">B2</span>: <span class="tuple">&#123;refc_binary,<span class="number">7</span>,<span class="tuple">&#123;binary,<span class="number">256</span>&#125;</span>,<span class="number">3</span>&#125;</span></span><br></pre></td></tr></table></figure></span>
-</code></pre><p>B1和B2本身是sub binary(它们只持有refc binary的一部分)，通过sub binary的flags来判定是否可被追加：</p>
+<pre><code><span class="comment"><figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">Bin0</span> = &lt;&lt;<span class="number">0</span>&gt;&gt;,                    <span class="comment">%% 创建一个heap binary Bin0</span></span><br><span class="line"><span class="variable">Bin1</span> = &lt;&lt;<span class="variable">Bin0</span>/binary,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&gt;&gt;,    <span class="comment">%% 追加目标不是refc binary，创建一个refc binary，预留256字节空间，用Bin0初始化，并追加1,2,3</span></span><br><span class="line"><span class="variable">Bin2</span> = &lt;&lt;<span class="variable">Bin1</span>/binary,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>&gt;&gt;,    <span class="comment">%% 追加目标为refc binary且有预留空间 直接追加4,5,6</span></span><br><span class="line"><span class="variable">Bin3</span> = &lt;&lt;<span class="variable">Bin2</span>/binary,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>&gt;&gt;,    <span class="comment">%% 同样，将7,8,9追加refc binary预留空间</span></span><br><span class="line"><span class="variable">Bin4</span> = &lt;&lt;<span class="variable">Bin1</span>/binary,<span class="number">17</span>&gt;&gt;,       <span class="comment">%% 此时不能直接追加，否则会覆盖Bin2内容，虚拟机会通过某种机制发现这一点，然后将Bin1拷贝到新的refc binary，再执行追加</span></span><br><span class="line"><span class="tuple">&#123;<span class="variable">Bin4</span>,<span class="variable">Bin3</span>&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">% 通过erts_get_internal_state/1可以获取binary状态</span></span><br><span class="line"><span class="comment">% 对应函数源码位于$BEAM_SRC/erl_bif_info.c erts_debug_get_internal_state_1</span></span><br><span class="line"><span class="function"><span class="title">f</span><span class="params">()</span> -&gt;</span></span><br><span class="line">	<span class="variable">B0</span> = &lt;&lt;<span class="number">0</span>&gt;&gt;,</span><br><span class="line">	<span class="function_name">erts_debug:set_internal_state</span>(available_internal_state,true), <span class="comment">% 打开内部状态获取接口 同一个进程只需执行一次</span></span><br><span class="line">	<span class="function_name">f2</span>(<span class="variable">B0</span>). <span class="comment">% 通过参数传递B0 是为了避免虚拟机优化 直接构造B1为heap binary</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">f2</span><span class="params">(<span class="variable">B0</span>)</span> -&gt;</span></span><br><span class="line">  <span class="function_name">io:format</span>(<span class="string">"B0: ~p~n"</span>, [<span class="function_name">erts_debug:get_internal_state</span>(<span class="tuple">&#123;binary_info,<span class="variable">B0</span>&#125;</span>)]),</span><br><span class="line">  <span class="variable">B1</span> = &lt;&lt;<span class="variable">B0</span>/binary, <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&gt;&gt;,</span><br><span class="line">  <span class="function_name">io:format</span>(<span class="string">"B1: ~p~n"</span>, [<span class="function_name">erts_debug:get_internal_state</span>(<span class="tuple">&#123;binary_info,<span class="variable">B1</span>&#125;</span>)]),</span><br><span class="line">  <span class="variable">B2</span> = &lt;&lt;<span class="variable">B1</span>/binary, <span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>&gt;&gt;,</span><br><span class="line">  <span class="function_name">io:format</span>(<span class="string">"B2: ~p~n"</span>, [<span class="function_name">erts_debug:get_internal_state</span>(<span class="tuple">&#123;binary_info,<span class="variable">B2</span>&#125;</span>)]),</span><br><span class="line">  ok.</span><br><span class="line"></span><br><span class="line"><span class="comment">% get_internal_state(&#123;binary_info, B&#125;)返回格式:</span></span><br><span class="line"><span class="comment">% proc binary：&#123;refc_binary, pb_size, &#123;binary, orig_size&#125;, pb_flags&#125;</span></span><br><span class="line"><span class="comment">% heap binary：heap_binary</span></span><br><span class="line"><span class="variable">B0</span>: heap_binary</span><br><span class="line"><span class="variable">B1</span>: <span class="tuple">&#123;refc_binary,<span class="number">4</span>,<span class="tuple">&#123;binary,<span class="number">256</span>&#125;</span>,<span class="number">3</span>&#125;</span></span><br><span class="line"><span class="variable">B2</span>: <span class="tuple">&#123;refc_binary,<span class="number">7</span>,<span class="tuple">&#123;binary,<span class="number">256</span>&#125;</span>,<span class="number">3</span>&#125;</span></span><br></pre></td></tr></table></figure></span>
+</code></pre><p>binary追加实现源码位于<code>$BEAM_SRC/erl_bits.c erts_bs_append</code>，B1和B2本身是sub binary，基于同一个ProcBin，可追加的refc binary只能被一个ProcBin引用，这是因为可追加refc binary可能会在追加过程中重新分配空间，此时要更新ProcBin引用，而refc binary无法快速追踪到其所有ProcBin引用(只能遍历)，另外，多个ProcBin上的sub binary可能对refc binary覆写。</p>
+<p>只有最后追加得到的sub binary才可执行快速追加(通过sub binary和对应ProBin flags来判定)，否则会拷贝并分配新的可追加refc binary。所有的sub binary都是指向ProcBin或heap binary的，不会指向sub binary本身。</p>
 <p><img src="/assets/image/erlang_binary_append.png" alt=""></p>
 <h4 id="binary降级">binary降级</h4><p>Erlang通过追加优化构造出的可追加refc binary通过空间换取了效率，并且这类refc binary只能被一个proc binary引用(多个proc binary上的sub binary会造成覆写，注意，前面的B1，B2是sub binary而不是ProBin)。比如在跨进程传输时，原本只需拷贝ProBin，但对可追加的refc binary来说，不能直接拷贝ProBin，这时需对binary降级，即将可追加refc binary降级为普通refc binary：</p>
 <pre><code><span class="keyword">bs_emasculate(Bin0) </span>-&gt;
@@ -2556,8 +2622,8 @@ ERL_EPMD_PORT=<span class="number">5000</span> erl -name hello
 <span class="label">io</span>:format(<span class="string">"Bin1 info: ~p~n"</span>, [erts_debug:get_internal_state({<span class="keyword">binary_info, </span><span class="keyword">Bin1})]),
 </span><span class="label">NewP</span> ! <span class="keyword">Bin1,
 </span><span class="label">io</span>:format(<span class="string">"Bin1 info: ~p~n"</span>, [erts_debug:get_internal_state({<span class="keyword">binary_info, </span><span class="keyword">Bin1})]),
-</span><span class="keyword">Bin2 </span>= &lt;&lt;<span class="keyword">Bin1/binary, </span><span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&gt;&gt;,
-<span class="label">io</span>:format(<span class="string">"Bin2 info: ~p~n"</span>, [erts_debug:get_internal_state({<span class="keyword">binary_info, </span><span class="keyword">Bin2})]),
+</span><span class="keyword">Bin2 </span>= &lt;&lt;<span class="keyword">Bin1/binary, </span><span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&gt;&gt;, % <span class="keyword">Bin1被收缩 </span>这一步会执行refc <span class="keyword">binary拷贝
+</span><span class="label">io</span>:format(<span class="string">"Bin2 info: ~p~n"</span>, [erts_debug:get_internal_state({<span class="keyword">binary_info, </span><span class="keyword">Bin2})]),
 </span><span class="keyword">Bin2.
 </span>
 % 运行结果
@@ -2566,8 +2632,8 @@ ERL_EPMD_PORT=<span class="number">5000</span> erl -name hello
 </span><span class="keyword">Bin1 </span><span class="preprocessor">info</span>: {refc_binary,<span class="number">4</span>,{<span class="keyword">binary,4},0}
 </span><span class="keyword">Bin2 </span><span class="preprocessor">info</span>: {refc_binary,<span class="number">7</span>,{<span class="keyword">binary,256},3}
 </span>&lt;&lt;<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>&gt;&gt;
-</code></pre><p>降级操作不会改变原有可追加refc binary的属性，而是重新创建一个普通的refc binary。</p>
-<pre><code>// 降级函数(<span class="keyword">BEAM_SRC/erl_bits.c)
+</code></pre><p>降级操作会重新创建一个普通的refc binary(原有可追加refc binary会被GC?)，同时，降级操作会将B1的flags置0，这保证基于B1的sub binary在执行追加时，会重新拷贝分配refc binary。</p>
+<pre><code>// 降级函数($<span class="keyword">BEAM_SRC/erl_bits.c)
 </span><span class="label">void</span> erts_emasculate_writable_binary(ProcBin* pb)
 {
     <span class="keyword">Binary* </span><span class="keyword">binp;
@@ -2586,14 +2652,21 @@ ERL_EPMD_PORT=<span class="number">5000</span> erl -name hello
 </span>    pb-&gt;<span class="keyword">bytes </span>= (<span class="keyword">byte </span>*) <span class="keyword">binp-&gt;orig_bytes;
 </span>    }
 }
-</code></pre><p>另外，全局堆GC也可能会对可追加refc binary的预留空间进行收缩(shrink)，可参考<code>erl_gc.c sweep_off_heap</code>函数。</p>
+</code></pre><blockquote>
+<blockquote>
+<p>Q: ProcBin B1的字段被更新了，那么Erlang上层如何维护变量不可变语义? </p>
+<p>A: 变量不可变指的是Erlang虚拟机上层通过底层屏蔽后所能看到的不变语义，而不是变量底层实现，诸如Pid打包，maps hash扩展等，通过底层差异化处理后，对上层体现的语义和接口都没变，因此我们将其理解为”变量不可变”)。</p>
+</blockquote>
+</blockquote>
+<p>另外，全局堆GC也可能会对可追加refc binary的预留空间进行收缩(shrink)，可参考<code>$BEAM_SRC/erl_gc.c sweep_off_heap</code>函数。</p>
+<p>以上都是理论的实现，实际上Erlang虚拟机对二进制还做了一些基于上下文的优化，通过<code>bin_opt_info</code>编译选项可以打印出这些优化。关于binary优化的更多细节，参考<a href="http://erlang.org/doc/efficiency_guide/binaryhandling.html" target="_blank" rel="external">Constructing and Matching Binaries</a>。</p>
 <h2 id="二-_复合类型">二. 复合类型</h2><p>基于list和tuple之上，Erlang还提供了一些其它的数据结构，这里列举几个key/value相关的数据结构，在服务器中会经常用到。</p>
 <h3 id="1-_record">1. record</h3><p>这个类型无需过多介绍，它就是一个tuple，所谓record filed在预编译后实际上都是通过数值下标来索引，因此它访问field是O(1)复杂度的。</p>
 <h3 id="2-_map">2. map</h3><p>虽然record的语法糖让我们在使用tuple时便利了不少，但是比起真正的key/value结构仍然有许多限制，如key只能是原子，key不能动态添加或删除，record变动对热更的支持很差等。proplists能够一定程度地解决这种问题，但是它适合键值少的情况，通常用来做选项配置，并且不能保证key的唯一。</p>
 <p>map是OTP 17引进的数据结构，是一个boxed对象，它支持任意类型的Key，模式匹配，动态增删Key等，并且最新的<a href="https://github.com/comtihon/mongodb-erlang" target="_blank" rel="external">mongodb-erlang</a>直接支持map。</p>
 <p>在<a href="https://github.com/erlang/otp/tree/maint-17" target="_blank" rel="external">OTP17</a>中，map的内存结构为：</p>
 <pre><code><span class="comment"><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//位于 $OTP_SRC/erts/emulator/beam/erl_map.h</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> map_s &#123;</span><br><span class="line">    Eterm thing_word;	<span class="comment">// 	boxed对象header</span></span><br><span class="line">    Uint  size;			<span class="comment">// 	map 键值对个数</span></span><br><span class="line">    Eterm keys;      	<span class="comment">// 	keys的tuple</span></span><br><span class="line">&#125; <span class="keyword">map_t</span>;</span><br></pre></td></tr></table></figure></span>
-</code></pre><p>该结构体之后就是依次存放的Value，因此maps的get操作，需要先遍历keys tuple，找到key所在下标，然后在value中取出该下标偏移对应的值。因此是O(n)复杂度的。详见maps:get源码(<code>BEAM_SRC/erl_map.c erts_maps_get</code>)。</p>
+</code></pre><p>该结构体之后就是依次存放的Value，因此maps的get操作，需要先遍历keys tuple，找到key所在下标，然后在value中取出该下标偏移对应的值。因此是O(n)复杂度的。详见maps:get源码(<code>$BEAM_SRC/erl_map.c erts_maps_get</code>)。</p>
 <p>如此的maps，只能作为record的替用，并不是真正的Key-&gt;Value映射，因此不能存放大量数据。而在OTP18中，maps加入了针对于big map的hash机制，当maps:size &lt; <code>MAP_SMALL_MAP_LIMIT</code>时，使用flatmap结构，也就是上述OTP17中的结构，当maps:size &gt;= <code>MAP_SMALL_MAP_LIMI</code>T时，将自动使用hashmap结构来高效存取数据。<code>MAP_SMALL_MAP_LIMIT</code>在erl_map.h中默认定义为32。</p>
 <p>仍然要注意Erlang本身的变量不可变原则，每次执行更新maps，都会导致新开辟一个maps，并且拷贝原maps的keys和values，在这一点上，maps:update比maps:put更高效，因为前者keys数量不会变，因此无需开辟新的keys tuple，拷贝keys tuples ETerm即可。实际使用maps时：</p>
 <ol>
