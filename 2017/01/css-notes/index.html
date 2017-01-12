@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  
+  <title>CSS 笔记 | wudaijun&#39;s blog | Coding is Funny</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="theme-color" content="#3F51B5">
+  
+  
+  <meta name="keywords" content="web">
+  <meta name="description" content="一. 选择器1. 普通选择器
+
+
+类别
+例子
+解释
+
+
+
+
+标签选择器
+div
+以HTML 标签类型来选择元素,又叫类型选择器
+
+
+类选择器
+.span1
+以class属性值来选择元素,可在页面中出现多个
+
+
+ID选择器
+#inst
+以id属性值来选择元素,在页面中只能出现一次
+
+
+
+2. 并列选择器
+
+
+类别
+例子
+解释
+
+
+
+
+并列选择器
+div1,span1
+同时定义多个样式,即该CSS有多">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSS 笔记">
+<meta property="og:url" content="http://wudaijun.com/2017/01/css-notes/index.html">
+<meta property="og:site_name" content="wudaijun's blog">
+<meta property="og:description" content="一. 选择器1. 普通选择器
+
+
+类别
+例子
+解释
+
+
+
+
+标签选择器
+div
+以HTML 标签类型来选择元素,又叫类型选择器
+
+
+类选择器
+.span1
+以class属性值来选择元素,可在页面中出现多个
+
+
+ID选择器
+#inst
+以id属性值来选择元素,在页面中只能出现一次
+
+
+
+2. 并列选择器
+
+
+类别
+例子
+解释
+
+
+
+
+并列选择器
+div1,span1
+同时定义多个样式,即该CSS有多">
+<meta property="og:image" content="http://wudaijun.com/assets/image/css/css-padding-margin.gif">
+<meta property="og:updated_time" content="2017-01-11T09:39:48.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CSS 笔记">
+<meta name="twitter:description" content="一. 选择器1. 普通选择器
+
+
+类别
+例子
+解释
+
+
+
+
+标签选择器
+div
+以HTML 标签类型来选择元素,又叫类型选择器
+
+
+类选择器
+.span1
+以class属性值来选择元素,可在页面中出现多个
+
+
+ID选择器
+#inst
+以id属性值来选择元素,在页面中只能出现一次
+
+
+
+2. 并列选择器
+
+
+类别
+例子
+解释
+
+
+
+
+并列选择器
+div1,span1
+同时定义多个样式,即该CSS有多">
+  
+    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
+  
+  <meta name="summary" content="null">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+</head>
+
+<body>
+  <div id="loading" class="active"></div>
+
+  <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <hgroup class="introduce">
+          <h5 class="nickname">wudaijun</h5>
+          <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://blog.csdn.net/wudaijun" target="_blank" >
+                <i class="icon icon-lg icon-contao"></i>
+                CSDN
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/wudaijun" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+
+      <footer class="footer">
+  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
+  <p>wudaijun&#39;s blog &copy; 2017</p>
+  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
+  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
+  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
+</footer>
+
+    </div>
+  </div>
+</aside>
+  <main id="main">
+    <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">CSS 笔记</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container">
+        <h1 class="title">CSS 笔记</h1>
+        
+        
+
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#一-_选择器"><span class="post-toc-text">一. 选择器</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-_普通选择器"><span class="post-toc-text">1. 普通选择器</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-_并列选择器"><span class="post-toc-text">2. 并列选择器</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-_层级选择器"><span class="post-toc-text">3. 层级选择器</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-_兄弟选择器"><span class="post-toc-text">4. 兄弟选择器</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-_伪类/伪元素"><span class="post-toc-text">5. 伪类/伪元素</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#二-_内外边距"><span class="post-toc-text">二. 内外边距</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-_元素结构"><span class="post-toc-text">1. 元素结构</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-_padding"><span class="post-toc-text">2. padding</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-_margin"><span class="post-toc-text">3. margin</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-_外边距合并"><span class="post-toc-text">4. 外边距合并</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-css-notes" 
+  class="post-article article-type-post" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">CSS 笔记</h1>
+        <div class="post-meta">
+            <time datetime="2017-01-08T16:00:00.000Z" itemprop="datePublished" class="post-time">
+  2017-01-09
+</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/web/">web</a></li></ul>
+
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="一-_选择器">一. 选择器</h2><h3 id="1-_普通选择器">1. 普通选择器</h3><table>
+<thead>
+<tr>
+<th>类别</th>
+<th>例子</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>标签选择器</td>
+<td>div</td>
+<td>以HTML 标签类型来选择元素,又叫类型选择器</td>
+</tr>
+<tr>
+<td>类选择器</td>
+<td>.span1</td>
+<td>以class属性值来选择元素,可在页面中出现多个</td>
+</tr>
+<tr>
+<td>ID选择器</td>
+<td>#inst</td>
+<td>以id属性值来选择元素,在页面中只能出现一次</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-_并列选择器">2. 并列选择器</h3><table>
+<thead>
+<tr>
+<th>类别</th>
+<th>例子</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>并列选择器</td>
+<td>div1,span1</td>
+<td>同时定义多个样式,即该CSS有多个名称,简化CSS书写</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-_层级选择器">3. 层级选择器</h3><table>
+<thead>
+<tr>
+<th>类别</th>
+<th>例子</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>后代选择器</td>
+<td>body .span1</td>
+<td>选择指定祖先元素内的后代元素</td>
+</tr>
+<tr>
+<td>直接子元素选择器</td>
+<td>body &gt; .span1</td>
+<td>选择指定父元素内的直接子元素</td>
+</tr>
+</tbody>
+</table>
+<p>例子:</p>
+<pre><code>/<span class="keyword">*</span> body .span1 影响元素E1 E2 <span class="keyword">*</span>/
+/<span class="keyword">*</span> body &gt; .span1 只影响元素E2 <span class="keyword">*</span>/ 
+<span class="variable">&lt;body&gt;</span>
+    <span class="variable">&lt;span class="span1"&gt;</span> E1 <span class="variable">&lt;/span&gt;</span>
+    <span class="variable">&lt;div&gt;</span> <span class="variable">&lt;span class="span1"&gt;</span> E2 <span class="variable">&lt;/span&gt;</span> <span class="variable">&lt;/div&gt;</span>
+<span class="variable">&lt;/body&gt;</span>
+</code></pre><h3 id="4-_兄弟选择器">4. 兄弟选择器</h3><table>
+<thead>
+<tr>
+<th>类别</th>
+<th>例子</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>普通兄弟选择器</td>
+<td>div ~ p</td>
+<td>选择第一个元素后的兄弟元素,两者拥有相同的父元素</td>
+</tr>
+<tr>
+<td>相邻兄弟选择器</td>
+<td>div + p</td>
+<td>选择第一个元素后紧跟的元素,两者拥有相同的父元素</td>
+</tr>
+</tbody>
+</table>
+<p>例子:</p>
+<pre><code>/<span class="keyword">*</span> div + p 影响 Three Six <span class="keyword">*</span>/
+/<span class="keyword">*</span> div ~ p 影响 Three Six Seven <span class="keyword">*</span>/
+<span class="variable">&lt;div&gt;</span>
+    <span class="variable">&lt;p&gt;</span>One<span class="variable">&lt;/p&gt;</span>
+    <span class="variable">&lt;div&gt;</span>Two<span class="variable">&lt;/div&gt;</span>
+    <span class="variable">&lt;p&gt;</span>Three<span class="variable">&lt;/p&gt;</span>
+<span class="variable">&lt;/div&gt;</span>
+
+<span class="variable">&lt;div&gt;</span>
+    <span class="variable">&lt;div&gt;</span>Four<span class="variable">&lt;/div&gt;</span>
+    <span class="variable">&lt;div&gt;</span><span class="variable">&lt;p&gt;</span>Five<span class="variable">&lt;/p&gt;</span><span class="variable">&lt;/div&gt;</span>
+    <span class="variable">&lt;p&gt;</span>Six<span class="variable">&lt;/p&gt;</span>
+    <span class="variable">&lt;p&gt;</span>Seven<span class="variable">&lt;/p&gt;</span>
+<span class="variable">&lt;/div&gt;</span>
+</code></pre><h3 id="5-_伪类/伪元素">5. 伪类/伪元素</h3><ul>
+<li>伪类: 用于定义同一样式的不同状态</li>
+<li><p>伪元素: 用来添加一些选择器的特殊效果</p>
+<pre><code><span class="comment">/* 常见伪类 */</span>
+<span class="tag">a</span><span class="pseudo">:link</span> {<span class="attribute">color</span>:<span class="hexcolor">#FF0000</span>;} <span class="comment">/* 未访问的链接 */</span>
+<span class="tag">a</span><span class="pseudo">:visited</span> {<span class="attribute">color</span>:<span class="hexcolor">#00FF00</span>;} <span class="comment">/* 已访问的链接 */</span>
+<span class="tag">a</span><span class="pseudo">:hover</span> {<span class="attribute">color</span>:<span class="hexcolor">#FF00FF</span>;} <span class="comment">/* 鼠标划过链接 */</span>
+<span class="tag">a</span><span class="pseudo">:active</span> {<span class="attribute">color</span>:<span class="hexcolor">#0000FF</span>;} <span class="comment">/* 已选中的链接 */</span>
+<span class="tag">p</span><span class="pseudo">:first-child</span>{<span class="attribute">color</span>:blue;} <span class="comment">/* 改变当p作为父元素第一个子元素时的样式*/</span> 
+
+<span class="comment">/* 常见伪元素 */</span>
+<span class="tag">h1</span><span class="pseudo">:before</span>{<span class="attribute">content</span>:<span class="function">url</span>(<span class="string">smiley.gif</span>);} <span class="comment">/* 在元素内容之前插入图片 */</span>
+<span class="tag">h1</span><span class="pseudo">:after</span>{<span class="attribute">content</span>:<span class="function">url</span>(<span class="string">smiley.gif</span>);} <span class="comment">/* 在元素内容之后插入图片 */</span>
+<span class="tag">p</span><span class="pseudo">:first-line</span> {<span class="attribute">color</span>:<span class="hexcolor">#ff0000</span>;} <span class="comment">/* 为文本的首行设置特殊样式 */</span>
+<span class="tag">p</span><span class="pseudo">:first-letter</span> {<span class="attribute">color</span>:<span class="hexcolor">#ff0000</span>;} <span class="comment">/* 为文本的首字母设置特殊样式 */</span>
+</code></pre></li>
+</ul>
+<h2 id="二-_内外边距">二. 内外边距</h2><h3 id="1-_元素结构">1. 元素结构</h3><p> <img src="/assets/image/css/css-padding-margin.gif" alt=""></p>
+<h3 id="2-_padding">2. padding</h3><p>内边距，定义元素边框和元素内容之间的留白</p>
+<ul>
+<li>可填充背景</li>
+<li>相邻元素的内边距会叠加(15px + 20px=35px)</li>
+</ul>
+<h3 id="3-_margin">3. margin</h3><p>外边距，元素周围生成额外的空白区。“空白区”通常是指其他元素不能出现且父元素背景可见的区域。</p>
+<ul>
+<li>不可填充背景</li>
+<li>边界是完全透明的(父元素背景可见)</li>
+<li>相邻元素的边界会被折叠15px + 20px=20px)</li>
+</ul>
+<p>margin可为负数，当static元素的margin-top/margin-left被赋予负值时，元素将被拉进指定的方向。例如：</p>
+<pre><code><span class="comment">/* 元素向上移10px*/</span>
+<span class="id">#mydiv1</span> <span class="rules">{<span class="rule"><span class="attribute">margin-top</span>:<span class="value">-<span class="number">10px</span></span></span>;}</span>
+</code></pre><p>但如果你设置margin-bottom/right为负数，元素并不会如你所想的那样向下/右移动，而是将后续的元素拖拉进来，覆盖本来的元素。</p>
+<pre><code><span class="comment">/* #mydiv1后续元素向上移10px, #mydiv1 本身不移动 */</span>
+<span class="id">#mydiv1</span> <span class="rules">{<span class="rule"><span class="attribute">margin-bottom</span>:<span class="value">-<span class="number">10px</span></span></span>;}</span>
+</code></pre><p>关于负margin的更多用法: <a href="https://www.w3cplus.com/css/the-definitive-guide-to-using-negative-margins.html" target="_blank" rel="external">https://www.w3cplus.com/css/the-definitive-guide-to-using-negative-margins.html</a></p>
+<h3 id="4-_外边距合并">4. 外边距合并</h3><p>外边距合并指的是，当两个垂直外边距相遇时，它们将形成一个外边距。合并后的外边距的高度等于两个发生合并的外边距的高度中的较大者。</p>
+<p>垂直外边距合并问题常见于第一个子元素的margin-top会顶开父元素与父元素相邻元素的间距。如:</p>
+<pre><code><span class="tag">&lt;<span class="title">html</span> <span class="attribute">xmlns</span>=<span class="value">"http://www.w3.org/1999/xhtml"</span>&gt;</span>
+<span class="tag">&lt;<span class="title">head</span>&gt;</span>
+<span class="tag">&lt;<span class="title">title</span>&gt;</span>垂直外边距合并<span class="tag">&lt;/<span class="title">title</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">style</span>&gt;</span><span class="css">
+        <span class="class">.top</span><span class="rules">{<span class="rule"><span class="attribute">width</span>:<span class="value"><span class="number">160px</span></span></span>; <span class="rule"><span class="attribute">height</span>:<span class="value"><span class="number">50px</span></span></span>; <span class="rule"><span class="attribute">background</span>:<span class="value"><span class="hexcolor">#ccf</span></span></span>;}</span>
+        <span class="class">.middle</span><span class="rules">{<span class="rule"><span class="attribute">width</span>:<span class="value"><span class="number">160px</span></span></span>; <span class="rule"><span class="attribute">background</span>:<span class="value"><span class="hexcolor">#cfc</span></span></span>;}</span>
+        <span class="class">.middle</span> <span class="class">.firstChild</span><span class="rules">{<span class="rule"><span class="attribute">margin-top</span>:<span class="value"><span class="number">20px</span></span></span>;}</span>
+    </span><span class="tag">&lt;/<span class="title">style</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">head</span>&gt;</span>
+
+<span class="tag">&lt;<span class="title">body</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">div</span> <span class="attribute">class</span>=<span class="value">"top"</span>&gt;</span><span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">div</span> <span class="attribute">class</span>=<span class="value">"middle"</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">div</span> <span class="attribute">class</span>=<span class="value">"firstChild"</span>&gt;</span>我其实只是想和我的父元素隔开点距离。<span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+    <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">body</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">html</span>&gt;</span>
+</code></pre><p>原因：根据CSS规范，当一个元素包含在另一个元素中时（假设没有内边距或边框把外边距分隔开），它们的上和/或下外边距会发生合并。因此firstChild和其父元素middle的上外边距重叠，并顶开了middle和top间的外边距。解决方案是为middle定义边框或者内边距。参考<a href="http://www.w3school.com.cn/css/css_margin_collapsing.asp" target="_blank" rel="external">CSS外边距合并</a>。</p>
+
+        </div>
+        
+        <blockquote class="post-copyright">
+            <div class="content">
+               这里写留言或版权声明：<a href="/2017/01/css-notes/" target="_blank" rel="external">http://wudaijun.com/2017/01/css-notes/</a>
+            </div>
+            <footer>
+                <a href="http://wudaijun.com">
+                    <img src="/favicon.png" alt="wudaijun">
+                    wudaijun
+                </a>
+            </footer>
+        </blockquote>
+
+        
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/web/">web</a></li></ul>
+
+
+            
+            <div class="post-share-wrap">
+                <div class="post-share" id="post-share">
+    <div class="tit">分享到：</div>
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
+          豆
+        </a>
+      </li>
+    </ul>
+ </div>
+
+                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
+                    <i class="icon icon-share-alt icon-lg"></i>
+                </a>
+            </div>
+            
+
+        </div>
+    </div>   
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2016/12/erlang-memory-debug/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Erlang 内存问题诊断</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+            
+    
+<div class="duoshuo">
+	<div class="ds-thread" data-thread-key="css-notes" data-title="CSS 笔记" data-url="http://wudaijun.com/2017/01/css-notes/"></div>
+</div>
+<script src="/js/embed.min.js?v=1.1.4"></script>
+<script src="//cdn.bootcss.com/marked/0.3.6/marked.min.js" async="async"></script>
+<script>
+var duoshuoQuery = {short_name:'wudaijun', theme: 'none'}
+</script>
+
+
+
+
+</article>
+
+
+</div>
+  </main>
+  <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+<script>
+var BLOG_SHARE = {
+    title: "CSS 笔记",
+    pic: "/favicon.png",
+    summary: document.getElementsByName('summary')[0].content,
+    url: "http://wudaijun.com/2017/01/css-notes/"
+};
+</script>
+<div class="global-share" id="global-share">
+    <div class="tit">分享到：</div>
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
+          豆
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script src="/js/main.min.js?v=1.1.4"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="/{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.1.4"></script>
+
+
+
+
+
+<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+
+
+
+
+</body>
+</html>
