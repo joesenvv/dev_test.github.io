@@ -564,12 +564,14 @@ MMAPv1 Storage EngineMongoDB3.2之前版本的默认引擎。
     <div class="post-content" id="post-content" itemprop="postContent" >
 
     
-        接入远程节点的几种方法
-JCL任务切换或remsh启动参数：
-erl -setcookie abc -name node_2@127.0.0.1 -remsh node_1@127.0.0.1
-
-通过erl_call实现shell脚本与Erlang节点的简单交互:
-erl_call -s -a 'erlang memory ' -name node_1@127.0.0.1 -c abc
+        一. 接入远程节点1. JCLerl -sname n2 -setcookie 123
+(n2@T4F-MBP-11)1&gt;        //^G
+User switch command
+ --&gt; r 'n1@T4F-MBP-11'
+ --&gt; c
+Eshell V8.1  (abort with ^G)
+(n1@T4F-MBP-11)1&gt;
+2. remsherl -s...
     
     
         <a href="/2016/05/erlang-debug-online/" class="post-more waves-effect waves-button">

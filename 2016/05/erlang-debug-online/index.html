@@ -12,42 +12,41 @@
   
   
   <meta name="keywords" content="erlang">
-  <meta name="description" content="接入远程节点的几种方法
-JCL任务切换或remsh启动参数：
-erl -setcookie abc -name node_2@127.0.0.1 -remsh node_1@127.0.0.1
-
-通过erl_call实现shell脚本与Erlang节点的简单交互:
-erl_call -s -a &apos;erlang memory &apos; -name node_1@127.0.0.1 -c abc">
+  <meta name="description" content="一. 接入远程节点1. JCLerl -sname n2 -setcookie 123
+(n2@T4F-MBP-11)1&amp;gt;        //^G
+User switch command
+ --&amp;gt; r &apos;n1@T4F-MBP-11&apos;
+ --&amp;gt; c
+Eshell V8.1  (abort with ^G)
+(n1@T4F-MBP-11)1&amp;gt;
+2. remsherl -setc">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Erlang 状态监控">
 <meta property="og:url" content="http://wudaijun.com/2016/05/erlang-debug-online/index.html">
 <meta property="og:site_name" content="wudaijun's blog">
-<meta property="og:description" content="接入远程节点的几种方法
-JCL任务切换或remsh启动参数：
-erl -setcookie abc -name node_2@127.0.0.1 -remsh node_1@127.0.0.1
-
-通过erl_call实现shell脚本与Erlang节点的简单交互:
-erl_call -s -a &apos;erlang memory &apos; -name node_1@127.0.0.1 -c abc">
-<meta property="og:updated_time" content="2016-08-12T02:57:37.000Z">
+<meta property="og:description" content="一. 接入远程节点1. JCLerl -sname n2 -setcookie 123
+(n2@T4F-MBP-11)1&amp;gt;        //^G
+User switch command
+ --&amp;gt; r &apos;n1@T4F-MBP-11&apos;
+ --&amp;gt; c
+Eshell V8.1  (abort with ^G)
+(n1@T4F-MBP-11)1&amp;gt;
+2. remsherl -setc">
+<meta property="og:updated_time" content="2017-01-12T11:50:38.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Erlang 状态监控">
-<meta name="twitter:description" content="接入远程节点的几种方法
-JCL任务切换或remsh启动参数：
-erl -setcookie abc -name node_2@127.0.0.1 -remsh node_1@127.0.0.1
-
-通过erl_call实现shell脚本与Erlang节点的简单交互:
-erl_call -s -a &apos;erlang memory &apos; -name node_1@127.0.0.1 -c abc">
+<meta name="twitter:description" content="一. 接入远程节点1. JCLerl -sname n2 -setcookie 123
+(n2@T4F-MBP-11)1&amp;gt;        //^G
+User switch command
+ --&amp;gt; r &apos;n1@T4F-MBP-11&apos;
+ --&amp;gt; c
+Eshell V8.1  (abort with ^G)
+(n1@T4F-MBP-11)1&amp;gt;
+2. remsherl -setc">
   
     <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
   
-  <meta name="summary" content="&lt;h2 id=&quot;接入远程节点的几种方法&quot;&gt;接入远程节点的几种方法&lt;/h2&gt;&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;JCL任务切换或remsh启动参数：&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;erl -setcookie abc -name node_2@&lt;span class=&quot;number&quot;&gt;127.0&lt;/span&gt;&lt;span class=&quot;number&quot;&gt;.0&lt;/span&gt;&lt;span class=&quot;number&quot;&gt;.1&lt;/span&gt; -remsh node_1@&lt;span class=&quot;number&quot;&gt;127.0&lt;/span&gt;&lt;span class=&quot;number&quot;&gt;.0&lt;/span&gt;&lt;span class=&quot;number&quot;&gt;.1&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;通过&lt;a href=&quot;http://erlang.org/doc/man/erl_call.html&quot;&gt;erl_call&lt;/a&gt;实现shell脚本与Erlang节点的简单交互:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;erl_call &lt;span class=&quot;operator&quot;&gt;-s&lt;/span&gt; &lt;span class=&quot;operator&quot;&gt;-a&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&#39;erlang memory &#39;&lt;/span&gt; -name node_1@&lt;span class=&quot;number&quot;&gt;127.0&lt;/span&gt;.&lt;span class=&quot;number&quot;&gt;0.1&lt;/span&gt; -c abc
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ol&gt;">
+  <meta name="summary" content="null">
   <link rel="shortcut icon" href="/favicon.ico">
   <link rel="stylesheet" href="/css/style.css?v=1.1.4">
 </head>
@@ -171,7 +170,7 @@ erl_call -s -a &apos;erlang memory &apos; -name node_1@127.0.0.1 -c abc">
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#接入远程节点的几种方法"><span class="post-toc-text">接入远程节点的几种方法</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#etop"><span class="post-toc-text">etop</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#erlang自带模块"><span class="post-toc-text">erlang自带模块</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#内存"><span class="post-toc-text">内存</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#CPU"><span class="post-toc-text">CPU</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#进程"><span class="post-toc-text">进程</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#recon"><span class="post-toc-text">recon</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#更多资料"><span class="post-toc-text">更多资料</span></a></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#一-_接入远程节点"><span class="post-toc-text">一. 接入远程节点</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-_JCL"><span class="post-toc-text">1. JCL</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-_remsh"><span class="post-toc-text">2. remsh</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-_erl_call"><span class="post-toc-text">3. erl_call</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-_run_erl"><span class="post-toc-text">4. run_erl</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-_ssh"><span class="post-toc-text">5. ssh</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#二-_etop"><span class="post-toc-text">二. etop</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#三-_erlang_API"><span class="post-toc-text">三. erlang API</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-_内存"><span class="post-toc-text">1. 内存</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-_CPU"><span class="post-toc-text">2. CPU</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-_进程"><span class="post-toc-text">3. 进程</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#四-_recon"><span class="post-toc-text">四. recon</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#五-_更多资料"><span class="post-toc-text">五. 更多资料</span></a></li></ol>
         </nav>
     </aside>
     
@@ -192,18 +191,25 @@ erl_call -s -a &apos;erlang memory &apos; -name node_1@127.0.0.1 -c abc">
 
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
-            <h2 id="接入远程节点的几种方法">接入远程节点的几种方法</h2><ol>
-<li><p>JCL任务切换或remsh启动参数：</p>
-<pre><code>erl -setcookie abc -name node_2@<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> -remsh node_1@<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>
-</code></pre></li>
-<li><p>通过<a href="http://erlang.org/doc/man/erl_call.html" target="_blank" rel="external">erl_call</a>实现shell脚本与Erlang节点的简单交互:</p>
-<pre><code>erl_call <span class="operator">-s</span> <span class="operator">-a</span> <span class="string">'erlang memory '</span> -name node_1@<span class="number">127.0</span>.<span class="number">0.1</span> -c abc
-</code></pre></li>
-</ol>
-<a id="more"></a>
-<ol>
-<li><p>通过ssh服务连接Erlang节点：</p>
-<pre><code>---------- <span class="variable">Server</span>:  -----------
+            <h2 id="一-_接入远程节点">一. 接入远程节点</h2><h3 id="1-_JCL">1. JCL</h3><pre><code>erl -sname n2 -setcookie <span class="number">123</span>
+(n2@T4F-MBP-<span class="number">11</span>)<span class="number">1</span>&gt;       <span class="comment"> //^G</span>
+User <span class="keyword">switch</span> <span class="command"><span class="keyword">command</span></span>
+ <span class="comment">--&gt; r 'n1@T4F-MBP-11'</span>
+ <span class="comment">--&gt; c</span>
+Eshell V8<span class="number">.1</span>  (abort <span class="operator">with</span> ^G)
+(n1@T4F-MBP-<span class="number">11</span>)<span class="number">1</span>&gt;
+</code></pre><h3 id="2-_remsh">2. remsh</h3><pre><code>erl -setcookie abc -name node_2@<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> -remsh node_1@<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>
+</code></pre><p>和第一种JCL方式是同一个原理，这也是rebar2 remote_console的实现方式。</p>
+<h3 id="3-_erl_call">3. <a href="http://erlang.org/doc/man/erl_call.html" target="_blank" rel="external">erl_call</a></h3><pre><code>erl_call <span class="operator">-s</span> <span class="operator">-a</span> <span class="string">'erlang memory '</span> -name node_1@<span class="number">127.0</span>.<span class="number">0.1</span> -c abc
+</code></pre><h3 id="4-_run_erl">4. <a href="http://erlang.org/doc/man/run_erl.html" target="_blank" rel="external">run_erl</a></h3><pre><code>run_erl -daemon tmp/ <span class="command">log</span>/ <span class="string">"exec erl -eval 't:start_link().'"</span>
+</code></pre><p><code>run_erl</code>是随OTP发布的命令，它通过管道来与Erlang节点交互，仅类Unix系统下可用。上面的命令启动Erlang节点，将tmp/目录设为节点管道目录，之后<code>run_erl</code>会在tmp下创建<code>erlang.pipe.1.r erlang.pipe.1.w</code>两个管道文件，外部系统可通过该管道文件向节点写入/读取数据。可用OTP提供的<code>to_erl</code>命令通过管道连接到节点:</p>
+<pre><code><span class="function_or_atom">to_erl</span> <span class="function_or_atom">tmp</span>/
+<span class="variable">Attaching</span> <span class="function_or_atom">to</span> <span class="function_or_atom">tmp</span>/<span class="function_or_atom">erlang</span>.<span class="function_or_atom">pipe</span>.<span class="number">1</span> (^<span class="variable">D</span> <span class="function_or_atom">to</span> <span class="function_or_atom">exit</span>)
+<span class="prompt">1&gt; </span>
+</code></pre><p>需要注意的当前你是直接通过Unix管道和节点交互的，并不存在中间代理节点(和remsh方式不同)，因此在这种情况下使用JCL <code>^G+q</code>会终止目标节点。如果要退出attach模式而不影响目标节点，使用<code>^D</code>。</p>
+<p><code>run_erl</code>另一个作用是输出重定向，上例中将所有输出(包括虚拟机和nif输出)重定向到log/erlang.log.*，这对多日志渠道(lager,io:format,c,lua等)的混合调试是有所帮助的。</p>
+<p>rebar2便通过<code>run_erl</code>实现节点启动，并使用<code>to_erl</code>实现<code>attach</code>命令。</p>
+<h3 id="5-_ssh">5. ssh</h3><pre><code>---------- <span class="variable">Server</span>:  -----------
 $ <span class="function_or_atom">mkdir</span> /<span class="function_or_atom">tmp</span>/<span class="function_or_atom">ssh</span>
 $ <span class="function_or_atom">ssh</span>-<span class="function_or_atom">keygen</span> -<span class="function_or_atom">t</span> <span class="function_or_atom">rsa</span> -<span class="function_or_atom">f</span> /<span class="function_or_atom">tmp</span>/<span class="function_or_atom">ssh</span>/<span class="function_or_atom">ssh_host_rsa_key</span>
 $ <span class="function_or_atom">ssh</span>-<span class="function_or_atom">keygen</span> -<span class="function_or_atom">t</span> <span class="function_or_atom">rsa1</span> -<span class="function_or_atom">f</span> /<span class="function_or_atom">tmp</span>/<span class="function_or_atom">ssh</span>/<span class="function_or_atom">ssh_host_key</span>
@@ -219,9 +225,7 @@ $ <span class="function_or_atom">erl</span>
 $ <span class="function_or_atom">ssh</span> -<span class="function_or_atom">p</span> <span class="number">8989</span> <span class="function_or_atom">ferd</span>@<span class="number">127.0</span>.<span class="number">0.1</span>
 <span class="variable">Eshell</span> <span class="variable">Vx</span>.<span class="function_or_atom">x</span>.<span class="function_or_atom">x</span> (<span class="function_or_atom">abort</span> <span class="function_or_atom">with</span> ^<span class="variable">G</span>)
 <span class="number">1</span>&gt;
-</code></pre></li>
-</ol>
-<h2 id="etop">etop</h2><p>etop是Erlang提供的类似于top命令，它的输出格式和功能都与top类似，提供了必要的节点信息和进程信息。常用用法：</p>
+</code></pre><h2 id="二-_etop">二. etop</h2><p>etop是Erlang提供的类似于top命令，它的输出格式和功能都与top类似，提供了必要的节点信息和进程信息。常用用法：</p>
 <pre><code>% 查看占用CPU最高的进程 每<span class="number">10</span>秒输出一次
 &gt; spawn(fun() -&gt; etop:<span class="built_in">start</span>([{interval,<span class="number">10</span>}, {<span class="built_in">sort</span>, runtime}]) <span class="keyword">end</span>). 
 % 查看占用内存最高的进程 每<span class="number">10</span>秒输出一次 输出进程数量为<span class="number">20</span>
@@ -250,13 +254,13 @@ Pid            <span class="keyword">Name</span> <span class="keyword">or</span>
 &lt;<span class="number">6858.0</span><span class="number">.0</span>&gt;     init                     <span class="string">'-'</span>    <span class="number">3775</span>   <span class="number">18600</span>       <span class="number">0</span> init:<span class="keyword">loop</span>/<span class="number">1</span>
 ========================================================================================</span>
 </code></pre><p>官方文档：<a href="http://erlang.org/doc/apps/observer/etop_ug.html" target="_blank" rel="external">http://erlang.org/doc/apps/observer/etop_ug.html</a></p>
-<h2 id="erlang自带模块">erlang自带模块</h2><h3 id="内存">内存</h3><p>通过<code>erlang:memory()</code>可以查看整个Erlang虚拟机的内存使用情况。</p>
-<h3 id="CPU">CPU</h3><p>Erlang的CPU使用情况是比较难衡量的，由于Erlang虚拟机内部复杂的调度机制，通过<code>top/htop</code>得到的系统进程级的CPU占用率参考性是有限的，即使一个空闲的Erlang虚拟机，调度线程的忙等也会占用一定的CPU。</p>
+<h2 id="三-_erlang_API">三. erlang API</h2><h3 id="1-_内存">1. 内存</h3><p>通过<code>erlang:memory()</code>可以查看整个Erlang虚拟机的内存使用情况。</p>
+<h3 id="2-_CPU">2. CPU</h3><p>Erlang的CPU使用情况是比较难衡量的，由于Erlang虚拟机内部复杂的调度机制，通过<code>top/htop</code>得到的系统进程级的CPU占用率参考性是有限的，即使一个空闲的Erlang虚拟机，调度线程的忙等也会占用一定的CPU。</p>
 <p>因此Erlang内部提供了一些更有用的测量参考，通过<code>erlang:statistics(scheduler_wall_time)</code>可以获得调度器钟表时间：</p>
 <figure class="highlight erlang-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="prompt">1&gt; </span><span class="function_or_atom">erlang:system_flag</span>(<span class="function_or_atom">scheduler_wall_time</span>, <span class="function_or_atom">true</span>).</span><br><span class="line"><span class="function_or_atom">false</span></span><br><span class="line"><span class="prompt">2&gt; </span><span class="function_or_atom">erlang:statistics</span>(<span class="function_or_atom">scheduler_wall_time</span>).</span><br><span class="line">[&#123;&#123;<span class="number">1</span>,<span class="number">166040393363</span>,<span class="number">9269301338549</span>&#125;,</span><br><span class="line"> &#123;<span class="number">2</span>,<span class="number">40587963468</span>,<span class="number">9269301007667</span>&#125;,</span><br><span class="line"> &#123;<span class="number">3</span>,<span class="number">725727980</span>,<span class="number">9269301004304</span>&#125;,</span><br><span class="line"> <span class="number">4</span>,<span class="number">299688</span>,<span class="number">9269301361357</span>&#125;]</span><br></pre></td></tr></table></figure>
 <p>该函数返回<code>[{调度器ID, BusyTime, TotalTime}]</code>，BusyTime是调度器执行进程代码，BIF，NIF，GC等的时间，TotalTime是<code>cheduler_wall_time</code>打开统计以来的总调度器钟表时间，通常，直观地看BusyTime和TotalTIme的数值没有什么参考意义，有意义的是BusyTime/TotalTIme，该值越高，说明调度器利用率越高：</p>
 <figure class="highlight erlang-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="prompt">1&gt; </span><span class="variable">Ts0</span> = <span class="function_or_atom">lists:sort</span>(<span class="function_or_atom">erlang:statistics</span>(<span class="function_or_atom">scheduler_wall_time</span>)), <span class="ok">ok</span>.</span><br><span class="line"><span class="ok">ok</span>	</span><br><span class="line"><span class="prompt">2&gt; </span><span class="variable">Ts1</span> = <span class="function_or_atom">lists:sort</span>(<span class="function_or_atom">erlang:statistics</span>(<span class="function_or_atom">scheduler_wall_time</span>)), <span class="ok">ok</span>.</span><br><span class="line"><span class="ok">ok</span>	</span><br><span class="line"><span class="prompt">3&gt; </span><span class="function_or_atom">lists:map</span>(<span class="function_or_atom">fun</span>(&#123;&#123;<span class="variable">I</span>, <span class="variable">A0</span>, <span class="variable">T0</span>&#125;, &#123;<span class="variable">I</span>, <span class="variable">A1</span>, <span class="variable">T1</span>&#125;&#125;) <span class="arrow">-&gt;</span> </span><br><span class="line">	&#123;<span class="variable">I</span>, (<span class="variable">A1</span> - <span class="variable">A0</span>)/(<span class="variable">T1</span> - <span class="variable">T0</span>)&#125; <span class="function_or_atom">end</span>, <span class="function_or_atom">lists:zip</span>(<span class="variable">Ts0</span>,<span class="variable">Ts1</span>)).</span><br><span class="line">[&#123;<span class="number">1</span>,<span class="number">0.01723977154806915</span>&#125;,	</span><br><span class="line"> &#123;<span class="number">2</span>,<span class="number">8.596423007719012e-5</span>&#125;,	</span><br><span class="line"> &#123;<span class="number">3</span>,<span class="number">2.8416950342830393e-6</span>&#125;,	</span><br><span class="line"> &#123;<span class="number">4</span>,<span class="number">1.3440177144802423e-6</span>&#125;</span><br><span class="line">&#125;]</span><br></pre></td></tr></table></figure>
-<h3 id="进程">进程</h3><p>通过<code>length(processes())</code>/<code>length(ports())</code>统计虚拟机当前进程和端口数量。</p>
+<h3 id="3-_进程">3. 进程</h3><p>通过<code>length(processes())</code>/<code>length(ports())</code>统计虚拟机当前进程和端口数量。</p>
 <p>关于指定进程的详细信息，都可以通过<code>erlang:process_info(Pid, Key)</code>获得，其中比较有用的Key有：</p>
 <ul>
 <li>dictionary:             进程字典中所有的数据项</li>
@@ -285,9 +289,24 @@ Pid            <span class="keyword">Name</span> <span class="keyword">or</span>
 <li>sys:suspend/resume:            挂起/恢复指定进程</li>
 <li>sys:terminate(Pid, Reason):        向指定进程发消息，终止该进程</li>
 </ul>
-<h2 id="recon">recon</h2><p><a href="https://github.com/ferd/recon" target="_blank" rel="external">recon</a>是<a href="http://learnyousomeerlang.com/" target="_blank" rel="external">learn you some erlang</a>的作者写的一个非常强大好用的库，将erlang散布在各个模块的调试函数整合起来，以更易用和可读的方式提供给用户，包含了信息统计，健康状态分析，动态追踪调试等一整套解决方案。并且本身只是一系列的API，放入rebar deps即可attach上节点使用，强烈推荐。</p>
-<p>详细用法参见：<a href="http://ferd.github.io/recon/" target="_blank" rel="external">http://ferd.github.io/recon/</a></p>
-<h2 id="更多资料">更多资料</h2><ul>
+<h2 id="四-_recon">四. recon</h2><p><a href="https://github.com/ferd/recon" target="_blank" rel="external">recon</a>是<a href="http://learnyousomeerlang.com/" target="_blank" rel="external">learn you some erlang</a>的作者写的一个非常强大好用的库，将erlang散布在各个模块的调试函数整合起来，以更易用和可读的方式提供给用户，包含了信息统计，健康状态分析，动态追踪调试等一整套解决方案。并且本身只是一系列的API，放入rebar deps即可attach上节点使用，强烈推荐。</p>
+<p>下面是我常用的几个函数:</p>
+<pre><code><span class="comment">% 找出当前节点Attr属性(如message_queue_len)最大的N个进程</span>
+recon:proc_count(<span class="variable">Attr</span>, <span class="variable">N</span>).
+<span class="comment">% 对节点进行GC，并返回进程GC前后持有的binary差异最大的N个进程</span>
+recon:bin_leak(<span class="variable">N</span>).
+<span class="comment">% process_info的安全增强版本</span>
+recon:info/<span class="number">1</span>-<span class="number">2</span>-<span class="number">3</span>-<span class="number">4</span>
+<span class="comment">% 返回M毫秒内的调度器占用</span>
+recon:scheduler_usage(<span class="variable">M</span>)
+<span class="comment">% 强大的动态追踪函数，可用于动态挂载钩子。</span>
+<span class="comment">% 1. 可挂载模块/函数调用(甚至可对参数匹配/过滤)</span>
+<span class="comment">% 2. 可对调用进程筛选(指定Pid，限制新建进程等)</span>
+<span class="comment">% 3. 可限制打印的追踪数量/速率</span>
+<span class="comment">% 4. 其它功能，如输出重定向，追踪调用结果等</span>
+recon_trace:calls/<span class="number">2</span>-<span class="number">3</span>
+</code></pre><p>详细用法参见：<a href="http://ferd.github.io/recon/" target="_blank" rel="external">http://ferd.github.io/recon/</a></p>
+<h2 id="五-_更多资料">五. 更多资料</h2><ul>
 <li>Erlang实践红宝书：<a href="http://pan.baidu.com/s/1gfCZBKf" target="_blank" rel="external">Erlang In Anger</a></li>
 </ul>
 
