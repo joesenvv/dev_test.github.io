@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://wudaijun.com/2016/08/web-get-started/</loc>
+    
+    <lastmod>2017-01-16T07:53:39.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://wudaijun.com/2016/05/erlang-debug-online/</loc>
     
     <lastmod>2017-01-12T11:50:38.000Z</lastmod>
@@ -191,13 +198,6 @@
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/06/firefly-study2/</loc>
-    
-    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://wudaijun.com/2015/02/skynet-gateserver/</loc>
     
     <lastmod>2016-09-20T14:51:49.000Z</lastmod>
@@ -205,7 +205,7 @@
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/07/kbengine-study1/</loc>
+    <loc>http://wudaijun.com/2015/02/skynet-socketserver/</loc>
     
     <lastmod>2016-09-20T14:51:49.000Z</lastmod>
     
@@ -219,6 +219,13 @@
   </url>
   
   <url>
+    <loc>http://wudaijun.com/2015/06/firefly-study2/</loc>
+    
+    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://wudaijun.com/2015/01/skynet-c-module/</loc>
     
     <lastmod>2016-09-20T14:51:49.000Z</lastmod>
@@ -226,14 +233,14 @@
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/01/skynet-luaservice/</loc>
+    <loc>http://wudaijun.com/2015/07/kbengine-study1/</loc>
     
     <lastmod>2016-09-20T14:51:49.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/02/skynet-socketserver/</loc>
+    <loc>http://wudaijun.com/2015/01/skynet-luaservice/</loc>
     
     <lastmod>2016-09-20T14:51:49.000Z</lastmod>
     
@@ -278,13 +285,6 @@
     <loc>http://wudaijun.com/2016/03/erlang-distribution-1/</loc>
     
     <lastmod>2016-08-12T02:55:28.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://wudaijun.com/2016/08/web-get-started/</loc>
-    
-    <lastmod>2016-08-11T08:03:49.000Z</lastmod>
     
   </url>
   
