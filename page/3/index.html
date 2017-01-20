@@ -154,6 +154,55 @@
     <ul class="post-list">
     
         <li class="post-list-item">
+            <article id="post-erlang-server-design6-distribution-question"
+  class="article-card article-type-post" itemprop="blogPost">
+     
+    <div class="post-meta">
+        <time datetime="2016-04-27T16:00:00.000Z" itemprop="datePublished" class="post-time">
+  2016-04-28
+</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2016/04/erlang-server-design6-distribution-question/">开发笔记(6) Erlang服务器集群常见问题</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent" >
+
+    
+        集群的安全启动/终止典型地，我们需要在GS和各个服务都启动完成之后，再打开网关接入网络连接，这需要通过master节点进行监控，GS和服务也需要向cluster汇报自己的状态(启动中，运行中)，master在关键服务都启动完成并状态正常之后，再通知gateway开放连接。基于cluster中的控制信息，这一点不难做到。集群的终止流程也类似。
+    
+    
+        <a href="/2016/04/erlang-server-design6-distribution-question/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/distribution/">distribution</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/erlang/">erlang</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item">
             <article id="post-learning-mistakes"
   class="article-card article-type-post" itemprop="blogPost">
      
@@ -605,55 +654,6 @@ Erlang虚拟机使用一个字(64/32位)来表示所有类型的数据，即Eter
     
     
         <a href="/2015/11/erlang-map2record/" class="post-more waves-effect waves-button">
-            阅读全文...
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/erlang/">erlang</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item">
-            <article id="post-erlang-server-design4-slg-map"
-  class="article-card article-type-post" itemprop="blogPost">
-     
-    <div class="post-meta">
-        <time datetime="2015-11-12T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2015-11-13
-</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2015/11/erlang-server-design4-slg-map/">开发笔记(4) SLG 地图</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent" >
-
-    
-        数据组织我们将地图上的数据分为动态数据(行军)和静态数据(点数据)，因为行军过程不会对地图上的点造成影响(飞行)，并且不考虑实时碰撞，因此行军的逻辑是非常轻的，将其剥离出地图点数据，处理起来会更简单。也就是说，行军是地图上特殊的一类事件，而不是动态的点。
-    
-    
-        <a href="/2015/11/erlang-server-design4-slg-map/" class="post-more waves-effect waves-button">
             阅读全文...
         </a>
     </div>

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  
+  <title>Go 常用命令 | wudaijun&#39;s blog | Coding is Funny</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="theme-color" content="#3F51B5">
+  
+  
+  <meta name="keywords" content="go">
+  <meta name="description" content="环境管理
+Go版本管理: gvm(go version manager)
+GOPATH管理: gvp(go version package)
+依赖版本管理: gpm(go package manager)
+
+go build用于编译指定的源码文件或代码包以及它们的依赖包。
+
+import导入路径中的最后一个元素是路径名而不是包名，路径名可以和包名不一样，但同一个目录只能定义一个包(包对应的_tes">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go 常用命令">
+<meta property="og:url" content="http://wudaijun.com/2017/01/go-command-notes/index.html">
+<meta property="og:site_name" content="wudaijun's blog">
+<meta property="og:description" content="环境管理
+Go版本管理: gvm(go version manager)
+GOPATH管理: gvp(go version package)
+依赖版本管理: gpm(go package manager)
+
+go build用于编译指定的源码文件或代码包以及它们的依赖包。
+
+import导入路径中的最后一个元素是路径名而不是包名，路径名可以和包名不一样，但同一个目录只能定义一个包(包对应的_tes">
+<meta property="og:updated_time" content="2017-01-20T08:30:32.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Go 常用命令">
+<meta name="twitter:description" content="环境管理
+Go版本管理: gvm(go version manager)
+GOPATH管理: gvp(go version package)
+依赖版本管理: gpm(go package manager)
+
+go build用于编译指定的源码文件或代码包以及它们的依赖包。
+
+import导入路径中的最后一个元素是路径名而不是包名，路径名可以和包名不一样，但同一个目录只能定义一个包(包对应的_tes">
+  
+    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
+  
+  <meta name="summary" content="&lt;h3 id=&quot;环境管理&quot;&gt;环境管理&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;Go版本管理: &lt;a href=&quot;https://github.com/moovweb/gvm&quot;&gt;gvm&lt;/a&gt;(go version manager)&lt;/li&gt;
+&lt;li&gt;GOPATH管理: &lt;a href=&quot;https://github.com/pote/gvp&quot;&gt;gvp&lt;/a&gt;(go version package)&lt;/li&gt;
+&lt;li&gt;依赖版本管理: &lt;a href=&quot;https://github.com/pote/gpm&quot;&gt;gpm&lt;/a&gt;(go package manager)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;go_build&quot;&gt;go build&lt;/h3&gt;&lt;p&gt;用于编译指定的源码文件或代码包以及它们的依赖包。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;import导入路径中的最后一个元素是路径名而不是包名，路径名可以和包名不一样，但同一个目录只能定义一个包(包对应的_test测试包除外)&lt;/p&gt;
+&lt;/blockquote&gt;">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+</head>
+
+<body>
+  <div id="loading" class="active"></div>
+
+  <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <hgroup class="introduce">
+          <h5 class="nickname">wudaijun</h5>
+          <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://blog.csdn.net/wudaijun" target="_blank" >
+                <i class="icon icon-lg icon-contao"></i>
+                CSDN
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/wudaijun" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+
+      <footer class="footer">
+  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
+  <p>wudaijun&#39;s blog &copy; 2017</p>
+  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
+  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
+  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
+</footer>
+
+    </div>
+  </div>
+</aside>
+  <main id="main">
+    <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Go 常用命令</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container">
+        <h1 class="title">Go 常用命令</h1>
+        
+        
+
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#环境管理"><span class="post-toc-text">环境管理</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#go_build"><span class="post-toc-text">go build</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#go_run"><span class="post-toc-text">go run</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#go_install"><span class="post-toc-text">go install</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#go_test"><span class="post-toc-text">go test</span></a></li></ol>
+        </nav>
+    </aside>
+    
+<article id="post-go-command-notes" 
+  class="post-article article-type-post" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Go 常用命令</h1>
+        <div class="post-meta">
+            <time datetime="2017-01-19T16:00:00.000Z" itemprop="datePublished" class="post-time">
+  2017-01-20
+</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/go/">go</a></li></ul>
+
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h3 id="环境管理">环境管理</h3><ul>
+<li>Go版本管理: <a href="https://github.com/moovweb/gvm" target="_blank" rel="external">gvm</a>(go version manager)</li>
+<li>GOPATH管理: <a href="https://github.com/pote/gvp" target="_blank" rel="external">gvp</a>(go version package)</li>
+<li>依赖版本管理: <a href="https://github.com/pote/gpm" target="_blank" rel="external">gpm</a>(go package manager)</li>
+</ul>
+<h3 id="go_build">go build</h3><p>用于编译指定的源码文件或代码包以及它们的依赖包。</p>
+<blockquote>
+<p>import导入路径中的最后一个元素是路径名而不是包名，路径名可以和包名不一样，但同一个目录只能定义一个包(包对应的_test测试包除外)</p>
+</blockquote>
+<a id="more"></a>
+<p>编译包:</p>
+<pre><code><span class="preprocessor"># 当前路径方式</span>
+cd src/foo &amp;&amp; go build
+<span class="preprocessor"># 包导入路径方式</span>
+go build foo bar
+<span class="preprocessor"># 本地代码包路径方式</span>
+go build ./src/foo
+</code></pre><p>go build 在编译只包含库源码文件的代码包时，只做检查性的编译，不会输出任何结果文件。如果编译的是main包，则会将编译结果放到执行命令的目录下。</p>
+<p>编译源码文件:</p>
+<pre><code><span class="preprocessor"># 指定源码文件使用文件路径</span>
+<span class="preprocessor"># 指定的多个源码文件必须属于同一个目录(包)</span>
+go build src/foo/foo1.go src/foo/foo2.go
+</code></pre><p>当执行以上编译时，编译命令在分析参数的时候如果发现第一个参数是Go源码文件而不是代码包时，会在内部生成一个名为“command-line-arguments”的虚拟代码包。也就是当前的foo1.go foo2.go属于”command-line-arguments”包，而不是foo包，因此除了指定的源码文件和它们所依赖的包，其它文件(如foo3.go)不会被编译。</p>
+<p>同样，对于库源码文件，build不会输出任何结果文件。对于main包的源文件，go build要求有且只能有一个main函数声明，并将生成结果(与指定的第一个源码文件同名)放在执行该命令的当前目录下。</p>
+<p>构建与<code>go build</code>之上的其它命令(如<code>go run</code>，<code>go install</code>)，在编译包或源码文件时，过程和特性是一样的。</p>
+<p>常用选项:</p>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-v</td>
+<td>打印出那些被编译的代码包的名字。</td>
+</tr>
+<tr>
+<td>-n</td>
+<td>打印编译期间所用到的其它命令，但是并不真正执行它们。</td>
+</tr>
+<tr>
+<td>-x</td>
+<td>打印编译期间所用到的其它命令。注意它与-n标记的区别。</td>
+</tr>
+<tr>
+<td>-a</td>
+<td>强行对所有涉及到的代码包（包含标准库中的代码包）进行重新构建，即使它们已经是最新的了。</td>
+</tr>
+<tr>
+<td>-work</td>
+<td>打印出编译时生成的临时工作目录的路径，并在编译结束时保留它。在默认情况下，编译结束时会删除该目录。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="go_run">go run</h3><p>go run编译(通过go build)并运行命令源码文件(main package)，查看过程:</p>
+<pre><code>go <span class="keyword">run</span> -x -work src/main/main.go
+# build 临时目录
+WORK=/<span class="keyword">var</span>/folders/n5/j8y6skrx1xn3_ls64gl1lrsmmp53rv/T/go-build979313546
+# main.go依赖foo包  先编译foo包
+<span class="keyword">mkdir</span> -p <span class="label">$WORK</span>/foo/_obj/
+<span class="keyword">mkdir</span> -p <span class="label">$WORK</span>/
+<span class="keyword">cd</span> /Users/wudaijun/Work/<span class="keyword">test</span>/src/foo
+/usr/<span class="keyword">local</span>/Cellar/go/1.7/libexec/pkg/tool/darwin_amd64/compile -o <span class="label">$WORK</span>/foo.a -trimpath <span class="label">$WORK</span> -p foo -complete -buildid cd61b5a9f3c8eba0f3088adca894fc9bf695826b -<span class="keyword">D</span> _/Users/wudaijun/Work/<span class="keyword">test</span>/src/foo -I <span class="label">$WORK</span> -pack ./foo.go
+# 在虚拟包 command-<span class="keyword">line</span>-arguments 中编译 main.go
+<span class="keyword">mkdir</span> -p <span class="label">$WORK</span>/command-<span class="keyword">line</span>-arguments/_obj/
+<span class="keyword">mkdir</span> -p <span class="label">$WORK</span>/command-<span class="keyword">line</span>-arguments/_obj/exe/
+<span class="keyword">cd</span> /Users/wudaijun/Work/<span class="keyword">test</span>/src/main
+/usr/<span class="keyword">local</span>/Cellar/go/1.7/libexec/pkg/tool/darwin_amd64/compile -o <span class="label">$WORK</span>/command-<span class="keyword">line</span>-arguments.a -trimpath <span class="label">$WORK</span> -p main -complete -buildid 9131b7dd9f64a85bb423da7f8a7d408c089a23e8 -<span class="keyword">D</span> _/Users/wudaijun/Work/<span class="keyword">test</span>/src/main -I <span class="label">$WORK</span> -I /Users/wudaijun/Work/<span class="keyword">test</span>/pkg/darwin_amd64 -pack ./main.go
+# 链接
+<span class="keyword">cd</span> .
+/usr/<span class="keyword">local</span>/Cellar/go/1.7/libexec/pkg/tool/darwin_amd64/link -o <span class="label">$WORK</span>/command-<span class="keyword">line</span>-arguments/_obj/exe/main -<span class="keyword">L</span> <span class="label">$WORK</span> -<span class="keyword">L</span> /Users/wudaijun/Work/<span class="keyword">test</span>/pkg/darwin_amd64 -w -extld=clang -buildmode=exe -buildid=9131b7dd9f64a85bb423da7f8a7d408c089a23e8 <span class="label">$WORK</span>/command-<span class="keyword">line</span>-arguments.a
+# 从临时目录运行可执行文件
+<span class="label">$WORK</span>/command-<span class="keyword">line</span>-arguments/_obj/exe/main
+Call Foo()
+</code></pre><p>可看到<code>go run</code>的执行结果都在WORK临时目录中完成，由于使用了<code>-work</code>选项，因此WORK目录会在<code>go run</code>执行完成后保留。<code>go run</code>只接受命令源文件而不接收包路径作为参数，并且不会在当前目录生成任何文件。</p>
+<h3 id="go_install">go install</h3><p><code>go install</code>只比<code>go build</code>多干一件事：安装编译后的结果文件到指定目录。</p>
+<h3 id="go_test">go test</h3><p><code>go test</code>编译指定包或源文件，并执行所在包对应的测试用例。一个符合规范的测试文件指：</p>
+<ul>
+<li>文件名必须是_test.go结尾的，这样在执行go test的时候才会执行到相应的代码</li>
+<li>你必须import testing这个包</li>
+<li>所有的测试用例函数必须是Test开头</li>
+<li>测试用例会按照源代码中写的顺序依次执行</li>
+<li>测试函数TestXxx()的参数是testing.T，我们可以使用该类型来记录错误或者是测试状态</li>
+<li>测试格式：<code>func TestXxx (t *testing.T)</code>,Xxx部分可以为任意的字母数字的组合，但是- - 首字母不能是小写字母[a-z]，例如Testintdiv是错误的函数名</li>
+<li>函数中通过调用testing.T的Error, Errorf, FailNow, Fatal, FatalIf方法，说明测试不通过，调用Log方法用来记录测试的信息</li>
+</ul>
+<p>测试分为包内测试和包外测试，即测试源码文件可于被测试源码文件位于同一个包(目录)，或者测试源码文件声明的包名可以是被测试包名+”_test”后缀。</p>
+<p>另外，可以用一些插件来辅助编写测试用例，如<a href="https://github.com/cweill/gotests/" target="_blank" rel="external">gotest</a>(支持sublime, emacs, vim)。</p>
+
+        </div>
+        
+        <blockquote class="post-copyright">
+            <div class="content">
+               这里写留言或版权声明：<a href="/2017/01/go-command-notes/" target="_blank" rel="external">http://wudaijun.com/2017/01/go-command-notes/</a>
+            </div>
+            <footer>
+                <a href="http://wudaijun.com">
+                    <img src="/favicon.png" alt="wudaijun">
+                    wudaijun
+                </a>
+            </footer>
+        </blockquote>
+
+        
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/go/">go</a></li></ul>
+
+
+            
+            <div class="post-share-wrap">
+                <div class="post-share" id="post-share">
+    <div class="tit">分享到：</div>
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
+          豆
+        </a>
+      </li>
+    </ul>
+ </div>
+
+                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
+                    <i class="icon icon-share-alt icon-lg"></i>
+                </a>
+            </div>
+            
+
+        </div>
+    </div>   
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/01/css-notes/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">CSS 笔记</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+            
+    
+<div class="duoshuo">
+	<div class="ds-thread" data-thread-key="go-command-notes" data-title="Go 常用命令" data-url="http://wudaijun.com/2017/01/go-command-notes/"></div>
+</div>
+<script src="/js/embed.min.js?v=1.1.4"></script>
+<script src="//cdn.bootcss.com/marked/0.3.6/marked.min.js" async="async"></script>
+<script>
+var duoshuoQuery = {short_name:'wudaijun', theme: 'none'}
+</script>
+
+
+
+
+</article>
+
+
+</div>
+  </main>
+  <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+<script>
+var BLOG_SHARE = {
+    title: "Go 常用命令",
+    pic: "/favicon.png",
+    summary: document.getElementsByName('summary')[0].content,
+    url: "http://wudaijun.com/2017/01/go-command-notes/"
+};
+</script>
+<div class="global-share" id="global-share">
+    <div class="tit">分享到：</div>
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
+          豆
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script src="/js/main.min.js?v=1.1.4"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="/{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.1.4"></script>
+
+
+
+
+
+<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+
+
+
+
+</body>
+</html>
