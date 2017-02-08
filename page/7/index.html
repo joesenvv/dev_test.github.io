@@ -154,6 +154,55 @@
     <ul class="post-list">
     
         <li class="post-list-item">
+            <article id="post-skynet-socketserver"
+  class="article-card article-type-post" itemprop="blogPost">
+     
+    <div class="post-meta">
+        <time datetime="2015-02-12T16:00:00.000Z" itemprop="datePublished" class="post-time">
+  2015-02-13
+</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/gameserver/">gameserver</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2015/02/skynet-socketserver/">skynet socketserver</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent" >
+
+    
+        1. 异步IOskynet用C编写的sokcet模块使用异步回调机制，通过lualib-src/lua-socket.c导出为socketdriver模块。skynet socket C API使用的异步回调方式是：在启动socket时，记录当前服务handle，之后该socket上面的消息(底层使用epoll机制)通过skynet消息的方式发往该服务。这里的当前服务指的是socket启动时所在的服务，对于被请求方来说，为调用socketdriver.start(id)的服务，对于请求方来说，为调用socketdriver.connect(addr,port)的服务。skynet不使用套接字fd在上层传播，因为在某些系统上fd的复用会导致上层遇到麻烦，skynet socket C API为每个fd分配一个ID，是自增不重复的。
+    
+    
+        <a href="/2015/02/skynet-socketserver/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/lua/">lua</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/skynet/">skynet</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item">
             <article id="post-cpp-disruptor"
   class="article-card article-type-post" itemprop="blogPost">
      
@@ -577,55 +626,6 @@ skynet服务可以由lua编写，因此skynet将C模块核心接口通过skynet/
     <div class="post-footer">
         
 	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c-c/">c/c++</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item">
-            <article id="post-ngserver-message-callback"
-  class="article-card article-type-post" itemprop="blogPost">
-     
-    <div class="post-meta">
-        <time datetime="2014-11-04T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2014-11-05
-</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/gameserver/">gameserver</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2014/11/ngserver-message-callback/">NGServer 消息的注册与回调</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent" >
-
-    
-        在前面Service框架的介绍中，提到在GameService的ProcessMsg(UserMessage*)和ProcessMsg(InsideMessage*)中，都完成了消息的回调处理。消息响应函数的注册是在服务初始化(Init())中完成的。需要注册和回调的消息有InsideMessage和UserMessage，对于InsideMessage，响应函数只有一种形式：即为响应服务的成员函数。而对于UserMessage，由于UserMessage有Player指针，响应函数则会有多种形式：
-    
-    
-        <a href="/2014/11/ngserver-message-callback/" class="post-more waves-effect waves-button">
-            阅读全文...
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ngserver/">ngserver</a></li></ul>
 
     </div>
     

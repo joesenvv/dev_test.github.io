@@ -154,6 +154,78 @@
     <ul class="post-list">
     
         <li class="post-list-item">
+            <article id="post-go-basic"
+  class="article-card article-type-post" itemprop="blogPost">
+     
+    <div class="post-meta">
+        <time datetime="2016-09-08T16:00:00.000Z" itemprop="datePublished" class="post-time">
+  2016-09-09
+</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/go/">go</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2016/09/go-basic/">Go 基础特性</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent" >
+
+    
+        一. 类型系统1. slice数组切片提供了动态数组的能力，功能和实现都类似于C++ Vector。
+// 初始化一个数组
+var Arr [3]int = [3]int{1,2,3}
+
+var Slice1 []int
+// 通过数组初始化切片 得到[1 2]
+Slice1 = Arr[:2]
+// 直接创建切片 其中size = 5 capacity = 10 尝试访问[size,capacity]之间的元素会得到运行时错误
+Slice2 := make([]int, 5, 10)
+Slice3 := []int{1,2,3}
+// 从切片创建切片 [:last] 只要last&lt;=capacity 均合法
+Slice4 := Slice2[:8]
+// 切片拷贝 如果两个切片不一样大 会按照较小的数组切片元素个数拷贝
+// 这里的拷贝 可以看作是：先置0 再拷贝
+copy(Slice4, Slice3)
+
+// 遍历切片[0:size] 多返回值简化了迭代
+for i, v := range Slice1 {
+    ...
+}
+
+// 通过append在size后面添加元素 capacity会自动扩展
+// 同样, 多参数简化了迭代
+Slice3 = append(Slice3, 1,2,3,4,5,6,7,8,9)
+    
+    
+        <a href="/2016/09/go-basic/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/go/">go</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item">
             <article id="post-linux-job-control"
   class="article-card article-type-post" itemprop="blogPost">
      
@@ -630,57 +702,6 @@ Eshell V8.1  (abort with ^G)
     
     
         <a href="/2016/05/erlang-debug-online/" class="post-more waves-effect waves-button">
-            阅读全文...
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/erlang/">erlang</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item">
-            <article id="post-erlang-practices"
-  class="article-card article-type-post" itemprop="blogPost">
-     
-    <div class="post-meta">
-        <time datetime="2016-05-24T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2016-05-25
-</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2016/05/erlang-practices/">Erlang 实践经验</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent" >
-
-    
-        使用binary而不是lists所有能用binary的地方都用binary，配置，协议，DB，网络接口，等等，如果驱动或第三方库不能很好地支持binary，就换一个或者重写接口，如果项目一开始就这么做，会在后期省掉很多麻烦。
-不要动态生成 atomatom不被Erlang GC，在代码中要时刻警惕诸如list(binary)_to_atom/2和binary_to_term/1等动态生成atom的API，特别是这些API的输入源来自于网络或客户端等不可信源，可用list(binary)_to_existing_atom/2和binary_to_term/2替换之，前者只能转换为已经存在的原子，否则会报错，后者功能类似，确保不会生成新的atom，函数引用，Pid等(这些资源都是不会被GC回收的)。
-可通过erlang:memory/0来观察atom内存使用状况。
-    
-    
-        <a href="/2016/05/erlang-practices/" class="post-more waves-effect waves-button">
             阅读全文...
         </a>
     </div>

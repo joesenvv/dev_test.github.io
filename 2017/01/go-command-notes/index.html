@@ -32,7 +32,7 @@ GOPATH管理: gvp(go version package)
 go build用于编译指定的源码文件或代码包以及它们的依赖包。
 
 import导入路径中的最后一个元素是路径名而不是包名，路径名可以和包名不一样，但同一个目录只能定义一个包(包对应的_tes">
-<meta property="og:updated_time" content="2017-01-20T08:30:32.000Z">
+<meta property="og:updated_time" content="2017-02-06T08:13:26.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Go 常用命令">
 <meta name="twitter:description" content="环境管理
@@ -284,7 +284,7 @@ Call Foo()
 <li>所有的测试用例函数必须是Test开头</li>
 <li>测试用例会按照源代码中写的顺序依次执行</li>
 <li>测试函数TestXxx()的参数是testing.T，我们可以使用该类型来记录错误或者是测试状态</li>
-<li>测试格式：<code>func TestXxx (t *testing.T)</code>,Xxx部分可以为任意的字母数字的组合，但是- - 首字母不能是小写字母[a-z]，例如Testintdiv是错误的函数名</li>
+<li>测试格式：<code>func TestXxx (t *testing.T)</code>,Xxx部分可以为任意的字母数字的组合，但是- - 首字母不能是小写字母[a-z]，例如Testingdiv是错误的函数名</li>
 <li>函数中通过调用testing.T的Error, Errorf, FailNow, Fatal, FatalIf方法，说明测试不通过，调用Log方法用来记录测试的信息</li>
 </ul>
 <p>测试分为包内测试和包外测试，即测试源码文件可于被测试源码文件位于同一个包(目录)，或者测试源码文件声明的包名可以是被测试包名+”_test”后缀。</p>
@@ -359,7 +359,14 @@ Call Foo()
     </div>   
 
     
-<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2017/02/max-osx-ulimit/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Mac OS X下的资源限制</h4>
+      </a>
+    </div>
   
 
   

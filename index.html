@@ -154,6 +154,58 @@
     <ul class="post-list">
     
         <li class="post-list-item">
+            <article id="post-max-osx-ulimit"
+  class="article-card article-type-post" itemprop="blogPost">
+     
+    <div class="post-meta">
+        <time datetime="2017-02-06T16:00:00.000Z" itemprop="datePublished" class="post-time">
+  2017-02-07
+</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/system/">system</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2017/02/max-osx-ulimit/">Mac OS X下的资源限制</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent" >
+
+    
+        系统的资源是有限的(如CPU，内存，内核所能打开的最大文件数等)，资源限制对针对进程能使用的系统资源设定上限。防止恶意进程无限制地占用系统资源。
+资源限制分为两种，硬限制(Hard Limit)和软限制(Soft Limit)，软限制作用于实际进程并且可以修改，但不能超过硬限制，硬限制只有Root权限才能修改。
+相关命令在Mac OS X下，有如下三个命令与系统资源有关。
+launchctl...
+    
+    
+        <a href="/2017/02/max-osx-ulimit/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macosx/">macosx</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/system/">system</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item">
             <article id="post-go-command-notes"
   class="article-card article-type-post" itemprop="blogPost">
      
@@ -700,78 +752,6 @@ goa利用生成代码和用户代码来实现一个服务，并提供一个完�
     <div class="post-footer">
         
 	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/erlang/">erlang</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item">
-            <article id="post-go-basic"
-  class="article-card article-type-post" itemprop="blogPost">
-     
-    <div class="post-meta">
-        <time datetime="2016-09-08T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2016-09-09
-</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/go/">go</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2016/09/go-basic/">Go 基础特性</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent" >
-
-    
-        一. 类型系统1. slice数组切片提供了动态数组的能力，功能和实现都类似于C++ Vector。
-// 初始化一个数组
-var Arr [3]int = [3]int{1,2,3}
-
-var Slice1 []int
-// 通过数组初始化切片 得到[1 2]
-Slice1 = Arr[:2]
-// 直接创建切片 其中size = 5 capacity = 10 尝试访问[size,capacity]之间的元素会得到运行时错误
-Slice2 := make([]int, 5, 10)
-Slice3 := []int{1,2,3}
-// 从切片创建切片 [:last] 只要last&lt;=capacity 均合法
-Slice4 := Slice2[:8]
-// 切片拷贝 如果两个切片不一样大 会按照较小的数组切片元素个数拷贝
-// 这里的拷贝 可以看作是：先置0 再拷贝
-copy(Slice4, Slice3)
-
-// 遍历切片[0:size] 多返回值简化了迭代
-for i, v := range Slice1 {
-    ...
-}
-
-// 通过append在size后面添加元素 capacity会自动扩展
-// 同样, 多参数简化了迭代
-Slice3 = append(Slice3, 1,2,3,4,5,6,7,8,9)
-    
-    
-        <a href="/2016/09/go-basic/" class="post-more waves-effect waves-button">
-            阅读全文...
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/go/">go</a></li></ul>
 
     </div>
     
