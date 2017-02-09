@@ -32,7 +32,7 @@ var Slice1 []int
 // 通过数组初始化切片 得到[1 2]
 Slice1 = Arr[:2]
 // 直接创建切片 其中size = 5 capacity = 10 尝试访问[size,capaci">
-<meta property="og:updated_time" content="2016-09-14T09:32:01.000Z">
+<meta property="og:updated_time" content="2017-02-09T08:15:58.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Go 基础特性">
 <meta name="twitter:description" content="一. 类型系统1. slice数组切片提供了动态数组的能力，功能和实现都类似于C++ Vector。
@@ -277,7 +277,7 @@ for i, <span class="number">ch</span> := range <span class="keyword">str</span>{
 <li>Map: 根据 size 大小来初始化分配内存，不过分配后的 map 长度为 0，如果 size 被忽略了，那么会在初始化分配内存时分配一个小尺寸的内存</li>
 <li>Channel: 管道缓冲区依据缓冲区容量被初始化。如果容量为 0 或者忽略容量，管道是没有缓冲区的</li>
 </ul>
-<h3 id="6-_常量">6. 常量</h3><p>Go中的常量是无类型的，字面常量(如：3.14, “ok”)是无类型的，可以赋给任何满在其值域中的类型。Go预定义了三个常量：true, false, itoa，其中itoa是一个可以被编译器修改的常量，它代表一个整数，在每个const出现时被重置为0，然后itoa每出现一次，其所代表的值即自增一次。itoa通常用来定义枚举值，这类值应用程序不关心具体数值，只需确保其在同一个const枚举声明中不会冲突即可。</p>
+<h3 id="6-_常量">6. 常量</h3><p>Go中的常量是无类型的，字面常量(如：3.14, “ok”)是无类型的，可以赋给任何满在其值域中的类型。Go预定义了三个常量：true, false, iota，其中iota是一个可以被编译器修改的常量，它代表一个整数，在每个const出现时被重置为0，然后iota每出现一次，其所代表的值即自增一次。iota通常用来定义枚举值，这类值应用程序不关心具体数值，只需确保其在同一个const枚举声明中不会冲突即可。</p>
 <pre><code><span class="keyword">const</span> (
     c0 = <span class="constant">iota</span>    <span class="comment">// c0 == 0</span>
     c1 = <span class="constant">iota</span>    <span class="comment">// c1 == 1</span>
