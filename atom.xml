@@ -5703,14 +5703,23 @@ test.c:<span class="number">12</span>:<span class="number">2</span>: note: previ
   </entry>
   
   <entry>
-    <title>lua协程</title>
+    <title>lua 协程和状态</title>
     <link href="http://wudaijun.com/2015/01/lua-coroutine/"/>
     <id>http://wudaijun.com/2015/01/lua-coroutine/</id>
     <published>2015-01-13T16:00:00.000Z</published>
-    <updated>2015-09-22T02:25:54.000Z</updated>
+    <updated>2017-02-15T07:21:29.000Z</updated>
     
-    <content type="html"><![CDATA[<p>协程是一种用户级的非抢占式线程。用户级是指它的切换和调度由用户控制，非抢占指一个协程只有在其挂起(yield)或者协程结束才会返回。协程和C线程一样，有自己的堆栈，自己的局部变量，自己的指令指针，并且和其它协程共享全局变量等信息。用户可以实现自己调度协程，这主要得益于yield函数可以自动保存协程当前上下文，这样当挂起的协程被唤醒(resume)时，会从yield处继续向下执行，看起来就像是一个”可以返回多次的函数”。协程还有一个强大的功能就是可通过resume/yield来交换数据，这样使得它可以用于异步回调：当执行异步代码时，切换协程，执行完成后，再切换回来(附带异步执行结果)。由于切换都是用户控制的，在同一时刻只有一个协同程序在运行(这也是和传统线程最大的区别之一)，因此无需考虑同步和加锁的问题。</p>
+    <content type="html"><![CDATA[<p>协程(协同式多线程)是一种用户级的非抢占式线程。用户级是指它的切换和调度由用户控制，非抢占指一个协程只有在其挂起(yield)或者协程结束才会返回。协程和C线程一样，有自己的堆栈，自己的局部变量，自己的指令指针，并且和其它协程共享全局变量等信息。用户可以实现自己调度协程，这主要得益于yield函数可以自动保存协程当前上下文，这样当挂起的协程被唤醒(resume)时，会从yield处继续向下执行，看起来就像是一个”可以返回多次的函数”。协程还有一个强大的功能就是可通过resume/yield来交换数据，这样使得它可以用于异步回调：当执行异步代码时，切换协程，执行完成后，再切换回来(附带异步执行结果)。由于切换都是用户控制的，在同一时刻只有一个协同程序在运行(这也是和传统线程最大的区别之一)，因此无需考虑同步和加锁的问题。</p>
 <a id="more"></a>
+<p>Lua协程的相关函数封装在coroutine中，对应的 C API为<code>lua_newthread</code>，<code>lua_resume</code>等。Lua文档中的thread和coroutine是一个概念，但与操作系统的线程是两个东西。</p>
+<p>C API通过<code>lua_State</code>维护一个协程的状态(以及Lua虚拟机状态的引用)，协程的状态主要指协程上下文(如交互栈)，Lua虚拟机状态是全局的，可被多个协程共享。以下描述摘自Lua5.3官方文档：</p>
+<blockquote>
+<blockquote>
+<p>An opaque structure that points to a thread and indirectly (through the thread) to the whole state of a Lua interpreter. The Lua library is fully reentrant: it has no global variables. All information about a state is accessible through this structure.</p>
+<p>A pointer to this structure must be passed as the first argument to every function in the library, except to lua_newstate, which creates a Lua state from scratch.</p>
+</blockquote>
+</blockquote>
+<p>当调用<code>lua_newstate</code>时，实际上分为两步，1. 创建并初始化一个Lua虚拟机；2.创建一个主线程运行于虚拟机中。调用<code>lua_newthread</code>时，将在已有Lua虚拟机上，创建另一个协程执行环境，该协程与已有协程共享虚拟机状态。这两个函数返回不同的lua_State，但却共享同一个虚拟机状态，因此将lua_State理解为协程执行上下文可能更合适，lua_State本身也是一个类型为thread的GCObject，无需手动释放(Lua也没有提供对应close或destroy接口)。</p>
 <h3 id="两个例子">两个例子</h3><p>pil上关于协程有两个很好的例子。</p>
 <p>在生产者消费者例子中，当消费者需要生产者的数据时(相当于一个异步回调)，切换到生产者协程(resume)，生产者开始运行，生产完成后，挂起自己(yield)并且传入生产的数据。此时调度回到消费者协程中，消费者从resume的返回值中得到数据，使用数据，在需要数据时再次唤醒生产者。这样我们像写同步代码一样(resume相当于函数调用，yield相当于函数返回)，完成了异步功能。而无需考虑传统生产者和消费者模型中的同步问题，因为执行顺序都由我们严格控制的。代码如下：</p>
 <figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">pfun = <span class="function"><span class="keyword">function</span><span class="params">()</span></span></span><br><span class="line">	<span class="keyword">while</span> <span class="keyword">true</span> <span class="keyword">do</span></span><br><span class="line">		<span class="keyword">local</span> value = <span class="built_in">io</span>.read()</span><br><span class="line">		<span class="built_in">print</span>(<span class="string">"生产: "</span>, value)</span><br><span class="line">		<span class="built_in">coroutine</span>.yield(value)</span><br><span class="line">	<span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">cfun = <span class="function"><span class="keyword">function</span><span class="params">(p)</span></span></span><br><span class="line">	<span class="keyword">while</span> <span class="keyword">true</span> <span class="keyword">do</span></span><br><span class="line">		<span class="keyword">local</span> _, value = <span class="built_in">coroutine</span>.resume(p)</span><br><span class="line">		<span class="built_in">print</span>(<span class="string">"消费: "</span>, value)</span><br><span class="line">	<span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">p = <span class="built_in">coroutine</span>.create(pfun)</span><br><span class="line">cfun(p)</span><br></pre></td></tr></table></figure>
@@ -5720,7 +5729,7 @@ test.c:<span class="number">12</span>:<span class="number">2</span>: note: previ
     
     <summary type="html">
     
-      &lt;p&gt;协程是一种用户级的非抢占式线程。用户级是指它的切换和调度由用户控制，非抢占指一个协程只有在其挂起(yield)或者协程结束才会返回。协程和C线程一样，有自己的堆栈，自己的局部变量，自己的指令指针，并且和其它协程共享全局变量等信息。用户可以实现自己调度协程，这主要得益于yield函数可以自动保存协程当前上下文，这样当挂起的协程被唤醒(resume)时，会从yield处继续向下执行，看起来就像是一个”可以返回多次的函数”。协程还有一个强大的功能就是可通过resume/yield来交换数据，这样使得它可以用于异步回调：当执行异步代码时，切换协程，执行完成后，再切换回来(附带异步执行结果)。由于切换都是用户控制的，在同一时刻只有一个协同程序在运行(这也是和传统线程最大的区别之一)，因此无需考虑同步和加锁的问题。&lt;/p&gt;
+      &lt;p&gt;协程(协同式多线程)是一种用户级的非抢占式线程。用户级是指它的切换和调度由用户控制，非抢占指一个协程只有在其挂起(yield)或者协程结束才会返回。协程和C线程一样，有自己的堆栈，自己的局部变量，自己的指令指针，并且和其它协程共享全局变量等信息。用户可以实现自己调度协程，这主要得益于yield函数可以自动保存协程当前上下文，这样当挂起的协程被唤醒(resume)时，会从yield处继续向下执行，看起来就像是一个”可以返回多次的函数”。协程还有一个强大的功能就是可通过resume/yield来交换数据，这样使得它可以用于异步回调：当执行异步代码时，切换协程，执行完成后，再切换回来(附带异步执行结果)。由于切换都是用户控制的，在同一时刻只有一个协同程序在运行(这也是和传统线程最大的区别之一)，因此无需考虑同步和加锁的问题。&lt;/p&gt;
     
     </summary>
     
