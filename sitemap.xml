@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://wudaijun.com/2016/12/erlang-unicode/</loc>
+    
+    <lastmod>2017-02-22T02:45:49.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://wudaijun.com/2015/01/lua-coroutine/</loc>
     
     <lastmod>2017-02-15T07:21:29.000Z</lastmod>
@@ -68,13 +75,6 @@
     <loc>http://wudaijun.com/2015/12/erlang-datastructures/</loc>
     
     <lastmod>2016-12-27T03:54:24.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://wudaijun.com/2016/12/erlang-unicode/</loc>
-    
-    <lastmod>2016-12-18T07:10:56.000Z</lastmod>
     
   </url>
   

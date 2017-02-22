@@ -28,7 +28,7 @@ ASCII: 不用多说，编码空间为7位(0-127)
 ISO 8859-1: 又称Latin-1，以ASCII为基础，在空置的0xA0-0xFF的范围内，加入96个字母及符号。编码空间为8位(0-255)
 UCS-2: 16位编码空间 又称基本多文种平面或零平面
 UCS-4: 32位编码空间 在UCS-2基本上，加入">
-<meta property="og:updated_time" content="2016-12-18T07:10:56.000Z">
+<meta property="og:updated_time" content="2017-02-22T02:45:49.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Erlang Unicode编码">
 <meta name="twitter:description" content="Unicode基础编码方式定义字符集中每个字符的codepoint(数字编码)
@@ -259,7 +259,7 @@ UCS-4: 32位编码空间 在UCS-2基本上，加入">
 <li>unicode binary: UTF8编码的binary(Erlang默认使用UTF8 binary编码unicode)</li>
 <li>charlist: UTF8编码的binary，或包含有效unicode codepoint的lists，或它们的嵌套，如<code>[&lt;&lt;&quot;hello&quot;&gt;&gt;, &quot;中国&quot;]</code></li>
 </ul>
-<p><code>~s</code>只能打印iolist，binary，或atom，因此不能直接打印中文lists(无法解码超过255的codepoint)或UTF8 binary(会按字节解释，出现乱码)，</p>
+<p><code>~s</code>只能打印iolist，binary，或atom，因此不能直接打印中文lists(无法解码超过255的codepoint)或UTF8 binary(会按字节解释，出现乱码)。</p>
 <p><code>~ts</code>则可打印charlist和unicode binary。</p>
 <p><code>~p</code>如果不能打印出ASCII(0-127)字符，则直接打印出原生Term，不会对Unicode编码进行处理。</p>
 <p>参考：</p>

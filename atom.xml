@@ -526,7 +526,7 @@ recon:bin_leak(<span class="keyword">N</span>)
     <link href="http://wudaijun.com/2016/12/erlang-unicode/"/>
     <id>http://wudaijun.com/2016/12/erlang-unicode/</id>
     <published>2016-12-16T16:00:00.000Z</published>
-    <updated>2016-12-18T07:10:56.000Z</updated>
+    <updated>2017-02-22T02:45:49.000Z</updated>
     
     <content type="html"><![CDATA[<h2 id="Unicode基础">Unicode基础</h2><h3 id="编码方式">编码方式</h3><p>定义字符集中每个字符的<strong>codepoint(数字编码)</strong></p>
 <ul>
@@ -594,7 +594,7 @@ recon:bin_leak(<span class="keyword">N</span>)
 <li>unicode binary: UTF8编码的binary(Erlang默认使用UTF8 binary编码unicode)</li>
 <li>charlist: UTF8编码的binary，或包含有效unicode codepoint的lists，或它们的嵌套，如<code>[&lt;&lt;&quot;hello&quot;&gt;&gt;, &quot;中国&quot;]</code></li>
 </ul>
-<p><code>~s</code>只能打印iolist，binary，或atom，因此不能直接打印中文lists(无法解码超过255的codepoint)或UTF8 binary(会按字节解释，出现乱码)，</p>
+<p><code>~s</code>只能打印iolist，binary，或atom，因此不能直接打印中文lists(无法解码超过255的codepoint)或UTF8 binary(会按字节解释，出现乱码)。</p>
 <p><code>~ts</code>则可打印charlist和unicode binary。</p>
 <p><code>~p</code>如果不能打印出ASCII(0-127)字符，则直接打印出原生Term，不会对Unicode编码进行处理。</p>
 <p>参考：</p>
