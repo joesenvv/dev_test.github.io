@@ -154,6 +154,64 @@
     <ul class="post-list">
     
         <li class="post-list-item">
+            <article id="post-lua-notes"
+  class="article-card article-type-post" itemprop="blogPost">
+     
+    <div class="post-meta">
+        <time datetime="2017-02-22T16:00:00.000Z" itemprop="datePublished" class="post-time">
+  2017-02-23
+</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/lua/">lua</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2017/02/lua-notes/">Lua 闭包 环境 包管理</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent" >
+
+    
+        Variables
+访问一个不存在的全局变量得到nil
+释放一个全局变量只需将其赋值为nil，效果与未定义该变量一样
+Lua 中的变量全是全局变量，那怕是语句块或是函数里，除非用 local 显式声明为局部变量
+局部变量比全局变量访问更快
+
+Functions1. 基本特性
+多参数/返回值匹配：多余忽略，缺少用nil补足
+可变参数：arg，table.pack，table.unpack
+命名...
+    
+    
+        <a href="/2017/02/lua-notes/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/lua/">lua</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item">
             <article id="post-max-osx-ulimit"
   class="article-card article-type-post" itemprop="blogPost">
      
@@ -687,71 +745,6 @@ goa利用生成代码和用户代码来实现一个服务，并提供一个完�
     <div class="post-footer">
         
 	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/go/">go</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/goa/">goa</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item">
-            <article id="post-erlang-rebar3"
-  class="article-card article-type-post" itemprop="blogPost">
-     
-    <div class="post-meta">
-        <time datetime="2016-09-09T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2016-09-10
-</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2016/09/erlang-rebar3/">Rebar3 Erlang/OTP构建利器</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent" >
-
-    
-        一. 依赖管理1. 包依赖和源码依赖Rebar3支持两种依赖：
-{deps,[
-  %% 包依赖
-  rebar,
-  {rebar,"1.0.0"},
-  {rebar, {pkg, rebar_fork}}, % rebar app under a different pkg name
-  {rebar, "1.0.0", {pkg, rebar_fork}},
-  %% 源码依赖
-  {rebar, {git, "git://github.com/erlang/rebar3.git"}},
-  {rebar, {git, "http://github.com/erlang/rebar3.git"}},
-  {rebar, {git, "https://github.com/erlang/rebar3.git"}},
-  {rebar, {git, "git@github.com:erlang/rebar3.git"}},
-  {rebar, {hg, "https://othersite.com/erlang/rebar3"}},
-  {rebar, {git, "git://github.com/erlang/rebar3.git", {ref, "aef728"}}},
-  {rebar, {git, "git://github.com/erlang/rebar3.git", {branch, "master"}}},
-  {rebar, {git, "git://github.com/erlang/rebar3.git", {tag, "3.0.0"}}}
-  ]}
-    
-    
-        <a href="/2016/09/erlang-rebar3/" class="post-more waves-effect waves-button">
-            阅读全文...
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/erlang/">erlang</a></li></ul>
 
     </div>
     

@@ -154,6 +154,71 @@
     <ul class="post-list">
     
         <li class="post-list-item">
+            <article id="post-erlang-rebar3"
+  class="article-card article-type-post" itemprop="blogPost">
+     
+    <div class="post-meta">
+        <time datetime="2016-09-09T16:00:00.000Z" itemprop="datePublished" class="post-time">
+  2016-09-10
+</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2016/09/erlang-rebar3/">Rebar3 Erlang/OTP构建利器</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent" >
+
+    
+        一. 依赖管理1. 包依赖和源码依赖Rebar3支持两种依赖：
+{deps,[
+  %% 包依赖
+  rebar,
+  {rebar,"1.0.0"},
+  {rebar, {pkg, rebar_fork}}, % rebar app under a different pkg name
+  {rebar, "1.0.0", {pkg, rebar_fork}},
+  %% 源码依赖
+  {rebar, {git, "git://github.com/erlang/rebar3.git"}},
+  {rebar, {git, "http://github.com/erlang/rebar3.git"}},
+  {rebar, {git, "https://github.com/erlang/rebar3.git"}},
+  {rebar, {git, "git@github.com:erlang/rebar3.git"}},
+  {rebar, {hg, "https://othersite.com/erlang/rebar3"}},
+  {rebar, {git, "git://github.com/erlang/rebar3.git", {ref, "aef728"}}},
+  {rebar, {git, "git://github.com/erlang/rebar3.git", {branch, "master"}}},
+  {rebar, {git, "git://github.com/erlang/rebar3.git", {tag, "3.0.0"}}}
+  ]}
+    
+    
+        <a href="/2016/09/erlang-rebar3/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/erlang/">erlang</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item">
             <article id="post-go-basic"
   class="article-card article-type-post" itemprop="blogPost">
      
@@ -653,62 +718,6 @@ MMAPv1 Storage EngineMongoDB3.2之前版本的默认引擎。
     <div class="post-footer">
         
 	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mongodb/">mongodb</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item">
-            <article id="post-erlang-debug-online"
-  class="article-card article-type-post" itemprop="blogPost">
-     
-    <div class="post-meta">
-        <time datetime="2016-05-25T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2016-05-26
-</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2016/05/erlang-debug-online/">Erlang 状态监控</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent" >
-
-    
-        一. 接入远程节点1. JCLerl -sname n2 -setcookie 123
-(n2@T4F-MBP-11)1&gt;        //^G
-User switch command
- --&gt; r 'n1@T4F-MBP-11'
- --&gt; c
-Eshell V8.1  (abort with ^G)
-(n1@T4F-MBP-11)1&gt;
-2. remsherl -s...
-    
-    
-        <a href="/2016/05/erlang-debug-online/" class="post-more waves-effect waves-button">
-            阅读全文...
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/erlang/">erlang</a></li></ul>
 
     </div>
     
