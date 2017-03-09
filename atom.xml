@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://wudaijun.com/"/>
-  <updated>2017-02-25T04:28:49.000Z</updated>
+  <updated>2017-02-28T04:20:22.000Z</updated>
   <id>http://wudaijun.com/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://wudaijun.com/2017/02/lua-notes/"/>
     <id>http://wudaijun.com/2017/02/lua-notes/</id>
     <published>2017-02-22T16:00:00.000Z</published>
-    <updated>2017-02-25T04:28:49.000Z</updated>
+    <updated>2017-02-28T04:20:22.000Z</updated>
     
     <content type="html"><![CDATA[<h2 id="Variables">Variables</h2><ul>
 <li>访问一个不存在的全局变量得到nil</li>
@@ -85,7 +85,9 @@
 <blockquote>
 <p>Lua keeps a distinguished environment called the global environment. This value is kept at a special index in the C registry (see §4.5). In Lua, the global variable _G is initialized with this same value. (_G is never used internally.)</p>
 </blockquote>
-<p>参考<a href="http://lua-users.org/lists/lua-l/2014-08/msg00345.html" target="_blank" rel="external">_ENV vs _G</a>，<a href="http://stackoverflow.com/questions/14290527/recreating-setfenv-in-lua-5-2" target="_blank" rel="external">setfenv in Lua5.2</a></p>
+<ul>
+<li>参考<a href="http://lua-users.org/lists/lua-l/2014-08/msg00345.html" target="_blank" rel="external">_ENV vs _G</a>，<a href="http://stackoverflow.com/questions/14290527/recreating-setfenv-in-lua-5-2" target="_blank" rel="external">setfenv in Lua5.2</a></li>
+</ul>
 <h2 id="Packages">Packages</h2><p>在Lua中，有闭包，灵活的table和环境管理，想要实现包管理有非常多的方法：</p>
 <h3 id="1-_基本方法">1. 基本方法</h3><p>最简单的方法就是直接使用table和第一类函数特性：</p>
 <figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">complex = &#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">complex.new</span><span class="params">(r,i)</span></span> ... <span class="keyword">end</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">complex.add</span><span class="params">(c1,c2)</span></span> ... <span class="keyword">end</span></span><br><span class="line">...</span><br><span class="line"><span class="keyword">return</span> complex</span><br></pre></td></tr></table></figure>
@@ -366,7 +368,7 @@ Call Foo()
     <link href="http://wudaijun.com/2017/01/css-notes/"/>
     <id>http://wudaijun.com/2017/01/css-notes/</id>
     <published>2017-01-08T16:00:00.000Z</published>
-    <updated>2017-01-11T09:39:48.000Z</updated>
+    <updated>2017-03-01T07:38:00.000Z</updated>
     
     <content type="html"><![CDATA[<h2 id="一-_选择器">一. 选择器</h2><h3 id="1-_普通选择器">1. 普通选择器</h3><table>
 <thead>
@@ -491,6 +493,8 @@ Call Foo()
 <span class="tag">p</span><span class="pseudo">:first-letter</span> {<span class="attribute">color</span>:<span class="hexcolor">#ff0000</span>;} <span class="comment">/* 为文本的首字母设置特殊样式 */</span>
 </code></pre></li>
 </ul>
+<h3 id="6-_优先级">6. 优先级</h3><p><code>!import</code> &gt; 元素内嵌样式 &gt; ID选择器 &gt; Class选择器 &gt; 类型选择器 &gt; 父元素继承值，如果一个选择器应用的多个样式重复定义了某一属性，则样式在CSS中定义顺序越后面优先级越高。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">style</span>&gt;</span><span class="css"></span><br><span class="line">	...</span><br><span class="line">	<span class="tag">h1</span> <span class="rules">&#123;<span class="rule"><span class="attribute">color</span>:<span class="value"> red</span></span>; &#125;</span></span><br><span class="line">  <span class="class">.pink-text</span> <span class="rules">&#123; <span class="rule"><span class="attribute">color</span>:<span class="value"> pink</span></span>; &#125;</span></span><br><span class="line">  <span class="class">.blue-text</span> <span class="rules">&#123; <span class="rule"><span class="attribute">color</span>:<span class="value"> blue</span></span>; &#125;</span></span><br><span class="line"></span><span class="tag">&lt;/<span class="title">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">h1</span> <span class="attribute">id</span>=<span class="value">"orange-text"</span> <span class="attribute">class</span>=<span class="value">"blue-text pink-text"</span> <span class="attribute">style</span>=<span class="value">"color: white"</span>&gt;</span>Hello World!<span class="tag">&lt;/<span class="title">h1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">body</span>&gt;</span></span><br><span class="line"></span><br><span class="line">应用color属性的优先级为: style="color:white" &gt; .orange-text &gt; .pink-text &gt; blue-text &gt; h1类型选择器 &gt; 从body继承color值</span><br><span class="line"></span><br><span class="line">如果对pink-text的color属性应用了!important，那么应用important的属性优先级将始终最高!</span><br></pre></td></tr></table></figure>
 <h2 id="二-_内外边距">二. 内外边距</h2><h3 id="1-_元素结构">1. 元素结构</h3><p> <img src="/assets/image/css/css-padding-margin.gif" alt=""></p>
 <h3 id="2-_padding">2. padding</h3><p>内边距，定义元素边框和元素内容之间的留白</p>
 <ul>
@@ -529,7 +533,7 @@ Call Foo()
     <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
 <span class="tag">&lt;/<span class="title">body</span>&gt;</span>
 <span class="tag">&lt;/<span class="title">html</span>&gt;</span>
-</code></pre><p>原因：根据CSS规范，当一个元素包含在另一个元素中时（假设没有内边距或边框把外边距分隔开），它们的上和/或下外边距会发生合并。因此firstChild和其父元素middle的上外边距重叠，并顶开了middle和top间的外边距。解决方案是为middle定义边框或者内边距。参考<a href="http://www.w3school.com.cn/css/css_margin_collapsing.asp" target="_blank" rel="external">CSS外边距合并</a>。</p>
+</code></pre><p>原因：根据CSS规范，当一个元素包含在另一个元素中时（假设没有内边距或边框把外边距分隔开），它们的上和/或下外边距会发生合并。因此firstChild和其父元素middle的上外边距重叠，并顶开了middle和top间的外边距。解决方案是为middle定义边框或者内边距。参考<a href="http://www.w3school.com.cn/css/css_margin_collapsing.asp" target="_blank" rel="external">CSS外边距合并</a>，<a href="http://www.hicss.net/use-margin-or-padding/" target="_blank" rel="external">padding or margin</a>。</p>
 ]]></content>
     
     <summary type="html">
@@ -2646,15 +2650,18 @@ recon_trace:calls/<span class="number">2</span>-<span class="number">3</span>
     <link href="http://wudaijun.com/2016/05/erlang-practices/"/>
     <id>http://wudaijun.com/2016/05/erlang-practices/</id>
     <published>2016-05-24T16:00:00.000Z</published>
-    <updated>2016-08-12T02:57:23.000Z</updated>
+    <updated>2017-02-27T09:35:15.000Z</updated>
     
     <content type="html"><![CDATA[<h3 id="使用binary而不是lists">使用binary而不是lists</h3><p>所有能用binary的地方都用binary，配置，协议，DB，网络接口，等等，如果驱动或第三方库不能很好地支持binary，就换一个或者重写接口，如果项目一开始就这么做，会在后期省掉很多麻烦。</p>
 <h3 id="不要动态生成_atom">不要动态生成 atom</h3><p>atom不被Erlang GC，在代码中要时刻警惕诸如<code>list(binary)_to_atom/2</code>和<code>binary_to_term/1</code>等动态生成atom的API，特别是这些API的输入源来自于网络或客户端等不可信源，可用<code>list(binary)_to_existing_atom/2</code>和<code>binary_to_term/2</code>替换之，前者只能转换为已经存在的原子，否则会报错，后者功能类似，确保不会生成新的atom，函数引用，Pid等(这些资源都是不会被GC回收的)。</p>
 <p>可通过<code>erlang:memory/0</code>来观察atom内存使用状况。</p>
 <a id="more"></a>
 <h3 id="保证OTP进程的init/1是安全稳定的">保证OTP进程的init/1是安全稳定的</h3><p>supervisor的start_link会<strong>同步启动</strong>整个supervisor树，如果某个孩子进程启动失败，supervisor会立即尝试重启，如果重启成功，继续启动下一个孩子进程，否则重试次数到达设定上限后，supervisor启动失败。</p>
-<p>在实践中，不要将耗时，依赖外部不稳定服务的操作，放在init/1中，这会导致整个supervisor树启动的不稳定性。特别是对于一些网络连接，数据库读取等操作，应该尽量通过诸如<code>gen_server:cast(self(), reconnect)</code>的形式，将实际初始化延后，并维护好状态(是否已经初始化完成)。在<code>handle_cast(reconnect, State)</code>中处理具体的细节，不管是初始化，还是运行时的网络异常，都可以通过该函数处理。如果一个错误会经常性地出现在日常的操作中，那么是现在出现，还是以后出现是没啥区别的，尽量以同样的方法处理它。</p>
+<p>在实践中，不要将耗时，依赖外部不稳定服务的操作，放在init/1中，这会导致整个supervisor树启动的不稳定性。特别是对于一些网络连接，数据库读取等操作，应该尽量通过诸如<code>gen_server:cast(self(), reconnect)</code>的形式，将实际初始化延后，并维护好状态(是否已经初始化完成)。在<code>handle_cast(reconnect, State)</code>中处理具体的细节，不管是初始化，还是运行时的网络异常，都可以通过该函数处理。如果一个错误会经常性地出现在日常的操作中，那么是现在出现，还是以后出现是没有区别的，尽量以同样的方法处理它。</p>
 <p>通常情况下，我们需要保证OTP进程的init/1是快速，稳定的，如果连启动过程都不是稳定的，那么supervisor的启动也就没有多大意义了(不能将整个系统恢复到已知稳定状态)，并且可能一个进程本身的非关键初始化错误，导致了整个supervisor启动失败。</p>
+<blockquote>
+<p>initialization与supervision方法的不同之处：在initialization过程中，client的使用者来决定他们能容忍什么程序的错误，而不是client自己本身决定的。在设计容错系统中，这两者区别尤其重要。   – <a href="https://zhongwencool.gitbooks.io/erlang_in_anger/chapter_2_building_open_source_erlang_software/side_effects.html" target="_blank" rel="external">Erlang In Anger</a></p>
+</blockquote>
 <h3 id="消息队列膨胀">消息队列膨胀</h3><p>Erlang系统最常见的问题是节点内存耗尽，而内存耗尽的主凶之一就是消息队列过长(Erlang消息队列的大小是无限制的)。要查看消息队列膨胀的进程不难，但是难的是找到消息队列膨胀的原因和解决方案。</p>
 <p>常见的消息膨胀原因：</p>
 <ol>
@@ -5621,7 +5628,7 @@ test.c:<span class="number">12</span>:<span class="number">2</span>: note: previ
 <p>如有以下类和函数:</p>
 <figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title">A</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="keyword">int</span>* _p;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function">A <span class="title">ReturnValue</span>(<span class="params"></span>)</span><br><span class="line"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> A();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><code>ReturnValue()</code>的返回值即为右值，它是一个不具名的临时变量。在C++98中，只有常量左值引用才能引用这个值。 </p>
-<figure class="highlight monkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">A&amp; a = ReturnValue(); // <span class="built_in">error</span>: non-<span class="keyword">const</span> lvalue reference <span class="keyword">to</span> type <span class="comment">'A' cannot bind to a temporary of type 'A'</span></span><br><span class="line">      </span><br><span class="line"><span class="keyword">const</span> A&amp; a2 = ReturnValue(); // ok</span><br></pre></td></tr></table></figure>
+<figure class="highlight vhdl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">A&amp; a = ReturnValue(); // error: non-const lvalue reference <span class="keyword">to</span> <span class="keyword">type</span> <span class="attribute">'A</span>' cannot bind <span class="keyword">to</span> a temporary <span class="keyword">of</span> <span class="keyword">type</span> <span class="attribute">'A</span>'</span><br><span class="line">      </span><br><span class="line">const A&amp; a2 = ReturnValue(); // ok</span><br></pre></td></tr></table></figure>
 <p>通过常量左值引用，可以延长ReturnValue()返回值的生命周期，但是不能修改它。C++11的右值引用出场了：</p>
 <p><code>A&amp;&amp; a3 = ReturnValue();</code></p>
 <p>右值引用通过”&amp;&amp;”来声明， a3引用了ReturnValue()的返回值，延长了它的生命周期，并且可以对该临时值进行修改。</p>
@@ -6439,40 +6446,6 @@ sum, diff = clib.<span class="function"><span class="title">addsub</span><span c
   </entry>
   
   <entry>
-    <title>NGServer Session -&gt; Player</title>
-    <link href="http://wudaijun.com/2014/10/ngserver-player/"/>
-    <id>http://wudaijun.com/2014/10/ngserver-player/</id>
-    <published>2014-10-30T16:00:00.000Z</published>
-    <updated>2015-09-22T02:29:08.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>在服务器中，一般都有一个代表客户端或玩家的类，用来处理一些相关逻辑并保存必要数据。也就是NGServer中的Player类，在网络模型中，一般一个Player对应一次会话(Session)，因此在很多服务器模型中，客户端类直接从Session类派生，这样客户端可以直接通过父类Session的接口发送数据，并且通过实现Sessoin的虚函数对数据进行处理。这种模型的好处在于简单，客户端类能够完全控制网络IO，并且对IO事件进行及时地处理。比如连接断开，那么客户端类可以通过实现Session的OnClose()函数完成一些业务逻辑上的处理，比如保存用户数据。而这种编程模型，将客户端和网络会话的耦合性提到了最高：Client is a Session。方便的同时，很大程度上限制了模块的可拓展性，比如客户端的断线重连，由于这种继承关系，导致Session在销毁的同时必然导致Client”逻辑上”的断线，这样玩家重连的时候，数据只能重新加载，建立新的Session和Client。这种情况还会发生在客户端异处登录时，原有客户端被挤下线的同时，逻辑上的数据也丢失了，而新的客户端将重新加载数据。除了断线重连之外，该模型还会造成不必要的编译依赖。因此我们需要将逻辑上的客户端和底层的网络Session解耦。</p>
-<a id="more"></a>
-<p>一种可行的解耦方式是让Session和Player以”包含”的方式并存。即让Session指针或引用作为Player的一个成员。如此数据的发送仍然比较简单，而数据的接收和处理则需要Session通知Player类，这里有两种方式：</p>
-<ol>
-<li>让Session也包含一个Player的引用，如此Session在收到数据或连接关闭时也能调用Player接口进行业务逻辑上的处理。</li>
-<li>通过std::bind直接让Player的数据解码接口(Decoder)交给Session，Session的数据接收和关闭均通过Decoder交由Player,如此实现更弱的耦合性。</li>
-</ol>
-<p>NGServer采用第二种方式：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> PlayerManager::OnConnect(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;Socket&gt;&amp; socket)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">uint32_t</span> id = ++_connect_id;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 创建Player和Session 并将Player和Session关联</span></span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;Session&gt; session = <span class="built_in">std</span>::make_shared&lt;Session&gt;(socket, id);</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;Player&gt; player = <span class="built_in">std</span>::make_shared&lt;Player&gt;(session, LoginService::sDefaultSid);</span><br><span class="line">	<span class="built_in">std</span>::function&lt;<span class="keyword">int32_t</span>(<span class="keyword">const</span> <span class="keyword">char</span>*, <span class="keyword">size_t</span> len)&gt; decoder = <span class="built_in">std</span>::bind(&amp;Player::Decode, player, <span class="built_in">std</span>::placeholders::_1, <span class="built_in">std</span>::placeholders::_2);</span><br><span class="line">	player-&gt;SetConnId(id);</span><br><span class="line">	session-&gt;SetDecoder(decoder);</span><br><span class="line"></span><br><span class="line">	AddPlayer(player);</span><br><span class="line"></span><br><span class="line">	session-&gt;StartRecv();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>PlayerManager管理所有Player的连接，它继承于AsyncTcpListener，一个连接监听器，提供OnConnect接口处理客户端连接事件。因此PlayerManager负责Session和Player的创建和管理，并将Session和Player关联。当有新用户连接时，在OnConnect中，创建Player和Session，并相互关联。Session将收到的数据通过Player::Decode解码，该函数返回解包完成后缓冲区的剩余长度，以便Session调整缓冲区。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Session收到新的数据</span></span><br><span class="line"><span class="keyword">void</span> Session::ReadComplete(<span class="keyword">const</span> boost::system::error_code&amp; err, <span class="keyword">size_t</span> bytes_transferred)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (err || bytes_transferred == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        DisConnect();</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    _recv_total += bytes_transferred;</span><br><span class="line">    _recv_off += bytes_transferred;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 处理数据</span></span><br><span class="line">    <span class="keyword">if</span> (ProcessData())</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 继续接收数据</span></span><br><span class="line">        AsyncReadSome();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对缓冲区中的数据解包 返回false则断开连接</span></span><br><span class="line"><span class="keyword">bool</span> Session::ProcessData()</span><br><span class="line">&#123;</span><br><span class="line">    assert(_decoder);</span><br><span class="line">    <span class="comment">// 将数据交由解码器处理 返回处理之后的缓冲区剩余字节数 返回-1表示服务器主动断线</span></span><br><span class="line">    <span class="keyword">int32_t</span> remain = _decoder(_recv_buf,_recv_off);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 服务器断开连接</span></span><br><span class="line">    <span class="keyword">if</span> (remain &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ShutDown(ShutDownType::shutdown_receive);</span><br><span class="line">        DisConnect();</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 处理之后的偏移</span></span><br><span class="line">    <span class="keyword">if</span> (remain &gt; <span class="number">0</span> &amp;&amp; remain &lt; kBufferSize)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">size_t</span> remain_off = _recv_off - remain;</span><br><span class="line">        _recv_off = (<span class="keyword">size_t</span>)remain;</span><br><span class="line">        <span class="built_in">memcpy</span>(_recv_buf, _recv_buf + remain_off, _recv_off);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        _recv_off = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>网络底层部分到此结束，焦点将由Player::Decode转向逻辑层。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;在服务器中，一般都有一个代表客户端或玩家的类，用来处理一些相关逻辑并保存必要数据。也就是NGServer中的Player类，在网络模型中，一般一个Player对应一次会话(Session)，因此在很多服务器模型中，客户端类直接从Session类派生，这样客户端可以直接通过父类Session的接口发送数据，并且通过实现Sessoin的虚函数对数据进行处理。这种模型的好处在于简单，客户端类能够完全控制网络IO，并且对IO事件进行及时地处理。比如连接断开，那么客户端类可以通过实现Session的OnClose()函数完成一些业务逻辑上的处理，比如保存用户数据。而这种编程模型，将客户端和网络会话的耦合性提到了最高：Client is a Session。方便的同时，很大程度上限制了模块的可拓展性，比如客户端的断线重连，由于这种继承关系，导致Session在销毁的同时必然导致Client”逻辑上”的断线，这样玩家重连的时候，数据只能重新加载，建立新的Session和Client。这种情况还会发生在客户端异处登录时，原有客户端被挤下线的同时，逻辑上的数据也丢失了，而新的客户端将重新加载数据。除了断线重连之外，该模型还会造成不必要的编译依赖。因此我们需要将逻辑上的客户端和底层的网络Session解耦。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="gameserver" scheme="http://wudaijun.com/categories/gameserver/"/>
-    
-    
-      <category term="ngserver" scheme="http://wudaijun.com/tags/ngserver/"/>
-    
-  </entry>
-  
-  <entry>
     <title>NGServer Service框架</title>
     <link href="http://wudaijun.com/2014/10/ngserver-service/"/>
     <id>http://wudaijun.com/2014/10/ngserver-service/</id>
@@ -6577,6 +6550,40 @@ sum, diff = clib.<span class="function"><span class="title">addsub</span><span c
     <summary type="html">
     
       &lt;p&gt;NGServer的核心概念便是服务(Service)，它对逻辑层表现为一个线程，处理各种特定的相关业务。如日志服务(LogService)，数据库服务(DBService)，登录服务(LoginService)。服务之间通过消息进行交互。Service实际上并不是一个独立线程，Service与线程是一种”多对多”的关系。即所有的Service通过ServiceManager来管理，后者维护一个线程池，并将线程池与”服务池”以某种调度方式关联，让线程充分被利用。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="gameserver" scheme="http://wudaijun.com/categories/gameserver/"/>
+    
+    
+      <category term="ngserver" scheme="http://wudaijun.com/tags/ngserver/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>NGServer Session -&gt; Player</title>
+    <link href="http://wudaijun.com/2014/10/ngserver-player/"/>
+    <id>http://wudaijun.com/2014/10/ngserver-player/</id>
+    <published>2014-10-30T16:00:00.000Z</published>
+    <updated>2015-09-22T02:29:08.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>在服务器中，一般都有一个代表客户端或玩家的类，用来处理一些相关逻辑并保存必要数据。也就是NGServer中的Player类，在网络模型中，一般一个Player对应一次会话(Session)，因此在很多服务器模型中，客户端类直接从Session类派生，这样客户端可以直接通过父类Session的接口发送数据，并且通过实现Sessoin的虚函数对数据进行处理。这种模型的好处在于简单，客户端类能够完全控制网络IO，并且对IO事件进行及时地处理。比如连接断开，那么客户端类可以通过实现Session的OnClose()函数完成一些业务逻辑上的处理，比如保存用户数据。而这种编程模型，将客户端和网络会话的耦合性提到了最高：Client is a Session。方便的同时，很大程度上限制了模块的可拓展性，比如客户端的断线重连，由于这种继承关系，导致Session在销毁的同时必然导致Client”逻辑上”的断线，这样玩家重连的时候，数据只能重新加载，建立新的Session和Client。这种情况还会发生在客户端异处登录时，原有客户端被挤下线的同时，逻辑上的数据也丢失了，而新的客户端将重新加载数据。除了断线重连之外，该模型还会造成不必要的编译依赖。因此我们需要将逻辑上的客户端和底层的网络Session解耦。</p>
+<a id="more"></a>
+<p>一种可行的解耦方式是让Session和Player以”包含”的方式并存。即让Session指针或引用作为Player的一个成员。如此数据的发送仍然比较简单，而数据的接收和处理则需要Session通知Player类，这里有两种方式：</p>
+<ol>
+<li>让Session也包含一个Player的引用，如此Session在收到数据或连接关闭时也能调用Player接口进行业务逻辑上的处理。</li>
+<li>通过std::bind直接让Player的数据解码接口(Decoder)交给Session，Session的数据接收和关闭均通过Decoder交由Player,如此实现更弱的耦合性。</li>
+</ol>
+<p>NGServer采用第二种方式：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> PlayerManager::OnConnect(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;Socket&gt;&amp; socket)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">uint32_t</span> id = ++_connect_id;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 创建Player和Session 并将Player和Session关联</span></span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;Session&gt; session = <span class="built_in">std</span>::make_shared&lt;Session&gt;(socket, id);</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;Player&gt; player = <span class="built_in">std</span>::make_shared&lt;Player&gt;(session, LoginService::sDefaultSid);</span><br><span class="line">	<span class="built_in">std</span>::function&lt;<span class="keyword">int32_t</span>(<span class="keyword">const</span> <span class="keyword">char</span>*, <span class="keyword">size_t</span> len)&gt; decoder = <span class="built_in">std</span>::bind(&amp;Player::Decode, player, <span class="built_in">std</span>::placeholders::_1, <span class="built_in">std</span>::placeholders::_2);</span><br><span class="line">	player-&gt;SetConnId(id);</span><br><span class="line">	session-&gt;SetDecoder(decoder);</span><br><span class="line"></span><br><span class="line">	AddPlayer(player);</span><br><span class="line"></span><br><span class="line">	session-&gt;StartRecv();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>PlayerManager管理所有Player的连接，它继承于AsyncTcpListener，一个连接监听器，提供OnConnect接口处理客户端连接事件。因此PlayerManager负责Session和Player的创建和管理，并将Session和Player关联。当有新用户连接时，在OnConnect中，创建Player和Session，并相互关联。Session将收到的数据通过Player::Decode解码，该函数返回解包完成后缓冲区的剩余长度，以便Session调整缓冲区。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Session收到新的数据</span></span><br><span class="line"><span class="keyword">void</span> Session::ReadComplete(<span class="keyword">const</span> boost::system::error_code&amp; err, <span class="keyword">size_t</span> bytes_transferred)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (err || bytes_transferred == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        DisConnect();</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    _recv_total += bytes_transferred;</span><br><span class="line">    _recv_off += bytes_transferred;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 处理数据</span></span><br><span class="line">    <span class="keyword">if</span> (ProcessData())</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 继续接收数据</span></span><br><span class="line">        AsyncReadSome();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对缓冲区中的数据解包 返回false则断开连接</span></span><br><span class="line"><span class="keyword">bool</span> Session::ProcessData()</span><br><span class="line">&#123;</span><br><span class="line">    assert(_decoder);</span><br><span class="line">    <span class="comment">// 将数据交由解码器处理 返回处理之后的缓冲区剩余字节数 返回-1表示服务器主动断线</span></span><br><span class="line">    <span class="keyword">int32_t</span> remain = _decoder(_recv_buf,_recv_off);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 服务器断开连接</span></span><br><span class="line">    <span class="keyword">if</span> (remain &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ShutDown(ShutDownType::shutdown_receive);</span><br><span class="line">        DisConnect();</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 处理之后的偏移</span></span><br><span class="line">    <span class="keyword">if</span> (remain &gt; <span class="number">0</span> &amp;&amp; remain &lt; kBufferSize)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">size_t</span> remain_off = _recv_off - remain;</span><br><span class="line">        _recv_off = (<span class="keyword">size_t</span>)remain;</span><br><span class="line">        <span class="built_in">memcpy</span>(_recv_buf, _recv_buf + remain_off, _recv_off);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        _recv_off = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>网络底层部分到此结束，焦点将由Player::Decode转向逻辑层。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;在服务器中，一般都有一个代表客户端或玩家的类，用来处理一些相关逻辑并保存必要数据。也就是NGServer中的Player类，在网络模型中，一般一个Player对应一次会话(Session)，因此在很多服务器模型中，客户端类直接从Session类派生，这样客户端可以直接通过父类Session的接口发送数据，并且通过实现Sessoin的虚函数对数据进行处理。这种模型的好处在于简单，客户端类能够完全控制网络IO，并且对IO事件进行及时地处理。比如连接断开，那么客户端类可以通过实现Session的OnClose()函数完成一些业务逻辑上的处理，比如保存用户数据。而这种编程模型，将客户端和网络会话的耦合性提到了最高：Client is a Session。方便的同时，很大程度上限制了模块的可拓展性，比如客户端的断线重连，由于这种继承关系，导致Session在销毁的同时必然导致Client”逻辑上”的断线，这样玩家重连的时候，数据只能重新加载，建立新的Session和Client。这种情况还会发生在客户端异处登录时，原有客户端被挤下线的同时，逻辑上的数据也丢失了，而新的客户端将重新加载数据。除了断线重连之外，该模型还会造成不必要的编译依赖。因此我们需要将逻辑上的客户端和底层的网络Session解耦。&lt;/p&gt;
     
     </summary>
     

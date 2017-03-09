@@ -36,7 +36,7 @@ Functions1. 基本特性
 多参数/返回值匹配：多余忽略，缺少用nil补足
 可变参数：arg，table.pack，table.unpack
 命名参数：">
-<meta property="og:updated_time" content="2017-02-25T04:28:49.000Z">
+<meta property="og:updated_time" content="2017-02-28T04:20:22.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Lua 闭包 环境 包管理">
 <meta name="twitter:description" content="Variables
@@ -260,7 +260,9 @@ Functions1. 基本特性
 <blockquote>
 <p>Lua keeps a distinguished environment called the global environment. This value is kept at a special index in the C registry (see §4.5). In Lua, the global variable _G is initialized with this same value. (_G is never used internally.)</p>
 </blockquote>
-<p>参考<a href="http://lua-users.org/lists/lua-l/2014-08/msg00345.html" target="_blank" rel="external">_ENV vs _G</a>，<a href="http://stackoverflow.com/questions/14290527/recreating-setfenv-in-lua-5-2" target="_blank" rel="external">setfenv in Lua5.2</a></p>
+<ul>
+<li>参考<a href="http://lua-users.org/lists/lua-l/2014-08/msg00345.html" target="_blank" rel="external">_ENV vs _G</a>，<a href="http://stackoverflow.com/questions/14290527/recreating-setfenv-in-lua-5-2" target="_blank" rel="external">setfenv in Lua5.2</a></li>
+</ul>
 <h2 id="Packages">Packages</h2><p>在Lua中，有闭包，灵活的table和环境管理，想要实现包管理有非常多的方法：</p>
 <h3 id="1-_基本方法">1. 基本方法</h3><p>最简单的方法就是直接使用table和第一类函数特性：</p>
 <figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">complex = &#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">complex.new</span><span class="params">(r,i)</span></span> ... <span class="keyword">end</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">complex.add</span><span class="params">(c1,c2)</span></span> ... <span class="keyword">end</span></span><br><span class="line">...</span><br><span class="line"><span class="keyword">return</span> complex</span><br></pre></td></tr></table></figure>
