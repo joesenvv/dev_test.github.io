@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  
+  <title>Erlang+Lua的一次重构 | wudaijun&#39;s blog | Coding is Funny</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="theme-color" content="#3F51B5">
+  
+  
+  <meta name="keywords" content="erlang,lua">
+  <meta name="description" content="目前所在的项目基于erlang cluster搭建框架，再接入lua用于写逻辑。由于之前有一些erlang+lua的开发经验，因此着手项目的重构和优化，过程中一些体会，记录于此。
+先简述一下项目架构，erlang做集群，网络层，节点交互，DB交互等，lua层只写逻辑。一个erlang的Actor持有一个luastate，为了加速erlang和lua之间的交互效率：
+
+将逻辑数据置于lua中而不是e">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Erlang+Lua的一次重构">
+<meta property="og:url" content="http://wudaijun.com/2017/03/erlang-lua-reconstruction/index.html">
+<meta property="og:site_name" content="wudaijun's blog">
+<meta property="og:description" content="目前所在的项目基于erlang cluster搭建框架，再接入lua用于写逻辑。由于之前有一些erlang+lua的开发经验，因此着手项目的重构和优化，过程中一些体会，记录于此。
+先简述一下项目架构，erlang做集群，网络层，节点交互，DB交互等，lua层只写逻辑。一个erlang的Actor持有一个luastate，为了加速erlang和lua之间的交互效率：
+
+将逻辑数据置于lua中而不是e">
+<meta property="og:updated_time" content="2017-03-23T09:02:24.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Erlang+Lua的一次重构">
+<meta name="twitter:description" content="目前所在的项目基于erlang cluster搭建框架，再接入lua用于写逻辑。由于之前有一些erlang+lua的开发经验，因此着手项目的重构和优化，过程中一些体会，记录于此。
+先简述一下项目架构，erlang做集群，网络层，节点交互，DB交互等，lua层只写逻辑。一个erlang的Actor持有一个luastate，为了加速erlang和lua之间的交互效率：
+
+将逻辑数据置于lua中而不是e">
+  
+    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
+  
+  <meta name="summary" content="null">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+</head>
+
+<body>
+  <div id="loading" class="active"></div>
+
+  <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap">
+      <div class="brand">
+        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <hgroup class="introduce">
+          <h5 class="nickname">wudaijun</h5>
+          <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="http://blog.csdn.net/wudaijun" target="_blank" >
+                <i class="icon icon-lg icon-contao"></i>
+                CSDN
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/wudaijun" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+
+      <footer class="footer">
+  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
+  <p>wudaijun&#39;s blog &copy; 2017</p>
+  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
+  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
+  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
+</footer>
+
+    </div>
+  </div>
+</aside>
+  <main id="main">
+    <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Erlang+Lua的一次重构</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container">
+        <h1 class="title">Erlang+Lua的一次重构</h1>
+        
+        
+
+    </div>
+
+    
+
+</header>
+
+
+<div class="container body-wrap">
+    
+<article id="post-erlang-lua-reconstruction" 
+  class="post-article article-type-post" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Erlang+Lua的一次重构</h1>
+        <div class="post-meta">
+            <time datetime="2017-03-21T16:00:00.000Z" itemprop="datePublished" class="post-time">
+  2017-03-22
+</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
+
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>目前所在的项目基于<a href="http://wudaijun.com/2015/08/erlang-server-design1-cluster-server/">erlang cluster</a>搭建框架，再接入lua用于写逻辑。由于之前有一些erlang+lua的开发经验，因此着手项目的重构和优化，过程中一些体会，记录于此。</p>
+<p>先简述一下项目架构，erlang做集群，网络层，节点交互，DB交互等，lua层只写逻辑。一个erlang的Actor持有一个luastate，为了加速erlang和lua之间的交互效率：</p>
+<ol>
+<li>将逻辑数据置于lua中而不是erlang中，在落地时，以二进制格式丢给erlang进行DB操作</li>
+<li>以<code>lual_ref</code>和msgid等方式，尽量用整数代理字符串</li>
+<li>erlang和lua异步运行，lua跑在原生线程池中，这在<a href="http://wudaijun.com/2015/09/erlang-server-design2-erlang-lua-battle/">这篇博文</a>中介绍过</li>
+</ol>
+<p>除了这些，还需要注意lua的沙盒环境管理，错误处理，热更新等，这里不再详述。就目前这种结构而言，还有一些缺陷：</p>
+<ol>
+<li>原子线程池忙碌可能导致的erlang虚拟机假死，需要保证原生线程池最多占用的核数不超过erlang虚拟机能使用的核数</li>
+<li>lua state本身带来的不稳定性，特别是内存，在Actor过多时将会非常明显</li>
+</ol>
+<p>第二点，也是目前我们遇到的最棘手的问题，我们知道，在lua中，模块，函数，均是一个闭包，闭包包含函数和外部环境(UpValue，ENV等)，因此在lua中，每个lua state都完整包含加载的所有模块和函数，并且很难共享。我们项目通过一个share lua state完成了对配置表这类静态数据的共享(跨系统进程级的共享可参考<a href="http://blog.codingnow.com/2012/07/dev_note_24.html" target="_blank" rel="external">云风blog</a>)，但本身逻辑代码占用内存仍然很大，随着逻辑和功能模块的增加，基本一个lua state加载完模块什么也不做，会占用6-7M内存。意味着如果一个玩家一个lua state，那么一台16G内存的服务器，基本只能容纳2000个玩家，内存吃紧，而CPU过剩。因此本次重构也只要针对这个问题。</p>
+<p>之前项目组曾针对玩家进行了优化，将主城位于一个岛的玩家归位一组，再将岛按照<code>%M</code>的方式放到M个lua state容器上，这样得到一个复杂的，三层逻辑的lua state。针对玩家这一块的内存占用确实大大减少了，但调试难度也提升了，并且扩展性不好，不能将这种容器扩展到其它service(如Union)上。</p>
+<p>按照系统本身的理想设计，一个service(player, union)对应一个lua state，由一个erlang process代理这个lua state，并且通过cluster注册/共享这个service的状态信息。但由于lua state的内存占用，不能再奢侈地将service和lua state 1:1调配，多service在逻辑代码中共用一个lua state已经无可避免，我们可以简单将整个系统分为几个层级，</p>
+<table>
+<thead>
+<tr>
+<th>service</th>
+<th>lua state</th>
+<th>erlang process</th>
+<th>cluster</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>N</td>
+<td>1</td>
+<td>?</td>
+<td>?</td>
+</tr>
+</tbody>
+</table>
+<p>因此有以下几种可能的方案：</p>
+<ol>
+<li><code>N 1 N N</code>：每个service对应一个erlang process，多个erlang process将代理同一个lua state，这就需要lua state可以”被并发”，也就是同一个lua state只能绑定一个原生线程池上执行，这一点是可以实现的。这种方案在erlang层会获得更好的并发性能，并且cluster层语义不变。</li>
+<li><code>N 1 1 N</code>：一个erlang process作为container的概念代理一个lua state，容纳N个service，并且将service和erlang process的映射关系写入cluster，cluster层对外提供的语义不变，但service的actor属性被弱化，service的一致性状态是个问题。</li>
+<li><code>N 1 1 1</code>：与上种方案类似，只不过将service到container的映射通过算法算出来，而不写入cluster，container本身被编号(如按照{serverid, servicetype}固定分配M个)，某个service将始终分配在指定container上。这种方案减少了cluster负担，并且减少了service不一致性的BUG。但由于container有状态，在每次系统启动后，service和container的映射关系就确定了，因此整个集群的可伸缩性降低了。</li>
+</ol>
+<p>经过几番讨论，我们最终选择了第三个方案，以降低集群的可伸缩性为代价，提高系统的稳定性。由于cluster条目减少了，整个mnesia的性能和一致性也得到了提升。本次重构在某些方面与我上一个项目<a href="http://wudaijun.com/2016/01/erlang-server-design5-server-node/">针对cluster的优化</a>有点相似，一个对系统服务进行横向切割，另一个则纵向切割，前者的初衷是为了更好地交互效率，后者则是处于对lua state资源的复用，两者都降低了系统的可伸缩性，得到了”一个更大粒度”的service。</p>
+<p>整个重构过程中，有几点感触：</p>
+<p>erlang和lua结合本身不是一种好的解决方案，或者说，erlang接入其它语言写逻辑都不合适，异质化的系统会打乱erlang本身的调度(不管通过nif还是线程池)，并且给整个系统带来不稳定性(CPU，内存)。另外，接入其它语言可能破坏erlang的原子语义和并发性。拿lua来说，原生线程池会和erlang调度线程抢占CPU并且很难管控，加之lua有自己的GC，因此在内存和CPU这两块关键资源上，erlang失去了控制权，给系统带来不稳定性。再加之lua state的内存占用以及lua state不支持并发，你可能要花更多的时间来调整系统结构，最终得到一个相对稳定的系统。如果处理得不好，用erlang做底层的可靠性和并发性将荡然无存。</p>
+<p>系统设计，是一个不断根据当前情况取舍的过程，想要一步到位是不可能的。简单，可控，开发效率高才是主要指标，才能最大程度地适应各种变化，快速响应需求。</p>
+
+        </div>
+        
+        <blockquote class="post-copyright">
+            <div class="content">
+               这里写留言或版权声明：<a href="/2017/03/erlang-lua-reconstruction/" target="_blank" rel="external">http://wudaijun.com/2017/03/erlang-lua-reconstruction/</a>
+            </div>
+            <footer>
+                <a href="http://wudaijun.com">
+                    <img src="/favicon.png" alt="wudaijun">
+                    wudaijun
+                </a>
+            </footer>
+        </blockquote>
+
+        
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/erlang/">erlang</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/lua/">lua</a></li></ul>
+
+
+            
+            <div class="post-share-wrap">
+                <div class="post-share" id="post-share">
+    <div class="tit">分享到：</div>
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
+          豆
+        </a>
+      </li>
+    </ul>
+ </div>
+
+                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
+                    <i class="icon icon-share-alt icon-lg"></i>
+                </a>
+            </div>
+            
+
+        </div>
+    </div>   
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2017/02/lua-notes/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Lua 闭包 环境 包管理</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+            
+    
+<div class="duoshuo">
+	<div class="ds-thread" data-thread-key="erlang-lua-reconstruction" data-title="Erlang+Lua的一次重构" data-url="http://wudaijun.com/2017/03/erlang-lua-reconstruction/"></div>
+</div>
+<script src="/js/embed.min.js?v=1.1.4"></script>
+<script src="//cdn.bootcss.com/marked/0.3.6/marked.min.js" async="async"></script>
+<script>
+var duoshuoQuery = {short_name:'wudaijun', theme: 'none'}
+</script>
+
+
+
+
+</article>
+
+
+</div>
+  </main>
+  <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+<script>
+var BLOG_SHARE = {
+    title: "Erlang+Lua的一次重构",
+    pic: "/favicon.png",
+    summary: document.getElementsByName('summary')[0].content,
+    url: "http://wudaijun.com/2017/03/erlang-lua-reconstruction/"
+};
+</script>
+<div class="global-share" id="global-share">
+    <div class="tit">分享到：</div>
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
+          豆
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script src="/js/main.min.js?v=1.1.4"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="/{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.1.4"></script>
+
+
+
+
+
+<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+
+
+
+
+</body>
+</html>

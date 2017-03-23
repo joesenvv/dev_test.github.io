@@ -154,6 +154,59 @@
     <ul class="post-list">
     
         <li class="post-list-item">
+            <article id="post-mongodb-sharding"
+  class="article-card article-type-post" itemprop="blogPost">
+     
+    <div class="post-meta">
+        <time datetime="2016-06-14T16:00:00.000Z" itemprop="datePublished" class="post-time">
+  2016-06-15
+</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/database/">database</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2016/06/mongodb-sharding/">MongoDB 分片</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent" >
+
+    
+        一. 什么是分片分片(shards)是使用多个机器存储数据的方法，MongoDB使用分片以支持巨大的数据存储量和对数据的操作。它将一个很大的集合分割成多个片(shard)，每个分片存储于不同的机器或副本集中，每个分片都是一个独立的数据库。
+分片为提高系统吞吐量和大数据的存储提供了方法：
+
+使用分片减少了每个分片需要处理的请求数
+使用分片减少了每个分片存储的数据量
+    
+    
+        <a href="/2016/06/mongodb-sharding/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mongodb/">mongodb</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item">
             <article id="post-erlang-debug-online"
   class="article-card article-type-post" itemprop="blogPost">
      
@@ -612,56 +665,6 @@ Model层不能访问Controller层
     <div class="post-footer">
         
 	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/erlang/">erlang</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item">
-            <article id="post-erlang-server-design5-server-node"
-  class="article-card article-type-post" itemprop="blogPost">
-     
-    <div class="post-meta">
-        <time datetime="2016-01-07T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2016-01-08
-</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2016/01/erlang-server-design5-server-node/">开发笔记(5) cluster_server集群优化</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent" >
-
-    
-        在使用cluster_server做gameserver后台集群支撑的过程中，逐步暴露出一些问题，在此记之。
-1. 节点交互效率低下我们按照业务职责将集群节点分为，agent，player，map，alliance，battle等，这些节点可以在一台物理机上(操作系统进程间交互)，也有可能部署到不同的物理机上(网络IO交互)，而玩家一个业务逻辑可能涉及到多个节点，形成一个节点交互链：如玩家在大地图上进行一场战斗，按照流程需要走：agent -&gt; player -&gt; map -&gt; battle -&gt; map -&gt; player -&gt; agent。整个过程都是异步的。这种交互是频繁的且低效的。
-    
-    
-        <a href="/2016/01/erlang-server-design5-server-node/" class="post-more waves-effect waves-button">
-            阅读全文...
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/distribution/">distribution</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/erlang/">erlang</a></li></ul>
 
     </div>
     

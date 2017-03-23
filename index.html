@@ -154,6 +154,58 @@
     <ul class="post-list">
     
         <li class="post-list-item">
+            <article id="post-erlang-lua-reconstruction"
+  class="article-card article-type-post" itemprop="blogPost">
+     
+    <div class="post-meta">
+        <time datetime="2017-03-21T16:00:00.000Z" itemprop="datePublished" class="post-time">
+  2017-03-22
+</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2017/03/erlang-lua-reconstruction/">Erlang+Lua的一次重构</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent" >
+
+    
+        目前所在的项目基于erlang cluster搭建框架，再接入lua用于写逻辑。由于之前有一些erlang+lua的开发经验，因此着手项目的重构和优化，过程中一些体会，记录于此。
+先简述一下项目架构，erlang做集群，网络层，节点交互，DB交互等，lua层只写逻辑。一个erlang的Actor持有一个luastate，为了加速erlang和lua之间的交互效率：
+
+将逻辑数据置于lua中而...
+    
+    
+        <a href="/2017/03/erlang-lua-reconstruction/" class="post-more waves-effect waves-button">
+            阅读全文...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/erlang/">erlang</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/lua/">lua</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item">
             <article id="post-lua-notes"
   class="article-card article-type-post" itemprop="blogPost">
      
@@ -691,60 +743,6 @@ start() -&gt;
     <div class="post-footer">
         
 	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/distribution/">distribution</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/erlang/">erlang</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item">
-            <article id="post-goa-intro"
-  class="article-card article-type-post" itemprop="blogPost">
-     
-    <div class="post-meta">
-        <time datetime="2016-09-19T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2016-09-20
-</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/go/">go</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2016/09/goa-intro/">goa - go web框架</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent" >
-
-    
-        一. 简介goa是基于微服务的go语言框架，能够有效帮助开发人员快速开发基于微服务的系统。它通过DSL和代码生成器来生成样板代码和辅助套件(如文档，客户端模块，客户端工具等)。这些生成数据均基于服务的设计描述，goa遵循单一数据源(Single Source of Truth, SSOT)原则，任何对设计的改变，都将自动反映到系统各处，
-goa可以分为三个部分：
-
-goa的设计语言是内置DSL，用于描述微服务的设计
-goa代码生成器，用于根据DSL描述生成代码模块，辅助工具，和文档等
-goa利用生成代码和用户代码来实现一个服务，并提供一个完全可插拨的框架
-    
-    
-        <a href="/2016/09/goa-intro/" class="post-more waves-effect waves-button">
-            阅读全文...
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/go/">go</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/goa/">goa</a></li></ul>
 
     </div>
     
