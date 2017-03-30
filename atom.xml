@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://wudaijun.com/"/>
-  <updated>2017-03-23T09:02:24.000Z</updated>
+  <updated>2017-03-30T03:14:59.000Z</updated>
   <id>http://wudaijun.com/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://wudaijun.com/2017/03/erlang-lua-reconstruction/"/>
     <id>http://wudaijun.com/2017/03/erlang-lua-reconstruction/</id>
     <published>2017-03-21T16:00:00.000Z</published>
-    <updated>2017-03-23T09:02:24.000Z</updated>
+    <updated>2017-03-30T03:14:59.000Z</updated>
     
     <content type="html"><![CDATA[<p>目前所在的项目基于<a href="http://wudaijun.com/2015/08/erlang-server-design1-cluster-server/">erlang cluster</a>搭建框架，再接入lua用于写逻辑。由于之前有一些erlang+lua的开发经验，因此着手项目的重构和优化，过程中一些体会，记录于此。</p>
 <p>先简述一下项目架构，erlang做集群，网络层，节点交互，DB交互等，lua层只写逻辑。一个erlang的Actor持有一个luastate，为了加速erlang和lua之间的交互效率：</p>
@@ -59,9 +59,9 @@
 <ol>
 <li><code>N 1 N N</code>：每个service对应一个erlang process，多个erlang process将代理同一个lua state，这就需要lua state可以”被并发”，也就是同一个lua state只能绑定一个原生线程池上执行，这一点是可以实现的。这种方案在erlang层会获得更好的并发性能，并且cluster层语义不变。</li>
 <li><code>N 1 1 N</code>：一个erlang process作为container的概念代理一个lua state，容纳N个service，并且将service和erlang process的映射关系写入cluster，cluster层对外提供的语义不变，但service的actor属性被弱化，service的一致性状态是个问题。</li>
-<li><code>N 1 1 1</code>：与上种方案类似，只不过将service到container的映射通过算法算出来，而不写入cluster，container本身被编号(如按照{serverid, servicetype}固定分配M个)，某个service将始终分配在指定container上。这种方案减少了cluster负担，并且减少了service不一致性的BUG。但由于container有状态，在每次系统启动后，service和container的映射关系就确定了，因此整个集群的可伸缩性降低了。</li>
+<li><code>N 1 1 1</code>：与上种方案类似，只不过将service到container的映射通过算法算出来，而不写入cluster，container本身被编号（编号时，可考虑将serverid编入，这样开新服有一定的扩展性，PS: <a href="http://yikun.github.io/2016/06/09/%E4%B8%80%E8%87%B4%E6%80%A7%E5%93%88%E5%B8%8C%E7%AE%97%E6%B3%95%E7%9A%84%E7%90%86%E8%A7%A3%E4%B8%8E%E5%AE%9E%E8%B7%B5/" target="_blank" rel="external">一致性哈希</a>方案不适用于游戏这类强状态逻辑），某个service将始终分配在指定container上。这种方案减少了cluster负担，并且减少了service不一致性的BUG。但由于container有状态，在每次系统启动后，service和container的映射关系就确定了，因此整个集群的可伸缩性降低了。</li>
 </ol>
-<p>经过几番讨论，我们最终选择了第三个方案，以降低集群的可伸缩性为代价，提高系统的稳定性。由于cluster条目减少了，整个mnesia的性能和一致性也得到了提升。本次重构在某些方面与我上一个项目<a href="http://wudaijun.com/2016/01/erlang-server-design5-server-node/">针对cluster的优化</a>有点相似，一个对系统服务进行横向切割，另一个则纵向切割，前者的初衷是为了更好地交互效率，后者则是处于对lua state资源的复用，两者都降低了系统的可伸缩性，得到了”一个更大粒度”的service。</p>
+<p>经过几番讨论，我们最终选择了第三个方案，虽然个人认为这类固定分配的方案，与分布式的理念是相悖的，但目前稳定性和一致性才是首要目标。由于采用计算而不是通过mnesia保存映射关系，mnesia的性能和系统一致性得到了提升。本次重构在某些方面与我上一个项目<a href="http://wudaijun.com/2016/01/erlang-server-design5-server-node/">针对cluster的优化</a>有点相似，一个对系统服务进行横向切割，另一个则纵向切割，前者的初衷是为了更好地交互效率，后者则是处于对lua state资源的复用，两者都降低了系统的可伸缩性，得到了”一个更大粒度”的service。</p>
 <p>整个重构过程中，有几点感触：</p>
 <p>erlang和lua结合本身不是一种好的解决方案，或者说，erlang接入其它语言写逻辑都不合适，异质化的系统会打乱erlang本身的调度(不管通过nif还是线程池)，并且给整个系统带来不稳定性(CPU，内存)。另外，接入其它语言可能破坏erlang的原子语义和并发性。拿lua来说，原生线程池会和erlang调度线程抢占CPU并且很难管控，加之lua有自己的GC，因此在内存和CPU这两块关键资源上，erlang失去了控制权，给系统带来不稳定性。再加之lua state的内存占用以及lua state不支持并发，你可能要花更多的时间来调整系统结构，最终得到一个相对稳定的系统。如果处理得不好，用erlang做底层的可靠性和并发性将荡然无存。</p>
 <p>系统设计，是一个不断根据当前情况取舍的过程，想要一步到位是不可能的。简单，可控，开发效率高才是主要指标，才能最大程度地适应各种变化，快速响应需求。</p>
@@ -5918,38 +5918,6 @@ test.c:<span class="number">12</span>:<span class="number">2</span>: note: previ
   </entry>
   
   <entry>
-    <title>false sharing</title>
-    <link href="http://wudaijun.com/2015/01/false-sharing/"/>
-    <id>http://wudaijun.com/2015/01/false-sharing/</id>
-    <published>2015-01-10T16:00:00.000Z</published>
-    <updated>2016-09-20T14:57:15.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>在多核的CPU架构中，每一个核心core都会有自己的缓存行(cache line)，因此如果一个变量如果同时存在不同的核心的cache line时，就会出现伪共享（false sharing)的问题。此时如果一个核心修改了该变量，该修改需要同步到其它核心的缓存。</p>
-<a id="more"></a>
-<p><img src="/assets/image/cache-line.png" alt="" title="cache-line示意图"></p>
-<p>上图说明了伪共享的问题。在核心1上运行的线程想更新变量X，同时核心2上的线程想要更新变量Y。不幸的是，这两个变量在同一个缓存行中。每个线程都要去竞争缓存行的所有权来更新变量。如果核心1获得了所有权，缓存子系统将会使核心2中对应的缓存行失效。当核心2获得了所有权然后执行更新操作，核心1就要使自己对应的缓存行失效。这会来来回回的经过L3缓存，大大影响了性能。如果互相竞争的核心位于不同的插槽，就要额外横跨插槽连接，问题可能更加严重。 </p>
-<p>我们可以通过padding来确保两个共享变量不位于同一个cache-line中，这对于链表等传统结构的共享(首尾节点通常位于同一cache-line)有重大意义。如下面这个例子：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="preprocessor">#<span class="keyword">include</span><span class="string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="preprocessor">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> foo &#123;</span><br><span class="line">    <span class="keyword">int</span> x;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span><br><span class="line">    int64_t pad1;</span><br><span class="line">    int64_t pad2;</span><br><span class="line">    int64_t pad3;</span><br><span class="line">    int64_t pad4;</span><br><span class="line">    int64_t pad5;</span><br><span class="line">    int64_t pad6;</span><br><span class="line">    int64_t pad7;</span><br><span class="line">    int64_t pad8;</span><br><span class="line">    int64_t pad9;</span><br><span class="line">    int64_t pad10;</span><br><span class="line">    int64_t pad11;</span><br><span class="line">    int64_t pad12;</span><br><span class="line">    int64_t pad13;</span><br><span class="line">    int64_t pad14;</span><br><span class="line">    int64_t pad15;</span><br><span class="line">    int64_t pad16;</span><br><span class="line">*/</span>    </span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> y;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">struct</span> foo f;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sum_a</span><span class="params">(<span class="keyword">void</span>)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="keyword">clock_t</span> start = clock();</span><br><span class="line">    <span class="keyword">int</span> s = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">1000000000</span>; ++i)</span><br><span class="line">        s += f.x;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"sum_a cost: "</span>&lt;&lt; clock()-start &lt;&lt; <span class="string">"ms"</span>&lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">inc_b</span><span class="params">(<span class="keyword">void</span>)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="keyword">clock_t</span> start = clock();</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">1000000000</span>; ++i)</span><br><span class="line">        ++f.y;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"inc_b cost: "</span>&lt;&lt; clock()-start &lt;&lt; <span class="string">"ms"</span>&lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="function">thread <span class="title">t1</span><span class="params">(sum_a)</span></span>;</span><br><span class="line">    <span class="built_in">std</span>::<span class="function">thread <span class="title">t2</span><span class="params">(inc_b)</span></span>;</span><br><span class="line"></span><br><span class="line">    t1.join();</span><br><span class="line">    t2.join();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>未添加padding时，在我的机器上运行结果为：</p>
-<pre><code>inc_b <span class="built_in">cos</span><span class="variable">t:</span> <span class="number">4692</span>ms
-sum_a <span class="built_in">cos</span><span class="variable">t:</span> <span class="number">5722</span>ms
-</code></pre><p>添加padding后，运行结果为：</p>
-<pre><code>inc_b <span class="built_in">cos</span><span class="variable">t:</span> <span class="number">2161</span>ms
-sum_a <span class="built_in">cos</span><span class="variable">t:</span> <span class="number">2194</span>ms
-</code></pre>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;在多核的CPU架构中，每一个核心core都会有自己的缓存行(cache line)，因此如果一个变量如果同时存在不同的核心的cache line时，就会出现伪共享（false sharing)的问题。此时如果一个核心修改了该变量，该修改需要同步到其它核心的缓存。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="os" scheme="http://wudaijun.com/categories/os/"/>
-    
-    
-  </entry>
-  
-  <entry>
     <title>skynet lua服务</title>
     <link href="http://wudaijun.com/2015/01/skynet-luaservice/"/>
     <id>http://wudaijun.com/2015/01/skynet-luaservice/</id>
@@ -6013,6 +5981,38 @@ sum_a <span class="built_in">cos</span><span class="variable">t:</span> <span cl
       <category term="lua" scheme="http://wudaijun.com/tags/lua/"/>
     
       <category term="skynet" scheme="http://wudaijun.com/tags/skynet/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>false sharing</title>
+    <link href="http://wudaijun.com/2015/01/false-sharing/"/>
+    <id>http://wudaijun.com/2015/01/false-sharing/</id>
+    <published>2015-01-10T16:00:00.000Z</published>
+    <updated>2016-09-20T14:57:15.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>在多核的CPU架构中，每一个核心core都会有自己的缓存行(cache line)，因此如果一个变量如果同时存在不同的核心的cache line时，就会出现伪共享（false sharing)的问题。此时如果一个核心修改了该变量，该修改需要同步到其它核心的缓存。</p>
+<a id="more"></a>
+<p><img src="/assets/image/cache-line.png" alt="" title="cache-line示意图"></p>
+<p>上图说明了伪共享的问题。在核心1上运行的线程想更新变量X，同时核心2上的线程想要更新变量Y。不幸的是，这两个变量在同一个缓存行中。每个线程都要去竞争缓存行的所有权来更新变量。如果核心1获得了所有权，缓存子系统将会使核心2中对应的缓存行失效。当核心2获得了所有权然后执行更新操作，核心1就要使自己对应的缓存行失效。这会来来回回的经过L3缓存，大大影响了性能。如果互相竞争的核心位于不同的插槽，就要额外横跨插槽连接，问题可能更加严重。 </p>
+<p>我们可以通过padding来确保两个共享变量不位于同一个cache-line中，这对于链表等传统结构的共享(首尾节点通常位于同一cache-line)有重大意义。如下面这个例子：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="preprocessor">#<span class="keyword">include</span><span class="string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="preprocessor">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> foo &#123;</span><br><span class="line">    <span class="keyword">int</span> x;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span><br><span class="line">    int64_t pad1;</span><br><span class="line">    int64_t pad2;</span><br><span class="line">    int64_t pad3;</span><br><span class="line">    int64_t pad4;</span><br><span class="line">    int64_t pad5;</span><br><span class="line">    int64_t pad6;</span><br><span class="line">    int64_t pad7;</span><br><span class="line">    int64_t pad8;</span><br><span class="line">    int64_t pad9;</span><br><span class="line">    int64_t pad10;</span><br><span class="line">    int64_t pad11;</span><br><span class="line">    int64_t pad12;</span><br><span class="line">    int64_t pad13;</span><br><span class="line">    int64_t pad14;</span><br><span class="line">    int64_t pad15;</span><br><span class="line">    int64_t pad16;</span><br><span class="line">*/</span>    </span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> y;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">struct</span> foo f;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sum_a</span><span class="params">(<span class="keyword">void</span>)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="keyword">clock_t</span> start = clock();</span><br><span class="line">    <span class="keyword">int</span> s = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">1000000000</span>; ++i)</span><br><span class="line">        s += f.x;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"sum_a cost: "</span>&lt;&lt; clock()-start &lt;&lt; <span class="string">"ms"</span>&lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">inc_b</span><span class="params">(<span class="keyword">void</span>)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="keyword">clock_t</span> start = clock();</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">1000000000</span>; ++i)</span><br><span class="line">        ++f.y;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"inc_b cost: "</span>&lt;&lt; clock()-start &lt;&lt; <span class="string">"ms"</span>&lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="function">thread <span class="title">t1</span><span class="params">(sum_a)</span></span>;</span><br><span class="line">    <span class="built_in">std</span>::<span class="function">thread <span class="title">t2</span><span class="params">(inc_b)</span></span>;</span><br><span class="line"></span><br><span class="line">    t1.join();</span><br><span class="line">    t2.join();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>未添加padding时，在我的机器上运行结果为：</p>
+<pre><code>inc_b <span class="built_in">cos</span><span class="variable">t:</span> <span class="number">4692</span>ms
+sum_a <span class="built_in">cos</span><span class="variable">t:</span> <span class="number">5722</span>ms
+</code></pre><p>添加padding后，运行结果为：</p>
+<pre><code>inc_b <span class="built_in">cos</span><span class="variable">t:</span> <span class="number">2161</span>ms
+sum_a <span class="built_in">cos</span><span class="variable">t:</span> <span class="number">2194</span>ms
+</code></pre>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;在多核的CPU架构中，每一个核心core都会有自己的缓存行(cache line)，因此如果一个变量如果同时存在不同的核心的cache line时，就会出现伪共享（false sharing)的问题。此时如果一个核心修改了该变量，该修改需要同步到其它核心的缓存。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="os" scheme="http://wudaijun.com/categories/os/"/>
+    
     
   </entry>
   
@@ -6208,35 +6208,6 @@ sum, diff = clib.<span class="function"><span class="title">addsub</span><span c
   </entry>
   
   <entry>
-    <title>NGServer 加入PlayerSession</title>
-    <link href="http://wudaijun.com/2014/12/ngserver-playersession/"/>
-    <id>http://wudaijun.com/2014/12/ngserver-playersession/</id>
-    <published>2014-12-11T16:00:00.000Z</published>
-    <updated>2015-09-22T02:30:04.000Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="PlayerSession类">PlayerSession类</h2><p>在之前的网络底层设计中，Player和Session之间通过组合实现弱关联，但仍然有个诟病：Player类和Session类在网络连接到来时一并创建了。这样后面在做断线重连的时候，会有两个Player。而事实上LoginService只管登录认证，登录认证的时候并不需要创建Player类，因此可以延迟Player的创建，将其放在MapService中。而这之前LoginService的登录认证也需要用户的一些基本信息。基于这些，实现了PlayerSession类：</p>
-<a id="more"></a>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> PlayerSession : <span class="keyword">public</span> Session</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    PlayerSession(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;Socket&gt; socket, <span class="keyword">int32_t</span> conn_id);</span><br><span class="line">    ~PlayerSession();</span><br><span class="line"></span><br><span class="line">	<span class="comment">// .....</span></span><br><span class="line">	</span><br><span class="line">    <span class="comment">// 网络数据解码</span></span><br><span class="line">    <span class="keyword">int32_t</span> Decode(<span class="keyword">const</span> <span class="keyword">char</span>* data, <span class="keyword">int32_t</span> len);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 发送消息</span></span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> MsgT&gt;</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">SendMsg</span><span class="params">(MsgId msgid, MsgT&amp; t)</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// ....</span></span><br><span class="line">	</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">int32_t</span> _sid = <span class="number">0</span>;       <span class="comment">// 所属服务ID</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;Player&gt; _playerToken; <span class="comment">// 玩家指针</span></span><br><span class="line">    SessionState _state = kSessionState_None;   <span class="comment">// 会话状态</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> _owner;       <span class="comment">// 登录用户名</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>解码将在PlayerSession而不是Player中完成，在登录完成之前，LoginService通过PlayerSession与玩家交互，在登录验证完成之后，LoginService将玩家登录信息和PlayerSession一并发送到MapService，MapService完成对Player的创建，并于PlayerSession建立关联：</p>
-<figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">void MapServi<span class="number">ce::</span>OnPlayerLogin(SS_PlayerLogin&amp; msg)</span><br><span class="line">&#123;</span><br><span class="line">    PlayerSessionPtr session = msg.session<span class="comment">;</span></span><br><span class="line">    if (session == nullptr)</span><br><span class="line">        return<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">    int64_t playerid = msg.login_info.playerid<span class="comment">;</span></span><br><span class="line">    // 创建 Player 并与PlayerSession关联</span><br><span class="line">    PlayerPtr player = st<span class="number">d::</span>make_shared&lt;Player&gt;(playerid, session)<span class="comment">;</span></span><br><span class="line">    player-&gt;SetMapService(dynamic_pointer_cast&lt;MapService&gt;(shared_from_this()))<span class="comment">;</span></span><br><span class="line">    session-&gt;SetPlayerToken(player)<span class="comment">;</span></span><br><span class="line">    session-&gt;SetSid(GetSid())<span class="comment">; </span></span><br><span class="line">    </span><br><span class="line">    AddPlayer(player)<span class="comment">;</span></span><br><span class="line">    </span><br><span class="line">    // 向数据库加载玩家信息</span><br><span class="line">    // ...</span><br><span class="line">    S2D_LoadPlayer loadmsg<span class="comment">;</span></span><br><span class="line">    loadmsg.playerid = playerid<span class="comment">;</span></span><br><span class="line">    SendToDB(playerid, kS2D_LoadPlayer, loadmsg)<span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>之后客户端业务逻辑上与MapService交互，在GameService::Process(UserMessage*)解码时提取出_playerToken，即可通过Player类完成业务逻辑。</p>
-<p>加入了PlayerSession之后，消息注册回调机制也更复杂了一些，为了方便管理，这些注册和回调均放在GameService中。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;PlayerSession类&quot;&gt;PlayerSession类&lt;/h2&gt;&lt;p&gt;在之前的网络底层设计中，Player和Session之间通过组合实现弱关联，但仍然有个诟病：Player类和Session类在网络连接到来时一并创建了。这样后面在做断线重连的时候，会有两个Player。而事实上LoginService只管登录认证，登录认证的时候并不需要创建Player类，因此可以延迟Player的创建，将其放在MapService中。而这之前LoginService的登录认证也需要用户的一些基本信息。基于这些，实现了PlayerSession类：&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="gameserver" scheme="http://wudaijun.com/categories/gameserver/"/>
-    
-    
-      <category term="ngserver" scheme="http://wudaijun.com/tags/ngserver/"/>
-    
-  </entry>
-  
-  <entry>
     <title>shared_ptr的引用链</title>
     <link href="http://wudaijun.com/2014/12/shared_ptr-reference/"/>
     <id>http://wudaijun.com/2014/12/shared_ptr-reference/</id>
@@ -6283,6 +6254,35 @@ sum, diff = clib.<span class="function"><span class="title">addsub</span><span c
     
     
       <category term="c/c++" scheme="http://wudaijun.com/tags/c-c/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>NGServer 加入PlayerSession</title>
+    <link href="http://wudaijun.com/2014/12/ngserver-playersession/"/>
+    <id>http://wudaijun.com/2014/12/ngserver-playersession/</id>
+    <published>2014-12-11T16:00:00.000Z</published>
+    <updated>2015-09-22T02:30:04.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="PlayerSession类">PlayerSession类</h2><p>在之前的网络底层设计中，Player和Session之间通过组合实现弱关联，但仍然有个诟病：Player类和Session类在网络连接到来时一并创建了。这样后面在做断线重连的时候，会有两个Player。而事实上LoginService只管登录认证，登录认证的时候并不需要创建Player类，因此可以延迟Player的创建，将其放在MapService中。而这之前LoginService的登录认证也需要用户的一些基本信息。基于这些，实现了PlayerSession类：</p>
+<a id="more"></a>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> PlayerSession : <span class="keyword">public</span> Session</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    PlayerSession(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;Socket&gt; socket, <span class="keyword">int32_t</span> conn_id);</span><br><span class="line">    ~PlayerSession();</span><br><span class="line"></span><br><span class="line">	<span class="comment">// .....</span></span><br><span class="line">	</span><br><span class="line">    <span class="comment">// 网络数据解码</span></span><br><span class="line">    <span class="keyword">int32_t</span> Decode(<span class="keyword">const</span> <span class="keyword">char</span>* data, <span class="keyword">int32_t</span> len);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 发送消息</span></span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> MsgT&gt;</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">SendMsg</span><span class="params">(MsgId msgid, MsgT&amp; t)</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// ....</span></span><br><span class="line">	</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">int32_t</span> _sid = <span class="number">0</span>;       <span class="comment">// 所属服务ID</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;Player&gt; _playerToken; <span class="comment">// 玩家指针</span></span><br><span class="line">    SessionState _state = kSessionState_None;   <span class="comment">// 会话状态</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> _owner;       <span class="comment">// 登录用户名</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>解码将在PlayerSession而不是Player中完成，在登录完成之前，LoginService通过PlayerSession与玩家交互，在登录验证完成之后，LoginService将玩家登录信息和PlayerSession一并发送到MapService，MapService完成对Player的创建，并于PlayerSession建立关联：</p>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">void MapServi<span class="number">ce::</span>OnPlayerLogin(SS_PlayerLogin&amp; msg)</span><br><span class="line">&#123;</span><br><span class="line">    PlayerSessionPtr session = msg.session<span class="comment">;</span></span><br><span class="line">    if (session == nullptr)</span><br><span class="line">        return<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">    int64_t playerid = msg.login_info.playerid<span class="comment">;</span></span><br><span class="line">    // 创建 Player 并与PlayerSession关联</span><br><span class="line">    PlayerPtr player = st<span class="number">d::</span>make_shared&lt;Player&gt;(playerid, session)<span class="comment">;</span></span><br><span class="line">    player-&gt;SetMapService(dynamic_pointer_cast&lt;MapService&gt;(shared_from_this()))<span class="comment">;</span></span><br><span class="line">    session-&gt;SetPlayerToken(player)<span class="comment">;</span></span><br><span class="line">    session-&gt;SetSid(GetSid())<span class="comment">; </span></span><br><span class="line">    </span><br><span class="line">    AddPlayer(player)<span class="comment">;</span></span><br><span class="line">    </span><br><span class="line">    // 向数据库加载玩家信息</span><br><span class="line">    // ...</span><br><span class="line">    S2D_LoadPlayer loadmsg<span class="comment">;</span></span><br><span class="line">    loadmsg.playerid = playerid<span class="comment">;</span></span><br><span class="line">    SendToDB(playerid, kS2D_LoadPlayer, loadmsg)<span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>之后客户端业务逻辑上与MapService交互，在GameService::Process(UserMessage*)解码时提取出_playerToken，即可通过Player类完成业务逻辑。</p>
+<p>加入了PlayerSession之后，消息注册回调机制也更复杂了一些，为了方便管理，这些注册和回调均放在GameService中。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;PlayerSession类&quot;&gt;PlayerSession类&lt;/h2&gt;&lt;p&gt;在之前的网络底层设计中，Player和Session之间通过组合实现弱关联，但仍然有个诟病：Player类和Session类在网络连接到来时一并创建了。这样后面在做断线重连的时候，会有两个Player。而事实上LoginService只管登录认证，登录认证的时候并不需要创建Player类，因此可以延迟Player的创建，将其放在MapService中。而这之前LoginService的登录认证也需要用户的一些基本信息。基于这些，实现了PlayerSession类：&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="gameserver" scheme="http://wudaijun.com/categories/gameserver/"/>
+    
+    
+      <category term="ngserver" scheme="http://wudaijun.com/tags/ngserver/"/>
     
   </entry>
   
