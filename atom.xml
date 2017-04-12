@@ -4314,38 +4314,126 @@ critic2() -&gt;
     <link href="http://wudaijun.com/2015/08/erlang-port/"/>
     <id>http://wudaijun.com/2015/08/erlang-port/</id>
     <published>2015-08-23T16:00:00.000Z</published>
-    <updated>2015-10-10T07:41:25.000Z</updated>
+    <updated>2017-04-12T10:53:46.000Z</updated>
     
-    <content type="html"><![CDATA[<p>Erlang虚拟机就像一个操作系统，操作系统可以通过Port与外界交互，完成IO操作。Port就像操作系统的套接字，在Erlang中其行为模式与进程无二，可以收发消息，注册名字等等，只不过它不具有代码执行能力，它是外部程序”伪装”的Erlang进程。Erlang Port可分为两种，一种是普通端口(Ports)，外部程序以操作系统进程的方式独立运行，它通过标准输入输出与Erlang虚拟机交互。另一种是端口驱动(Port Driver)，它以动态链接库的方式内联(linkin)到Erlang虚拟机，作为虚拟机的一部分，与Erlang虚拟机共享一个操作系统进程。除了端口以外，Erlang还可以通过NIF的方式调用外部程序，Erlang使用NIF就像调用普通Erlang函数一样，只不过这个函数是其它语言实现的。</p>
+    <content type="html"><![CDATA[<h3 id="OverView">OverView</h3><p>Erlang外部调用的几种方式：</p>
+<p>外部接入(OS进程级)：</p>
+<ul>
+<li><a href="http://erlang.org/doc/tutorial/c_port.html" target="_blank" rel="external">Ports</a>: 用C实现的可执行程序，以Port的方式与Erlang交互。</li>
+<li><a href="http://erlang.org/doc/tutorial/cnode.html" target="_blank" rel="external">C Nodes</a>: 用C模拟Erlang Node行为实现的可执行程序。</li>
+<li><a href="http://erlang.org/doc/apps/jinterface/jinterface_users_guide.html" target="_blank" rel="external">Jinterface</a>: Java和Erlang的通讯接口。</li>
+<li>Network: 通过自定义序列化格式与Erlang节点网络交互，如<a href="http://bert-rpc.org/" target="_blank" rel="external">bert-rpc</a></li>
+</ul>
+<p>内部接入(和虚拟机在同一个OS进程内)：</p>
+<ul>
+<li>BIF: Erlang大部分BIF用C实现，如erlang:now，lists:reverse等</li>
+<li><a href="http://erlang.org/doc/tutorial/c_portdriver.html)" target="_blank" rel="external">Port Driver</a>: 以链接库方式将Port嵌入虚拟机，也叫Linkin Driver</li>
+<li><a href="http://www.erlang.org/doc/tutorial/nif.html" target="_blank" rel="external">NIF</a>: 虚拟机直接调用C原生代码</li>
+</ul>
+<p>下面主要理解常用的三种：Ports, Port Driver, NIF。</p>
 <a id="more"></a>
-<p>Erlang与外部程序交互的方式主要有三种：</p>
-<ol>
-<li>普通端口(Ports)</li>
-<li>端口驱动(Port Driver),也叫链入式驱动(Linkin Driver)</li>
-<li>原生实现函数(Native Implemented Functions, NIF)</li>
-</ol>
-<h3 id="一-_Ports">一. Ports</h3><h4 id="1-简介">1.简介</h4><p><img src="/assets/image/erlang/Erlang_Port.png" alt="" title="普通端口"></p>
+<h3 id="Ports">Ports</h3><p><img src="/assets/image/erlang/Erlang_Port.png" alt="" title="普通端口"></p>
 <p>图一. Ports 通信模型</p>
-<p>普通端口是连接外部程序进程和Erlang虚拟机的桥梁，外部进程通过标准输入输出与Erlang虚拟机交互，并运行于独立的地址空间。</p>
-<p>从操作系统的角度看，外部程序和Erlang虚拟机都是独立允许的进程，只不过外部程序的标准输入输出与Erlang虚拟机对接在了一起而已。因此外部程序可以通过<code>read(0, req_buf, len)</code>来获取虚拟机发出的指令，也可通过<code>write(1, ack_buf, len)</code>来发出响应。当外部程序崩溃了，Erlang虚拟机可以检测到，可以选择重启等对应策略。由于两者在不同的地址空间，只能通过标准IO交互，因此外部程序的崩溃不会影响到Erlang虚拟机本身的正常运行。</p>
-<p>从Erlang的角度看，端口的行为模式表现为一个进程，但它本身无法执行代码，每个端口都有一个属主进程，一般是调用<code>open_port</code>的进程，端口将外界收到的数据发给属主。Erlang中其它进程也通过属主进程与端口交互。当属主进程终止时，端口也将被自动关闭。</p>
-<h4 id="2-优缺点">2.优缺点</h4><p>普通端口的优势在于隔离性和安全性，因为外部程序的任何异常都不会导致虚拟机崩溃，并且Erlang层通过<code>receive</code>来实现同步调用等待外部程序响应时，是不会影响Erlang虚拟机调度的。至于普通端口的缺点，主要是效率低，由于传递的是字节流数据，因此需要对数据进行序列化反序列化，Erlang本身针对C和Java提供了对应的编解码库ei和Jinterface。</p>
-<h4 id="3-使用">3.使用</h4><p>将外部C代码编译为可执行文件，通过<code>erlang:open_port/2</code>打开端口，Erlang层之后即可通过消息与Port交互。C程序从标准输入读取字节流，反序列化得到请求数据，处理完成之后，将序列化后的响应数据写入标准输出。Port收到数据后，会将数据以消息的方式发往属主进程。</p>
-<p>参见：<a href="http://erlang.org/doc/tutorial/c_port.html" target="_blank" rel="external">http://erlang.org/doc/tutorial/c_port.html</a></p>
-<h3 id="二-_Port_Driver">二. Port Driver</h3><h4 id="1-简介-1">1.简介</h4><p><img src="/assets/image/erlang/Erlang_Port_Driver.png" alt="" title="端口驱动"></p>
+<p>Port是连接外部程序进程和Erlang虚拟机的桥梁，外部进程通过标准输入输出与Erlang虚拟机交互，并运行于独立的地址空间。</p>
+<p>从操作系统的角度看，外部程序和Erlang虚拟机都是独立允许的进程，只不过外部程序的标准输入输出与Erlang虚拟机对接在了一起而已。因此外部程序可以通过<code>read(0, req_buf, len)</code>来获取虚拟机发出的指令，也可通过<code>write(1, ack_buf, len)</code>来发出响应。当外部程序崩溃了，Erlang虚拟机可以检测到，可以选择重启等对应策略。由于两者在不同的地址空间，通过标准IO交互，因此外部程序的崩溃不会影响到Erlang虚拟机本身的正常运行。</p>
+<p>每个Port都有一个owner进程，通常为创建Port的进程，当owner进程终止时，Port也将被自动关闭。Ports使用示例参考<a href="http://erlang.org/doc/tutorial/c_port.html" target="_blank" rel="external">Ports</a>。</p>
+<p>Port的优势在于隔离性和安全性，因为外部程序的任何异常都不会导致虚拟机崩溃，并且Erlang层通过<code>receive</code>来实现同步调用等待外部程序响应时，是不会影响Erlang虚拟机调度的。至于Port的缺点，主要是效率低，由于传递的是字节流数据，因此需要对数据进行序列化反序列化，Erlang本身针对C和Java提供了对应的编解码库ei和Jinterface。</p>
+<h3 id="Port_Driver">Port Driver</h3><p><img src="/assets/image/erlang/Erlang_Port_Driver.png" alt="" title="端口驱动"></p>
 <p>图二. Port Driver 通信模型</p>
-<p>从Erlang层来看，端口驱动和普通端口所体现的行为模式一样，收发消息，注册名字，并且共用一套Port API。但是端口驱动本身是作为一个动态链接库运行于Erlang虚拟机中的，也就是和Erlang虚拟机共享一个操作系统进程。</p>
-<h4 id="2-优缺点-1">2.优缺点</h4><p>端口驱动的主要优势是效率高，但是缺点是链入的动态链接库本身出现内测泄露或异常，将影响虚拟机的正常运行甚至导致虚拟机崩溃。将外部模块的问题带入了虚拟机本身。并且Port Driver的调用是阻塞的，这将影响到虚拟机调度。因此Erlang Driver提供了一系列的异步接口。</p>
-<h4 id="3-使用-1">3.使用</h4><p>Port Driver是符合<a href="http://erlang.org/doc/man/erl_driver.html" target="_blank" rel="external">Erlang Driver</a>规范的动态链接库，它向Erlang虚拟机提供一个<a href="http://erlang.org/doc/man/driver_entry.html" target="_blank" rel="external">ErlDrvEntry</a>结构体，其内主要包含由虚拟机回调Driver的各个接口。<a href="http://wudaijun.com/2015/01/skynet-c-module/">skynet挂接service</a>的思想大概也继承于此，只不过Erlang Port Driver更为完善和复杂。</p>
-<p>具体使用参见：<a href="http://erlang.org/doc/tutorial/c_portdriver.html" target="_blank" rel="external">http://erlang.org/doc/tutorial/c_portdriver.html</a></p>
-<h3 id="三-_NIF">三. NIF</h3><h4 id="1-_简介">1. 简介</h4><p>Erlang挂接外部模块的第三种方式就是NIF，NIF是由C实现的函数，但是在Erlang层和调用BIF一样方便和快速。</p>
-<h4 id="2-_优缺点">2. 优缺点</h4><p>原生函数(NIF)是三种方式中效率最高的，但是也是风险最高的。它和Port Driver一样可能导致虚拟机异常和崩溃，NIF是在虚拟机线程上下文中调用的，NIF不将控制权交还给虚拟机，虚拟机就无法再次调度该线程。因此NIF只适用于安全，高速的原生实现。</p>
-<h4 id="3-_使用">3. 使用</h4><p>参见：<a href="http://www.erlang.org/doc/tutorial/nif.html" target="_blank" rel="external">http://www.erlang.org/doc/tutorial/nif.html</a></p>
+<p>从Erlang层来看，端口驱动和普通端口所体现的行为模式一样，收发消息，注册名字，并且共用一套Port API。但是端口驱动本身是作为一个链接库运行于Erlang虚拟机中的，也就是和Erlang虚拟机共享一个操作系统进程。</p>
+<p>Port Driver分为静态链接和动态链接两种，前者和虚拟机一起编译，在虚拟机启动时被加载，后者通过动态链接库的方式嵌入到虚拟机。出于灵活性和易用性的原因，通常使用后者。</p>
+<p>虚拟机和Port Driver的交互方式与Port一样，Port和Port Driver在Erlang层表现的语义一致。</p>
+<p>Port Driver通过一个<a href="http://erlang.org/doc/man/driver_entry.html" target="_blank" rel="external">driver_entry</a>结构体与虚拟机交互，该结构体注册了driver针对各种虚拟机事件的响应函数。<a href="http://wudaijun.com/2015/01/skynet-c-module/">skynet挂接service</a>的思想大概也继承于此。driver_entry结构体主要成员如下：</p>
+<pre><code><span class="keyword">typedef</span> <span class="keyword">struct</span> erl_drv_entry {
+<span class="comment">// 当链接库被加载(erl_ddll:load_driver/2)时调用，同一个链接库的多个driver实例来说，只调用一次</span>
+<span class="keyword">int</span> (*init)(<span class="keyword">void</span>);
+
+<span class="comment">// 当Erlang层调用erlang:open_port/2时调用，每个driver实例执行一次</span>
+ErlDrvData (*start)(ErlDrvPort port, <span class="keyword">char</span> *command);
+
+<span class="comment">// 当Port Driver被关闭(erlang:port_close/1,owner进程终止,虚拟机停止等)时执行</span>
+<span class="keyword">void</span> (*stop)(ErlDrvData drv_data);
+
+<span class="comment">// 收到Erlang进程发来的消息(Port ! {PortOwner, {command, Data}} or erlang:port_command(Port, Data))</span>
+<span class="keyword">void</span> (*output)(ErlDrvData drv_data, <span class="keyword">char</span> *buf, ErlDrvSizeT len);
+
+<span class="comment">// 用于基于事件的异步Driver 通过erl_driver:driver_select函数进行事件(socket,pipe,Event等)监听</span>
+<span class="keyword">void</span> (*ready_input)(ErlDrvData drv_data, ErlDrvEvent event);
+<span class="keyword">void</span> (*ready_output)(ErlDrvData drv_data, ErlDrvEvent event);
+
+<span class="comment">// Driver名字 用于open_port/2</span>
+<span class="keyword">char</span> *driver_name;
+
+<span class="comment">// 当Driver被卸载时调用(erl_ddll:unload_driver/1)，和init对应。仅针对动态链接Driver</span>
+<span class="keyword">void</span> (*finish)(<span class="keyword">void</span>);
+
+<span class="comment">// 被erlang:port_control/3(类似ioctl)触发</span>
+ErlDrvSSizeT (*control)(ErlDrvData drv_data, <span class="keyword">unsigned</span> <span class="keyword">int</span> command,
+                        <span class="keyword">char</span> *buf, ErlDrvSizeT len,
+            <span class="keyword">char</span> **rbuf, ErlDrvSizeT rlen);
+
+<span class="comment">// Driver定义的超时回调，通过erl_driver:driver_set_timer设置</span>
+<span class="keyword">void</span> (*timeout)(ErlDrvData drv_data);
+
+<span class="comment">// output的高级版本，通过ErlIOVec避免了数据拷贝，更高效</span>
+<span class="keyword">void</span> (*outputv)(ErlDrvData drv_data, ErlIOVec *ev);
+
+<span class="comment">// 用于基于线程池的异步Driver(erl_driver:driver_async) 当线程池中的的任务执行完成时，由虚拟机调度线程回调该函数                       </span>
+<span class="keyword">void</span> (*ready_async)(ErlDrvData drv_data, ErlDrvThreadData thread_data);
+
+<span class="comment">// 当Driver即将关闭时，在stop之前调用 用于清理Driver队列中的数据(?)</span>
+<span class="keyword">void</span> (*flush)(ErlDrvData drv_data);
+
+<span class="comment">// 被erlang:port_call/3触发 和port_control类似，但使用ei库编码ETerm</span>
+ErlDrvSSizeT (*call)(ErlDrvData drv_data, <span class="keyword">unsigned</span> <span class="keyword">int</span> command,
+                     <span class="keyword">char</span> *buf, ErlDrvSizeT len,
+         <span class="keyword">char</span> **rbuf, ErlDrvSizeT rlen, <span class="keyword">unsigned</span> <span class="keyword">int</span> *flags);
+
+<span class="comment">// Driver 监听的进程退出信号(erl_driver:driver_monitor_process)</span>
+<span class="keyword">void</span> (*process_exit)(ErlDrvData drv_data, ErlDrvMonitor *monitor);
+} ErlDrvEntry;
+</code></pre><p>该结构体比较复杂，主要原因是Erlang Port Driver支持多种运行方式：</p>
+<ol>
+<li>运行于虚拟机调度线程的基本模式</li>
+<li>基于select事件触发的异步Driver</li>
+<li>基于异步线程池的异步Driver</li>
+</ol>
+<p>三种模式的示例参考<a href="http://erlang.org/doc/tutorial/c_portdriver.html)" target="_blank" rel="external">Port Driver</a>，<a href="(http://erlang.org/doc/apps/erts/driver.html)">How to Implement a Driver</a>，Driver API接口文档：<a href="http://erlang.org/doc/man/erl_driver.html" target="_blank" rel="external">erl_driver</a>。Erlang虚拟机提供的异步线程池可通过<code>+A</code>选项设置。</p>
+<p>端口驱动的主要优势是效率高，但是缺点是链入的动态链接库本身出现内测泄露或异常，将影响虚拟机的正常运行甚至导致虚拟机崩溃。将外部模块的问题带入了虚拟机本身。对于耗时较长或阻塞的任务，应该通过异步方式设计，避免影响虚拟机调度。</p>
+<h3 id="NIF">NIF</h3><p>NIF是Erlang调用C代码最简单高效的方案，对Erlang层来说，调用NIF就像调用普通函数一样，只不过这个函数是由C实现的。NIF是同步语义的，运行于调度线程中，无需上下文切换，因此效率很高。但也引出一个问题，对于执行时间长的NIF，在NIF返回之前，调度线程不能做别的事情，影响了虚拟机的公平调度，甚至会影响调度线程之间的协作。因此NIF是把双刃剑，在使用的时候要尤其小心。</p>
+<p>Erlang建议的NIF执行时间不要超过1ms，针对于执行时间长的NIF，有如下几种方案：</p>
+<ol>
+<li>分割任务，将单次长时间调用切分为多次短时间调用，再合并结果。这种方案显然不通用</li>
+<li>让NIF参与调度。在NIF中恰当时机通过<code>enif_consume_timeslice</code>汇报消耗的时间片，让虚拟机确定是否放弃控制权并通过返回值通知NIF(做上下文保存等)</li>
+<li>使用脏调度器，让NIF在非调度线程中执行</li>
+</ol>
+<p>Erlang默认并未启用脏调度器，通过<code>--enable-dirty-schedulers</code>选项并重新编译可打开脏调度器，目前脏调度器只能被NIF使用。</p>
+<p>关于脏调度器，NIF测试与调优，参考：</p>
+<ol>
+<li><a href="http://www.cnblogs.com/zhengsyao/p/dirty_scheduler_otp_17rc1.html" target="_blank" rel="external">siyao blog</a></li>
+<li><a href="https://github.com/slfritchie/nifwait/tree/md5" target="_blank" rel="external">nifwait</a></li>
+<li><a href="https://github.com/vinoski/bitwise/" target="_blank" rel="external">bitwise</a>(里面的PDF质量很高)</li>
+</ol>
+<p>Port Driver和NIF与虚拟机调度密切相关，想要在实践中用好它们，还是要加深对Erlang虚拟机调度的理解，如公平调度，进程规约，调度器协同等。再来理解异步线程池，脏调度器的存在的意义以及适用场景。另外，Port Driver和NIF还有一种用法是自己创建新的线程或线程池(Driver和NIF也提供了线程操作API)，我们项目组也这么用过，这基本是费力不讨好的一种方案，还极易出错。</p>
 ]]></content>
     
     <summary type="html">
     
-      &lt;p&gt;Erlang虚拟机就像一个操作系统，操作系统可以通过Port与外界交互，完成IO操作。Port就像操作系统的套接字，在Erlang中其行为模式与进程无二，可以收发消息，注册名字等等，只不过它不具有代码执行能力，它是外部程序”伪装”的Erlang进程。Erlang Port可分为两种，一种是普通端口(Ports)，外部程序以操作系统进程的方式独立运行，它通过标准输入输出与Erlang虚拟机交互。另一种是端口驱动(Port Driver)，它以动态链接库的方式内联(linkin)到Erlang虚拟机，作为虚拟机的一部分，与Erlang虚拟机共享一个操作系统进程。除了端口以外，Erlang还可以通过NIF的方式调用外部程序，Erlang使用NIF就像调用普通Erlang函数一样，只不过这个函数是其它语言实现的。&lt;/p&gt;
+      &lt;h3 id=&quot;OverView&quot;&gt;OverView&lt;/h3&gt;&lt;p&gt;Erlang外部调用的几种方式：&lt;/p&gt;
+&lt;p&gt;外部接入(OS进程级)：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http://erlang.org/doc/tutorial/c_port.html&quot;&gt;Ports&lt;/a&gt;: 用C实现的可执行程序，以Port的方式与Erlang交互。&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://erlang.org/doc/tutorial/cnode.html&quot;&gt;C Nodes&lt;/a&gt;: 用C模拟Erlang Node行为实现的可执行程序。&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://erlang.org/doc/apps/jinterface/jinterface_users_guide.html&quot;&gt;Jinterface&lt;/a&gt;: Java和Erlang的通讯接口。&lt;/li&gt;
+&lt;li&gt;Network: 通过自定义序列化格式与Erlang节点网络交互，如&lt;a href=&quot;http://bert-rpc.org/&quot;&gt;bert-rpc&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;内部接入(和虚拟机在同一个OS进程内)：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;BIF: Erlang大部分BIF用C实现，如erlang:now，lists:reverse等&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://erlang.org/doc/tutorial/c_portdriver.html)&quot;&gt;Port Driver&lt;/a&gt;: 以链接库方式将Port嵌入虚拟机，也叫Linkin Driver&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://www.erlang.org/doc/tutorial/nif.html&quot;&gt;NIF&lt;/a&gt;: 虚拟机直接调用C原生代码&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;下面主要理解常用的三种：Ports, Port Driver, NIF。&lt;/p&gt;
     
     </summary>
     

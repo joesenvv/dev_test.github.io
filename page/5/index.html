@@ -331,7 +331,21 @@
     <div class="post-content" id="post-content" itemprop="postContent" >
 
     
-        Erlang虚拟机就像一个操作系统，操作系统可以通过Port与外界交互，完成IO操作。Port就像操作系统的套接字，在Erlang中其行为模式与进程无二，可以收发消息，注册名字等等，只不过它不具有代码执行能力，它是外部程序”伪装”的Erlang进程。Erlang Port可分为两种，一种是普通端口(Ports)，外部程序以操作系统进程的方式独立运行，它通过标准输入输出与Erlang虚拟机交互。另一种是端口驱动(Port Driver)，它以动态链接库的方式内联(linkin)到Erlang虚拟机，作为虚拟机的一部分，与Erlang虚拟机共享一个操作系统进程。除了端口以外，Erlang还可以通过NIF的方式调用外部程序，Erlang使用NIF就像调用普通Erlang函数一样，只不过这个函数是其它语言实现的。
+        OverViewErlang外部调用的几种方式：
+外部接入(OS进程级)：
+
+Ports: 用C实现的可执行程序，以Port的方式与Erlang交互。
+C Nodes: 用C模拟Erlang Node行为实现的可执行程序。
+Jinterface: Java和Erlang的通讯接口。
+Network: 通过自定义序列化格式与Erlang节点网络交互，如bert-rpc
+
+内部接入(和虚拟机在同一个OS进程内)：
+
+BIF: Erlang大部分BIF用C实现，如erlang:now，lists:reverse等
+Port Driver: 以链接库方式将Port嵌入虚拟机，也叫Linkin Driver
+NIF: 虚拟机直接调用C原生代码
+
+下面主要理解常用的三种：Ports, Port Driver, NIF。
     
     
         <a href="/2015/08/erlang-port/" class="post-more waves-effect waves-button">
