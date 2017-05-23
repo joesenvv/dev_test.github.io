@@ -36,7 +36,7 @@ Network: 通过自定义序列化格式与Erlang节点网络交互，如bert-rpc
 内部接入(和虚拟机在同一个O">
 <meta property="og:image" content="http://wudaijun.com/assets/image/erlang/Erlang_Port.png">
 <meta property="og:image" content="http://wudaijun.com/assets/image/erlang/Erlang_Port_Driver.png">
-<meta property="og:updated_time" content="2017-04-12T10:53:46.000Z">
+<meta property="og:updated_time" content="2017-05-23T07:41:02.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Erlang Ports">
 <meta name="twitter:description" content="OverViewErlang外部调用的几种方式：
@@ -301,12 +301,12 @@ ErlDrvSSizeT (*call)(ErlDrvData drv_data, <span class="keyword">unsigned</span> 
 <li>让NIF参与调度。在NIF中恰当时机通过<code>enif_consume_timeslice</code>汇报消耗的时间片，让虚拟机确定是否放弃控制权并通过返回值通知NIF(做上下文保存等)</li>
 <li>使用脏调度器，让NIF在非调度线程中执行</li>
 </ol>
-<p>Erlang默认并未启用脏调度器，通过<code>--enable-dirty-schedulers</code>选项并重新编译可打开脏调度器，目前脏调度器只能被NIF使用。</p>
+<p>Erlang默认并未启用脏调度器，通过<code>--enable-dirty-schedulers</code>选项重新编译虚拟机可打开脏调度器，目前脏调度器只能被NIF使用。</p>
 <p>关于脏调度器，NIF测试与调优，参考：</p>
 <ol>
 <li><a href="http://www.cnblogs.com/zhengsyao/p/dirty_scheduler_otp_17rc1.html" target="_blank" rel="external">siyao blog</a></li>
 <li><a href="https://github.com/slfritchie/nifwait/tree/md5" target="_blank" rel="external">nifwait</a></li>
-<li><a href="https://github.com/vinoski/bitwise/" target="_blank" rel="external">bitwise</a>(里面的PDF质量很高)</li>
+<li><a href="https://github.com/vinoski/bitwise/" target="_blank" rel="external">bitwise</a>(<a href="https://github.com/vinoski/bitwise/blob/master/vinoski-opt-native-code.pdf" target="_blank" rel="external">其中的PDF</a>质量很高)</li>
 </ol>
 <p>Port Driver和NIF与虚拟机调度密切相关，想要在实践中用好它们，还是要加深对Erlang虚拟机调度的理解，如公平调度，进程规约，调度器协同等。再来理解异步线程池，脏调度器的存在的意义以及适用场景。另外，Port Driver和NIF还有一种用法是自己创建新的线程或线程池(Driver和NIF也提供了线程操作API)，我们项目组也这么用过，这基本是费力不讨好的一种方案，还极易出错。</p>
 
