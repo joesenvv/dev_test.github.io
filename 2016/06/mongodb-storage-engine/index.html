@@ -1,63 +1,59 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  
-  
-  <title>MongoDB 存储引擎 | wudaijun&#39;s blog | Coding is Funny</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="theme-color" content="#3F51B5">
-  
-  
-  <meta name="keywords" content="mongodb">
-  <meta name="description" content="MongoDB目前支持三种存储引擎：MMAPv1 Storage Engine，In-Memory Storage Engine, WiredTiger Storage Engine。
-MMAPv1 Storage EngineMongoDB3.2之前版本的默认引擎。
-1. 存储原理文档在磁盘中连续存放，文档所占用的磁盘空间包括文档数据所占空间和文档填充(padding)。
+    
 
-摘自：MongoDB">
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>MongoDB 存储引擎 | wudaijun&#39;s blog | Coding is Funny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="mongodb">
+    <meta name="description" content="MongoDB目前支持三种存储引擎：MMAPv1 Storage Engine，In-Memory Storage Engine, WiredTiger Storage Engine。 MMAPv1 Storage EngineMongoDB3.2之前版本的默认引擎。 1. 存储原理文档在磁盘中连续存放，文档所占用的磁盘空间包括文档数据所占空间和文档填充(padding)。">
+<meta name="keywords" content="mongodb">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MongoDB 存储引擎">
 <meta property="og:url" content="http://wudaijun.com/2016/06/mongodb-storage-engine/index.html">
-<meta property="og:site_name" content="wudaijun's blog">
-<meta property="og:description" content="MongoDB目前支持三种存储引擎：MMAPv1 Storage Engine，In-Memory Storage Engine, WiredTiger Storage Engine。
-MMAPv1 Storage EngineMongoDB3.2之前版本的默认引擎。
-1. 存储原理文档在磁盘中连续存放，文档所占用的磁盘空间包括文档数据所占空间和文档填充(padding)。
-
-摘自：MongoDB">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
+<meta property="og:description" content="MongoDB目前支持三种存储引擎：MMAPv1 Storage Engine，In-Memory Storage Engine, WiredTiger Storage Engine。 MMAPv1 Storage EngineMongoDB3.2之前版本的默认引擎。 1. 存储原理文档在磁盘中连续存放，文档所占用的磁盘空间包括文档数据所占空间和文档填充(padding)。">
 <meta property="og:image" content="http://wudaijun.com/assets/image/mongodb/MMAPv1_storage_engine.png">
 <meta property="og:updated_time" content="2016-07-12T11:53:23.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MongoDB 存储引擎">
-<meta name="twitter:description" content="MongoDB目前支持三种存储引擎：MMAPv1 Storage Engine，In-Memory Storage Engine, WiredTiger Storage Engine。
-MMAPv1 Storage EngineMongoDB3.2之前版本的默认引擎。
-1. 存储原理文档在磁盘中连续存放，文档所占用的磁盘空间包括文档数据所占空间和文档填充(padding)。
-
-摘自：MongoDB">
-  
-    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
-  
-  <meta name="summary" content="&lt;p&gt;MongoDB目前支持三种存储引擎：MMAPv1 Storage Engine，In-Memory Storage Engine, WiredTiger Storage Engine。&lt;/p&gt;
-&lt;h2 id=&quot;MMAPv1_Storage_Engine&quot;&gt;MMAPv1 Storage Engine&lt;/h2&gt;&lt;p&gt;MongoDB3.2之前版本的默认引擎。&lt;/p&gt;
-&lt;h3 id=&quot;1-_存储原理&quot;&gt;1. 存储原理&lt;/h3&gt;&lt;p&gt;文档在磁盘中连续存放，文档所占用的磁盘空间包括文档数据所占空间和文档填充(padding)。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;/assets/image/mongodb/MMAPv1_storage_engine.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-&lt;p&gt;摘自：MongoDB MMAPv1内部实现：&lt;a href=&quot;http://www.mongoing.com/archives/1484&quot;&gt;http://www.mongoing.com/archives/1484&lt;/a&gt;&lt;/p&gt;">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+<meta name="twitter:description" content="MongoDB目前支持三种存储引擎：MMAPv1 Storage Engine，In-Memory Storage Engine, WiredTiger Storage Engine。 MMAPv1 Storage EngineMongoDB3.2之前版本的默认引擎。 1. 存储原理文档在磁盘中连续存放，文档所占用的磁盘空间包括文档数据所占空间和文档填充(padding)。">
+<meta name="twitter:image" content="http://wudaijun.com/assets/image/mongodb/MMAPv1_storage_engine.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="wudaijun&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <aside id="menu" class="hide" >
+    <aside id="menu" class="hide" >
   <div class="inner flex-row-vertical">
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap">
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
       <div class="brand">
-        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/favicon.png">
+        </a>
         <hgroup class="introduce">
           <h5 class="nickname">wudaijun</h5>
           <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
@@ -110,20 +106,12 @@ MMAPv1 Storage EngineMongoDB3.2之前版本的默认引擎。
             </li>
         
       </ul>
-
-      <footer class="footer">
-  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
-  <p>wudaijun&#39;s blog &copy; 2017</p>
-  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
-</footer>
-
     </div>
   </div>
 </aside>
-  <main id="main">
-    <header class="top-header" id="header">
+
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -141,7 +129,7 @@ MMAPv1 Storage EngineMongoDB3.2之前版本的默认引擎。
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
@@ -149,14 +137,23 @@ MMAPv1 Storage EngineMongoDB3.2之前版本的默认引擎。
 </header>
 <header class="content-header post-header">
 
-    <div class="container">
+    <div class="container fade-scale">
         <h1 class="title">MongoDB 存储引擎</h1>
-        
-        
+        <h5 class="subtitle">
+            
+                <time datetime="2016-06-24T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2016-06-25
+</time>
 
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/database/">database</a></li></ul>
+
+            
+        </h5>
     </div>
 
     
+
 
 </header>
 
@@ -166,56 +163,68 @@ MMAPv1 Storage EngineMongoDB3.2之前版本的默认引擎。
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#MMAPv1_Storage_Engine"><span class="post-toc-text">MMAPv1 Storage Engine</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-_存储原理"><span class="post-toc-text">1. 存储原理</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1-1_文档移动"><span class="post-toc-text">1.1 文档移动</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1-2_padding算法"><span class="post-toc-text">1.2 padding算法</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-并发能力"><span class="post-toc-text">2.并发能力</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-_故障恢复"><span class="post-toc-text">3. 故障恢复</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-_内存占用"><span class="post-toc-text">4. 内存占用</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-_遗留问题"><span class="post-toc-text">5. 遗留问题</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#WiredTiger_Storage_Engine"><span class="post-toc-text">WiredTiger Storage Engine</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-_并发能力"><span class="post-toc-text">1. 并发能力</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-_故障恢复"><span class="post-toc-text">2. 故障恢复</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-_磁盘占用"><span class="post-toc-text">3. 磁盘占用</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-_内存占用-1"><span class="post-toc-text">4. 内存占用</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-_遗留问题-1"><span class="post-toc-text">5. 遗留问题</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#In-Memory_Storage_Engine"><span class="post-toc-text">In-Memory Storage Engine</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#参考："><span class="post-toc-text">参考：</span></a></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#MMAPv1-Storage-Engine"><span class="post-toc-text">MMAPv1 Storage Engine</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-存储原理"><span class="post-toc-text">1. 存储原理</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1-1-文档移动"><span class="post-toc-text">1.1 文档移动</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1-2-padding算法"><span class="post-toc-text">1.2 padding算法</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-并发能力"><span class="post-toc-text">2.并发能力</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-故障恢复"><span class="post-toc-text">3. 故障恢复</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-内存占用"><span class="post-toc-text">4. 内存占用</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-遗留问题"><span class="post-toc-text">5. 遗留问题</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#WiredTiger-Storage-Engine"><span class="post-toc-text">WiredTiger Storage Engine</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-并发能力"><span class="post-toc-text">1. 并发能力</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-故障恢复"><span class="post-toc-text">2. 故障恢复</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-磁盘占用"><span class="post-toc-text">3. 磁盘占用</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-内存占用-1"><span class="post-toc-text">4. 内存占用</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-遗留问题-1"><span class="post-toc-text">5. 遗留问题</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#In-Memory-Storage-Engine"><span class="post-toc-text">In-Memory Storage Engine</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#参考："><span class="post-toc-text">参考：</span></a></li></ol>
         </nav>
     </aside>
     
-<article id="post-mongodb-storage-engine" 
-  class="post-article article-type-post" itemprop="blogPost">
+<article id="post-mongodb-storage-engine"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
         <h1 class="post-card-title">MongoDB 存储引擎</h1>
         <div class="post-meta">
-            <time datetime="2016-06-24T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2016-06-25
-</time>
+            <time class="post-time" title="2016-06-25 00:00:00" datetime="2016-06-24T16:00:00.000Z"  itemprop="datePublished">2016-06-25</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/database/">database</a></li></ul>
 
 
 
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
             <p>MongoDB目前支持三种存储引擎：MMAPv1 Storage Engine，In-Memory Storage Engine, WiredTiger Storage Engine。</p>
-<h2 id="MMAPv1_Storage_Engine">MMAPv1 Storage Engine</h2><p>MongoDB3.2之前版本的默认引擎。</p>
-<h3 id="1-_存储原理">1. 存储原理</h3><p>文档在磁盘中连续存放，文档所占用的磁盘空间包括文档数据所占空间和文档填充(padding)。</p>
-<p><img src="/assets/image/mongodb/MMAPv1_storage_engine.png" alt=""></p>
+<h2 id="MMAPv1-Storage-Engine"><a href="#MMAPv1-Storage-Engine" class="headerlink" title="MMAPv1 Storage Engine"></a>MMAPv1 Storage Engine</h2><p>MongoDB3.2之前版本的默认引擎。</p>
+<h3 id="1-存储原理"><a href="#1-存储原理" class="headerlink" title="1. 存储原理"></a>1. 存储原理</h3><p>文档在磁盘中连续存放，文档所占用的磁盘空间包括文档数据所占空间和文档填充(padding)。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/assets/image/mongodb/MMAPv1_storage_engine.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
 <p>摘自：MongoDB MMAPv1内部实现：<a href="http://www.mongoing.com/archives/1484" target="_blank" rel="external">http://www.mongoing.com/archives/1484</a></p>
 <a id="more"></a>
-<h4 id="1-1_文档移动">1.1 文档移动</h4><p>由于文档在磁盘中连续存放，当文档大小增长时，可能需要重新分配文档空间，并更新索引。这会使写入效率降低，因此通常MongoDB为文档分配的record空间会包括document数据和padding空间。这样减少了文档移动的可能性，提高了写入效率。</p>
-<h4 id="1-2_padding算法">1.2 padding算法</h4><p> 在MongoDB3.0之前，MMAPv1使用填充因子(<a href="http://openmymind.net/Whats-A-Padding-Factor/" target="_blank" rel="external">padding factor</a>)来决定空间分配，填充因子会根据文档移动的频繁度动态调整(初始时为1.0)，当padding factor = 1.5时，MMAPv1将为文档分配<code>sizeof(record) = 1.5 * sizeof(document)</code>的空间，其中<code>0.5*sizeof(document)</code>用作padding。</p>
+<h4 id="1-1-文档移动"><a href="#1-1-文档移动" class="headerlink" title="1.1 文档移动"></a>1.1 文档移动</h4><p>由于文档在磁盘中连续存放，当文档大小增长时，可能需要重新分配文档空间，并更新索引。这会使写入效率降低，因此通常MongoDB为文档分配的record空间会包括document数据和padding空间。这样减少了文档移动的可能性，提高了写入效率。</p>
+<h4 id="1-2-padding算法"><a href="#1-2-padding算法" class="headerlink" title="1.2 padding算法"></a>1.2 padding算法</h4><p> 在MongoDB3.0之前，MMAPv1使用填充因子(<a href="http://openmymind.net/Whats-A-Padding-Factor/" target="_blank" rel="external">padding factor</a>)来决定空间分配，填充因子会根据文档移动的频繁度动态调整(初始时为1.0)，当padding factor = 1.5时，MMAPv1将为文档分配<code>sizeof(record) = 1.5 * sizeof(document)</code>的空间，其中<code>0.5*sizeof(document)</code>用作padding。</p>
 <p>padding factor这种方式看起来很智能，但是由于文档的record大小不一，在文档删除或移动之后，文档原来分配的空间很难被再次利用，从而造成了磁盘碎片，这也是MongoDB3.0之前数据占用磁盘空间大的主要原因之一。</p>
 <p>因此在MongoDB3.0之后，不再使用padding factor填充机制，而使用<a href="https://docs.mongodb.com/manual/core/mmapv1/#power-of-2-sized-allocations" target="_blank" rel="external">Power of 2 Sized Allocations</a>，为每个文档分配2的N次方的空间(超过2MB则变为2MB的倍数增长)，这样做既可以减少文档的移动，文档被删除或移动后的空间也可以被有序地组织起来，达成复用(只能被其所在collection的文档复用)。除了Power of 2 Sized Allocations外，MongoDB3.0还提供了<a href="https://docs.mongodb.com/manual/reference/command/collMod/#noPadding" target="_blank" rel="external">no padding</a>分配策略，即只分配文档实际大小的磁盘空间，但应用程序需要确保文档大小不会增长。</p>
 <p>虽然Power of 2 Sized Allocations解决了磁盘碎片的问题，但改进后的MMAPv1引擎仍然在数据库级别分配文件，数据库中的所有集合和索引都混合存储在数据库文件中，并且删除或移动文档后的空间会被保留用以复用，因此磁盘空间无法无法即时自动回收的问题仍然存在(即使drop collection)。</p>
-<h3 id="2-并发能力">2.并发能力</h3><p>在MongoDB3.0之前，只有MMAPv1存储引擎支持，并且只支持Database级的锁，有时候不得不刻意将数据分到多个数据库中提升并发能力。在MongoDB3.0之后，MMAPv1终于支持collection级的并发，并发效率提升了一个档次。参考<a href="https://docs.mongodb.com/manual/faq/concurrency/" target="_blank" rel="external">MongoDB concurrency FAQ</a>。</p>
-<h3 id="3-_故障恢复">3. 故障恢复</h3><p>MongoDB默认记录所有的变更操作日志(<a href="https://docs.mongodb.com/manual/core/journaling/#journaling-and-the-mmapv1-storage-engine" target="_blank" rel="external">journal</a>)并写入磁盘，MongoDB flush变更日志的频率(默认100ms)比flush数据的频率(默认60s)要高，因此journal是MongoDB故障恢复的重要保障。</p>
-<h3 id="4-_内存占用">4. 内存占用</h3><p>由于MMAPv1使用<a href="http://www.cnblogs.com/huxiao-tee/p/4660352.html" target="_blank" rel="external">mmap</a>来将数据库文件映射到内存中，MongoDB总是尽可能的多吃内存，以映射更多的数据文件。并且页面的换入换出基本交给OS控制(MongoDB不建议<a href="https://docs.mongodb.com/manual/core/mmapv1/#journal" target="_blank" rel="external">修改</a>flush频率)，因此，将MongoDB部署在更高RAM环境下，是提升性能的最有效的方式之一。</p>
-<h3 id="5-_遗留问题">5. 遗留问题</h3><ul>
+<h3 id="2-并发能力"><a href="#2-并发能力" class="headerlink" title="2.并发能力"></a>2.并发能力</h3><p>在MongoDB3.0之前，只有MMAPv1存储引擎支持，并且只支持Database级的锁，有时候不得不刻意将数据分到多个数据库中提升并发能力。在MongoDB3.0之后，MMAPv1终于支持collection级的并发，并发效率提升了一个档次。参考<a href="https://docs.mongodb.com/manual/faq/concurrency/" target="_blank" rel="external">MongoDB concurrency FAQ</a>。</p>
+<h3 id="3-故障恢复"><a href="#3-故障恢复" class="headerlink" title="3. 故障恢复"></a>3. 故障恢复</h3><p>MongoDB默认记录所有的变更操作日志(<a href="https://docs.mongodb.com/manual/core/journaling/#journaling-and-the-mmapv1-storage-engine" target="_blank" rel="external">journal</a>)并写入磁盘，MongoDB flush变更日志的频率(默认100ms)比flush数据的频率(默认60s)要高，因此journal是MongoDB故障恢复的重要保障。</p>
+<h3 id="4-内存占用"><a href="#4-内存占用" class="headerlink" title="4. 内存占用"></a>4. 内存占用</h3><p>由于MMAPv1使用<a href="http://www.cnblogs.com/huxiao-tee/p/4660352.html" target="_blank" rel="external">mmap</a>来将数据库文件映射到内存中，MongoDB总是尽可能的多吃内存，以映射更多的数据文件。并且页面的换入换出基本交给OS控制(MongoDB不建议<a href="https://docs.mongodb.com/manual/core/mmapv1/#journal" target="_blank" rel="external">修改</a>flush频率)，因此，将MongoDB部署在更高RAM环境下，是提升性能的最有效的方式之一。</p>
+<h3 id="5-遗留问题"><a href="#5-遗留问题" class="headerlink" title="5. 遗留问题"></a>5. 遗留问题</h3><ul>
 <li>磁盘占用，运维人员可能需要定期的整理数据库(<a href="https://docs.mongodb.com/manual/reference/command/compact/" target="_blank" rel="external">compat</a>，<a href="https://docs.mongodb.com/manual/reference/command/repairDatabase/" target="_blank" rel="external">repairDatabase</a>)</li>
 <li>内存占用，基本是有多少吃多少</li>
 <li>collection级的并发控制仍然偏弱</li>
 </ul>
-<h2 id="WiredTiger_Storage_Engine">WiredTiger Storage Engine</h2><p>MongoDB version3.0中引入，在MongoDB3.2中，已将WiredTiger作为默认存储引擎。</p>
-<h3 id="1-_并发能力">1. 并发能力</h3><p>文档级别的并发支持，WiredTiger通过MVCC实现文档级别的并发控制，即文档级别锁。这就允许多个客户端请求同时更新一个集合内存的多个文档。更多MongoDB并发模型，参见<a href="https://docs.mongodb.com/manual/faq/concurrency/" target="_blank" rel="external">MongoDB concurrency FAQ</a>。</p>
-<h3 id="2-_故障恢复">2. 故障恢复</h3><p>支持checkpoint和journal两种方式进行持久化。</p>
+<h2 id="WiredTiger-Storage-Engine"><a href="#WiredTiger-Storage-Engine" class="headerlink" title="WiredTiger Storage Engine"></a>WiredTiger Storage Engine</h2><p>MongoDB version3.0中引入，在MongoDB3.2中，已将WiredTiger作为默认存储引擎。</p>
+<h3 id="1-并发能力"><a href="#1-并发能力" class="headerlink" title="1. 并发能力"></a>1. 并发能力</h3><p>文档级别的并发支持，WiredTiger通过MVCC实现文档级别的并发控制，即文档级别锁。这就允许多个客户端请求同时更新一个集合内存的多个文档。更多MongoDB并发模型，参见<a href="https://docs.mongodb.com/manual/faq/concurrency/" target="_blank" rel="external">MongoDB concurrency FAQ</a>。</p>
+<h3 id="2-故障恢复"><a href="#2-故障恢复" class="headerlink" title="2. 故障恢复"></a>2. 故障恢复</h3><p>支持checkpoint和journal两种方式进行持久化。</p>
 <p>checkpoint是数据库某一时刻的快照，每60s或超过2GB的变更日志执行一次，在写最新快照时，上一个快照仍然有效，防止MongoDB在快照落地时挂掉，在快照落地完成后，上一个快照将被删除。</p>
 <p>和MMAPv1一样，支持通过变更日志故障恢复，journal可与checkpoint集合使用，提供快速，可靠的数据恢复。可禁用wiredtiger journal，这在一定程度上可以降低系统开支，对于单点MongoDB来说，可能会导致异常关闭时丢失checkpoint之间的数据，对于复制集来说，可靠性稍高一点。在MongoDB3.2之前的版本中，WiredTiger journal默认在日志超过100MB时持久化journal一次，系统宕机最多会丢失100MB journal数据。在3.2版本中，加入了默认50ms时间间隔刷盘条件。参见官方文档<a href="https://docs.mongodb.com/manual/core/journaling/#journaling-wiredtiger" target="_blank" rel="external">journaling wiredtiger</a>。</p>
-<h3 id="3-_磁盘占用">3. 磁盘占用</h3><p>不同于MMAPv1在数据库级别分配数据文件，WiredTiger将每个collection的数据和索引单独存放，并且会即时回收文档和集合占用空间。</p>
+<h3 id="3-磁盘占用"><a href="#3-磁盘占用" class="headerlink" title="3. 磁盘占用"></a>3. 磁盘占用</h3><p>不同于MMAPv1在数据库级别分配数据文件，WiredTiger将每个collection的数据和索引单独存放，并且会即时回收文档和集合占用空间。</p>
 <p>WiredTiger的另一个两点是支持日志，文档数据块，索引压缩，可配置或关闭压缩算法，大幅度节省了磁盘空间。</p>
-<h3 id="4-_内存占用-1">4. 内存占用</h3><p>WiredTiger支持内存使用容量配置，用户可通过<a href="https://docs.mongodb.com/manual/reference/configuration-options/#storage.wiredTiger.engineConfig.cacheSizeGB" target="_blank" rel="external">WiredTiger CacheSize</a>配置MongoDB WiredTiger所能使用的最大内存，在3.2版本中，该参数默认值为<code>max(60%Ram-1GB, 1GB)</code>。这个内存限制的并不是MongoDB所占用的内存，MongoDB还使用OS文件系统缓存(文件可能是被压缩过的)。</p>
-<h3 id="5-_遗留问题-1">5. 遗留问题</h3><p>相较于MMAPv1，压缩算法和新的存储机制，极大减少了磁盘空间占用，文档级别的并发控制，在多核上吞吐量有明显提升。MongoDB WiredTiger仍然是个吃内存的家伙，虽然可以配置内存最高占用，但更多的内存确实能带来更好的读写效率。</p>
-<h2 id="In-Memory_Storage_Engine">In-Memory Storage Engine</h2><p>纯内存版的MongoDB，限企业版，64bits。简单介绍一下：</p>
+<h3 id="4-内存占用-1"><a href="#4-内存占用-1" class="headerlink" title="4. 内存占用"></a>4. 内存占用</h3><p>WiredTiger支持内存使用容量配置，用户可通过<a href="https://docs.mongodb.com/manual/reference/configuration-options/#storage.wiredTiger.engineConfig.cacheSizeGB" target="_blank" rel="external">WiredTiger CacheSize</a>配置MongoDB WiredTiger所能使用的最大内存，在3.2版本中，该参数默认值为<code>max(60%Ram-1GB, 1GB)</code>。这个内存限制的并不是MongoDB所占用的内存，MongoDB还使用OS文件系统缓存(文件可能是被压缩过的)。</p>
+<h3 id="5-遗留问题-1"><a href="#5-遗留问题-1" class="headerlink" title="5. 遗留问题"></a>5. 遗留问题</h3><p>相较于MMAPv1，压缩算法和新的存储机制，极大减少了磁盘空间占用，文档级别的并发控制，在多核上吞吐量有明显提升。MongoDB WiredTiger仍然是个吃内存的家伙，虽然可以配置内存最高占用，但更多的内存确实能带来更好的读写效率。</p>
+<h2 id="In-Memory-Storage-Engine"><a href="#In-Memory-Storage-Engine" class="headerlink" title="In-Memory Storage Engine"></a>In-Memory Storage Engine</h2><p>纯内存版的MongoDB，限企业版，64bits。简单介绍一下：</p>
 <ul>
 <li>不维护任何磁盘数据，包括配置数据，索引，用户证书，等等，Everything In Memory</li>
 <li>文档级别的并发支持</li>
@@ -224,7 +233,7 @@ MMAPv1 Storage EngineMongoDB3.2之前版本的默认引擎。
 <li>支持分片，复制集</li>
 </ul>
 <p>总结：为啥不用Redis？</p>
-<h2 id="参考：">参考：</h2><ol>
+<h2 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h2><ol>
 <li>MongoDB Storage Engine: <a href="https://docs.mongodb.com/manual/core/storage-engines/" target="_blank" rel="external">https://docs.mongodb.com/manual/core/storage-engines/</a></li>
 <li>MongoDB Storage FAQ: <a href="https://docs.mongodb.com/manual/faq/storage/" target="_blank" rel="external">https://docs.mongodb.com/manual/faq/storage/</a></li>
 <li>MongoDB MMAPv1内部实现：    <a href="http://www.mongoing.com/archives/1484" target="_blank" rel="external">http://www.mongoing.com/archives/1484</a></li>
@@ -234,20 +243,29 @@ MMAPv1 Storage EngineMongoDB3.2之前版本的默认引擎。
 </ol>
 
         </div>
-        
+
         <blockquote class="post-copyright">
-            <div class="content">
-               这里写留言或版权声明：<a href="/2016/06/mongodb-storage-engine/" target="_blank" rel="external">http://wudaijun.com/2016/06/mongodb-storage-engine/</a>
-            </div>
-            <footer>
-                <a href="http://wudaijun.com">
-                    <img src="/favicon.png" alt="wudaijun">
-                    wudaijun
-                </a>
-            </footer>
-        </blockquote>
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-07-12T11:53:23.000Z" itemprop="dateUpdated">2016-07-12 19:53:23</time>
+</span><br>
+
 
         
+        博客均为原创，转载请征得作者同意并注明出处，本文永久链接：<a href="/2016/06/mongodb-storage-engine/" target="_blank" rel="external">http://wudaijun.com/2016/06/mongodb-storage-engine/</a>
+        
+    </div>
+    <footer>
+        <a href="http://wudaijun.com">
+            <img src="/favicon.png" alt="wudaijun">
+            wudaijun
+        </a>
+    </footer>
+</blockquote>
+
+        
+
 
         <div class="post-footer">
             
@@ -255,51 +273,55 @@ MMAPv1 Storage EngineMongoDB3.2之前版本的默认引擎。
 
 
             
-            <div class="post-share-wrap">
-                <div class="post-share" id="post-share">
-    <div class="tit">分享到：</div>
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2016/06/mongodb-storage-engine/&title=《MongoDB 存储引擎》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2016/06/mongodb-storage-engine/&title=《MongoDB 存储引擎》 — wudaijun's blog&source=MongoDB目前支持三种存储引擎：MMAPv1 Storage Engine，In-Memory Storage Engine, WiredTiger ..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2016/06/mongodb-storage-engine/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《MongoDB 存储引擎》 — wudaijun's blog&url=http://wudaijun.com/2016/06/mongodb-storage-engine/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2016/06/mongodb-storage-engine/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
-                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
-                    <i class="icon icon-share-alt icon-lg"></i>
-                </a>
-            </div>
-            
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
 
         </div>
-    </div>   
+    </div>
 
     
 <nav class="post-nav flex-row flex-justify-between">
@@ -323,83 +345,139 @@ MMAPv1 Storage EngineMongoDB3.2之前版本的默认引擎。
 </nav>
 
 
-            
+
     
 
 
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'wudaijun'; // required: replace example with your forum shortname
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://wudaijun.com/2016/06/mongodb-storage-engine/index.html',
+        sourceId: 'mongodb-storage-engine',
+        productKey: '02b378614d264e81bca14ffaadf03446',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
 
 
 </article>
 
 
+
 </div>
-  </main>
-  <div class="mask" id="mask"></div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>wudaijun &copy; 2015 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
-<script>
-var BLOG_SHARE = {
-    title: "MongoDB 存储引擎",
-    pic: "/favicon.png",
-    summary: document.getElementsByName('summary')[0].content,
-    url: "http://wudaijun.com/2016/06/mongodb-storage-engine/"
-};
-</script>
-<div class="global-share" id="global-share">
-    <div class="tit">分享到：</div>
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2016/06/mongodb-storage-engine/&title=《MongoDB 存储引擎》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2016/06/mongodb-storage-engine/&title=《MongoDB 存储引擎》 — wudaijun's blog&source=MongoDB目前支持三种存储引擎：MMAPv1 Storage Engine，In-Memory Storage Engine, WiredTiger ..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2016/06/mongodb-storage-engine/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《MongoDB 存储引擎》 — wudaijun's blog&url=http://wudaijun.com/2016/06/mongodb-storage-engine/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2016/06/mongodb-storage-engine/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script src="/js/main.min.js?v=1.1.4"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://wudaijun.com/2016/06/mongodb-storage-engine/" alt="微信分享二维码">
+</div>
 
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
@@ -407,7 +485,7 @@ var BLOG_SHARE = {
 </div>
 <template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -419,13 +497,14 @@ var BLOG_SHARE = {
 </li>
 </template>
 
-<script src="/js/search.min.js?v=1.1.4"></script>
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 

@@ -1,51 +1,59 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  
-  
-  <title>开发笔记(5) cluster_server集群优化 | wudaijun&#39;s blog | Coding is Funny</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="theme-color" content="#3F51B5">
-  
-  
-  <meta name="keywords" content="distribution,erlang">
-  <meta name="description" content="在使用cluster_server做gameserver后台集群支撑的过程中，逐步暴露出一些问题，在此记之。
-1. 节点交互效率低下我们按照业务职责将集群节点分为，agent，player，map，alliance，battle等，这些节点可以在一台物理机上(操作系统进程间交互)，也有可能部署到不同的物理机上(网络IO交互)，而玩家一个业务逻辑可能涉及到多个节点，形成一个节点交互链：如玩家在大地图">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>开发笔记(5) cluster_server集群优化 | wudaijun&#39;s blog | Coding is Funny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="erlang,distribution">
+    <meta name="description" content="在使用cluster_server做gameserver后台集群支撑的过程中，逐步暴露出一些问题，在此记之。 1. 节点交互效率低下我们按照业务职责将集群节点分为，agent，player，map，alliance，battle等，这些节点可以在一台物理机上(操作系统进程间交互)，也有可能部署到不同的物理机上(网络IO交互)，而玩家一个业务逻辑可能涉及到多个节点，形成一个节点交互链：如玩家在大地图">
+<meta name="keywords" content="erlang,distribution">
 <meta property="og:type" content="article">
 <meta property="og:title" content="开发笔记(5) cluster_server集群优化">
 <meta property="og:url" content="http://wudaijun.com/2016/01/erlang-server-design5-server-node/index.html">
-<meta property="og:site_name" content="wudaijun's blog">
-<meta property="og:description" content="在使用cluster_server做gameserver后台集群支撑的过程中，逐步暴露出一些问题，在此记之。
-1. 节点交互效率低下我们按照业务职责将集群节点分为，agent，player，map，alliance，battle等，这些节点可以在一台物理机上(操作系统进程间交互)，也有可能部署到不同的物理机上(网络IO交互)，而玩家一个业务逻辑可能涉及到多个节点，形成一个节点交互链：如玩家在大地图">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
+<meta property="og:description" content="在使用cluster_server做gameserver后台集群支撑的过程中，逐步暴露出一些问题，在此记之。 1. 节点交互效率低下我们按照业务职责将集群节点分为，agent，player，map，alliance，battle等，这些节点可以在一台物理机上(操作系统进程间交互)，也有可能部署到不同的物理机上(网络IO交互)，而玩家一个业务逻辑可能涉及到多个节点，形成一个节点交互链：如玩家在大地图">
 <meta property="og:image" content="http://wudaijun.com/assets/image/erlang/cluster_server_server_node.png">
 <meta property="og:updated_time" content="2016-09-07T12:13:18.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="开发笔记(5) cluster_server集群优化">
-<meta name="twitter:description" content="在使用cluster_server做gameserver后台集群支撑的过程中，逐步暴露出一些问题，在此记之。
-1. 节点交互效率低下我们按照业务职责将集群节点分为，agent，player，map，alliance，battle等，这些节点可以在一台物理机上(操作系统进程间交互)，也有可能部署到不同的物理机上(网络IO交互)，而玩家一个业务逻辑可能涉及到多个节点，形成一个节点交互链：如玩家在大地图">
-  
-    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
-  
-  <meta name="summary" content="&lt;p&gt;在使用&lt;a href=&quot;http://wudaijun.com/2015/08/erlang-server-design1-cluster-server/&quot;&gt;cluster_server&lt;/a&gt;做gameserver后台集群支撑的过程中，逐步暴露出一些问题，在此记之。&lt;/p&gt;
-&lt;h4 id=&quot;1-_节点交互效率低下&quot;&gt;1. 节点交互效率低下&lt;/h4&gt;&lt;p&gt;我们按照业务职责将集群节点分为，agent，player，map，alliance，battle等，这些节点可以在一台物理机上(操作系统进程间交互)，也有可能部署到不同的物理机上(网络IO交互)，而玩家一个业务逻辑可能涉及到多个节点，形成一个节点交互链：如玩家在大地图上进行一场战斗，按照流程需要走：agent -&amp;gt; player -&amp;gt; map -&amp;gt; battle -&amp;gt; map -&amp;gt; player -&amp;gt; agent。整个过程都是异步的。这种交互是频繁的且低效的。&lt;/p&gt;">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+<meta name="twitter:description" content="在使用cluster_server做gameserver后台集群支撑的过程中，逐步暴露出一些问题，在此记之。 1. 节点交互效率低下我们按照业务职责将集群节点分为，agent，player，map，alliance，battle等，这些节点可以在一台物理机上(操作系统进程间交互)，也有可能部署到不同的物理机上(网络IO交互)，而玩家一个业务逻辑可能涉及到多个节点，形成一个节点交互链：如玩家在大地图">
+<meta name="twitter:image" content="http://wudaijun.com/assets/image/erlang/cluster_server_server_node.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="wudaijun&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <aside id="menu" class="hide" >
+    <aside id="menu" class="hide" >
   <div class="inner flex-row-vertical">
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap">
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
       <div class="brand">
-        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/favicon.png">
+        </a>
         <hgroup class="introduce">
           <h5 class="nickname">wudaijun</h5>
           <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
@@ -98,20 +106,12 @@
             </li>
         
       </ul>
-
-      <footer class="footer">
-  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
-  <p>wudaijun&#39;s blog &copy; 2017</p>
-  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
-</footer>
-
     </div>
   </div>
 </aside>
-  <main id="main">
-    <header class="top-header" id="header">
+
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -129,7 +129,7 @@
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
@@ -137,14 +137,23 @@
 </header>
 <header class="content-header post-header">
 
-    <div class="container">
+    <div class="container fade-scale">
         <h1 class="title">开发笔记(5) cluster_server集群优化</h1>
-        
-        
+        <h5 class="subtitle">
+            
+                <time datetime="2016-01-07T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2016-01-08
+</time>
 
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
+
+            
+        </h5>
     </div>
 
     
+
 
 </header>
 
@@ -154,34 +163,46 @@
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1-_节点交互效率低下"><span class="post-toc-text">1. 节点交互效率低下</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#2-_玩家数据同步"><span class="post-toc-text">2. 玩家数据同步</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#3-_节点交互链过长"><span class="post-toc-text">3. 节点交互链过长</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#总结"><span class="post-toc-text">总结</span></a>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1-节点交互效率低下"><span class="post-toc-text">1. 节点交互效率低下</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#2-玩家数据同步"><span class="post-toc-text">2. 玩家数据同步</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#3-节点交互链过长"><span class="post-toc-text">3. 节点交互链过长</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#总结"><span class="post-toc-text">总结</span></a>
         </nav>
     </aside>
     
-<article id="post-erlang-server-design5-server-node" 
-  class="post-article article-type-post" itemprop="blogPost">
+<article id="post-erlang-server-design5-server-node"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
         <h1 class="post-card-title">开发笔记(5) cluster_server集群优化</h1>
         <div class="post-meta">
-            <time datetime="2016-01-07T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2016-01-08
-</time>
+            <time class="post-time" title="2016-01-08 00:00:00" datetime="2016-01-07T16:00:00.000Z"  itemprop="datePublished">2016-01-08</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
 
 
 
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
             <p>在使用<a href="http://wudaijun.com/2015/08/erlang-server-design1-cluster-server/">cluster_server</a>做gameserver后台集群支撑的过程中，逐步暴露出一些问题，在此记之。</p>
-<h4 id="1-_节点交互效率低下">1. 节点交互效率低下</h4><p>我们按照业务职责将集群节点分为，agent，player，map，alliance，battle等，这些节点可以在一台物理机上(操作系统进程间交互)，也有可能部署到不同的物理机上(网络IO交互)，而玩家一个业务逻辑可能涉及到多个节点，形成一个节点交互链：如玩家在大地图上进行一场战斗，按照流程需要走：agent -&gt; player -&gt; map -&gt; battle -&gt; map -&gt; player -&gt; agent。整个过程都是异步的。这种交互是频繁的且低效的。</p>
+<h4 id="1-节点交互效率低下"><a href="#1-节点交互效率低下" class="headerlink" title="1. 节点交互效率低下"></a>1. 节点交互效率低下</h4><p>我们按照业务职责将集群节点分为，agent，player，map，alliance，battle等，这些节点可以在一台物理机上(操作系统进程间交互)，也有可能部署到不同的物理机上(网络IO交互)，而玩家一个业务逻辑可能涉及到多个节点，形成一个节点交互链：如玩家在大地图上进行一场战斗，按照流程需要走：agent -&gt; player -&gt; map -&gt; battle -&gt; map -&gt; player -&gt; agent。整个过程都是异步的。这种交互是频繁的且低效的。</p>
 <a id="more"></a>
 <p>反思cluster_server最初的设计：根据业务职责来划分节点，这样做主要优势在于容错(灾)性和负载均衡，在节点调试和调优方面也很方便。但是对于业务逻辑来说，玩家的数据被分散到各个节点，这些节点之间异步交互(我们对call是敏感的)，造成了数据同步和逻辑交互都变得复杂，这种复杂度随节点数量和逻辑复杂程度(涉及到的节点数)还会不断上升。</p>
 <p>针对于这些问题，我们首先对集群进行了重整，将同一个server_id下的player，map，pvp，alliance等轻量的进程放在一起，由server进程统一管理，并挂载server_node之上。这样整个集群的节点只剩三个：agent，server，battle，满足了数据局部性原则，业务逻辑交互也更高效(Erlang进程之间)。mnesia集群表仍然保留，用于执行快速的消息路由和进程查找。</p>
-<p><img src="/assets/image/erlang/cluster_server_server_node.png" alt="" title="Server Node"></p>
-<h4 id="2-_玩家数据同步">2. 玩家数据同步</h4><p>这一直是分布式系统中的一个大问题，玩家的数据被分散在各节点，不同的节点还需要玩家一些基础信息的副本，这部分需要同步的数据很难管理。主要有以下几种方案：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/assets/image/erlang/cluster_server_server_node.png" alt="Server" title="">
+                </div>
+                <div class="image-caption">Server</div>
+            </figure>
+<h4 id="2-玩家数据同步"><a href="#2-玩家数据同步" class="headerlink" title="2. 玩家数据同步"></a>2. 玩家数据同步</h4><p>这一直是分布式系统中的一个大问题，玩家的数据被分散在各节点，不同的节点还需要玩家一些基础信息的副本，这部分需要同步的数据很难管理。主要有以下几种方案：</p>
 <ol>
 <li>玩家跨节点时，将本次处理所需要的信息带上。这种方案只能运用于玩家本身的数据同步。而玩家可能或查看或拉取其它玩家的数据</li>
 <li>各节点存有玩家部分数据的副本，玩家对应数据更新时，player通过cast消息到相关节点进行数据更新。这适用于简单的数据同步，如玩家name，level等，复杂的数据，比如玩家的英雄信息，会导致通信量过大</li>
@@ -189,8 +210,8 @@
 <li>做一个Cache中心，并且满足单写多读的原则。比如map节点改变了玩家数据，那么它应该将数据变动发给player节点，由player节点来完成数据更新并更新Cache</li>
 </ol>
 <p>在重构集群之前，我们用的是方案2，主要原因是数据简单，更新实时。要在跨节点同步中，使用Cache中心，可以直接通过mnesia实现，但是这是软实时，对于一些实时性很高的数据，需要使用事务。但在建立了server_node之后，就简单很多了，通过ets即可实现，但仍然要满足只有一个写入者的原则。</p>
-<h4 id="3-_节点交互链过长">3. 节点交互链过长</h4><p>可以在agent消息路由处，将map相关消息直接路由到map，而map业务处理完成之后，如果不需要在玩家身上增减资源，则可以直接将Ack发到玩家对应的agent上，流程得以简化。</p>
-<h3 id="总结">总结</h3><p>目前服务器的分布式特性：</p>
+<h4 id="3-节点交互链过长"><a href="#3-节点交互链过长" class="headerlink" title="3. 节点交互链过长"></a>3. 节点交互链过长</h4><p>可以在agent消息路由处，将map相关消息直接路由到map，而map业务处理完成之后，如果不需要在玩家身上增减资源，则可以直接将Ack发到玩家对应的agent上，流程得以简化。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>目前服务器的分布式特性：</p>
 <ul>
 <li>按照ServerId组成一颗大的监督树，一个Server及其所有包含模块，均作为整体部署在一个server_node上。这样Server内部的逻辑与数据得以聚合。而负载均衡将以Server为基本单位</li>
 <li>在节点内部，为了方便交互，仍然使用Mnesia作服务注册与发现，但由于Server之间没有隔离，要求服务ID全局唯一</li>
@@ -204,20 +225,29 @@
 </ul>
 
         </div>
-        
+
         <blockquote class="post-copyright">
-            <div class="content">
-               这里写留言或版权声明：<a href="/2016/01/erlang-server-design5-server-node/" target="_blank" rel="external">http://wudaijun.com/2016/01/erlang-server-design5-server-node/</a>
-            </div>
-            <footer>
-                <a href="http://wudaijun.com">
-                    <img src="/favicon.png" alt="wudaijun">
-                    wudaijun
-                </a>
-            </footer>
-        </blockquote>
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-09-07T12:13:18.000Z" itemprop="dateUpdated">2016-09-07 20:13:18</time>
+</span><br>
+
 
         
+        博客均为原创，转载请征得作者同意并注明出处，本文永久链接：<a href="/2016/01/erlang-server-design5-server-node/" target="_blank" rel="external">http://wudaijun.com/2016/01/erlang-server-design5-server-node/</a>
+        
+    </div>
+    <footer>
+        <a href="http://wudaijun.com">
+            <img src="/favicon.png" alt="wudaijun">
+            wudaijun
+        </a>
+    </footer>
+</blockquote>
+
+        
+
 
         <div class="post-footer">
             
@@ -225,51 +255,56 @@
 
 
             
-            <div class="post-share-wrap">
-                <div class="post-share" id="post-share">
-    <div class="tit">分享到：</div>
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2016/01/erlang-server-design5-server-node/&title=《开发笔记(5) cluster_server集群优化》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2016/01/erlang-server-design5-server-node/&title=《开发笔记(5) cluster_server集群优化》 — wudaijun's blog&source=在使用cluster_server做gameserver后台集群支撑的过程中，逐步暴露出一些问题，在此记之。
+1. 节点交互效率低下我们按照业务职责将集群..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2016/01/erlang-server-design5-server-node/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《开发笔记(5) cluster_server集群优化》 — wudaijun's blog&url=http://wudaijun.com/2016/01/erlang-server-design5-server-node/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2016/01/erlang-server-design5-server-node/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
-                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
-                    <i class="icon icon-share-alt icon-lg"></i>
-                </a>
-            </div>
-            
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
 
         </div>
-    </div>   
+    </div>
 
     
 <nav class="post-nav flex-row flex-justify-between">
@@ -293,83 +328,140 @@
 </nav>
 
 
-            
+
     
 
 
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'wudaijun'; // required: replace example with your forum shortname
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://wudaijun.com/2016/01/erlang-server-design5-server-node/index.html',
+        sourceId: 'erlang-server-design5-server-node',
+        productKey: '02b378614d264e81bca14ffaadf03446',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
 
 
 </article>
 
 
+
 </div>
-  </main>
-  <div class="mask" id="mask"></div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>wudaijun &copy; 2015 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
-<script>
-var BLOG_SHARE = {
-    title: "开发笔记(5) cluster_server集群优化",
-    pic: "/favicon.png",
-    summary: document.getElementsByName('summary')[0].content,
-    url: "http://wudaijun.com/2016/01/erlang-server-design5-server-node/"
-};
-</script>
-<div class="global-share" id="global-share">
-    <div class="tit">分享到：</div>
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2016/01/erlang-server-design5-server-node/&title=《开发笔记(5) cluster_server集群优化》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2016/01/erlang-server-design5-server-node/&title=《开发笔记(5) cluster_server集群优化》 — wudaijun's blog&source=在使用cluster_server做gameserver后台集群支撑的过程中，逐步暴露出一些问题，在此记之。
+1. 节点交互效率低下我们按照业务职责将集群..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2016/01/erlang-server-design5-server-node/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《开发笔记(5) cluster_server集群优化》 — wudaijun's blog&url=http://wudaijun.com/2016/01/erlang-server-design5-server-node/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2016/01/erlang-server-design5-server-node/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script src="/js/main.min.js?v=1.1.4"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://wudaijun.com/2016/01/erlang-server-design5-server-node/" alt="微信分享二维码">
+</div>
 
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
@@ -377,7 +469,7 @@ var BLOG_SHARE = {
 </div>
 <template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -389,13 +481,14 @@ var BLOG_SHARE = {
 </li>
 </template>
 
-<script src="/js/search.min.js?v=1.1.4"></script>
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 

@@ -1,50 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  
-  
-  <title>Erlang Map映射到Record | wudaijun&#39;s blog | Coding is Funny</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="theme-color" content="#3F51B5">
-  
-  
-  <meta name="keywords" content="erlang">
-  <meta name="description" content="在游戏服务器中，通常要面临对象到模型的映射，以及对象到协议的映射，前者用于GS和DB交互，后者用于GS和Client交互。我们的项目中做到了对象到模型的自动映射，这样在开发过程中无需关心GS和DB的交互，很方便。
-而现在我们还没有实现对象(map)到协议(record)的自动映射，我觉得这个特性是比较有用的，特别是在同步一些实体数据的时候。无需写一堆Packer函数来将对象数据打包为协议。因此就研">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>Erlang Map映射到Record | wudaijun&#39;s blog | Coding is Funny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="erlang">
+    <meta name="description" content="在游戏服务器中，通常要面临对象到模型的映射，以及对象到协议的映射，前者用于GS和DB交互，后者用于GS和Client交互。我们的项目中做到了对象到模型的自动映射，这样在开发过程中无需关心GS和DB的交互，很方便。 而现在我们还没有实现对象(map)到协议(record)的自动映射，我觉得这个特性是比较有用的，特别是在同步一些实体数据的时候。无需写一堆Packer函数来将对象数据打包为协议。因此就研">
+<meta name="keywords" content="erlang">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Erlang Map映射到Record">
 <meta property="og:url" content="http://wudaijun.com/2015/11/erlang-map2record/index.html">
-<meta property="og:site_name" content="wudaijun's blog">
-<meta property="og:description" content="在游戏服务器中，通常要面临对象到模型的映射，以及对象到协议的映射，前者用于GS和DB交互，后者用于GS和Client交互。我们的项目中做到了对象到模型的自动映射，这样在开发过程中无需关心GS和DB的交互，很方便。
-而现在我们还没有实现对象(map)到协议(record)的自动映射，我觉得这个特性是比较有用的，特别是在同步一些实体数据的时候。无需写一堆Packer函数来将对象数据打包为协议。因此就研">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
+<meta property="og:description" content="在游戏服务器中，通常要面临对象到模型的映射，以及对象到协议的映射，前者用于GS和DB交互，后者用于GS和Client交互。我们的项目中做到了对象到模型的自动映射，这样在开发过程中无需关心GS和DB的交互，很方便。 而现在我们还没有实现对象(map)到协议(record)的自动映射，我觉得这个特性是比较有用的，特别是在同步一些实体数据的时候。无需写一堆Packer函数来将对象数据打包为协议。因此就研">
 <meta property="og:updated_time" content="2015-11-20T09:55:38.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Erlang Map映射到Record">
-<meta name="twitter:description" content="在游戏服务器中，通常要面临对象到模型的映射，以及对象到协议的映射，前者用于GS和DB交互，后者用于GS和Client交互。我们的项目中做到了对象到模型的自动映射，这样在开发过程中无需关心GS和DB的交互，很方便。
-而现在我们还没有实现对象(map)到协议(record)的自动映射，我觉得这个特性是比较有用的，特别是在同步一些实体数据的时候。无需写一堆Packer函数来将对象数据打包为协议。因此就研">
-  
-    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
-  
-  <meta name="summary" content="&lt;p&gt;在游戏服务器中，通常要面临对象到模型的映射，以及对象到协议的映射，前者用于GS和DB交互，后者用于GS和Client交互。我们的项目中做到了&lt;a href=&quot;http://wudaijun.com/2015/11/erlang-server-design3-mongodb-driver/&quot;&gt;对象到模型的自动映射&lt;/a&gt;，这样在开发过程中无需关心GS和DB的交互，很方便。&lt;/p&gt;
-&lt;p&gt;而现在我们还没有实现对象(map)到协议(record)的自动映射，我觉得这个特性是比较有用的，特别是在同步一些实体数据的时候。无需写一堆Packer函数来将对象数据打包为协议。因此就研究了一下如何将map的数据自动映射到&lt;a href=&quot;https://github.com/basho/erlang_protobuffs&quot;&gt;protobuffer&lt;/a&gt;，也就是转换为record。&lt;/p&gt;">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+<meta name="twitter:description" content="在游戏服务器中，通常要面临对象到模型的映射，以及对象到协议的映射，前者用于GS和DB交互，后者用于GS和Client交互。我们的项目中做到了对象到模型的自动映射，这样在开发过程中无需关心GS和DB的交互，很方便。 而现在我们还没有实现对象(map)到协议(record)的自动映射，我觉得这个特性是比较有用的，特别是在同步一些实体数据的时候。无需写一堆Packer函数来将对象数据打包为协议。因此就研">
+    
+        <link rel="alternate" type="application/atom+xml" title="wudaijun&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <aside id="menu" class="hide" >
+    <aside id="menu" class="hide" >
   <div class="inner flex-row-vertical">
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap">
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
       <div class="brand">
-        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/favicon.png">
+        </a>
         <hgroup class="introduce">
           <h5 class="nickname">wudaijun</h5>
           <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
@@ -97,20 +104,12 @@
             </li>
         
       </ul>
-
-      <footer class="footer">
-  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
-  <p>wudaijun&#39;s blog &copy; 2017</p>
-  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
-</footer>
-
     </div>
   </div>
 </aside>
-  <main id="main">
-    <header class="top-header" id="header">
+
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -128,7 +127,7 @@
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
@@ -136,14 +135,23 @@
 </header>
 <header class="content-header post-header">
 
-    <div class="container">
+    <div class="container fade-scale">
         <h1 class="title">Erlang Map映射到Record</h1>
-        
-        
+        <h5 class="subtitle">
+            
+                <time datetime="2015-11-19T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2015-11-20
+</time>
 
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
+
+            
+        </h5>
     </div>
 
     
+
 
 </header>
 
@@ -153,24 +161,30 @@
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#实现"><span class="post-toc-text">实现</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1-_识别record"><span class="post-toc-text">1. 识别record</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#2-_填充record"><span class="post-toc-text">2. 填充record</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#结语"><span class="post-toc-text">结语</span></a></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#实现"><span class="post-toc-text">实现</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1-识别record"><span class="post-toc-text">1. 识别record</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#2-填充record"><span class="post-toc-text">2. 填充record</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#结语"><span class="post-toc-text">结语</span></a></li></ol>
         </nav>
     </aside>
     
-<article id="post-erlang-map2record" 
-  class="post-article article-type-post" itemprop="blogPost">
+<article id="post-erlang-map2record"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
         <h1 class="post-card-title">Erlang Map映射到Record</h1>
         <div class="post-meta">
-            <time datetime="2015-11-19T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2015-11-20
-</time>
+            <time class="post-time" title="2015-11-20 00:00:00" datetime="2015-11-19T16:00:00.000Z"  itemprop="datePublished">2015-11-20</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
 
 
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
 
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
@@ -178,12 +192,12 @@
 <p>而现在我们还没有实现对象(map)到协议(record)的自动映射，我觉得这个特性是比较有用的，特别是在同步一些实体数据的时候。无需写一堆Packer函数来将对象数据打包为协议。因此就研究了一下如何将map的数据自动映射到<a href="https://github.com/basho/erlang_protobuffs" target="_blank" rel="external">protobuffer</a>，也就是转换为record。</p>
 <a id="more"></a>
 <p>我希望实现一个接口：</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% RecordName: 	type:atom, 协议名字 如hero</span></span><br><span class="line"><span class="comment">% MapData:		type:map,  对象数据</span></span><br><span class="line"><span class="comment">% RecordData:	type:tuple, 被转换后的协议包</span></span><br><span class="line"><span class="function"><span class="title">map2record</span><span class="params">(<span class="variable">RecodName</span>, <span class="variable">MapData</span>)</span> -&gt;</span> <span class="variable">RecordData</span>.</span><br><span class="line"></span><br><span class="line">如：</span><br><span class="line">&gt; rd(hero, <span class="tuple">&#123;id, level, star&#125;</span>).</span><br><span class="line">&gt; <span class="variable">HeroMap</span> = #<span class="tuple">&#123;id =&gt; <span class="number">1</span>, level =&gt; <span class="number">2</span>, star =&gt; <span class="number">3</span>&#125;</span>.</span><br><span class="line">&gt; <span class="tuple">&#123;hero, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span> = map2record(hero, <span class="variable">HeroMap</span>).</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">% RecordName: 	type:atom, 协议名字 如hero</div><div class="line">% MapData:		type:map,  对象数据</div><div class="line">% RecordData:	type:tuple, 被转换后的协议包</div><div class="line">map2record(RecodName, MapData) -&gt; RecordData.</div><div class="line"></div><div class="line">如：</div><div class="line">&gt; rd(hero, &#123;id, level, star&#125;).</div><div class="line">&gt; HeroMap = #&#123;id =&gt; 1, level =&gt; 2, star =&gt; 3&#125;.</div><div class="line">&gt; &#123;hero, 1, 2, 3&#125; = map2record(hero, HeroMap).</div></pre></td></tr></table></figure>
 <p>在实际使用中，还应该考虑到protobuffer中的嵌套结构，map2record应该能够实现嵌套结构，repeated字段的自动解析。</p>
-<h3 id="实现">实现</h3><h4 id="1-_识别record">1. 识别record</h4><p>由于record类型在erlang运行时并不存在，因此我们无法判断一个原子是否是record，也无法获取它的字段。因此需要实现<code>is_record/1</code>和<code>record_fields/1</code>接口。</p>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><h4 id="1-识别record"><a href="#1-识别record" class="headerlink" title="1. 识别record"></a>1. 识别record</h4><p>由于record类型在erlang运行时并不存在，因此我们无法判断一个原子是否是record，也无法获取它的字段。因此需要实现<code>is_record/1</code>和<code>record_fields/1</code>接口。</p>
 <p>在网上找到<a href="http://jixiuf.github.io/erlang/record_info.html" target="_blank" rel="external">这篇博客</a>为此提供了一个很好的解决方案。它通过<a href="http://www.erlang.org/doc/man/epp.html" target="_blank" rel="external">erlang epp</a>模块对record定义进行语义级的解析，并且手动生成我们所需要的函数。我只需要其中的<code>record_fields</code>接口，并对<code>is_record</code>接口进行了一些修改，让其判断一个原子是否是一个record名字，而不是判断一个数据是不是record类型。</p>
-<h4 id="2-_填充record">2. 填充record</h4><p>填充比较简单，参见代码：</p>
-<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="expansion">&#123;% codeblock <span class="symbol">lang:</span>erlang %&#125;</span><br><span class="line">-<span class="class"><span class="keyword">module</span>(<span class="title">map2record</span>).</span></span><br><span class="line"></span><br><span class="line">-export([auto_transfer/<span class="number">2</span>]).</span><br><span class="line"></span><br><span class="line">auto_transfer(<span class="constant">RecordName</span>, <span class="constant">MapData</span>) -&gt;</span><br><span class="line">  <span class="keyword">case</span> &#123;<span class="symbol">myhead_util:</span>is_record(<span class="constant">RecordName</span>), is_list(<span class="constant">MapData</span>)&#125; <span class="keyword">of</span></span><br><span class="line">    &#123;<span class="literal">true</span>, <span class="literal">true</span>&#125; -&gt;</span><br><span class="line">      <span class="symbol">lists:</span>map(<span class="function"><span class="keyword">fun</span>(<span class="title">SubData</span></span>) -&gt;</span><br><span class="line">        auto_transfer(<span class="constant">RecordName</span>, <span class="constant">SubData</span>)</span><br><span class="line">      <span class="keyword">end</span>, <span class="constant">MapData</span>);</span><br><span class="line">    &#123;<span class="literal">true</span>, <span class="literal">false</span>&#125; -&gt;</span><br><span class="line">      <span class="constant">Fields</span> = <span class="symbol">myhead_util:</span>fields_info(<span class="constant">RecordName</span>),</span><br><span class="line">      <span class="constant">Values</span> = <span class="symbol">lists:</span>map(<span class="function"><span class="keyword">fun</span>(<span class="title">Field</span></span>) -&gt;</span><br><span class="line">        auto_transfer(<span class="constant">Field</span>, <span class="symbol">maps:</span>get(<span class="constant">Field</span>, <span class="constant">MapData</span>, undefined))</span><br><span class="line">      <span class="keyword">end</span>, <span class="constant">Fields</span>),</span><br><span class="line">      list_to_tuple([<span class="constant">RecordName</span>|<span class="constant">Values</span>]);</span><br><span class="line">    &#123;<span class="literal">false</span>, _&#125; -&gt;</span><br><span class="line">      <span class="constant">MapData</span> </span><br><span class="line">  <span class="keyword">end</span>.</span><br><span class="line">&#123;% <span class="keyword">end</span> codeblock %&#125;</span></span><br></pre></td></tr></table></figure>
+<h4 id="2-填充record"><a href="#2-填充record" class="headerlink" title="2. 填充record"></a>2. 填充record</h4><p>填充比较简单，参见代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">&#123;% codeblock lang:erlang %&#125;</div><div class="line">-module(map2record).</div><div class="line"></div><div class="line">-export([auto_transfer/2]).</div><div class="line"></div><div class="line">auto_transfer(RecordName, MapData) -&gt;</div><div class="line">  case &#123;myhead_util:is_record(RecordName), is_list(MapData)&#125; of</div><div class="line">    &#123;true, true&#125; -&gt;</div><div class="line">      lists:map(fun(SubData) -&gt;</div><div class="line">        auto_transfer(RecordName, SubData)</div><div class="line">      end, MapData);</div><div class="line">    &#123;true, false&#125; -&gt;</div><div class="line">      Fields = myhead_util:fields_info(RecordName),</div><div class="line">      Values = lists:map(fun(Field) -&gt;</div><div class="line">        auto_transfer(Field, maps:get(Field, MapData, undefined))</div><div class="line">      end, Fields),</div><div class="line">      list_to_tuple([RecordName|Values]);</div><div class="line">    &#123;false, _&#125; -&gt;</div><div class="line">      MapData </div><div class="line">  end.</div><div class="line">&#123;% end codeblock %&#125;</div></pre></td></tr></table></figure>
 <p>整个填充需要满足一些条件，</p>
 <ul>
 <li>record中的field名字要和map中的key一致</li>
@@ -191,25 +205,34 @@
 <li>对于嵌套record，字段名应该为被嵌套的record名字</li>
 </ul>
 <p>举个例子：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 协议文件</span></span><br><span class="line">message hero&#123;</span><br><span class="line">	required int32 id              = <span class="number">1</span>;</span><br><span class="line">	required hero_base hero_base   = <span class="number">2</span>;</span><br><span class="line">	repeated hero_skill hero_skill = <span class="number">3</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 那么内测中的HeroMap应该是这样：</span></span><br><span class="line"><span class="preprocessor">#&#123;	</span></span><br><span class="line">    id          =&gt; <span class="number">1</span>,</span><br><span class="line">    hero_base   =&gt; <span class="preprocessor">#&#123; ... &#125;</span></span><br><span class="line">    hero_skill  =&gt; [<span class="preprocessor">#&#123;...&#125;, #&#123;...&#125;]</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="结语">结语</h3><p>完整代码参见Github: <a href="https://github.com/wudaijun/erl_utils/tree/master/map2record" target="_blank" rel="external">https://github.com/wudaijun/erl_utils/tree/master/map2record</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">// 协议文件</div><div class="line">message hero&#123;</div><div class="line">	required int32 id              = 1;</div><div class="line">	required hero_base hero_base   = 2;</div><div class="line">	repeated hero_skill hero_skill = 3;</div><div class="line">&#125;</div><div class="line"></div><div class="line">// 那么内测中的HeroMap应该是这样：</div><div class="line">#&#123;	</div><div class="line">    id          =&gt; 1,</div><div class="line">    hero_base   =&gt; #&#123; ... &#125;</div><div class="line">    hero_skill  =&gt; [#&#123;...&#125;, #&#123;...&#125;]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p>完整代码参见Github: <a href="https://github.com/wudaijun/erl_utils/tree/master/map2record" target="_blank" rel="external">https://github.com/wudaijun/erl_utils/tree/master/map2record</a></p>
 <p>由于我们项目中大部分列表型实体都被组织成了譬如skill_id =&gt; SkillData的map，因此在项目中并没有采用这份方案，也不知具体实践会遇到什么问题。暂时只当个map2record的工具吧。</p>
 
         </div>
-        
+
         <blockquote class="post-copyright">
-            <div class="content">
-               这里写留言或版权声明：<a href="/2015/11/erlang-map2record/" target="_blank" rel="external">http://wudaijun.com/2015/11/erlang-map2record/</a>
-            </div>
-            <footer>
-                <a href="http://wudaijun.com">
-                    <img src="/favicon.png" alt="wudaijun">
-                    wudaijun
-                </a>
-            </footer>
-        </blockquote>
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2015-11-20T09:55:38.000Z" itemprop="dateUpdated">2015-11-20 17:55:38</time>
+</span><br>
+
 
         
+        博客均为原创，转载请征得作者同意并注明出处，本文永久链接：<a href="/2015/11/erlang-map2record/" target="_blank" rel="external">http://wudaijun.com/2015/11/erlang-map2record/</a>
+        
+    </div>
+    <footer>
+        <a href="http://wudaijun.com">
+            <img src="/favicon.png" alt="wudaijun">
+            wudaijun
+        </a>
+    </footer>
+</blockquote>
+
+        
+
 
         <div class="post-footer">
             
@@ -217,51 +240,55 @@
 
 
             
-            <div class="post-share-wrap">
-                <div class="post-share" id="post-share">
-    <div class="tit">分享到：</div>
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2015/11/erlang-map2record/&title=《Erlang Map映射到Record》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2015/11/erlang-map2record/&title=《Erlang Map映射到Record》 — wudaijun's blog&source=在游戏服务器中，通常要面临对象到模型的映射，以及对象到协议的映射，前者用于GS和DB交互，后者用于GS和Client交互。我们的项目中做到了对象到模型的自..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2015/11/erlang-map2record/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Erlang Map映射到Record》 — wudaijun's blog&url=http://wudaijun.com/2015/11/erlang-map2record/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2015/11/erlang-map2record/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
-                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
-                    <i class="icon icon-share-alt icon-lg"></i>
-                </a>
-            </div>
-            
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
 
         </div>
-    </div>   
+    </div>
 
     
 <nav class="post-nav flex-row flex-justify-between">
@@ -285,83 +312,139 @@
 </nav>
 
 
-            
+
     
 
 
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'wudaijun'; // required: replace example with your forum shortname
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://wudaijun.com/2015/11/erlang-map2record/index.html',
+        sourceId: 'erlang-map2record',
+        productKey: '02b378614d264e81bca14ffaadf03446',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
 
 
 </article>
 
 
+
 </div>
-  </main>
-  <div class="mask" id="mask"></div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>wudaijun &copy; 2015 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
-<script>
-var BLOG_SHARE = {
-    title: "Erlang Map映射到Record",
-    pic: "/favicon.png",
-    summary: document.getElementsByName('summary')[0].content,
-    url: "http://wudaijun.com/2015/11/erlang-map2record/"
-};
-</script>
-<div class="global-share" id="global-share">
-    <div class="tit">分享到：</div>
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2015/11/erlang-map2record/&title=《Erlang Map映射到Record》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2015/11/erlang-map2record/&title=《Erlang Map映射到Record》 — wudaijun's blog&source=在游戏服务器中，通常要面临对象到模型的映射，以及对象到协议的映射，前者用于GS和DB交互，后者用于GS和Client交互。我们的项目中做到了对象到模型的自..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2015/11/erlang-map2record/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Erlang Map映射到Record》 — wudaijun's blog&url=http://wudaijun.com/2015/11/erlang-map2record/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2015/11/erlang-map2record/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script src="/js/main.min.js?v=1.1.4"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://wudaijun.com/2015/11/erlang-map2record/" alt="微信分享二维码">
+</div>
 
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
@@ -369,7 +452,7 @@ var BLOG_SHARE = {
 </div>
 <template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -381,13 +464,14 @@ var BLOG_SHARE = {
 </li>
 </template>
 
-<script src="/js/search.min.js?v=1.1.4"></script>
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 

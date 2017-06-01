@@ -1,47 +1,59 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  
-  
-  <title>ranch | wudaijun&#39;s blog | Coding is Funny</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="theme-color" content="#3F51B5">
-  
-  
-  <meta name="keywords" content="erlang">
-  <meta name="description" content="一. 简介ranch是erlang的一个开源网络库，提供一个高效的监听进程池，并且将数据传输和数据处理分离开来。使用起来非常简单，灵活。关于ranch的更多介绍和使用，参见官方文档。">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>ranch | wudaijun&#39;s blog | Coding is Funny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="erlang">
+    <meta name="description" content="一. 简介ranch是erlang的一个开源网络库，提供一个高效的监听进程池，并且将数据传输和数据处理分离开来。使用起来非常简单，灵活。关于ranch的更多介绍和使用，参见官方文档。">
+<meta name="keywords" content="erlang">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ranch">
 <meta property="og:url" content="http://wudaijun.com/2015/09/erlang-ranch/index.html">
-<meta property="og:site_name" content="wudaijun's blog">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
 <meta property="og:description" content="一. 简介ranch是erlang的一个开源网络库，提供一个高效的监听进程池，并且将数据传输和数据处理分离开来。使用起来非常简单，灵活。关于ranch的更多介绍和使用，参见官方文档。">
 <meta property="og:image" content="http://wudaijun.com/assets/image/erlang/erlang_ranch.png">
 <meta property="og:updated_time" content="2015-10-10T07:41:52.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ranch">
 <meta name="twitter:description" content="一. 简介ranch是erlang的一个开源网络库，提供一个高效的监听进程池，并且将数据传输和数据处理分离开来。使用起来非常简单，灵活。关于ranch的更多介绍和使用，参见官方文档。">
-  
-    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
-  
-  <meta name="summary" content="&lt;h3 id=&quot;一-_简介&quot;&gt;一. 简介&lt;/h3&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/ninenines/ranch&quot;&gt;ranch&lt;/a&gt;是erlang的一个开源网络库，提供一个高效的监听进程池，并且将数据传输和数据处理分离开来。使用起来非常简单，灵活。关于ranch的更多介绍和使用，参见&lt;a href=&quot;https://github.com/ninenines/ranch/tree/master/doc/src&quot;&gt;官方文档&lt;/a&gt;。&lt;br&gt;">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+<meta name="twitter:image" content="http://wudaijun.com/assets/image/erlang/erlang_ranch.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="wudaijun&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <aside id="menu" class="hide" >
+    <aside id="menu" class="hide" >
   <div class="inner flex-row-vertical">
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap">
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
       <div class="brand">
-        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/favicon.png">
+        </a>
         <hgroup class="introduce">
           <h5 class="nickname">wudaijun</h5>
           <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
@@ -94,20 +106,12 @@
             </li>
         
       </ul>
-
-      <footer class="footer">
-  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
-  <p>wudaijun&#39;s blog &copy; 2017</p>
-  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
-</footer>
-
     </div>
   </div>
 </aside>
-  <main id="main">
-    <header class="top-header" id="header">
+
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -125,7 +129,7 @@
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
@@ -133,14 +137,23 @@
 </header>
 <header class="content-header post-header">
 
-    <div class="container">
+    <div class="container fade-scale">
         <h1 class="title">ranch</h1>
-        
-        
+        <h5 class="subtitle">
+            
+                <time datetime="2015-09-22T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2015-09-23
+</time>
 
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
+
+            
+        </h5>
     </div>
 
     
+
 
 </header>
 
@@ -150,29 +163,35 @@
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#一-_简介"><span class="post-toc-text">一. 简介</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#二-_功能"><span class="post-toc-text">二. 功能</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#三-_使用"><span class="post-toc-text">三. 使用</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#四-_结构"><span class="post-toc-text">四. 结构</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#ranch_server:"><span class="post-toc-text">ranch_server:</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#ranch_listener_sup:"><span class="post-toc-text">ranch_listener_sup:</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#ranch_acceptors_sup:"><span class="post-toc-text">ranch_acceptors_sup:</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#ranch_acceptor:"><span class="post-toc-text">ranch_acceptor:</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#ranch_conns_sup:"><span class="post-toc-text">ranch_conns_sup:</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#your_protocol"><span class="post-toc-text">your_protocol</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#五-_其它"><span class="post-toc-text">五. 其它</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#proc_lib"><span class="post-toc-text">proc_lib</span></a></li></ol></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#一-简介"><span class="post-toc-text">一. 简介</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#二-功能"><span class="post-toc-text">二. 功能</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#三-使用"><span class="post-toc-text">三. 使用</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#四-结构"><span class="post-toc-text">四. 结构</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#ranch-server"><span class="post-toc-text">ranch_server:</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#ranch-listener-sup"><span class="post-toc-text">ranch_listener_sup:</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#ranch-acceptors-sup"><span class="post-toc-text">ranch_acceptors_sup:</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#ranch-acceptor"><span class="post-toc-text">ranch_acceptor:</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#ranch-conns-sup"><span class="post-toc-text">ranch_conns_sup:</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#your-protocol"><span class="post-toc-text">your_protocol</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#五-其它"><span class="post-toc-text">五. 其它</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#proc-lib"><span class="post-toc-text">proc_lib</span></a></li></ol></li></ol>
         </nav>
     </aside>
     
-<article id="post-erlang-ranch" 
-  class="post-article article-type-post" itemprop="blogPost">
+<article id="post-erlang-ranch"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
         <h1 class="post-card-title">ranch</h1>
         <div class="post-meta">
-            <time datetime="2015-09-22T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2015-09-23
-</time>
+            <time class="post-time" title="2015-09-23 00:00:00" datetime="2015-09-22T16:00:00.000Z"  itemprop="datePublished">2015-09-23</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
 
 
 
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
-            <h3 id="一-_简介">一. 简介</h3><p><a href="https://github.com/ninenines/ranch" target="_blank" rel="external">ranch</a>是erlang的一个开源网络库，提供一个高效的监听进程池，并且将数据传输和数据处理分离开来。使用起来非常简单，灵活。关于ranch的更多介绍和使用，参见<a href="https://github.com/ninenines/ranch/tree/master/doc/src" target="_blank" rel="external">官方文档</a>。<br><a id="more"></a></p>
-<h3 id="二-_功能">二. 功能</h3><p>ranch将网络连接分为传输层(transport)和协议层(protocol)，传输层是底层数据的传输方式，如tcp, udp, ssl等。协议层负责数据在业务逻辑上的处理，是开发者真正需要关心的部分。而ranch的一个目标就是将传输层和逻辑层很好的分离开来。</p>
+            <h3 id="一-简介"><a href="#一-简介" class="headerlink" title="一. 简介"></a>一. 简介</h3><p><a href="https://github.com/ninenines/ranch" target="_blank" rel="external">ranch</a>是erlang的一个开源网络库，提供一个高效的监听进程池，并且将数据传输和数据处理分离开来。使用起来非常简单，灵活。关于ranch的更多介绍和使用，参见<a href="https://github.com/ninenines/ranch/tree/master/doc/src" target="_blank" rel="external">官方文档</a>。<br><a id="more"></a></p>
+<h3 id="二-功能"><a href="#二-功能" class="headerlink" title="二. 功能"></a>二. 功能</h3><p>ranch将网络连接分为传输层(transport)和协议层(protocol)，传输层是底层数据的传输方式，如tcp, udp, ssl等。协议层负责数据在业务逻辑上的处理，是开发者真正需要关心的部分。而ranch的一个目标就是将传输层和逻辑层很好的分离开来。</p>
 <p>对服务器端来说，传输层需要负责管理监听套接字和连接套接字。ranch提供一个可设置的进程池，用于高效地接受新连接，将新连接套接字交予用户定义的连接进程，进行业务逻辑上的处理。</p>
 <p>ranch做了什么：</p>
 <ul>
@@ -182,28 +201,34 @@
 <li>到达最大连接数时，后续连接(已经accept的连接)进程将被阻塞，待负载降下来或最大连接数变大后被唤醒</li>
 <li>提供安全的网络退出方式</li>
 </ul>
-<h3 id="三-_使用">三. 使用</h3><pre><code><span class="atom">ok</span> = <span class="atom">application</span>:<span class="atom">start</span>(<span class="atom">ranch</span>).
+<h3 id="三-使用"><a href="#三-使用" class="headerlink" title="三. 使用"></a>三. 使用</h3><pre><code>ok = application:start(ranch).
 
-{<span class="atom">ok</span>, <span class="name">_</span>} = <span class="atom">ranch</span>:<span class="atom">start_listener</span>(<span class="atom">tcp_echo</span>, <span class="number">100</span>, <span class="comment">% 监听器名字和监听进程池大小</span>
-    <span class="atom">ranch_tcp</span>, [{<span class="atom">port</span>, <span class="number">5555</span>}],        <span class="comment">% 定义底层transport handler及其选项 ranch_tcp由ranch提供，底层使用gen_tcp</span>
-    <span class="atom">echo_protocol</span>, []                <span class="comment">% 自定义的protocol handler进程所在模块，及其选项</span>
+{ok, _} = ranch:start_listener(tcp_echo, 100, % 监听器名字和监听进程池大小
+    ranch_tcp, [{port, 5555}],        % 定义底层transport handler及其选项 ranch_tcp由ranch提供，底层使用gen_tcp
+    echo_protocol, []                % 自定义的protocol handler进程所在模块，及其选项
 ).
 </code></pre><p>之后我们需要做的，就是定义echo_protocol，ranch会在每个新连接到达时，调用<code>echo_protocol:start_link/4</code>，生成我们的协议处理进程。参见<a href="https://github.com/ninenines/ranch/blob/master/examples/tcp_echo/src/echo_protocol.erl" target="_blank" rel="external">官网示例</a>。使用起来非常简单。</p>
-<h3 id="四-_结构">四. 结构</h3><p>ranch的进程结构如下：</p>
-<p><img src="/assets/image/erlang/erlang_ranch.png" alt="" title="ranch进程结构"></p>
-<h4 id="ranch_server:">ranch_server:</h4><p>维护全局配置信息，整个ranch_app唯一，由多个listener共享。通过ets维护一些配置信息和核心进程的Pid信息，格式<code>\{\{Opt, Ref\}, OptValue\}</code>，Ref是listener名字。</p>
-<h4 id="ranch_listener_sup:">ranch_listener_sup:</h4><p>由<code>ranch:start_listener/6</code>启动，其子进程有ranch_conns_sup和ranch_acceptors_sup，以<code>rest_for_one</code>策略启动，亦即一旦ranch_conns_sup挂了，ranch_acceptors_sup也将被终止，然后再依次重启。</p>
-<h4 id="ranch_acceptors_sup:">ranch_acceptors_sup:</h4><p>由它创建监听套接字，并启动N个ranch_accepter执行accept操作(<code>gen_tcp:accept</code>本身支持多process执行)。</p>
-<h4 id="ranch_acceptor:">ranch_acceptor:</h4><p>执行loop，不断执行accept操作，将新conn socket的所属权交给ranch_conns_sup(<code>gen_tcp:controlling_process</code>)，通知其启动新protocol handle进行处理，并阻塞等待ranch_conns_sup返回。</p>
-<h4 id="ranch_conns_sup:">ranch_conns_sup:</h4><p>维护当前所有连接，当新连接到达时，调用<code>your_protocol:start_link/4</code>创建新进程，之后将conn socket所属权交给新连接进程。当连接到达上限时，阻塞前来通知开启新连接的Acceptor进程。直到阀值提高，或有其它连接断开，再唤醒这些Acceptor。ranch的实际最大连接数 = max_conns + NAcceptor。</p>
-<h4 id="your_protocol">your_protocol</h4><p>开发者定义protocol，当有新连接到达时，将调用<code>your_protocol:start_link/4</code>启动新进程，之后的处理交予开发者。</p>
-<h3 id="五-_其它">五. 其它</h3><ul>
+<h3 id="四-结构"><a href="#四-结构" class="headerlink" title="四. 结构"></a>四. 结构</h3><p>ranch的进程结构如下：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/assets/image/erlang/erlang_ranch.png" alt="ranch进程结构" title="">
+                </div>
+                <div class="image-caption">ranch进程结构</div>
+            </figure>
+<h4 id="ranch-server"><a href="#ranch-server" class="headerlink" title="ranch_server:"></a>ranch_server:</h4><p>维护全局配置信息，整个ranch_app唯一，由多个listener共享。通过ets维护一些配置信息和核心进程的Pid信息，格式<code>\{\{Opt, Ref\}, OptValue\}</code>，Ref是listener名字。</p>
+<h4 id="ranch-listener-sup"><a href="#ranch-listener-sup" class="headerlink" title="ranch_listener_sup:"></a>ranch_listener_sup:</h4><p>由<code>ranch:start_listener/6</code>启动，其子进程有ranch_conns_sup和ranch_acceptors_sup，以<code>rest_for_one</code>策略启动，亦即一旦ranch_conns_sup挂了，ranch_acceptors_sup也将被终止，然后再依次重启。</p>
+<h4 id="ranch-acceptors-sup"><a href="#ranch-acceptors-sup" class="headerlink" title="ranch_acceptors_sup:"></a>ranch_acceptors_sup:</h4><p>由它创建监听套接字，并启动N个ranch_accepter执行accept操作(<code>gen_tcp:accept</code>本身支持多process执行)。</p>
+<h4 id="ranch-acceptor"><a href="#ranch-acceptor" class="headerlink" title="ranch_acceptor:"></a>ranch_acceptor:</h4><p>执行loop，不断执行accept操作，将新conn socket的所属权交给ranch_conns_sup(<code>gen_tcp:controlling_process</code>)，通知其启动新protocol handle进行处理，并阻塞等待ranch_conns_sup返回。</p>
+<h4 id="ranch-conns-sup"><a href="#ranch-conns-sup" class="headerlink" title="ranch_conns_sup:"></a>ranch_conns_sup:</h4><p>维护当前所有连接，当新连接到达时，调用<code>your_protocol:start_link/4</code>创建新进程，之后将conn socket所属权交给新连接进程。当连接到达上限时，阻塞前来通知开启新连接的Acceptor进程。直到阀值提高，或有其它连接断开，再唤醒这些Acceptor。ranch的实际最大连接数 = max_conns + NAcceptor。</p>
+<h4 id="your-protocol"><a href="#your-protocol" class="headerlink" title="your_protocol"></a>your_protocol</h4><p>开发者定义protocol，当有新连接到达时，将调用<code>your_protocol:start_link/4</code>启动新进程，之后的处理交予开发者。</p>
+<h3 id="五-其它"><a href="#五-其它" class="headerlink" title="五. 其它"></a>五. 其它</h3><ul>
 <li>对于不需要接收其它进程消息的进程，应该定义通过receive清理进程信箱，避免意料之外的消息一直堆积在信箱中。见<a href="https://github.com/ninenines/ranch/blob/master/src/ranch_acceptor.erl" target="_blank" rel="external">ranch_accepter.erl</a>。</li>
 <li>rest_for_one，实现更加强大灵活的监督者。</li>
 <li>ranch将网络的退出方式(brutal_kill，Timeout，infinity等)，交给开发者定制，而不放在框架中。</li>
 <li>注意套接字所属权的转移：<code>ranch_acceptor</code> -&gt; <code>ranch_conns_sup</code> -&gt; <code>your_protocol</code>。</li>
 </ul>
-<h4 id="proc_lib">proc_lib</h4><p>ranch中多处用到了proc_lib启动进程，proc_lib是OTP进程的基石，所有OTP behaviour进程都通过proc_lib来创建新进程。</p>
+<h4 id="proc-lib"><a href="#proc-lib" class="headerlink" title="proc_lib"></a>proc_lib</h4><p>ranch中多处用到了proc_lib启动进程，proc_lib是OTP进程的基石，所有OTP behaviour进程都通过proc_lib来创建新进程。</p>
 <p>proc_lib的使用方法：</p>
 <ol>
 <li><code>proc_lib:start_link(M, F, A)</code>启动一个符合OTP规范的进程</li>
@@ -217,20 +242,29 @@
 </ol>
 
         </div>
-        
+
         <blockquote class="post-copyright">
-            <div class="content">
-               这里写留言或版权声明：<a href="/2015/09/erlang-ranch/" target="_blank" rel="external">http://wudaijun.com/2015/09/erlang-ranch/</a>
-            </div>
-            <footer>
-                <a href="http://wudaijun.com">
-                    <img src="/favicon.png" alt="wudaijun">
-                    wudaijun
-                </a>
-            </footer>
-        </blockquote>
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2015-10-10T07:41:52.000Z" itemprop="dateUpdated">2015-10-10 15:41:52</time>
+</span><br>
+
 
         
+        博客均为原创，转载请征得作者同意并注明出处，本文永久链接：<a href="/2015/09/erlang-ranch/" target="_blank" rel="external">http://wudaijun.com/2015/09/erlang-ranch/</a>
+        
+    </div>
+    <footer>
+        <a href="http://wudaijun.com">
+            <img src="/favicon.png" alt="wudaijun">
+            wudaijun
+        </a>
+    </footer>
+</blockquote>
+
+        
+
 
         <div class="post-footer">
             
@@ -238,51 +272,55 @@
 
 
             
-            <div class="post-share-wrap">
-                <div class="post-share" id="post-share">
-    <div class="tit">分享到：</div>
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2015/09/erlang-ranch/&title=《ranch》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2015/09/erlang-ranch/&title=《ranch》 — wudaijun's blog&source=一. 简介ranch是erlang的一个开源网络库，提供一个高效的监听进程池，并且将数据传输和数据处理分离开来。使用起来非常简单，灵活。关于ranch的更..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2015/09/erlang-ranch/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《ranch》 — wudaijun's blog&url=http://wudaijun.com/2015/09/erlang-ranch/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2015/09/erlang-ranch/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
-                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
-                    <i class="icon icon-share-alt icon-lg"></i>
-                </a>
-            </div>
-            
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
 
         </div>
-    </div>   
+    </div>
 
     
 <nav class="post-nav flex-row flex-justify-between">
@@ -306,83 +344,139 @@
 </nav>
 
 
-            
+
     
 
 
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'wudaijun'; // required: replace example with your forum shortname
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://wudaijun.com/2015/09/erlang-ranch/index.html',
+        sourceId: 'erlang-ranch',
+        productKey: '02b378614d264e81bca14ffaadf03446',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
 
 
 </article>
 
 
+
 </div>
-  </main>
-  <div class="mask" id="mask"></div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>wudaijun &copy; 2015 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
-<script>
-var BLOG_SHARE = {
-    title: "ranch",
-    pic: "/favicon.png",
-    summary: document.getElementsByName('summary')[0].content,
-    url: "http://wudaijun.com/2015/09/erlang-ranch/"
-};
-</script>
-<div class="global-share" id="global-share">
-    <div class="tit">分享到：</div>
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2015/09/erlang-ranch/&title=《ranch》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2015/09/erlang-ranch/&title=《ranch》 — wudaijun's blog&source=一. 简介ranch是erlang的一个开源网络库，提供一个高效的监听进程池，并且将数据传输和数据处理分离开来。使用起来非常简单，灵活。关于ranch的更..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2015/09/erlang-ranch/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《ranch》 — wudaijun's blog&url=http://wudaijun.com/2015/09/erlang-ranch/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2015/09/erlang-ranch/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script src="/js/main.min.js?v=1.1.4"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://wudaijun.com/2015/09/erlang-ranch/" alt="微信分享二维码">
+</div>
 
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
@@ -390,7 +484,7 @@ var BLOG_SHARE = {
 </div>
 <template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -402,13 +496,14 @@ var BLOG_SHARE = {
 </li>
 </template>
 
-<script src="/js/search.min.js?v=1.1.4"></script>
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 

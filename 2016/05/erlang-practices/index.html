@@ -1,51 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  
-  
-  <title>Erlang 实践经验 | wudaijun&#39;s blog | Coding is Funny</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="theme-color" content="#3F51B5">
-  
-  
-  <meta name="keywords" content="erlang">
-  <meta name="description" content="使用binary而不是lists所有能用binary的地方都用binary，配置，协议，DB，网络接口，等等，如果驱动或第三方库不能很好地支持binary，就换一个或者重写接口，如果项目一开始就这么做，会在后期省掉很多麻烦。
-不要动态生成 atomatom不被Erlang GC，在代码中要时刻警惕诸如list(binary)_to_atom/2和binary_to_term/1等动态生成atom的">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>Erlang 实践经验 | wudaijun&#39;s blog | Coding is Funny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="erlang">
+    <meta name="description" content="使用binary而不是lists所有能用binary的地方都用binary，配置，协议，DB，网络接口，等等，如果驱动或第三方库不能很好地支持binary，就换一个或者重写接口，如果项目一开始就这么做，会在后期省掉很多麻烦。 不要动态生成 atomatom不被Erlang GC，在代码中要时刻警惕诸如list(binary)_to_atom/2和binary_to_term/1等动态生成atom的">
+<meta name="keywords" content="erlang">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Erlang 实践经验">
 <meta property="og:url" content="http://wudaijun.com/2016/05/erlang-practices/index.html">
-<meta property="og:site_name" content="wudaijun's blog">
-<meta property="og:description" content="使用binary而不是lists所有能用binary的地方都用binary，配置，协议，DB，网络接口，等等，如果驱动或第三方库不能很好地支持binary，就换一个或者重写接口，如果项目一开始就这么做，会在后期省掉很多麻烦。
-不要动态生成 atomatom不被Erlang GC，在代码中要时刻警惕诸如list(binary)_to_atom/2和binary_to_term/1等动态生成atom的">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
+<meta property="og:description" content="使用binary而不是lists所有能用binary的地方都用binary，配置，协议，DB，网络接口，等等，如果驱动或第三方库不能很好地支持binary，就换一个或者重写接口，如果项目一开始就这么做，会在后期省掉很多麻烦。 不要动态生成 atomatom不被Erlang GC，在代码中要时刻警惕诸如list(binary)_to_atom/2和binary_to_term/1等动态生成atom的">
 <meta property="og:updated_time" content="2017-02-27T09:35:15.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Erlang 实践经验">
-<meta name="twitter:description" content="使用binary而不是lists所有能用binary的地方都用binary，配置，协议，DB，网络接口，等等，如果驱动或第三方库不能很好地支持binary，就换一个或者重写接口，如果项目一开始就这么做，会在后期省掉很多麻烦。
-不要动态生成 atomatom不被Erlang GC，在代码中要时刻警惕诸如list(binary)_to_atom/2和binary_to_term/1等动态生成atom的">
-  
-    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
-  
-  <meta name="summary" content="&lt;h3 id=&quot;使用binary而不是lists&quot;&gt;使用binary而不是lists&lt;/h3&gt;&lt;p&gt;所有能用binary的地方都用binary，配置，协议，DB，网络接口，等等，如果驱动或第三方库不能很好地支持binary，就换一个或者重写接口，如果项目一开始就这么做，会在后期省掉很多麻烦。&lt;/p&gt;
-&lt;h3 id=&quot;不要动态生成_atom&quot;&gt;不要动态生成 atom&lt;/h3&gt;&lt;p&gt;atom不被Erlang GC，在代码中要时刻警惕诸如&lt;code&gt;list(binary)_to_atom/2&lt;/code&gt;和&lt;code&gt;binary_to_term/1&lt;/code&gt;等动态生成atom的API，特别是这些API的输入源来自于网络或客户端等不可信源，可用&lt;code&gt;list(binary)_to_existing_atom/2&lt;/code&gt;和&lt;code&gt;binary_to_term/2&lt;/code&gt;替换之，前者只能转换为已经存在的原子，否则会报错，后者功能类似，确保不会生成新的atom，函数引用，Pid等(这些资源都是不会被GC回收的)。&lt;/p&gt;
-&lt;p&gt;可通过&lt;code&gt;erlang:memory/0&lt;/code&gt;来观察atom内存使用状况。&lt;/p&gt;">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+<meta name="twitter:description" content="使用binary而不是lists所有能用binary的地方都用binary，配置，协议，DB，网络接口，等等，如果驱动或第三方库不能很好地支持binary，就换一个或者重写接口，如果项目一开始就这么做，会在后期省掉很多麻烦。 不要动态生成 atomatom不被Erlang GC，在代码中要时刻警惕诸如list(binary)_to_atom/2和binary_to_term/1等动态生成atom的">
+    
+        <link rel="alternate" type="application/atom+xml" title="wudaijun&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <aside id="menu" class="hide" >
+    <aside id="menu" class="hide" >
   <div class="inner flex-row-vertical">
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap">
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
       <div class="brand">
-        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/favicon.png">
+        </a>
         <hgroup class="introduce">
           <h5 class="nickname">wudaijun</h5>
           <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
@@ -98,20 +104,12 @@
             </li>
         
       </ul>
-
-      <footer class="footer">
-  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
-  <p>wudaijun&#39;s blog &copy; 2017</p>
-  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
-</footer>
-
     </div>
   </div>
 </aside>
-  <main id="main">
-    <header class="top-header" id="header">
+
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -129,7 +127,7 @@
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
@@ -137,14 +135,23 @@
 </header>
 <header class="content-header post-header">
 
-    <div class="container">
+    <div class="container fade-scale">
         <h1 class="title">Erlang 实践经验</h1>
-        
-        
+        <h5 class="subtitle">
+            
+                <time datetime="2016-05-24T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2016-05-25
+</time>
 
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
+
+            
+        </h5>
     </div>
 
     
+
 
 </header>
 
@@ -154,38 +161,44 @@
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#使用binary而不是lists"><span class="post-toc-text">使用binary而不是lists</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#不要动态生成_atom"><span class="post-toc-text">不要动态生成 atom</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#保证OTP进程的init/1是安全稳定的"><span class="post-toc-text">保证OTP进程的init/1是安全稳定的</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#消息队列膨胀"><span class="post-toc-text">消息队列膨胀</span></a></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#使用binary而不是lists"><span class="post-toc-text">使用binary而不是lists</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#不要动态生成-atom"><span class="post-toc-text">不要动态生成 atom</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#保证OTP进程的init-1是安全稳定的"><span class="post-toc-text">保证OTP进程的init/1是安全稳定的</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#消息队列膨胀"><span class="post-toc-text">消息队列膨胀</span></a></li></ol>
         </nav>
     </aside>
     
-<article id="post-erlang-practices" 
-  class="post-article article-type-post" itemprop="blogPost">
+<article id="post-erlang-practices"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
         <h1 class="post-card-title">Erlang 实践经验</h1>
         <div class="post-meta">
-            <time datetime="2016-05-24T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2016-05-25
-</time>
+            <time class="post-time" title="2016-05-25 00:00:00" datetime="2016-05-24T16:00:00.000Z"  itemprop="datePublished">2016-05-25</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
 
 
 
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
-            <h3 id="使用binary而不是lists">使用binary而不是lists</h3><p>所有能用binary的地方都用binary，配置，协议，DB，网络接口，等等，如果驱动或第三方库不能很好地支持binary，就换一个或者重写接口，如果项目一开始就这么做，会在后期省掉很多麻烦。</p>
-<h3 id="不要动态生成_atom">不要动态生成 atom</h3><p>atom不被Erlang GC，在代码中要时刻警惕诸如<code>list(binary)_to_atom/2</code>和<code>binary_to_term/1</code>等动态生成atom的API，特别是这些API的输入源来自于网络或客户端等不可信源，可用<code>list(binary)_to_existing_atom/2</code>和<code>binary_to_term/2</code>替换之，前者只能转换为已经存在的原子，否则会报错，后者功能类似，确保不会生成新的atom，函数引用，Pid等(这些资源都是不会被GC回收的)。</p>
+            <h3 id="使用binary而不是lists"><a href="#使用binary而不是lists" class="headerlink" title="使用binary而不是lists"></a>使用binary而不是lists</h3><p>所有能用binary的地方都用binary，配置，协议，DB，网络接口，等等，如果驱动或第三方库不能很好地支持binary，就换一个或者重写接口，如果项目一开始就这么做，会在后期省掉很多麻烦。</p>
+<h3 id="不要动态生成-atom"><a href="#不要动态生成-atom" class="headerlink" title="不要动态生成 atom"></a>不要动态生成 atom</h3><p>atom不被Erlang GC，在代码中要时刻警惕诸如<code>list(binary)_to_atom/2</code>和<code>binary_to_term/1</code>等动态生成atom的API，特别是这些API的输入源来自于网络或客户端等不可信源，可用<code>list(binary)_to_existing_atom/2</code>和<code>binary_to_term/2</code>替换之，前者只能转换为已经存在的原子，否则会报错，后者功能类似，确保不会生成新的atom，函数引用，Pid等(这些资源都是不会被GC回收的)。</p>
 <p>可通过<code>erlang:memory/0</code>来观察atom内存使用状况。</p>
 <a id="more"></a>
-<h3 id="保证OTP进程的init/1是安全稳定的">保证OTP进程的init/1是安全稳定的</h3><p>supervisor的start_link会<strong>同步启动</strong>整个supervisor树，如果某个孩子进程启动失败，supervisor会立即尝试重启，如果重启成功，继续启动下一个孩子进程，否则重试次数到达设定上限后，supervisor启动失败。</p>
+<h3 id="保证OTP进程的init-1是安全稳定的"><a href="#保证OTP进程的init-1是安全稳定的" class="headerlink" title="保证OTP进程的init/1是安全稳定的"></a>保证OTP进程的init/1是安全稳定的</h3><p>supervisor的start_link会<strong>同步启动</strong>整个supervisor树，如果某个孩子进程启动失败，supervisor会立即尝试重启，如果重启成功，继续启动下一个孩子进程，否则重试次数到达设定上限后，supervisor启动失败。</p>
 <p>在实践中，不要将耗时，依赖外部不稳定服务的操作，放在init/1中，这会导致整个supervisor树启动的不稳定性。特别是对于一些网络连接，数据库读取等操作，应该尽量通过诸如<code>gen_server:cast(self(), reconnect)</code>的形式，将实际初始化延后，并维护好状态(是否已经初始化完成)。在<code>handle_cast(reconnect, State)</code>中处理具体的细节，不管是初始化，还是运行时的网络异常，都可以通过该函数处理。如果一个错误会经常性地出现在日常的操作中，那么是现在出现，还是以后出现是没有区别的，尽量以同样的方法处理它。</p>
 <p>通常情况下，我们需要保证OTP进程的init/1是快速，稳定的，如果连启动过程都不是稳定的，那么supervisor的启动也就没有多大意义了(不能将整个系统恢复到已知稳定状态)，并且可能一个进程本身的非关键初始化错误，导致了整个supervisor启动失败。</p>
 <blockquote>
 <p>initialization与supervision方法的不同之处：在initialization过程中，client的使用者来决定他们能容忍什么程序的错误，而不是client自己本身决定的。在设计容错系统中，这两者区别尤其重要。   – <a href="https://zhongwencool.gitbooks.io/erlang_in_anger/chapter_2_building_open_source_erlang_software/side_effects.html" target="_blank" rel="external">Erlang In Anger</a></p>
 </blockquote>
-<h3 id="消息队列膨胀">消息队列膨胀</h3><p>Erlang系统最常见的问题是节点内存耗尽，而内存耗尽的主凶之一就是消息队列过长(Erlang消息队列的大小是无限制的)。要查看消息队列膨胀的进程不难，但是难的是找到消息队列膨胀的原因和解决方案。</p>
+<h3 id="消息队列膨胀"><a href="#消息队列膨胀" class="headerlink" title="消息队列膨胀"></a>消息队列膨胀</h3><p>Erlang系统最常见的问题是节点内存耗尽，而内存耗尽的主凶之一就是消息队列过长(Erlang消息队列的大小是无限制的)。要查看消息队列膨胀的进程不难，但是难的是找到消息队列膨胀的原因和解决方案。</p>
 <p>常见的消息膨胀原因：</p>
 <ol>
 <li>日志进程：特别是错误日志，重试，重启，链接都是产生大量错误日志消息的原因，解决方案：使用lager</li>
@@ -195,20 +208,29 @@
 </ol>
 
         </div>
-        
+
         <blockquote class="post-copyright">
-            <div class="content">
-               这里写留言或版权声明：<a href="/2016/05/erlang-practices/" target="_blank" rel="external">http://wudaijun.com/2016/05/erlang-practices/</a>
-            </div>
-            <footer>
-                <a href="http://wudaijun.com">
-                    <img src="/favicon.png" alt="wudaijun">
-                    wudaijun
-                </a>
-            </footer>
-        </blockquote>
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2017-02-27T09:35:15.000Z" itemprop="dateUpdated">2017-02-27 17:35:15</time>
+</span><br>
+
 
         
+        博客均为原创，转载请征得作者同意并注明出处，本文永久链接：<a href="/2016/05/erlang-practices/" target="_blank" rel="external">http://wudaijun.com/2016/05/erlang-practices/</a>
+        
+    </div>
+    <footer>
+        <a href="http://wudaijun.com">
+            <img src="/favicon.png" alt="wudaijun">
+            wudaijun
+        </a>
+    </footer>
+</blockquote>
+
+        
+
 
         <div class="post-footer">
             
@@ -216,51 +238,55 @@
 
 
             
-            <div class="post-share-wrap">
-                <div class="post-share" id="post-share">
-    <div class="tit">分享到：</div>
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2016/05/erlang-practices/&title=《Erlang 实践经验》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2016/05/erlang-practices/&title=《Erlang 实践经验》 — wudaijun's blog&source=使用binary而不是lists所有能用binary的地方都用binary，配置，协议，DB，网络接口，等等，如果驱动或第三方库不能很好地支持binary..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2016/05/erlang-practices/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Erlang 实践经验》 — wudaijun's blog&url=http://wudaijun.com/2016/05/erlang-practices/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2016/05/erlang-practices/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
-                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
-                    <i class="icon icon-share-alt icon-lg"></i>
-                </a>
-            </div>
-            
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
 
         </div>
-    </div>   
+    </div>
 
     
 <nav class="post-nav flex-row flex-justify-between">
@@ -284,83 +310,139 @@
 </nav>
 
 
-            
+
     
 
 
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'wudaijun'; // required: replace example with your forum shortname
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://wudaijun.com/2016/05/erlang-practices/index.html',
+        sourceId: 'erlang-practices',
+        productKey: '02b378614d264e81bca14ffaadf03446',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
 
 
 </article>
 
 
+
 </div>
-  </main>
-  <div class="mask" id="mask"></div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>wudaijun &copy; 2015 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
-<script>
-var BLOG_SHARE = {
-    title: "Erlang 实践经验",
-    pic: "/favicon.png",
-    summary: document.getElementsByName('summary')[0].content,
-    url: "http://wudaijun.com/2016/05/erlang-practices/"
-};
-</script>
-<div class="global-share" id="global-share">
-    <div class="tit">分享到：</div>
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2016/05/erlang-practices/&title=《Erlang 实践经验》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2016/05/erlang-practices/&title=《Erlang 实践经验》 — wudaijun's blog&source=使用binary而不是lists所有能用binary的地方都用binary，配置，协议，DB，网络接口，等等，如果驱动或第三方库不能很好地支持binary..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2016/05/erlang-practices/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Erlang 实践经验》 — wudaijun's blog&url=http://wudaijun.com/2016/05/erlang-practices/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2016/05/erlang-practices/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script src="/js/main.min.js?v=1.1.4"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://wudaijun.com/2016/05/erlang-practices/" alt="微信分享二维码">
+</div>
 
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
@@ -368,7 +450,7 @@ var BLOG_SHARE = {
 </div>
 <template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -380,13 +462,14 @@ var BLOG_SHARE = {
 </li>
 </template>
 
-<script src="/js/search.min.js?v=1.1.4"></script>
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 

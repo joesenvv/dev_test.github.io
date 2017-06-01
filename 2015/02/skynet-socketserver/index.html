@@ -1,46 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  
-  
-  <title>skynet socketserver | wudaijun&#39;s blog | Coding is Funny</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="theme-color" content="#3F51B5">
-  
-  
-  <meta name="keywords" content="lua,skynet">
-  <meta name="description" content="1. 异步IOskynet用C编写的sokcet模块使用异步回调机制，通过lualib-src/lua-socket.c导出为socketdriver模块。skynet socket C API使用的异步回调方式是：在启动socket时，记录当前服务handle，之后该socket上面的消息(底层使用epoll机制)通过skynet消息的方式发往该服务。这里的当前服务指的是socket启动时所在的">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>skynet socketserver | wudaijun&#39;s blog | Coding is Funny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="lua,skynet">
+    <meta name="description" content="1. 异步IOskynet用C编写的sokcet模块使用异步回调机制，通过lualib-src/lua-socket.c导出为socketdriver模块。skynet socket C API使用的异步回调方式是：在启动socket时，记录当前服务handle，之后该socket上面的消息(底层使用epoll机制)通过skynet消息的方式发往该服务。这里的当前服务指的是socket启动时所在的">
+<meta name="keywords" content="lua,skynet">
 <meta property="og:type" content="article">
 <meta property="og:title" content="skynet socketserver">
 <meta property="og:url" content="http://wudaijun.com/2015/02/skynet-socketserver/index.html">
-<meta property="og:site_name" content="wudaijun's blog">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
 <meta property="og:description" content="1. 异步IOskynet用C编写的sokcet模块使用异步回调机制，通过lualib-src/lua-socket.c导出为socketdriver模块。skynet socket C API使用的异步回调方式是：在启动socket时，记录当前服务handle，之后该socket上面的消息(底层使用epoll机制)通过skynet消息的方式发往该服务。这里的当前服务指的是socket启动时所在的">
 <meta property="og:updated_time" content="2016-09-20T14:51:49.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="skynet socketserver">
 <meta name="twitter:description" content="1. 异步IOskynet用C编写的sokcet模块使用异步回调机制，通过lualib-src/lua-socket.c导出为socketdriver模块。skynet socket C API使用的异步回调方式是：在启动socket时，记录当前服务handle，之后该socket上面的消息(底层使用epoll机制)通过skynet消息的方式发往该服务。这里的当前服务指的是socket启动时所在的">
-  
-    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
-  
-  <meta name="summary" content="&lt;h3 id=&quot;1-_异步IO&quot;&gt;1. 异步IO&lt;/h3&gt;&lt;p&gt;skynet用C编写的sokcet模块使用异步回调机制，通过lualib-src/lua-socket.c导出为socketdriver模块。skynet socket C API使用的异步回调方式是：在启动socket时，记录当前服务handle，之后该socket上面的消息(底层使用epoll机制)通过skynet消息的方式发往该服务。这里的当前服务指的是socket启动时所在的服务，对于被请求方来说，为调用&lt;code&gt;socketdriver.start(id)&lt;/code&gt;的服务，对于请求方来说，为调用&lt;code&gt;socketdriver.connect(addr,port)&lt;/code&gt;的服务。skynet不使用套接字fd在上层传播，因为在某些系统上fd的复用会导致上层遇到麻烦，skynet socket C API为每个fd分配一个ID，是自增不重复的。&lt;/p&gt;">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+    
+        <link rel="alternate" type="application/atom+xml" title="wudaijun&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <aside id="menu" class="hide" >
+    <aside id="menu" class="hide" >
   <div class="inner flex-row-vertical">
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap">
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
       <div class="brand">
-        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/favicon.png">
+        </a>
         <hgroup class="introduce">
           <h5 class="nickname">wudaijun</h5>
           <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
@@ -93,20 +104,12 @@
             </li>
         
       </ul>
-
-      <footer class="footer">
-  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
-  <p>wudaijun&#39;s blog &copy; 2017</p>
-  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
-</footer>
-
     </div>
   </div>
 </aside>
-  <main id="main">
-    <header class="top-header" id="header">
+
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -124,7 +127,7 @@
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
@@ -132,14 +135,23 @@
 </header>
 <header class="content-header post-header">
 
-    <div class="container">
+    <div class="container fade-scale">
         <h1 class="title">skynet socketserver</h1>
-        
-        
+        <h5 class="subtitle">
+            
+                <time datetime="2015-02-12T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2015-02-13
+</time>
 
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/gameserver/">gameserver</a></li></ul>
+
+            
+        </h5>
     </div>
 
     
+
 
 </header>
 
@@ -149,58 +161,73 @@
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-_异步IO"><span class="post-toc-text">1. 异步IO</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#socket_poll"><span class="post-toc-text">socket poll</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#socket_server_poll"><span class="post-toc-text">socket_server_poll</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#skynet_socket_poll"><span class="post-toc-text">skynet_socket_poll</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-_lua层封装"><span class="post-toc-text">2. lua层封装</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-_消息分包"><span class="post-toc-text">3. 消息分包</span></a></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-异步IO"><span class="post-toc-text">1. 异步IO</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#socket-poll"><span class="post-toc-text">socket poll</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#socket-server-poll"><span class="post-toc-text">socket_server_poll</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#skynet-socket-poll"><span class="post-toc-text">skynet_socket_poll</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-lua层封装"><span class="post-toc-text">2. lua层封装</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-消息分包"><span class="post-toc-text">3. 消息分包</span></a></li></ol>
         </nav>
     </aside>
     
-<article id="post-skynet-socketserver" 
-  class="post-article article-type-post" itemprop="blogPost">
+<article id="post-skynet-socketserver"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
         <h1 class="post-card-title">skynet socketserver</h1>
         <div class="post-meta">
-            <time datetime="2015-02-12T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2015-02-13
-</time>
+            <time class="post-time" title="2015-02-13 00:00:00" datetime="2015-02-12T16:00:00.000Z"  itemprop="datePublished">2015-02-13</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/gameserver/">gameserver</a></li></ul>
 
 
 
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
-            <h3 id="1-_异步IO">1. 异步IO</h3><p>skynet用C编写的sokcet模块使用异步回调机制，通过lualib-src/lua-socket.c导出为socketdriver模块。skynet socket C API使用的异步回调方式是：在启动socket时，记录当前服务handle，之后该socket上面的消息(底层使用epoll机制)通过skynet消息的方式发往该服务。这里的当前服务指的是socket启动时所在的服务，对于被请求方来说，为调用<code>socketdriver.start(id)</code>的服务，对于请求方来说，为调用<code>socketdriver.connect(addr,port)</code>的服务。skynet不使用套接字fd在上层传播，因为在某些系统上fd的复用会导致上层遇到麻烦，skynet socket C API为每个fd分配一个ID，是自增不重复的。</p>
+            <h3 id="1-异步IO"><a href="#1-异步IO" class="headerlink" title="1. 异步IO"></a>1. 异步IO</h3><p>skynet用C编写的sokcet模块使用异步回调机制，通过lualib-src/lua-socket.c导出为socketdriver模块。skynet socket C API使用的异步回调方式是：在启动socket时，记录当前服务handle，之后该socket上面的消息(底层使用epoll机制)通过skynet消息的方式发往该服务。这里的当前服务指的是socket启动时所在的服务，对于被请求方来说，为调用<code>socketdriver.start(id)</code>的服务，对于请求方来说，为调用<code>socketdriver.connect(addr,port)</code>的服务。skynet不使用套接字fd在上层传播，因为在某些系统上fd的复用会导致上层遇到麻烦，skynet socket C API为每个fd分配一个ID，是自增不重复的。</p>
 <a id="more"></a>
 <p>socket C API 的核心是三个poll:</p>
-<h4 id="socket_poll">socket poll</h4><p>位于skynet-src/socket_poll.h 底层异步IO，监听可读可写状态，对于linux系统，使用的是epoll模型。</p>
-<h4 id="socket_server_poll">socket_server_poll</h4><p>位于skynet-src/socket_server.c 使用socket poll，处理所有套接字上的IO事件和控制事件。socket_server_poll处理这些事件，并返回处理结果(返回一个type代表事件类型，通过socket_message* result指针参数返回处理结果)。</p>
+<h4 id="socket-poll"><a href="#socket-poll" class="headerlink" title="socket poll"></a>socket poll</h4><p>位于skynet-src/socket_poll.h 底层异步IO，监听可读可写状态，对于linux系统，使用的是epoll模型。</p>
+<h4 id="socket-server-poll"><a href="#socket-server-poll" class="headerlink" title="socket_server_poll"></a>socket_server_poll</h4><p>位于skynet-src/socket_server.c 使用socket poll，处理所有套接字上的IO事件和控制事件。socket_server_poll处理这些事件，并返回处理结果(返回一个type代表事件类型，通过socket_message* result指针参数返回处理结果)。</p>
 <p>IO事件主要包括可读，可写，新连接到达，连接成功。对于可读事件，socket_server_poll会读取对应套接字上的数据，如果读取成功，返回SOCKET_DATA类型，并且通过result参数返回读取的buffer。同样对于可写事件，会尝试发送缓冲区中的数据，并返回处理结果。</p>
 <p>而控制事件指的是上层调用，由于skynet上层使用的是一个id而不是socket fd来代表一个套接字。skynet在该id上做的所有操作(如设置套接字属性，接受连接，关闭连接，发送数据等等)都会被写入特殊的ctrl套接字(recvctrl_fd sendctrl_fd)，这些ctrl fd位于socket_server结构中，是唯一的，因此写入ctrl的控制信息要包括被操作的套接字ID。这些控制信息统一通过socket poll来处理。再在socket_server_poll中，根据id提出对应的socket fd来完成操作。</p>
-<h4 id="skynet_socket_poll">skynet_socket_poll</h4><p>通过socket poll 和 socket_server_poll，此时数据已就绪，新连接也已经被接受，需要通知上层处理这些数据，而skynet_socket_poll就是来完成这些工作的。它调用socket_server_poll，根据其返回的type和result来将这些套接字事件发送给套接字所属服务(服务handle已由socket_server_poll填充在result-&gt;opaque字段中)。skynet_socket_poll将socket_message* result 和 type 字段组装成skynet_socket_message，并且通过skynet_message消息发送给指定服务，消息类型为PTYPE_SOCKET。这样一次异步IO就完成了。</p>
+<h4 id="skynet-socket-poll"><a href="#skynet-socket-poll" class="headerlink" title="skynet_socket_poll"></a>skynet_socket_poll</h4><p>通过socket poll 和 socket_server_poll，此时数据已就绪，新连接也已经被接受，需要通知上层处理这些数据，而skynet_socket_poll就是来完成这些工作的。它调用socket_server_poll，根据其返回的type和result来将这些套接字事件发送给套接字所属服务(服务handle已由socket_server_poll填充在result-&gt;opaque字段中)。skynet_socket_poll将socket_message* result 和 type 字段组装成skynet_socket_message，并且通过skynet_message消息发送给指定服务，消息类型为PTYPE_SOCKET。这样一次异步IO就完成了。</p>
 <p>skynet_socket_poll通过一个单独的线程跑起来，线程入口为_socket函数，位于skynet-src/skynet_start.c。</p>
-<h3 id="2-_lua层封装">2. lua层封装</h3><p>skynet socket C API提供的是异步IO，为方便使用，在lua层提供了一个socket(lualib/socket.lua)模块来实现阻塞读写。该模块是对socketdriver的封装。它通过lua协程模拟阻塞读写。</p>
+<h3 id="2-lua层封装"><a href="#2-lua层封装" class="headerlink" title="2. lua层封装"></a>2. lua层封装</h3><p>skynet socket C API提供的是异步IO，为方便使用，在lua层提供了一个socket(lualib/socket.lua)模块来实现阻塞读写。该模块是对socketdriver的封装。它通过lua协程模拟阻塞读写。</p>
 <p>和gateserver模块一样，socket模块对PTYPE_SOCKET类型的消息进行了注册处理，它使用socketdriver.unpack作为该类型消息的unpack函数。socketdriver.unpack并不进行实际的分包，它只解析出原始数据，socket模块会缓存套接字上收到的数据。缓存结构由socketdriver提供。当调用socket.readline时，将通过socketdriver.readline尝试从缓冲区中读取一行数据。如果缓冲区数据不足，则挂起自身，待数据足够时唤醒。虽然底层仍然是异步，但是由于协程的特性，对上层体现为同步。通过socket模块的API读到的数据可以看做原始数据。</p>
-<h3 id="3-_消息分包">3. 消息分包</h3><p>大多数时候，在收到套接字数据时，要按照消息协议进行消息分包。skynet提供一个netpack库用于处理分包问题，netpack由C编写，位于lualib-src/lua-netpack.c。skynet范例使用的包格式是两个字节的消息长度(Big-Endian)加上消息数据。netpack根据包格式处理分包问题，netpack提供一个<code>netpack.filter(queue, msg, size)</code>接口，它返回一个type(“data”, “more”, “error”, “open”, “close”)代表具体IO事件，其后返回每个事件所需参数。</p>
+<h3 id="3-消息分包"><a href="#3-消息分包" class="headerlink" title="3. 消息分包"></a>3. 消息分包</h3><p>大多数时候，在收到套接字数据时，要按照消息协议进行消息分包。skynet提供一个netpack库用于处理分包问题，netpack由C编写，位于lualib-src/lua-netpack.c。skynet范例使用的包格式是两个字节的消息长度(Big-Endian)加上消息数据。netpack根据包格式处理分包问题，netpack提供一个<code>netpack.filter(queue, msg, size)</code>接口，它返回一个type(“data”, “more”, “error”, “open”, “close”)代表具体IO事件，其后返回每个事件所需参数。</p>
 <p>对于SOCKET_DATA事件，filter会进行数据分包，如果分包后刚好只有一条完整消息，filter返回的type为”data”，其后跟fd msg size。如果不止一条消息，那么消息将被依次压入queue参数中，并且仅返回一个type为”more”。queue是一个结构体指针，可以通过<code>netpack.pop</code>弹出queue中的一条消息。</p>
 <p>其余type类型”open”，”error”, “close”分别对应于socket_message中的SOCKET_ACCEPT SOCKET_ERROR SOCKET_CLOSE事件。netpack的使用者可以通过filter返回的type来进行事件处理。</p>
 <p>netpack会尽可能多地分包，交给上层。并且通过一个哈希表保存每个套接字ID对应的粘包，在下次数据到达时，取出上次留下的粘包数据，重新分包。</p>
 
         </div>
-        
+
         <blockquote class="post-copyright">
-            <div class="content">
-               这里写留言或版权声明：<a href="/2015/02/skynet-socketserver/" target="_blank" rel="external">http://wudaijun.com/2015/02/skynet-socketserver/</a>
-            </div>
-            <footer>
-                <a href="http://wudaijun.com">
-                    <img src="/favicon.png" alt="wudaijun">
-                    wudaijun
-                </a>
-            </footer>
-        </blockquote>
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-09-20T14:51:49.000Z" itemprop="dateUpdated">2016-09-20 22:51:49</time>
+</span><br>
+
 
         
+        博客均为原创，转载请征得作者同意并注明出处，本文永久链接：<a href="/2015/02/skynet-socketserver/" target="_blank" rel="external">http://wudaijun.com/2015/02/skynet-socketserver/</a>
+        
+    </div>
+    <footer>
+        <a href="http://wudaijun.com">
+            <img src="/favicon.png" alt="wudaijun">
+            wudaijun
+        </a>
+    </footer>
+</blockquote>
+
+        
+
 
         <div class="post-footer">
             
@@ -208,51 +235,55 @@
 
 
             
-            <div class="post-share-wrap">
-                <div class="post-share" id="post-share">
-    <div class="tit">分享到：</div>
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2015/02/skynet-socketserver/&title=《skynet socketserver》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2015/02/skynet-socketserver/&title=《skynet socketserver》 — wudaijun's blog&source=1. 异步IOskynet用C编写的sokcet模块使用异步回调机制，通过lualib-src/lua-socket.c导出为socketdriver模块..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2015/02/skynet-socketserver/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《skynet socketserver》 — wudaijun's blog&url=http://wudaijun.com/2015/02/skynet-socketserver/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2015/02/skynet-socketserver/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
-                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
-                    <i class="icon icon-share-alt icon-lg"></i>
-                </a>
-            </div>
-            
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
 
         </div>
-    </div>   
+    </div>
 
     
 <nav class="post-nav flex-row flex-justify-between">
@@ -276,83 +307,139 @@
 </nav>
 
 
-            
+
     
 
 
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'wudaijun'; // required: replace example with your forum shortname
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://wudaijun.com/2015/02/skynet-socketserver/index.html',
+        sourceId: 'skynet-socketserver',
+        productKey: '02b378614d264e81bca14ffaadf03446',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
 
 
 </article>
 
 
+
 </div>
-  </main>
-  <div class="mask" id="mask"></div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>wudaijun &copy; 2015 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
-<script>
-var BLOG_SHARE = {
-    title: "skynet socketserver",
-    pic: "/favicon.png",
-    summary: document.getElementsByName('summary')[0].content,
-    url: "http://wudaijun.com/2015/02/skynet-socketserver/"
-};
-</script>
-<div class="global-share" id="global-share">
-    <div class="tit">分享到：</div>
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2015/02/skynet-socketserver/&title=《skynet socketserver》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2015/02/skynet-socketserver/&title=《skynet socketserver》 — wudaijun's blog&source=1. 异步IOskynet用C编写的sokcet模块使用异步回调机制，通过lualib-src/lua-socket.c导出为socketdriver模块..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2015/02/skynet-socketserver/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《skynet socketserver》 — wudaijun's blog&url=http://wudaijun.com/2015/02/skynet-socketserver/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2015/02/skynet-socketserver/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script src="/js/main.min.js?v=1.1.4"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://wudaijun.com/2015/02/skynet-socketserver/" alt="微信分享二维码">
+</div>
 
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
@@ -360,7 +447,7 @@ var BLOG_SHARE = {
 </div>
 <template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -372,13 +459,14 @@ var BLOG_SHARE = {
 </li>
 </template>
 
-<script src="/js/search.min.js?v=1.1.4"></script>
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 

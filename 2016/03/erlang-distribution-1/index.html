@@ -1,47 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  
-  
-  <title>Erlang 分布式系统(1) | wudaijun&#39;s blog | Coding is Funny</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="theme-color" content="#3F51B5">
-  
-  
-  <meta name="keywords" content="erlang">
-  <meta name="description" content="一. 分布式计算的八大谬论1. 网络总是可靠的在分布式系统中，你可能最容易犯下的错误就是认为远程节点是永远可用的，尽管这可以通过添加更多的硬件(比如主从)来实现，但这也带来了冗余性。网络可能随时因为断电，硬件故障，自然因素，人为因素等不可用，在这种情况下，保证你的程序能够在远程节点或者第三方服务不可用时，能够正常运行是非常重要的。Erlang除了能够监测到外部服务失去连接(或者不能响应)之外，没有">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>Erlang 分布式系统(1) | wudaijun&#39;s blog | Coding is Funny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="erlang">
+    <meta name="description" content="一. 分布式计算的八大谬论1. 网络总是可靠的在分布式系统中，你可能最容易犯下的错误就是认为远程节点是永远可用的，尽管这可以通过添加更多的硬件(比如主从)来实现，但这也带来了冗余性。网络可能随时因为断电，硬件故障，自然因素，人为因素等不可用，在这种情况下，保证你的程序能够在远程节点或者第三方服务不可用时，能够正常运行是非常重要的。Erlang除了能够监测到外部服务失去连接(或者不能响应)之外，没有">
+<meta name="keywords" content="erlang">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Erlang 分布式系统(1)">
 <meta property="og:url" content="http://wudaijun.com/2016/03/erlang-distribution-1/index.html">
-<meta property="og:site_name" content="wudaijun's blog">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
 <meta property="og:description" content="一. 分布式计算的八大谬论1. 网络总是可靠的在分布式系统中，你可能最容易犯下的错误就是认为远程节点是永远可用的，尽管这可以通过添加更多的硬件(比如主从)来实现，但这也带来了冗余性。网络可能随时因为断电，硬件故障，自然因素，人为因素等不可用，在这种情况下，保证你的程序能够在远程节点或者第三方服务不可用时，能够正常运行是非常重要的。Erlang除了能够监测到外部服务失去连接(或者不能响应)之外，没有">
 <meta property="og:updated_time" content="2016-08-12T02:55:28.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Erlang 分布式系统(1)">
 <meta name="twitter:description" content="一. 分布式计算的八大谬论1. 网络总是可靠的在分布式系统中，你可能最容易犯下的错误就是认为远程节点是永远可用的，尽管这可以通过添加更多的硬件(比如主从)来实现，但这也带来了冗余性。网络可能随时因为断电，硬件故障，自然因素，人为因素等不可用，在这种情况下，保证你的程序能够在远程节点或者第三方服务不可用时，能够正常运行是非常重要的。Erlang除了能够监测到外部服务失去连接(或者不能响应)之外，没有">
-  
-    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
-  
-  <meta name="summary" content="&lt;h3 id=&quot;一-_分布式计算的八大谬论&quot;&gt;一. 分布式计算的八大谬论&lt;/h3&gt;&lt;h4 id=&quot;1-_网络总是可靠的&quot;&gt;1. 网络总是可靠的&lt;/h4&gt;&lt;p&gt;在分布式系统中，你可能最容易犯下的错误就是认为远程节点是永远可用的，尽管这可以通过添加更多的硬件(比如主从)来实现，但这也带来了冗余性。网络可能随时因为断电，硬件故障，自然因素，人为因素等不可用，在这种情况下，保证你的程序能够在远程节点或者第三方服务不可用时，能够正常运行是非常重要的。Erlang除了能够监测到外部服务失去连接(或者不能响应)之外，没有任何的其它措施，毕竟，除了你自己以外，谁也不知道某个组件有多重要。&lt;/p&gt;
-&lt;p&gt;注意，Erlang跨节点的monitor和link操作是比较危险的，因为一旦远程节点不可用，将触发关于该节点所有的远程monitor和link，这可能会引起一场网络风暴，给系统带来意料之外的高负载。在不可靠的网络上构建可靠的分布式应用，需要你随时准备面临这种突发状况，并且保证系统能够继续正常稳定地工作。&lt;/p&gt;">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+    
+        <link rel="alternate" type="application/atom+xml" title="wudaijun&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <aside id="menu" class="hide" >
+    <aside id="menu" class="hide" >
   <div class="inner flex-row-vertical">
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap">
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
       <div class="brand">
-        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/favicon.png">
+        </a>
         <hgroup class="introduce">
           <h5 class="nickname">wudaijun</h5>
           <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
@@ -94,20 +104,12 @@
             </li>
         
       </ul>
-
-      <footer class="footer">
-  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
-  <p>wudaijun&#39;s blog &copy; 2017</p>
-  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
-</footer>
-
     </div>
   </div>
 </aside>
-  <main id="main">
-    <header class="top-header" id="header">
+
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -125,7 +127,7 @@
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
@@ -133,14 +135,23 @@
 </header>
 <header class="content-header post-header">
 
-    <div class="container">
+    <div class="container fade-scale">
         <h1 class="title">Erlang 分布式系统(1)</h1>
-        
-        
+        <h5 class="subtitle">
+            
+                <time datetime="2016-03-16T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2016-03-17
+</time>
 
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
+
+            
+        </h5>
     </div>
 
     
+
 
 </header>
 
@@ -150,45 +161,51 @@
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#一-_分布式计算的八大谬论"><span class="post-toc-text">一. 分布式计算的八大谬论</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1-_网络总是可靠的"><span class="post-toc-text">1. 网络总是可靠的</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#2-_可忽略的延迟"><span class="post-toc-text">2. 可忽略的延迟</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#3-_带宽是无限的"><span class="post-toc-text">3. 带宽是无限的</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#4-_网络是安全的"><span class="post-toc-text">4. 网络是安全的</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#5-_网络拓扑是不变的"><span class="post-toc-text">5. 网络拓扑是不变的</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#6-_只有一个管理员"><span class="post-toc-text">6. 只有一个管理员</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#7-_数据传输代价为零"><span class="post-toc-text">7. 数据传输代价为零</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#8-_集群是同质的"><span class="post-toc-text">8. 集群是同质的</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#二-_节点检活"><span class="post-toc-text">二. 节点检活</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#三-_CAP理论"><span class="post-toc-text">三. CAP理论</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#四-_待续"><span class="post-toc-text">四. 待续</span></a></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#一-分布式计算的八大谬论"><span class="post-toc-text">一. 分布式计算的八大谬论</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1-网络总是可靠的"><span class="post-toc-text">1. 网络总是可靠的</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#2-可忽略的延迟"><span class="post-toc-text">2. 可忽略的延迟</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#3-带宽是无限的"><span class="post-toc-text">3. 带宽是无限的</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#4-网络是安全的"><span class="post-toc-text">4. 网络是安全的</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#5-网络拓扑是不变的"><span class="post-toc-text">5. 网络拓扑是不变的</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#6-只有一个管理员"><span class="post-toc-text">6. 只有一个管理员</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#7-数据传输代价为零"><span class="post-toc-text">7. 数据传输代价为零</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#8-集群是同质的"><span class="post-toc-text">8. 集群是同质的</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#二-节点检活"><span class="post-toc-text">二. 节点检活</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#三-CAP理论"><span class="post-toc-text">三. CAP理论</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#四-待续"><span class="post-toc-text">四. 待续</span></a></li></ol>
         </nav>
     </aside>
     
-<article id="post-erlang-distribution-1" 
-  class="post-article article-type-post" itemprop="blogPost">
+<article id="post-erlang-distribution-1"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
         <h1 class="post-card-title">Erlang 分布式系统(1)</h1>
         <div class="post-meta">
-            <time datetime="2016-03-16T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2016-03-17
-</time>
+            <time class="post-time" title="2016-03-17 00:00:00" datetime="2016-03-16T16:00:00.000Z"  itemprop="datePublished">2016-03-17</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
 
 
 
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
-            <h3 id="一-_分布式计算的八大谬论">一. 分布式计算的八大谬论</h3><h4 id="1-_网络总是可靠的">1. 网络总是可靠的</h4><p>在分布式系统中，你可能最容易犯下的错误就是认为远程节点是永远可用的，尽管这可以通过添加更多的硬件(比如主从)来实现，但这也带来了冗余性。网络可能随时因为断电，硬件故障，自然因素，人为因素等不可用，在这种情况下，保证你的程序能够在远程节点或者第三方服务不可用时，能够正常运行是非常重要的。Erlang除了能够监测到外部服务失去连接(或者不能响应)之外，没有任何的其它措施，毕竟，除了你自己以外，谁也不知道某个组件有多重要。</p>
+            <h3 id="一-分布式计算的八大谬论"><a href="#一-分布式计算的八大谬论" class="headerlink" title="一. 分布式计算的八大谬论"></a>一. 分布式计算的八大谬论</h3><h4 id="1-网络总是可靠的"><a href="#1-网络总是可靠的" class="headerlink" title="1. 网络总是可靠的"></a>1. 网络总是可靠的</h4><p>在分布式系统中，你可能最容易犯下的错误就是认为远程节点是永远可用的，尽管这可以通过添加更多的硬件(比如主从)来实现，但这也带来了冗余性。网络可能随时因为断电，硬件故障，自然因素，人为因素等不可用，在这种情况下，保证你的程序能够在远程节点或者第三方服务不可用时，能够正常运行是非常重要的。Erlang除了能够监测到外部服务失去连接(或者不能响应)之外，没有任何的其它措施，毕竟，除了你自己以外，谁也不知道某个组件有多重要。</p>
 <p>注意，Erlang跨节点的monitor和link操作是比较危险的，因为一旦远程节点不可用，将触发关于该节点所有的远程monitor和link，这可能会引起一场网络风暴，给系统带来意料之外的高负载。在不可靠的网络上构建可靠的分布式应用，需要你随时准备面临这种突发状况，并且保证系统能够继续正常稳定地工作。</p>
 <a id="more"></a>
-<h4 id="2-_可忽略的延迟">2. 可忽略的延迟</h4><p>一个好的分布式系统的特性之一就是隐藏函数调用为远程调用的事实，然而这是一把双刃剑，一些本地上执行非常快的函数，通过网络调用时，会与预期大不相同。在这一点上，Erlang的通信模型处理得很好，Erlang的每个进程是孤立的，通过异步消息进行通信，这使得我们考虑超时，以及外部服务不可用的情况。将Erlang程序改造为分布式程序只需要做很少的工作，异步通信模型，超时，监视，链接等都可以保留。因此，Erlang在设计之初，并不忽略延迟的存在。但是作为设计者，在设计上，你需要对此留意。</p>
-<h4 id="3-_带宽是无限的">3. 带宽是无限的</h4><p>尽管现在网络越来越快，每个字节在网络上传输的成本也越来越便宜，但是对网络负载过于乐观的假设仍然是具有风险的。关于这一点的一个小技巧是发送当前的事件，而不是当前的整个状态。如果在一些情况下，你不得不发送大消息，一定要小心，由于Erlang保证两个进程间的消息次序(即使是通过网络)，因此一个大消息可能会阻塞该通道上的其它消息。更糟糕的是，这可能会阻塞节点间的正常心跳，导致节点误以为对方节点无法响应并且断开连接。要避免这种情况发生的唯一方案就是控制消息的大小，这也是一条好的Erlang设计实践。</p>
-<h4 id="4-_网络是安全的">4. 网络是安全的</h4><p>当你在分布式环境下，信任你所接收到的任何消息是非常危险的，消息可能被刻意伪造或抓包改写，甚至外部节点可能已经完全被其他人控制。遗憾的是，Erlang做了这种假设，Erlang分布式系统的网络安全是非常薄弱的，这和它的历史有关。这意味着Erlang程序很少被部署在不同的数据中心，Erlang也不建议你这么做。你可以将你的系统分为很多小的，相互隔离的节点，并且部署在可靠的地方(一台物理机，或者安全的局域网)。但任何除此之外的东西，都需要开发者自己去实现，例如切换到SSL，或者实现你自己的更高层次的通信协议，或重写节点之间的通信协议等。关于这些主题可以参见<a href="http://erlang.org/doc/apps/erts/alt_dist.html" target="_blank" rel="external">How to implement an alternative carrier for the Erlang distribution</a>和<a href="http://erlang.org/doc/apps/erts/erl_dist_protocol.html" target="_blank" rel="external">Distribution Protocol</a>。即使做了更多的安全工作，也要非常小心，因为一旦有人获取了你的远程节点的访问权限，他就可以获取到节点上的一切，并且在该节点上执行任何命令。</p>
-<h4 id="5-_网络拓扑是不变的">5. 网络拓扑是不变的</h4><p>在分布式系统构建之初，你的系统原型可能有指定数量的节点并且确定了它们的网络位置(IP+Port)，但硬件错误，人为部署，负载均衡等，都会导致节点的动态添加和删除，这时集群的网络拓扑结构就会变化，如果你在程序中对集群节点位置有任何依赖，都将很难适应这种变化。在Erlang中，每个节点都有其名字(相当于IP+Port)，如果在程序中对这些节点地址硬编码，将会使程序很难动态扩展。</p>
-<h4 id="6-_只有一个管理员">6. 只有一个管理员</h4><p>这是从系统运维上来说的，你可能只管理着整个系统的一部分，一方面你需要诊断系统问题的工具，这一点上来说，Erlang提供了比较完善的调试诊断系统，并且支持热更。另一方面，你需要做好系统各个部分间的通讯协议，以管理各个子系统的不同版本的兼容问题。</p>
-<h4 id="7-_数据传输代价为零">7. 数据传输代价为零</h4><p>这里的代价包括时间代价和金钱代价，前者指数据的序列化和反序列化时间，后者指数据对带宽的占用，从这个角度来看，将消息优化得小而短又一次被证明是很重要的。基于Erlang的历史，Erlang并没有对网络传输数据做任何压缩处理(尽管提供了这样的函数)，Erlang的设计者选择让开发者自己按需实现其通讯协议，减小数据传输的代价。</p>
-<h4 id="8-_集群是同质的">8. 集群是同质的</h4><p>这里的同质(Homogeneous)指的是同一种语言(或协议)，在分布式集群中，你不能对所有节点都是同质的作出假设，集群中的节点可能由不同的语言实现，或者遵从其它通讯协议。你应该对集群持开放原则而不是封闭原则。对Erlang来说，分布式协议是公开的，但所有的Erlang节点都假设其它节点都是同质的，外部节点想要将自己整合在Erlang集群中，有两种方式：</p>
+<h4 id="2-可忽略的延迟"><a href="#2-可忽略的延迟" class="headerlink" title="2. 可忽略的延迟"></a>2. 可忽略的延迟</h4><p>一个好的分布式系统的特性之一就是隐藏函数调用为远程调用的事实，然而这是一把双刃剑，一些本地上执行非常快的函数，通过网络调用时，会与预期大不相同。在这一点上，Erlang的通信模型处理得很好，Erlang的每个进程是孤立的，通过异步消息进行通信，这使得我们考虑超时，以及外部服务不可用的情况。将Erlang程序改造为分布式程序只需要做很少的工作，异步通信模型，超时，监视，链接等都可以保留。因此，Erlang在设计之初，并不忽略延迟的存在。但是作为设计者，在设计上，你需要对此留意。</p>
+<h4 id="3-带宽是无限的"><a href="#3-带宽是无限的" class="headerlink" title="3. 带宽是无限的"></a>3. 带宽是无限的</h4><p>尽管现在网络越来越快，每个字节在网络上传输的成本也越来越便宜，但是对网络负载过于乐观的假设仍然是具有风险的。关于这一点的一个小技巧是发送当前的事件，而不是当前的整个状态。如果在一些情况下，你不得不发送大消息，一定要小心，由于Erlang保证两个进程间的消息次序(即使是通过网络)，因此一个大消息可能会阻塞该通道上的其它消息。更糟糕的是，这可能会阻塞节点间的正常心跳，导致节点误以为对方节点无法响应并且断开连接。要避免这种情况发生的唯一方案就是控制消息的大小，这也是一条好的Erlang设计实践。</p>
+<h4 id="4-网络是安全的"><a href="#4-网络是安全的" class="headerlink" title="4. 网络是安全的"></a>4. 网络是安全的</h4><p>当你在分布式环境下，信任你所接收到的任何消息是非常危险的，消息可能被刻意伪造或抓包改写，甚至外部节点可能已经完全被其他人控制。遗憾的是，Erlang做了这种假设，Erlang分布式系统的网络安全是非常薄弱的，这和它的历史有关。这意味着Erlang程序很少被部署在不同的数据中心，Erlang也不建议你这么做。你可以将你的系统分为很多小的，相互隔离的节点，并且部署在可靠的地方(一台物理机，或者安全的局域网)。但任何除此之外的东西，都需要开发者自己去实现，例如切换到SSL，或者实现你自己的更高层次的通信协议，或重写节点之间的通信协议等。关于这些主题可以参见<a href="http://erlang.org/doc/apps/erts/alt_dist.html" target="_blank" rel="external">How to implement an alternative carrier for the Erlang distribution</a>和<a href="http://erlang.org/doc/apps/erts/erl_dist_protocol.html" target="_blank" rel="external">Distribution Protocol</a>。即使做了更多的安全工作，也要非常小心，因为一旦有人获取了你的远程节点的访问权限，他就可以获取到节点上的一切，并且在该节点上执行任何命令。</p>
+<h4 id="5-网络拓扑是不变的"><a href="#5-网络拓扑是不变的" class="headerlink" title="5. 网络拓扑是不变的"></a>5. 网络拓扑是不变的</h4><p>在分布式系统构建之初，你的系统原型可能有指定数量的节点并且确定了它们的网络位置(IP+Port)，但硬件错误，人为部署，负载均衡等，都会导致节点的动态添加和删除，这时集群的网络拓扑结构就会变化，如果你在程序中对集群节点位置有任何依赖，都将很难适应这种变化。在Erlang中，每个节点都有其名字(相当于IP+Port)，如果在程序中对这些节点地址硬编码，将会使程序很难动态扩展。</p>
+<h4 id="6-只有一个管理员"><a href="#6-只有一个管理员" class="headerlink" title="6. 只有一个管理员"></a>6. 只有一个管理员</h4><p>这是从系统运维上来说的，你可能只管理着整个系统的一部分，一方面你需要诊断系统问题的工具，这一点上来说，Erlang提供了比较完善的调试诊断系统，并且支持热更。另一方面，你需要做好系统各个部分间的通讯协议，以管理各个子系统的不同版本的兼容问题。</p>
+<h4 id="7-数据传输代价为零"><a href="#7-数据传输代价为零" class="headerlink" title="7. 数据传输代价为零"></a>7. 数据传输代价为零</h4><p>这里的代价包括时间代价和金钱代价，前者指数据的序列化和反序列化时间，后者指数据对带宽的占用，从这个角度来看，将消息优化得小而短又一次被证明是很重要的。基于Erlang的历史，Erlang并没有对网络传输数据做任何压缩处理(尽管提供了这样的函数)，Erlang的设计者选择让开发者自己按需实现其通讯协议，减小数据传输的代价。</p>
+<h4 id="8-集群是同质的"><a href="#8-集群是同质的" class="headerlink" title="8. 集群是同质的"></a>8. 集群是同质的</h4><p>这里的同质(Homogeneous)指的是同一种语言(或协议)，在分布式集群中，你不能对所有节点都是同质的作出假设，集群中的节点可能由不同的语言实现，或者遵从其它通讯协议。你应该对集群持开放原则而不是封闭原则。对Erlang来说，分布式协议是公开的，但所有的Erlang节点都假设其它节点都是同质的，外部节点想要将自己整合在Erlang集群中，有两种方式：</p>
 <p>第一种方式是使自己看起来像Erlang节点，实现Erlang节点的通讯协议，比如<a href="http://erlang.org/doc/tutorial/cnode.html" target="_blank" rel="external">Erlang C-nodes</a>，这样其它语言实现的节点也能像Erlang节点一样运行于Erlang集群中。</p>
 <p>另一种方式是使用其它的数据交换协议，如<a href="http://bert-rpc.org/" target="_blank" rel="external">BERT-RPC</a>，一种类似于XML或JSON的数据交换格式，但与<a href="http://erlang.org/doc/apps/erts/erl_ext_dist.html" target="_blank" rel="external">Erlang External Term Format</a>更为契合。</p>
 <p>关于以上8点更多请参考：<a href="http://www.rgoarchitects.com/Files/fallacies.pdf" target="_blank" rel="external">Fallacies of Distributed Computing Explained</a>。</p>
-<h3 id="二-_节点检活">二. 节点检活</h3><p>对于分布式系统来说，其中最让人头疼的事情之一就是当节点不可响应(或网络错误)时的处理流程。一个节点不可响应的因素有很多：网络故障，网络拥塞，硬件错误，应用崩溃，节点忙碌等，几乎没有方式能够对问题节点当时的状态进行确认和诊断，这个时候，其它节点有几种处理方式：继续等待响应，再次发起请求，或者假设问题节点已经挂掉并且继续后续事宜。如果真是问题节点挂掉了，那你可以忽略这个节点，整个集群继续运转。而更差的情况下，问题节点此时仍然运行于孤立的环境中，从该节点的视角来看，其它节点都挂掉了，整个集群只剩自己一个节点。</p>
+<h3 id="二-节点检活"><a href="#二-节点检活" class="headerlink" title="二. 节点检活"></a>二. 节点检活</h3><p>对于分布式系统来说，其中最让人头疼的事情之一就是当节点不可响应(或网络错误)时的处理流程。一个节点不可响应的因素有很多：网络故障，网络拥塞，硬件错误，应用崩溃，节点忙碌等，几乎没有方式能够对问题节点当时的状态进行确认和诊断，这个时候，其它节点有几种处理方式：继续等待响应，再次发起请求，或者假设问题节点已经挂掉并且继续后续事宜。如果真是问题节点挂掉了，那你可以忽略这个节点，整个集群继续运转。而更差的情况下，问题节点此时仍然运行于孤立的环境中，从该节点的视角来看，其它节点都挂掉了，整个集群只剩自己一个节点。</p>
 <p>Erlang集群默认即视不可达的节点为死节点，这是一种悲观的方案，这可以让我们对灾难性故障迅速作出反应。Erlang假设网络故障的概率比硬件或应用故障的概率低，Erlang最初就是这么设计的(为电信通讯平台服务)。另一种乐观的方案(假设失连节点仍然存活)可能或延迟故障恢复相关的处理，因为它假设网络故障的可能性要比硬件或应用故障的可能性更大，因此它会重试等待更长的时间，以便失连节点重返集群。</p>
 <p>那么问题来了，在悲观的解决方案中，如果失连节点突然回归集群(比如网络恢复)又会怎么样呢？此时失连节点可能已经运行在孤立的环境数日，有自己的数据，连接，状态等。这个时候想要协调数据和状态的一致性是很困难的，并且你的集群可能已经启动了失连节点的备用节点，而直接忽略节点也不可取，也许该节点已经处理了很多外部请求，甚至向DB写入了数据。总之，会有一些非常奇怪的事情发生。</p>
 <p>那么，是否有一个方案可以在节点失连的时候保持应用正常运行，并且不会出现数据丢失或不一致呢？</p>
-<h3 id="三-_CAP理论">三. CAP理论</h3><p>在CAP理论中，关于上一个问题的答案是”没有”，你没有办法让一个分布式系统在网络断开的时候保持正常运行并且正确地运行。CAP理论在<a href="https://zh.wikipedia.org/wiki/CAP%E5%AE%9A%E7%90%86" target="_blank" rel="external">Wiki</a>中解释：</p>
+<h3 id="三-CAP理论"><a href="#三-CAP理论" class="headerlink" title="三. CAP理论"></a>三. CAP理论</h3><p>在CAP理论中，关于上一个问题的答案是”没有”，你没有办法让一个分布式系统在网络断开的时候保持正常运行并且正确地运行。CAP理论在<a href="https://zh.wikipedia.org/wiki/CAP%E5%AE%9A%E7%90%86" target="_blank" rel="external">Wiki</a>中解释：</p>
 <ul>
 <li>一致性（Consistence) (等同于所有节点访问同一份最新的数据副本）</li>
 <li>可用性（Availability）（对数据更新具备高可用性）</li>
@@ -197,24 +214,33 @@
 <p>根据定理，分布式系统只能满足三项中的两项而不可能满足全部三项。理解CAP理论的最简单方式是想象两个节点分处分区两侧。允许至少一个节点更新状态会导致数据不一致，即丧失了C性质。如果为了保证数据一致性，将分区一侧的节点设置为不可用，那么又丧失了A性质。除非两个节点可以互相通信，才能既保证C又保证A，这又会导致丧失P性质。</p>
 <p>关于CAP理论的另一篇很有意思的文章：<a href="http://www.infoq.com/cn/articles/cap-twelve-years-later-how-the-rules-have-changed" target="_blank" rel="external">CAP理论十二年回顾：”规则”变了</a>。</p>
 <p>从CAP理论来看，我们只有三种选择: CA, CP, AP，通常情况下，CA是我们无需考虑的，除非你可以保证你的网络不会出现故障，抑或集群是部署在同一台主机上。剩下的CP, AP需要根据你自己的系统进行取舍。</p>
-<h3 id="四-_待续">四. 待续</h3><p>尽管在Erlang中构建分布式系统是非常Easy的一件事情，但是分布式系统本身的复杂度，需要你根据系统需求，从多个维度去设计，考量和评估整个分布式系统，同时理解分布式系统的常见误区，注重底层细节。本文内容参考：<a href="http://learnyousomeerlang.com/distribunomicon" target="_blank" rel="external">http://learnyousomeerlang.com/distribunomicon</a></p>
+<h3 id="四-待续"><a href="#四-待续" class="headerlink" title="四. 待续"></a>四. 待续</h3><p>尽管在Erlang中构建分布式系统是非常Easy的一件事情，但是分布式系统本身的复杂度，需要你根据系统需求，从多个维度去设计，考量和评估整个分布式系统，同时理解分布式系统的常见误区，注重底层细节。本文内容参考：<a href="http://learnyousomeerlang.com/distribunomicon" target="_blank" rel="external">http://learnyousomeerlang.com/distribunomicon</a></p>
 <p>之后可能详细整理一下Erlang本身在分布式方面提供的具体支持，并且评估一下当前项目用到的服务器集群系统。</p>
 
         </div>
-        
+
         <blockquote class="post-copyright">
-            <div class="content">
-               这里写留言或版权声明：<a href="/2016/03/erlang-distribution-1/" target="_blank" rel="external">http://wudaijun.com/2016/03/erlang-distribution-1/</a>
-            </div>
-            <footer>
-                <a href="http://wudaijun.com">
-                    <img src="/favicon.png" alt="wudaijun">
-                    wudaijun
-                </a>
-            </footer>
-        </blockquote>
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-08-12T02:55:28.000Z" itemprop="dateUpdated">2016-08-12 10:55:28</time>
+</span><br>
+
 
         
+        博客均为原创，转载请征得作者同意并注明出处，本文永久链接：<a href="/2016/03/erlang-distribution-1/" target="_blank" rel="external">http://wudaijun.com/2016/03/erlang-distribution-1/</a>
+        
+    </div>
+    <footer>
+        <a href="http://wudaijun.com">
+            <img src="/favicon.png" alt="wudaijun">
+            wudaijun
+        </a>
+    </footer>
+</blockquote>
+
+        
+
 
         <div class="post-footer">
             
@@ -222,51 +248,55 @@
 
 
             
-            <div class="post-share-wrap">
-                <div class="post-share" id="post-share">
-    <div class="tit">分享到：</div>
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2016/03/erlang-distribution-1/&title=《Erlang 分布式系统(1)》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2016/03/erlang-distribution-1/&title=《Erlang 分布式系统(1)》 — wudaijun's blog&source=一. 分布式计算的八大谬论1. 网络总是可靠的在分布式系统中，你可能最容易犯下的错误就是认为远程节点是永远可用的，尽管这可以通过添加更多的硬件(比如主从)..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2016/03/erlang-distribution-1/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Erlang 分布式系统(1)》 — wudaijun's blog&url=http://wudaijun.com/2016/03/erlang-distribution-1/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2016/03/erlang-distribution-1/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
-                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
-                    <i class="icon icon-share-alt icon-lg"></i>
-                </a>
-            </div>
-            
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
 
         </div>
-    </div>   
+    </div>
 
     
 <nav class="post-nav flex-row flex-justify-between">
@@ -290,83 +320,139 @@
 </nav>
 
 
-            
+
     
 
 
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'wudaijun'; // required: replace example with your forum shortname
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://wudaijun.com/2016/03/erlang-distribution-1/index.html',
+        sourceId: 'erlang-distribution-1',
+        productKey: '02b378614d264e81bca14ffaadf03446',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
 
 
 </article>
 
 
+
 </div>
-  </main>
-  <div class="mask" id="mask"></div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>wudaijun &copy; 2015 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
-<script>
-var BLOG_SHARE = {
-    title: "Erlang 分布式系统(1)",
-    pic: "/favicon.png",
-    summary: document.getElementsByName('summary')[0].content,
-    url: "http://wudaijun.com/2016/03/erlang-distribution-1/"
-};
-</script>
-<div class="global-share" id="global-share">
-    <div class="tit">分享到：</div>
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2016/03/erlang-distribution-1/&title=《Erlang 分布式系统(1)》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2016/03/erlang-distribution-1/&title=《Erlang 分布式系统(1)》 — wudaijun's blog&source=一. 分布式计算的八大谬论1. 网络总是可靠的在分布式系统中，你可能最容易犯下的错误就是认为远程节点是永远可用的，尽管这可以通过添加更多的硬件(比如主从)..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2016/03/erlang-distribution-1/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Erlang 分布式系统(1)》 — wudaijun's blog&url=http://wudaijun.com/2016/03/erlang-distribution-1/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2016/03/erlang-distribution-1/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script src="/js/main.min.js?v=1.1.4"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://wudaijun.com/2016/03/erlang-distribution-1/" alt="微信分享二维码">
+</div>
 
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
@@ -374,7 +460,7 @@ var BLOG_SHARE = {
 </div>
 <template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -386,13 +472,14 @@ var BLOG_SHARE = {
 </li>
 </template>
 
-<script src="/js/search.min.js?v=1.1.4"></script>
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 

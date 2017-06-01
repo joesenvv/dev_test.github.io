@@ -1,73 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  
-  
-  <title>Lua 闭包 环境 包管理 | wudaijun&#39;s blog | Coding is Funny</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="theme-color" content="#3F51B5">
-  
-  
-  <meta name="keywords" content="lua">
-  <meta name="description" content="Variables
-访问一个不存在的全局变量得到nil
-释放一个全局变量只需将其赋值为nil，效果与未定义该变量一样
-Lua 中的变量全是全局变量，那怕是语句块或是函数里，除非用 local 显式声明为局部变量
-局部变量比全局变量访问更快
+    
 
-Functions1. 基本特性
-多参数/返回值匹配：多余忽略，缺少用nil补足
-可变参数：arg，table.pack，table.unpack
-命名参数：">
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>Lua 闭包 环境 包管理 | wudaijun&#39;s blog | Coding is Funny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="lua">
+    <meta name="description" content="Variables 访问一个不存在的全局变量得到nil 释放一个全局变量只需将其赋值为nil，效果与未定义该变量一样 Lua 中的变量全是全局变量，那怕是语句块或是函数里，除非用 local 显式声明为局部变量 局部变量比全局变量访问更快  Functions1. 基本特性 多参数/返回值匹配：多余忽略，缺少用nil补足 可变参数：arg，table.pack，table.unpack 命名参数：">
+<meta name="keywords" content="lua">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Lua 闭包 环境 包管理">
 <meta property="og:url" content="http://wudaijun.com/2017/02/lua-notes/index.html">
-<meta property="og:site_name" content="wudaijun's blog">
-<meta property="og:description" content="Variables
-访问一个不存在的全局变量得到nil
-释放一个全局变量只需将其赋值为nil，效果与未定义该变量一样
-Lua 中的变量全是全局变量，那怕是语句块或是函数里，除非用 local 显式声明为局部变量
-局部变量比全局变量访问更快
-
-Functions1. 基本特性
-多参数/返回值匹配：多余忽略，缺少用nil补足
-可变参数：arg，table.pack，table.unpack
-命名参数：">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
+<meta property="og:description" content="Variables 访问一个不存在的全局变量得到nil 释放一个全局变量只需将其赋值为nil，效果与未定义该变量一样 Lua 中的变量全是全局变量，那怕是语句块或是函数里，除非用 local 显式声明为局部变量 局部变量比全局变量访问更快  Functions1. 基本特性 多参数/返回值匹配：多余忽略，缺少用nil补足 可变参数：arg，table.pack，table.unpack 命名参数：">
 <meta property="og:updated_time" content="2017-02-28T04:20:22.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Lua 闭包 环境 包管理">
-<meta name="twitter:description" content="Variables
-访问一个不存在的全局变量得到nil
-释放一个全局变量只需将其赋值为nil，效果与未定义该变量一样
-Lua 中的变量全是全局变量，那怕是语句块或是函数里，除非用 local 显式声明为局部变量
-局部变量比全局变量访问更快
-
-Functions1. 基本特性
-多参数/返回值匹配：多余忽略，缺少用nil补足
-可变参数：arg，table.pack，table.unpack
-命名参数：">
-  
-    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
-  
-  <meta name="summary" content="null">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+<meta name="twitter:description" content="Variables 访问一个不存在的全局变量得到nil 释放一个全局变量只需将其赋值为nil，效果与未定义该变量一样 Lua 中的变量全是全局变量，那怕是语句块或是函数里，除非用 local 显式声明为局部变量 局部变量比全局变量访问更快  Functions1. 基本特性 多参数/返回值匹配：多余忽略，缺少用nil补足 可变参数：arg，table.pack，table.unpack 命名参数：">
+    
+        <link rel="alternate" type="application/atom+xml" title="wudaijun&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <aside id="menu" class="hide" >
+    <aside id="menu" class="hide" >
   <div class="inner flex-row-vertical">
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap">
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
       <div class="brand">
-        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/favicon.png">
+        </a>
         <hgroup class="introduce">
           <h5 class="nickname">wudaijun</h5>
           <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
@@ -120,20 +104,12 @@ Functions1. 基本特性
             </li>
         
       </ul>
-
-      <footer class="footer">
-  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
-  <p>wudaijun&#39;s blog &copy; 2017</p>
-  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
-</footer>
-
     </div>
   </div>
 </aside>
-  <main id="main">
-    <header class="top-header" id="header">
+
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -151,7 +127,7 @@ Functions1. 基本特性
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
@@ -159,14 +135,23 @@ Functions1. 基本特性
 </header>
 <header class="content-header post-header">
 
-    <div class="container">
+    <div class="container fade-scale">
         <h1 class="title">Lua 闭包 环境 包管理</h1>
-        
-        
+        <h5 class="subtitle">
+            
+                <time datetime="2017-02-22T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2017-02-23
+</time>
 
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/lua/">lua</a></li></ul>
+
+            
+        </h5>
     </div>
 
     
+
 
 </header>
 
@@ -176,58 +161,64 @@ Functions1. 基本特性
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Variables"><span class="post-toc-text">Variables</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Functions"><span class="post-toc-text">Functions</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-_基本特性"><span class="post-toc-text">1. 基本特性</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-_第一类函数"><span class="post-toc-text">2. 第一类函数</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-_词法闭包"><span class="post-toc-text">3. 词法闭包</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Chunk"><span class="post-toc-text">Chunk</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Enviroment"><span class="post-toc-text">Enviroment</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Packages"><span class="post-toc-text">Packages</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-_基本方法"><span class="post-toc-text">1. 基本方法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-_局部函数"><span class="post-toc-text">2. 局部函数</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-_独立环境"><span class="post-toc-text">3. 独立环境</span></a></li></ol></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Variables"><span class="post-toc-text">Variables</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Functions"><span class="post-toc-text">Functions</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-基本特性"><span class="post-toc-text">1. 基本特性</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-第一类函数"><span class="post-toc-text">2. 第一类函数</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-词法闭包"><span class="post-toc-text">3. 词法闭包</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Chunk"><span class="post-toc-text">Chunk</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Enviroment"><span class="post-toc-text">Enviroment</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Packages"><span class="post-toc-text">Packages</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-基本方法"><span class="post-toc-text">1. 基本方法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-局部函数"><span class="post-toc-text">2. 局部函数</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-独立环境"><span class="post-toc-text">3. 独立环境</span></a></li></ol></li></ol>
         </nav>
     </aside>
     
-<article id="post-lua-notes" 
-  class="post-article article-type-post" itemprop="blogPost">
+<article id="post-lua-notes"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
         <h1 class="post-card-title">Lua 闭包 环境 包管理</h1>
         <div class="post-meta">
-            <time datetime="2017-02-22T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2017-02-23
-</time>
+            <time class="post-time" title="2017-02-23 00:00:00" datetime="2017-02-22T16:00:00.000Z"  itemprop="datePublished">2017-02-23</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/lua/">lua</a></li></ul>
 
 
 
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
-            <h2 id="Variables">Variables</h2><ul>
+            <h2 id="Variables"><a href="#Variables" class="headerlink" title="Variables"></a>Variables</h2><ul>
 <li>访问一个不存在的全局变量得到nil</li>
 <li>释放一个全局变量只需将其赋值为nil，效果与未定义该变量一样</li>
 <li>Lua 中的变量全是全局变量，那怕是语句块或是函数里，除非用 local 显式声明为局部变量</li>
 <li>局部变量比全局变量访问更快</li>
 </ul>
-<h2 id="Functions">Functions</h2><h3 id="1-_基本特性">1. 基本特性</h3><ol>
+<h2 id="Functions"><a href="#Functions" class="headerlink" title="Functions"></a>Functions</h2><h3 id="1-基本特性"><a href="#1-基本特性" class="headerlink" title="1. 基本特性"></a>1. 基本特性</h3><ol>
 <li>多参数/返回值匹配：多余忽略，缺少用nil补足</li>
 <li>可变参数：arg，table.pack，table.unpack</li>
 <li>命名参数：参数的非顺序填充方式</li>
 <li>正确处理尾调用：Lua能够高效正确处理尾调用，而不会导致栈溢出</li>
 </ol>
-<h3 id="2-_第一类函数">2. 第一类函数</h3><p>函数是第一类值，函数可以像其它值（string, number）样用于赋给变量，作为函数参数或返回值。函数定义实际上是一个赋值语句，将类型为function的变量赋给一个变量。</p>
-<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo.bar</span> <span class="params">(x)</span></span> <span class="keyword">return</span> <span class="number">2</span>*x <span class="keyword">end</span></span><br><span class="line"><span class="comment">-- 等价于</span></span><br><span class="line">foo.bar = <span class="function"><span class="keyword">function</span> <span class="params">(x)</span></span> <span class="keyword">return</span> <span class="number">2</span>*x <span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-第一类函数"><a href="#2-第一类函数" class="headerlink" title="2. 第一类函数"></a>2. 第一类函数</h3><p>函数是第一类值，函数可以像其它值（string, number）样用于赋给变量，作为函数参数或返回值。函数定义实际上是一个赋值语句，将类型为function的变量赋给一个变量。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo.bar</span> <span class="params">(x)</span></span> <span class="keyword">return</span> <span class="number">2</span>*x <span class="keyword">end</span></div><div class="line"><span class="comment">-- 等价于</span></div><div class="line">foo.bar = <span class="function"><span class="keyword">function</span> <span class="params">(x)</span></span> <span class="keyword">return</span> <span class="number">2</span>*x <span class="keyword">end</span></div></pre></td></tr></table></figure>
 <p>从这个角度来看，自然，与变量一样，Lua有全局函数和局部函数之分。</p>
-<h3 id="3-_词法闭包">3. 词法闭包</h3><p>词法闭包是指当在一个函数内部嵌套定义另一个函数时，内部函数体可以访问到外部函数的局部变量。</p>
-<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">newCounter</span><span class="params">()</span></span></span><br><span class="line">    <span class="keyword">local</span> i = <span class="number">0</span></span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span><span class="params">()</span></span>     <span class="comment">-- anonymous function</span></span><br><span class="line">        i = i + <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> i</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">c1 = newCounter()</span><br><span class="line"><span class="built_in">print</span>(c1())  <span class="comment">--&gt; 1</span></span><br><span class="line"><span class="built_in">print</span>(c1())  <span class="comment">--&gt; 2</span></span><br><span class="line">c2 = newCounter()</span><br><span class="line"><span class="built_in">print</span>(c2())  <span class="comment">--&gt; 1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 打印c1所有的upvalue 输出: i</span></span><br><span class="line"><span class="keyword">local</span> i=<span class="number">1</span></span><br><span class="line"><span class="keyword">local</span> up = <span class="built_in">debug</span>.getupvalue(c1, i)</span><br><span class="line"><span class="keyword">while</span>(up ~= <span class="keyword">nil</span>) <span class="keyword">do</span></span><br><span class="line">    <span class="built_in">print</span>(up, <span class="string">"  "</span>)</span><br><span class="line">    i = i+<span class="number">1</span></span><br><span class="line">    up = <span class="built_in">debug</span>.getupvalue(c1, i)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">print</span>(c1, c2) <span class="comment">-- function: 0x7f8df1d02100        function: 0x7f8df1d02160</span></span><br></pre></td></tr></table></figure>
+<h3 id="3-词法闭包"><a href="#3-词法闭包" class="headerlink" title="3. 词法闭包"></a>3. 词法闭包</h3><p>词法闭包是指当在一个函数内部嵌套定义另一个函数时，内部函数体可以访问到外部函数的局部变量。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">newCounter</span><span class="params">()</span></span></div><div class="line">    <span class="keyword">local</span> i = <span class="number">0</span></div><div class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span><span class="params">()</span></span>     <span class="comment">-- anonymous function</span></div><div class="line">        i = i + <span class="number">1</span></div><div class="line">        <span class="keyword">return</span> i</div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line">c1 = newCounter()</div><div class="line"><span class="built_in">print</span>(c1())  <span class="comment">--&gt; 1</span></div><div class="line"><span class="built_in">print</span>(c1())  <span class="comment">--&gt; 2</span></div><div class="line">c2 = newCounter()</div><div class="line"><span class="built_in">print</span>(c2())  <span class="comment">--&gt; 1</span></div><div class="line"></div><div class="line"><span class="comment">-- 打印c1所有的upvalue 输出: i</span></div><div class="line"><span class="keyword">local</span> i=<span class="number">1</span></div><div class="line"><span class="keyword">local</span> up = <span class="built_in">debug</span>.<span class="built_in">getupvalue</span>(c1, i)</div><div class="line"><span class="keyword">while</span>(up ~= <span class="literal">nil</span>) <span class="keyword">do</span></div><div class="line">    <span class="built_in">print</span>(up, <span class="string">"  "</span>)</div><div class="line">    i = i+<span class="number">1</span></div><div class="line">    up = <span class="built_in">debug</span>.<span class="built_in">getupvalue</span>(c1, i)</div><div class="line"><span class="keyword">end</span></div><div class="line"><span class="built_in">print</span>(c1, c2) <span class="comment">-- function: 0x7f8df1d02100        function: 0x7f8df1d02160</span></div></pre></td></tr></table></figure>
 <p>这种情况下，我们称i为匿名函数的外部局部变量(external local variable)或upvalue。在这里，newCounter函数返回了一个闭包(closure)。闭包是指一个函数和它的upvalues，闭包机制保证了即使upvalue已经超出了其作用域(newCounter返回)，仍然能正确被闭包函数引用而不会释放(由Lua GC管理)。在上例中，我们说c1和c2是建立在同一个函数上，但作用于同一个局部变量(i)不同实例的两个不同的闭包。</p>
 <p>通过打印的upvalues可以看到，只有被闭包函数引用的外部局部变量，才算作该闭包函数的upvalue，Lua会按照闭包函数引用的顺序为upvalue编号，该编号与upvalue定义顺序无关。</p>
 <p>最后一点是，闭包函数都是动态生成的，这和<a href="http://wudaijun.com/2016/09/go-basic/">Go中的闭包</a>有所不同，Go的闭包函数是在编译时生成的，不同的闭包可以共享闭包函数(同一个函数地址)。Lua的闭包函数动态生成会一定程度地影响运行效率和内存占用。</p>
 <p>Lua闭包除了用于高级函数，回调函数，迭代器等上下文环境中以外，在完全不同的上下文环境，可用于重定义或预定义函数，通过这种方法，可以为代码创建一个安全的执行环境(也叫沙箱，sandbox)。</p>
 <p>Lua还提供了对C闭包的支持，每当你在Lua中创建一个新的C函数，你可以将这个函数与任意多个upvalues联系起来，每一个upvalue 可以持有一个单独的Lua值。当函数被调用的时候，可以通过假索引(<code>lua_upvalueindex</code>)自由的访问任何一个upvalues。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">counter</span> <span class="params">(lua_State *L)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">double</span> val = lua_tonumber(L, lua_upvalueindex(<span class="number">1</span>));</span><br><span class="line">    lua_pushnumber(L, ++val);   <span class="comment">/* new value */</span></span><br><span class="line">    lua_pushvalue(L, -<span class="number">1</span>);       <span class="comment">/* duplicate it */</span></span><br><span class="line">    lua_replace(L, lua_upvalueindex(<span class="number">1</span>));  <span class="comment">/* update upvalue */</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;  <span class="comment">/* return new value */</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">newCounter</span> <span class="params">(lua_State *L)</span> </span>&#123;</span><br><span class="line">    lua_pushnumber(L, <span class="number">0</span>);</span><br><span class="line">    lua_pushcclosure(L, &amp;counter, <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">counter</span> <span class="params">(lua_State *L)</span> </span>&#123;</div><div class="line">    <span class="keyword">double</span> val = lua_tonumber(L, lua_upvalueindex(<span class="number">1</span>));</div><div class="line">    lua_pushnumber(L, ++val);   <span class="comment">/* new value */</span></div><div class="line">    lua_pushvalue(L, <span class="number">-1</span>);       <span class="comment">/* duplicate it */</span></div><div class="line">    lua_replace(L, lua_upvalueindex(<span class="number">1</span>));  <span class="comment">/* update upvalue */</span></div><div class="line">    <span class="keyword">return</span> <span class="number">1</span>;  <span class="comment">/* return new value */</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">newCounter</span> <span class="params">(lua_State *L)</span> </span>&#123;</div><div class="line">    lua_pushnumber(L, <span class="number">0</span>);</div><div class="line">    lua_pushcclosure(L, &amp;counter, <span class="number">1</span>);</div><div class="line">    <span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>C闭包与Lua闭包在概念上很相似，但有两点不同：</p>
 <ol>
 <li>C函数的upvalues是显示push到栈中的，而Lua则可通过闭包函数引用确定哪些是upvalues</li>
 <li>C闭包不能共享upvalues，每个闭包在栈中都有独立的变量集，但你可以通过将upvalues指向同一个table来实现共享</li>
 </ol>
-<h2 id="Chunk">Chunk</h2><p>Chunk是一系列语句，Lua执行的每一块语句，比如一个文件或者交互模式下的每一行都是一个Chunk。</p>
+<h2 id="Chunk"><a href="#Chunk" class="headerlink" title="Chunk"></a>Chunk</h2><p>Chunk是一系列语句，Lua执行的每一块语句，比如一个文件或者交互模式下的每一行都是一个Chunk。</p>
 <p>当我们执行loadfile(“test.lua”)时，便将test.lua的内容编译后的Chunk作为一个函数返回，如果出现编译错误，则返回nil和错误信息。而dofile相当于:</p>
-<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">dofile</span> <span class="params">(filename)</span></span></span><br><span class="line">    <span class="keyword">local</span> f = <span class="built_in">assert</span>(<span class="built_in">loadfile</span>(filename))</span><br><span class="line">    <span class="keyword">return</span> f()</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">dofile</span> <span class="params">(filename)</span></span></div><div class="line">    <span class="keyword">local</span> f = <span class="built_in">assert</span>(<span class="built_in">loadfile</span>(filename))</div><div class="line">    <span class="keyword">return</span> f()</div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
 <p>loadstring和dostring的关系类似，只是接收字符串而不是文件名为参数。</p>
 <p>再看require，require和dofile完成同样的功能，但主要有几点不同：</p>
 <ol>
@@ -236,7 +227,7 @@ Functions1. 基本特性
 <li>require可以用于加载C .so库，功能类似loadlib，参考<a href="http://wudaijun.com/2014/12/lua-C/">这里</a></li>
 </ol>
 <p>一个lua模块编译后的Chunk被作为匿名函数被执行，那么定义于模块中函数对模块局部变量的引用就形成了闭包，所以说Lua中的闭包真是无处不在。</p>
-<h2 id="Enviroment">Enviroment</h2><p>Lua中的环境用table来表示，这简化了环境处理也带来了不少灵活性。</p>
+<h2 id="Enviroment"><a href="#Enviroment" class="headerlink" title="Enviroment"></a>Enviroment</h2><p>Lua中的环境用table来表示，这简化了环境处理也带来了不少灵活性。</p>
 <p>在Lua5.1及之前，Lua将环境本身存储在一个全局变量_G中，其中包含了全局变量，内置函数，内置模块等。我们在使用任何符号x时，如果在当前函数的局部变量和upvalues无法找到符号定义(PS: Lua查找变量定义的规则为：局部变量 -&gt; 外部局部变量(upvalue) -&gt; 全局变量)，则会返回_G.x的值。由于_G是一个table，因此我们可以用它实现一些有意思的功能：</p>
 <ol>
 <li>通过动态名字访问全局变量： <code>_G[varname]</code></li>
@@ -245,7 +236,7 @@ Functions1. 基本特性
 </ol>
 <p>现在再回头来看闭包，实际上，Lua闭包除了函数和upvalues，还包括函数环境，这三者组成了一个完整的执行沙盒。</p>
 <p>在Lua5.2及之后，Lua取消了setfenv函数，用_ENV方案替代了_G方案：</p>
-<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- before Lua 5.1</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span><span class="params">()</span></span></span><br><span class="line">  <span class="built_in">setfenv</span>(<span class="number">1</span>, &#123;&#125;)</span><br><span class="line">  <span class="comment">-- code here</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- after Lua 5.2</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span><span class="params">()</span></span></span><br><span class="line">  <span class="keyword">local</span> _ENV = &#123;&#125;</span><br><span class="line">  <span class="comment">-- code here</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">or</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span><span class="params">()</span></span></span><br><span class="line">    <span class="keyword">local</span> _ENV = &#123;&#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span><span class="params">()</span></span> ... <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment">-- before Lua 5.1</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span><span class="params">()</span></span></div><div class="line">  <span class="built_in">setfenv</span>(<span class="number">1</span>, &#123;&#125;)</div><div class="line">  <span class="comment">-- code here</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="comment">-- after Lua 5.2</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span><span class="params">()</span></span></div><div class="line">  <span class="keyword">local</span> <span class="built_in">_ENV</span> = &#123;&#125;</div><div class="line">  <span class="comment">-- code here</span></div><div class="line"><span class="keyword">end</span></div><div class="line"><span class="keyword">or</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span><span class="params">()</span></span></div><div class="line">    <span class="keyword">local</span> <span class="built_in">_ENV</span> = &#123;&#125;</div><div class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span><span class="params">()</span></span> ... <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
 <p>_ENV有三个特性：</p>
 <ol>
 <li>对全局变量x的引用，将转换为_ENV.x</li>
@@ -255,7 +246,7 @@ Functions1. 基本特性
 <p>除了以上三点外，_ENV和普通变量并无区别。因此我们可以直接通过<code>local _ENV = {}</code>来覆盖接下来的代码的环境。将环境(_ENV)作为一个普通的upvalue来处理，这样做的好处是简化了闭包的概念，闭包等于函数加upvalues(没有了全局变量_G)，为闭包优化(如合并相同upvalues的闭包)提供更好的支持，同时也减少了<code>setfenv(f, env)</code>带来的不确定性和不安全性(函数的_ENV upvalue在闭包返回时就已经确定了)。</p>
 <p>有_ENV还是一个table，因此对全局变量的访问控制等trick，仍然很容易实现。Lua目前仍然保留_G，但理解它们的别是比较重要的：</p>
 <p>我们都知道Lua有一个全局注册表(Registry)，其中包含整个Lua虚拟机的信息，在Registry的<code>LUA_RIDX_GLOBALS</code>索引中，保存了Globals(也就是_G)，在创建Globals时，会生成<code>_G._G=_G</code>的自引用。在引入_ENV后，初始时，<code>_ENV=_G</code>，一旦编译器将_ENV放入Chunk的upvalue后，_ENV将作为普通upvalue被看待，因此我们可以对其重新赋值：</p>
-<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">i = <span class="number">1</span> <span class="comment">-- 此时 _ENV.i == _G.i == 1</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span><span class="params">()</span></span></span><br><span class="line">    <span class="keyword">local</span> _ENV=&#123;i=<span class="number">2</span>, <span class="built_in">print</span>=<span class="built_in">print</span>, <span class="built_in">_G</span>=<span class="built_in">_G</span>&#125;</span><br><span class="line">    <span class="built_in">print</span>(i, _ENV.i, <span class="built_in">_G</span>.i)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">g</span><span class="params">()</span></span></span><br><span class="line">    <span class="built_in">print</span>(i, _ENV.i, <span class="built_in">_G</span>.i)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">f() <span class="comment">-- 2 2 1</span></span><br><span class="line">g() <span class="comment">-- 1 1 1</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">i = <span class="number">1</span> <span class="comment">-- 此时 _ENV.i == _G.i == 1</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span><span class="params">()</span></span></div><div class="line">    <span class="keyword">local</span> <span class="built_in">_ENV</span>=&#123;i=<span class="number">2</span>, <span class="built_in">print</span>=<span class="built_in">print</span>, <span class="built_in">_G</span>=<span class="built_in">_G</span>&#125;</div><div class="line">    <span class="built_in">print</span>(i, <span class="built_in">_ENV</span>.i, <span class="built_in">_G</span>.i)</div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">g</span><span class="params">()</span></span></div><div class="line">    <span class="built_in">print</span>(i, <span class="built_in">_ENV</span>.i, <span class="built_in">_G</span>.i)</div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line">f() <span class="comment">-- 2 2 1</span></div><div class="line">g() <span class="comment">-- 1 1 1</span></div></pre></td></tr></table></figure>
 <p>因此，_ENV除了在创建时和_G都指向Registry[LUA_RIDX_GLOBALS]之外，和_G并没有直接联系(<code>_G={}</code>不会影响函数环境，<code>_G.x=1</code>仍然会影响注册表中的Globals)，Lua5.2及之后的环境都由_ENV指定，_G出于历史原因保留，但实际上Lua并不在内部再使用：</p>
 <blockquote>
 <p>Lua keeps a distinguished environment called the global environment. This value is kept at a special index in the C registry (see §4.5). In Lua, the global variable _G is initialized with this same value. (_G is never used internally.)</p>
@@ -263,31 +254,40 @@ Functions1. 基本特性
 <ul>
 <li>参考<a href="http://lua-users.org/lists/lua-l/2014-08/msg00345.html" target="_blank" rel="external">_ENV vs _G</a>，<a href="http://stackoverflow.com/questions/14290527/recreating-setfenv-in-lua-5-2" target="_blank" rel="external">setfenv in Lua5.2</a></li>
 </ul>
-<h2 id="Packages">Packages</h2><p>在Lua中，有闭包，灵活的table和环境管理，想要实现包管理有非常多的方法：</p>
-<h3 id="1-_基本方法">1. 基本方法</h3><p>最简单的方法就是直接使用table和第一类函数特性：</p>
-<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">complex = &#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">complex.new</span><span class="params">(r,i)</span></span> ... <span class="keyword">end</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">complex.add</span><span class="params">(c1,c2)</span></span> ... <span class="keyword">end</span></span><br><span class="line">...</span><br><span class="line"><span class="keyword">return</span> complex</span><br></pre></td></tr></table></figure>
+<h2 id="Packages"><a href="#Packages" class="headerlink" title="Packages"></a>Packages</h2><p>在Lua中，有闭包，灵活的table和环境管理，想要实现包管理有非常多的方法：</p>
+<h3 id="1-基本方法"><a href="#1-基本方法" class="headerlink" title="1. 基本方法"></a>1. 基本方法</h3><p>最简单的方法就是直接使用table和第一类函数特性：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">complex = &#123;&#125;</div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">complex.new</span><span class="params">(r,i)</span></span> ... <span class="keyword">end</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">complex.add</span><span class="params">(c1,c2)</span></span> ... <span class="keyword">end</span></div><div class="line">...</div><div class="line"><span class="keyword">return</span> complex</div></pre></td></tr></table></figure>
 <p>执行这个Chunk后，便可以通过<code>complex.xxx()</code>使用complex中定义的API了。这种方案主要的缺点是包内包外的调用都必须加上前缀，并且不能很好地隐藏私有成员。</p>
-<h3 id="2-_局部函数">2. 局部函数</h3><p>通过局部函数再导出的方式，我们可以解决包内调用前缀和隐藏私有成员(不导出即可)的问题。<br><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">new</span><span class="params">(r,i)</span></span> ... <span class="keyword">end</span></span><br><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">add</span><span class="params">(c1,c2)</span></span> ... <span class="keyword">end</span></span><br><span class="line">...</span><br><span class="line">complex = &#123;new = new, add = add&#125;</span><br><span class="line"><span class="keyword">return</span> complex</span><br></pre></td></tr></table></figure></p>
+<h3 id="2-局部函数"><a href="#2-局部函数" class="headerlink" title="2. 局部函数"></a>2. 局部函数</h3><p>通过局部函数再导出的方式，我们可以解决包内调用前缀和隐藏私有成员(不导出即可)的问题。<br><figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">new</span><span class="params">(r,i)</span></span> ... <span class="keyword">end</span></div><div class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">add</span><span class="params">(c1,c2)</span></span> ... <span class="keyword">end</span></div><div class="line">...</div><div class="line">complex = &#123;new = new, add = add&#125;</div><div class="line"><span class="keyword">return</span> complex</div></pre></td></tr></table></figure></p>
 <p>但这样容易忘了local，造成全局命名空间污染。</p>
-<h3 id="3-_独立环境">3. 独立环境</h3><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">complex = &#123;&#125;</span><br><span class="line"><span class="comment">-- before Lua5.1: setfenv(1, complex)</span></span><br><span class="line"><span class="keyword">local</span> _ENV = complex</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">new</span><span class="params">(r,  i)</span></span> ... <span class="keyword">end</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">new</span><span class="params">(c1, c2)</span></span> ... <span class="keyword">end</span></span><br><span class="line"><span class="keyword">return</span> complex</span><br></pre></td></tr></table></figure>
+<h3 id="3-独立环境"><a href="#3-独立环境" class="headerlink" title="3. 独立环境"></a>3. 独立环境</h3><figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">complex = &#123;&#125;</div><div class="line"><span class="comment">-- before Lua5.1: setfenv(1, complex)</span></div><div class="line"><span class="keyword">local</span> <span class="built_in">_ENV</span> = complex</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">new</span><span class="params">(r,  i)</span></span> ... <span class="keyword">end</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">new</span><span class="params">(c1, c2)</span></span> ... <span class="keyword">end</span></div><div class="line"><span class="keyword">return</span> complex</div></pre></td></tr></table></figure>
 <p>现在，包内所有全局符号new, add都会被转换为complex.new, complex.add，并且我们为包创建了一个独立沙盒环境，如果要在包内访问全局符号，也有多种方法:</p>
-<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 方案1: 保存老的全局环境 之后访问全局符号需要加上 _G.前缀</span></span><br><span class="line"><span class="keyword">local</span> <span class="built_in">_G</span> = <span class="built_in">_G</span></span><br><span class="line"><span class="comment">-- 方案2: 通过metatable 效率低一些，并且外部可通过complex.print访问_G.print</span></span><br><span class="line"><span class="built_in">setmetatable</span>(complex, &#123;__index = <span class="built_in">_G</span>&#125;)</span><br><span class="line"><span class="comment">-- 方案3: 只导出要使用的函数 这种方法隔离型更好，并且更快</span></span><br><span class="line"><span class="keyword">local</span> sqrt = <span class="built_in">math</span>.sqrt</span><br><span class="line"><span class="keyword">local</span> <span class="built_in">print</span> = <span class="built_in">print</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">-- 方案1: 保存老的全局环境 之后访问全局符号需要加上 _G.前缀</span></div><div class="line"><span class="keyword">local</span> <span class="built_in">_G</span> = <span class="built_in">_G</span></div><div class="line"><span class="comment">-- 方案2: 通过metatable 效率低一些，并且外部可通过complex.print访问_G.print</span></div><div class="line"><span class="built_in">setmetatable</span>(complex, &#123;<span class="built_in">__index</span> = <span class="built_in">_G</span>&#125;)</div><div class="line"><span class="comment">-- 方案3: 只导出要使用的函数 这种方法隔离型更好，并且更快</span></div><div class="line"><span class="keyword">local</span> <span class="built_in">sqrt</span> = <span class="built_in">math</span>.<span class="built_in">sqrt</span></div><div class="line"><span class="keyword">local</span> <span class="built_in">print</span> = <span class="built_in">print</span></div></pre></td></tr></table></figure>
 
         </div>
-        
+
         <blockquote class="post-copyright">
-            <div class="content">
-               这里写留言或版权声明：<a href="/2017/02/lua-notes/" target="_blank" rel="external">http://wudaijun.com/2017/02/lua-notes/</a>
-            </div>
-            <footer>
-                <a href="http://wudaijun.com">
-                    <img src="/favicon.png" alt="wudaijun">
-                    wudaijun
-                </a>
-            </footer>
-        </blockquote>
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2017-02-28T04:20:22.000Z" itemprop="dateUpdated">2017-02-28 12:20:22</time>
+</span><br>
+
 
         
+        博客均为原创，转载请征得作者同意并注明出处，本文永久链接：<a href="/2017/02/lua-notes/" target="_blank" rel="external">http://wudaijun.com/2017/02/lua-notes/</a>
+        
+    </div>
+    <footer>
+        <a href="http://wudaijun.com">
+            <img src="/favicon.png" alt="wudaijun">
+            wudaijun
+        </a>
+    </footer>
+</blockquote>
+
+        
+
 
         <div class="post-footer">
             
@@ -295,51 +295,55 @@ Functions1. 基本特性
 
 
             
-            <div class="post-share-wrap">
-                <div class="post-share" id="post-share">
-    <div class="tit">分享到：</div>
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2017/02/lua-notes/&title=《Lua 闭包 环境 包管理》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2017/02/lua-notes/&title=《Lua 闭包 环境 包管理》 — wudaijun's blog&source=" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2017/02/lua-notes/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Lua 闭包 环境 包管理》 — wudaijun's blog&url=http://wudaijun.com/2017/02/lua-notes/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2017/02/lua-notes/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
-                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
-                    <i class="icon icon-share-alt icon-lg"></i>
-                </a>
-            </div>
-            
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
 
         </div>
-    </div>   
+    </div>
 
     
 <nav class="post-nav flex-row flex-justify-between">
@@ -363,83 +367,139 @@ Functions1. 基本特性
 </nav>
 
 
-            
+
     
 
 
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'wudaijun'; // required: replace example with your forum shortname
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://wudaijun.com/2017/02/lua-notes/index.html',
+        sourceId: 'lua-notes',
+        productKey: '02b378614d264e81bca14ffaadf03446',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
 
 
 </article>
 
 
+
 </div>
-  </main>
-  <div class="mask" id="mask"></div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>wudaijun &copy; 2015 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
-<script>
-var BLOG_SHARE = {
-    title: "Lua 闭包 环境 包管理",
-    pic: "/favicon.png",
-    summary: document.getElementsByName('summary')[0].content,
-    url: "http://wudaijun.com/2017/02/lua-notes/"
-};
-</script>
-<div class="global-share" id="global-share">
-    <div class="tit">分享到：</div>
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2017/02/lua-notes/&title=《Lua 闭包 环境 包管理》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2017/02/lua-notes/&title=《Lua 闭包 环境 包管理》 — wudaijun's blog&source=" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2017/02/lua-notes/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Lua 闭包 环境 包管理》 — wudaijun's blog&url=http://wudaijun.com/2017/02/lua-notes/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2017/02/lua-notes/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script src="/js/main.min.js?v=1.1.4"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://wudaijun.com/2017/02/lua-notes/" alt="微信分享二维码">
+</div>
 
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
@@ -447,7 +507,7 @@ var BLOG_SHARE = {
 </div>
 <template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -459,13 +519,14 @@ var BLOG_SHARE = {
 </li>
 </template>
 
-<script src="/js/search.min.js?v=1.1.4"></script>
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 

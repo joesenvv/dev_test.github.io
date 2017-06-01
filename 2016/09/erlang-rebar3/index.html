@@ -1,87 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  
-  
-  <title>Rebar3 Erlang/OTP构建利器 | wudaijun&#39;s blog | Coding is Funny</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="theme-color" content="#3F51B5">
-  
-  
-  <meta name="keywords" content="erlang">
-  <meta name="description" content="一. 依赖管理1. 包依赖和源码依赖Rebar3支持两种依赖：
-{deps,[
-  %% 包依赖
-  rebar,
-  {rebar,&quot;1.0.0&quot;},
-  {rebar, {pkg, rebar_fork}}, % rebar app under a different pkg name
-  {rebar, &quot;1.0.0&quot;, {pkg, rebar_fork}},
-  %% 源码依赖
-  {re">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>Rebar3 Erlang/OTP构建利器 | wudaijun&#39;s blog | Coding is Funny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="erlang">
+    <meta name="description" content="一. 依赖管理1. 包依赖和源码依赖Rebar3支持两种依赖： {deps,[   %% 包依赖   rebar,   {rebar,&amp;quot;1.0.0&amp;quot;},   {rebar, {pkg, rebar_fork}}, % rebar app under a different pkg name   {rebar, &amp;quot;1.0.0&amp;quot;, {pkg, rebar_for">
+<meta name="keywords" content="erlang">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Rebar3 Erlang/OTP构建利器">
+<meta property="og:title" content="Rebar3 Erlang&#x2F;OTP构建利器">
 <meta property="og:url" content="http://wudaijun.com/2016/09/erlang-rebar3/index.html">
-<meta property="og:site_name" content="wudaijun's blog">
-<meta property="og:description" content="一. 依赖管理1. 包依赖和源码依赖Rebar3支持两种依赖：
-{deps,[
-  %% 包依赖
-  rebar,
-  {rebar,&quot;1.0.0&quot;},
-  {rebar, {pkg, rebar_fork}}, % rebar app under a different pkg name
-  {rebar, &quot;1.0.0&quot;, {pkg, rebar_fork}},
-  %% 源码依赖
-  {re">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
+<meta property="og:description" content="一. 依赖管理1. 包依赖和源码依赖Rebar3支持两种依赖： {deps,[   %% 包依赖   rebar,   {rebar,&amp;quot;1.0.0&amp;quot;},   {rebar, {pkg, rebar_fork}}, % rebar app under a different pkg name   {rebar, &amp;quot;1.0.0&amp;quot;, {pkg, rebar_for">
 <meta property="og:updated_time" content="2016-09-09T18:17:06.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Rebar3 Erlang/OTP构建利器">
-<meta name="twitter:description" content="一. 依赖管理1. 包依赖和源码依赖Rebar3支持两种依赖：
-{deps,[
-  %% 包依赖
-  rebar,
-  {rebar,&quot;1.0.0&quot;},
-  {rebar, {pkg, rebar_fork}}, % rebar app under a different pkg name
-  {rebar, &quot;1.0.0&quot;, {pkg, rebar_fork}},
-  %% 源码依赖
-  {re">
-  
-    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
-  
-  <meta name="summary" content="&lt;h3 id=&quot;一-_依赖管理&quot;&gt;一. 依赖管理&lt;/h3&gt;&lt;h4 id=&quot;1-_包依赖和源码依赖&quot;&gt;1. 包依赖和源码依赖&lt;/h4&gt;&lt;p&gt;Rebar3支持两种依赖：&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;&lt;span class=&quot;collection&quot;&gt;{deps,&lt;span class=&quot;collection&quot;&gt;[
-  %% 包依赖
-  rebar,
-  &lt;span class=&quot;collection&quot;&gt;{rebar,&lt;span class=&quot;string&quot;&gt;&quot;1.0.0&quot;&lt;/span&gt;}&lt;/span&gt;,
-  &lt;span class=&quot;collection&quot;&gt;{rebar, &lt;span class=&quot;collection&quot;&gt;{pkg, rebar_fork}&lt;/span&gt;}&lt;/span&gt;, % rebar app under a different pkg name
-  &lt;span class=&quot;collection&quot;&gt;{rebar, &lt;span class=&quot;string&quot;&gt;&quot;1.0.0&quot;&lt;/span&gt;, &lt;span class=&quot;collection&quot;&gt;{pkg, rebar_fork}&lt;/span&gt;}&lt;/span&gt;,
-  %% 源码依赖
-  &lt;span class=&quot;collection&quot;&gt;{rebar, &lt;span class=&quot;collection&quot;&gt;{git, &lt;span class=&quot;string&quot;&gt;&quot;git://github.com/erlang/rebar3.git&quot;&lt;/span&gt;}&lt;/span&gt;}&lt;/span&gt;,
-  &lt;span class=&quot;collection&quot;&gt;{rebar, &lt;span class=&quot;collection&quot;&gt;{git, &lt;span class=&quot;string&quot;&gt;&quot;http://github.com/erlang/rebar3.git&quot;&lt;/span&gt;}&lt;/span&gt;}&lt;/span&gt;,
-  &lt;span class=&quot;collection&quot;&gt;{rebar, &lt;span class=&quot;collection&quot;&gt;{git, &lt;span class=&quot;string&quot;&gt;&quot;https://github.com/erlang/rebar3.git&quot;&lt;/span&gt;}&lt;/span&gt;}&lt;/span&gt;,
-  &lt;span class=&quot;collection&quot;&gt;{rebar, &lt;span class=&quot;collection&quot;&gt;{git, &lt;span class=&quot;string&quot;&gt;&quot;git@github.com:erlang/rebar3.git&quot;&lt;/span&gt;}&lt;/span&gt;}&lt;/span&gt;,
-  &lt;span class=&quot;collection&quot;&gt;{rebar, &lt;span class=&quot;collection&quot;&gt;{hg, &lt;span class=&quot;string&quot;&gt;&quot;https://othersite.com/erlang/rebar3&quot;&lt;/span&gt;}&lt;/span&gt;}&lt;/span&gt;,
-  &lt;span class=&quot;collection&quot;&gt;{rebar, &lt;span class=&quot;collection&quot;&gt;{git, &lt;span class=&quot;string&quot;&gt;&quot;git://github.com/erlang/rebar3.git&quot;&lt;/span&gt;, &lt;span class=&quot;collection&quot;&gt;{ref, &lt;span class=&quot;string&quot;&gt;&quot;aef728&quot;&lt;/span&gt;}&lt;/span&gt;}&lt;/span&gt;}&lt;/span&gt;,
-  &lt;span class=&quot;collection&quot;&gt;{rebar, &lt;span class=&quot;collection&quot;&gt;{git, &lt;span class=&quot;string&quot;&gt;&quot;git://github.com/erlang/rebar3.git&quot;&lt;/span&gt;, &lt;span class=&quot;collection&quot;&gt;{branch, &lt;span class=&quot;string&quot;&gt;&quot;master&quot;&lt;/span&gt;}&lt;/span&gt;}&lt;/span&gt;}&lt;/span&gt;,
-  &lt;span class=&quot;collection&quot;&gt;{rebar, &lt;span class=&quot;collection&quot;&gt;{git, &lt;span class=&quot;string&quot;&gt;&quot;git://github.com/erlang/rebar3.git&quot;&lt;/span&gt;, &lt;span class=&quot;collection&quot;&gt;{tag, &lt;span class=&quot;string&quot;&gt;&quot;3.0.0&quot;&lt;/span&gt;}&lt;/span&gt;}&lt;/span&gt;}&lt;/span&gt;
-  ]&lt;/span&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+<meta name="twitter:title" content="Rebar3 Erlang&#x2F;OTP构建利器">
+<meta name="twitter:description" content="一. 依赖管理1. 包依赖和源码依赖Rebar3支持两种依赖： {deps,[   %% 包依赖   rebar,   {rebar,&amp;quot;1.0.0&amp;quot;},   {rebar, {pkg, rebar_fork}}, % rebar app under a different pkg name   {rebar, &amp;quot;1.0.0&amp;quot;, {pkg, rebar_for">
+    
+        <link rel="alternate" type="application/atom+xml" title="wudaijun&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <aside id="menu" class="hide" >
+    <aside id="menu" class="hide" >
   <div class="inner flex-row-vertical">
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap">
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
       <div class="brand">
-        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/favicon.png">
+        </a>
         <hgroup class="introduce">
           <h5 class="nickname">wudaijun</h5>
           <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
@@ -134,20 +104,12 @@
             </li>
         
       </ul>
-
-      <footer class="footer">
-  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
-  <p>wudaijun&#39;s blog &copy; 2017</p>
-  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
-</footer>
-
     </div>
   </div>
 </aside>
-  <main id="main">
-    <header class="top-header" id="header">
+
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -165,7 +127,7 @@
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
@@ -173,14 +135,23 @@
 </header>
 <header class="content-header post-header">
 
-    <div class="container">
+    <div class="container fade-scale">
         <h1 class="title">Rebar3 Erlang/OTP构建利器</h1>
-        
-        
+        <h5 class="subtitle">
+            
+                <time datetime="2016-09-09T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2016-09-10
+</time>
 
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
+
+            
+        </h5>
     </div>
 
     
+
 
 </header>
 
@@ -190,108 +161,114 @@
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#一-_依赖管理"><span class="post-toc-text">一. 依赖管理</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1-_包依赖和源码依赖"><span class="post-toc-text">1. 包依赖和源码依赖</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#2-_升级依赖"><span class="post-toc-text">2. 升级依赖</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#二-_构建"><span class="post-toc-text">二. 构建</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#三-_发布"><span class="post-toc-text">三. 发布</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1-_发布环境"><span class="post-toc-text">1. 发布环境</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#2-_发布多个应用"><span class="post-toc-text">2. 发布多个应用</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#3-_应用依赖"><span class="post-toc-text">3. 应用依赖</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#4-_Overlays"><span class="post-toc-text">4. Overlays</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#四-_总结"><span class="post-toc-text">四. 总结</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#五-_参考："><span class="post-toc-text">五. 参考：</span></a></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#一-依赖管理"><span class="post-toc-text">一. 依赖管理</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1-包依赖和源码依赖"><span class="post-toc-text">1. 包依赖和源码依赖</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#2-升级依赖"><span class="post-toc-text">2. 升级依赖</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#二-构建"><span class="post-toc-text">二. 构建</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#三-发布"><span class="post-toc-text">三. 发布</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1-发布环境"><span class="post-toc-text">1. 发布环境</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#2-发布多个应用"><span class="post-toc-text">2. 发布多个应用</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#3-应用依赖"><span class="post-toc-text">3. 应用依赖</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#4-Overlays"><span class="post-toc-text">4. Overlays</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#四-总结"><span class="post-toc-text">四. 总结</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#五-参考："><span class="post-toc-text">五. 参考：</span></a></li></ol>
         </nav>
     </aside>
     
-<article id="post-erlang-rebar3" 
-  class="post-article article-type-post" itemprop="blogPost">
+<article id="post-erlang-rebar3"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
         <h1 class="post-card-title">Rebar3 Erlang/OTP构建利器</h1>
         <div class="post-meta">
-            <time datetime="2016-09-09T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2016-09-10
-</time>
+            <time class="post-time" title="2016-09-10 00:00:00" datetime="2016-09-09T16:00:00.000Z"  itemprop="datePublished">2016-09-10</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
 
 
 
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
-            <h3 id="一-_依赖管理">一. 依赖管理</h3><h4 id="1-_包依赖和源码依赖">1. 包依赖和源码依赖</h4><p>Rebar3支持两种依赖：</p>
-<pre><code><span class="collection">{deps,<span class="collection">[
+            <h3 id="一-依赖管理"><a href="#一-依赖管理" class="headerlink" title="一. 依赖管理"></a>一. 依赖管理</h3><h4 id="1-包依赖和源码依赖"><a href="#1-包依赖和源码依赖" class="headerlink" title="1. 包依赖和源码依赖"></a>1. 包依赖和源码依赖</h4><p>Rebar3支持两种依赖：</p>
+<pre><code>{deps,[
   %% 包依赖
   rebar,
-  <span class="collection">{rebar,<span class="string">"1.0.0"</span>}</span>,
-  <span class="collection">{rebar, <span class="collection">{pkg, rebar_fork}</span>}</span>, % rebar app under a different pkg name
-  <span class="collection">{rebar, <span class="string">"1.0.0"</span>, <span class="collection">{pkg, rebar_fork}</span>}</span>,
+  {rebar,&quot;1.0.0&quot;},
+  {rebar, {pkg, rebar_fork}}, % rebar app under a different pkg name
+  {rebar, &quot;1.0.0&quot;, {pkg, rebar_fork}},
   %% 源码依赖
-  <span class="collection">{rebar, <span class="collection">{git, <span class="string">"git://github.com/erlang/rebar3.git"</span>}</span>}</span>,
-  <span class="collection">{rebar, <span class="collection">{git, <span class="string">"http://github.com/erlang/rebar3.git"</span>}</span>}</span>,
-  <span class="collection">{rebar, <span class="collection">{git, <span class="string">"https://github.com/erlang/rebar3.git"</span>}</span>}</span>,
-  <span class="collection">{rebar, <span class="collection">{git, <span class="string">"git@github.com:erlang/rebar3.git"</span>}</span>}</span>,
-  <span class="collection">{rebar, <span class="collection">{hg, <span class="string">"https://othersite.com/erlang/rebar3"</span>}</span>}</span>,
-  <span class="collection">{rebar, <span class="collection">{git, <span class="string">"git://github.com/erlang/rebar3.git"</span>, <span class="collection">{ref, <span class="string">"aef728"</span>}</span>}</span>}</span>,
-  <span class="collection">{rebar, <span class="collection">{git, <span class="string">"git://github.com/erlang/rebar3.git"</span>, <span class="collection">{branch, <span class="string">"master"</span>}</span>}</span>}</span>,
-  <span class="collection">{rebar, <span class="collection">{git, <span class="string">"git://github.com/erlang/rebar3.git"</span>, <span class="collection">{tag, <span class="string">"3.0.0"</span>}</span>}</span>}</span>
-  ]</span>}</span>
+  {rebar, {git, &quot;git://github.com/erlang/rebar3.git&quot;}},
+  {rebar, {git, &quot;http://github.com/erlang/rebar3.git&quot;}},
+  {rebar, {git, &quot;https://github.com/erlang/rebar3.git&quot;}},
+  {rebar, {git, &quot;git@github.com:erlang/rebar3.git&quot;}},
+  {rebar, {hg, &quot;https://othersite.com/erlang/rebar3&quot;}},
+  {rebar, {git, &quot;git://github.com/erlang/rebar3.git&quot;, {ref, &quot;aef728&quot;}}},
+  {rebar, {git, &quot;git://github.com/erlang/rebar3.git&quot;, {branch, &quot;master&quot;}}},
+  {rebar, {git, &quot;git://github.com/erlang/rebar3.git&quot;, {tag, &quot;3.0.0&quot;}}}
+  ]}
 </code></pre><a id="more"></a>
 <p>Rebar3通过<a href="https://hex.pm" target="_blank" rel="external">hex.pm</a>来管理包依赖，在使用之前，需要通过<code>rebar3 update</code>从hex.pm更新包索引，并将包索引信息缓存到本地(<code>~/.cache/rebar3/</code>)。之后Rebar3便能正确解析包依赖，对应用程序使用上来说，两者没有明显区别。</p>
-<h4 id="2-_升级依赖">2. 升级依赖</h4><p>在使用Rebar2的时候，如果项目依赖一个指向分支的dep，就会出现这种情况：</p>
+<h4 id="2-升级依赖"><a href="#2-升级依赖" class="headerlink" title="2. 升级依赖"></a>2. 升级依赖</h4><p>在使用Rebar2的时候，如果项目依赖一个指向分支的dep，就会出现这种情况：</p>
 <ul>
 <li>这个dep有远程分支更新时，rebar get-deps不会自动拉取更新，通常你只能进入dep目录执行<code>git pull</code>，或者删除该dep重新执行rebar get-deps。</li>
 <li>项目成员各自的工作目录deps版本可能不一致，并且一些很久没更新的依赖可能在你部署新环境时(此时所有依赖都指向最新)出现问题。</li>
 </ul>
 <p>所以在Rebar2的reabr.config中定义deps，都应该尽量使用tag, commitid来指定，而不是直接指向分支。那么Rebar3是如何解决这个问题的呢？</p>
 <p>Rebar3解决此问题的核心在rebar.lock文件，该文件内容如下：</p>
-<pre><code>{<span class="string">"1.1.0"</span>,
-[{&lt;&lt;<span class="string">"goldrush"</span>&gt;&gt;,{pkg,&lt;&lt;<span class="string">"goldrush"</span>&gt;&gt;,&lt;&lt;<span class="string">"0.1.8"</span>&gt;&gt;},<span class="number">1</span>},
- {&lt;&lt;<span class="string">"lager"</span>&gt;&gt;,{pkg,&lt;&lt;<span class="string">"lager"</span>&gt;&gt;,&lt;&lt;<span class="string">"3.2.1"</span>&gt;&gt;},<span class="number">0</span>}]}.
+<pre><code>{&quot;1.1.0&quot;,
+[{&lt;&lt;&quot;goldrush&quot;&gt;&gt;,{pkg,&lt;&lt;&quot;goldrush&quot;&gt;&gt;,&lt;&lt;&quot;0.1.8&quot;&gt;&gt;},1},
+ {&lt;&lt;&quot;lager&quot;&gt;&gt;,{pkg,&lt;&lt;&quot;lager&quot;&gt;&gt;,&lt;&lt;&quot;3.2.1&quot;&gt;&gt;},0}]}.
 [
 {pkg_hash,[
- {&lt;&lt;<span class="string">"goldrush"</span>&gt;&gt;, &lt;&lt;<span class="string">"2024BA375CEEA47E27EA70E14D2C483B2D8610101B4E852EF7F89163CDB6E649"</span>&gt;&gt;},
- {&lt;&lt;<span class="string">"lager"</span>&gt;&gt;, &lt;&lt;<span class="string">"EEF4E18B39E4195D37606D9088EA05BF1B745986CF8EC84F01D332456FE88D17"</span>&gt;&gt;}]}
+ {&lt;&lt;&quot;goldrush&quot;&gt;&gt;, &lt;&lt;&quot;2024BA375CEEA47E27EA70E14D2C483B2D8610101B4E852EF7F89163CDB6E649&quot;&gt;&gt;},
+ {&lt;&lt;&quot;lager&quot;&gt;&gt;, &lt;&lt;&quot;EEF4E18B39E4195D37606D9088EA05BF1B745986CF8EC84F01D332456FE88D17&quot;&gt;&gt;}]}
 ].
 </code></pre><p>该文件是项目当前使用依赖库的一个版本快照。当一个依赖被获取和锁定，Rebar3将从依赖中提取版本信息并写入rebar.lock文件中，该文件应该加入GIt仓库，并且由专人维护，这样只要rebar.lock一致，各本地仓库的依赖库版本就是一致的。</p>
 <p>依赖升级分为两种，一种是直接通过<code>rebar upgrade [dep]</code>进行源码更新或包更新(只能更新Top Level依赖)。另一种是rebar.config发生变动，比如去除了某个依赖，此时需要<code>rebar unlock [dep]</code>命令来清理rebar.lock文件。</p>
 <p>相关命令：</p>
-<pre><code>rebar3 update  <span class="comment">// 更新包索引</span>
-rebar3 pkgs <span class="comment">// 列出所有可用的包</span>
-rebar3 deps  <span class="comment">// 列出所有一级(Top Level)依赖</span>
-rebar3 tree  <span class="comment">// 以树形结构查看依赖</span>
-rebar3 compile <span class="comment">// 获取并编译依赖</span>
-rebar3 upgrade <span class="attr_selector">[dep]</span> <span class="comment">// 升级依赖</span>
-rebar3 lock <span class="attr_selector">[dep]</span> <span class="comment">// 锁定依赖</span>
-rebar3 unlock <span class="attr_selector">[dep]</span> <span class="comment">// 解锁依赖</span>
-</code></pre><h3 id="二-_构建">二. 构建</h3><pre><code>rebar3 new app [appname]
-rebar3 new <span class="class"><span class="keyword">lib</span> [<span class="title">libname</span>]</span>
+<pre><code>rebar3 update  // 更新包索引
+rebar3 pkgs // 列出所有可用的包
+rebar3 deps  // 列出所有一级(Top Level)依赖
+rebar3 tree  // 以树形结构查看依赖
+rebar3 compile // 获取并编译依赖
+rebar3 upgrade [dep] // 升级依赖
+rebar3 lock [dep] // 锁定依赖
+rebar3 unlock [dep] // 解锁依赖
+</code></pre><h3 id="二-构建"><a href="#二-构建" class="headerlink" title="二. 构建"></a>二. 构建</h3><pre><code>rebar3 new app [appname]
+rebar3 new lib [libname]
 </code></pre><p>Rebar3建议应用程序按照OTP规范目录进行组织：</p>
 <pre><code>├── LICENSE
-├── README<span class="class">.md</span>
+├── README.md
 ├── apps
 │   └── myapp
 │       └── src
-│           ├── myapp<span class="class">.app</span><span class="class">.src</span>
-│           ├── myapp_app<span class="class">.erl</span>
-│           └── myapp_sup<span class="class">.erl</span>
+│           ├── myapp.app.src
+│           ├── myapp_app.erl
+│           └── myapp_sup.erl
 ├── config
-│   ├── sys<span class="class">.config</span>
-│   └── vm<span class="class">.args</span>
+│   ├── sys.config
+│   └── vm.args
 ├── lib
 │   └── mylib
 │       ├── LICENSE
-│       ├── README<span class="class">.md</span>
-│       ├── rebar<span class="class">.config</span>
+│       ├── README.md
+│       ├── rebar.config
 │       └── src
-│           ├── mylib<span class="class">.app</span><span class="class">.src</span>
-│           └── mylib<span class="class">.erl</span>
+│           ├── mylib.app.src
+│           └── mylib.erl
 └── rebar.config
 </code></pre><p>这样无需在rebar.config中指定sub_dirs，Rebar3会自动将lib和apps作为搜索路径。</p>
 <p>Rebar3没有get-deps命令，通过<code>rebar3 compile</code>即可编译项目，并自动获取和编译不存在的依赖，Rebar3将所有编译文件和Release信息都置于<code>_build</code>目录下。默认apps，deps和lib下的应用都被编译到<code>_build/default/lib</code>中。要指定应用目录和输出目录等选项，请参考：<a href="http://www.rebar3.org/docs/configuration" target="_blank" rel="external">Rebar3配置</a>。</p>
-<h3 id="三-_发布">三. 发布</h3><h4 id="1-_发布环境">1. 发布环境</h4><p>Rebar3放弃了<a href="http://erlang.org/doc/man/reltool.html" target="_blank" rel="external">reltool</a>而使用<a href="https://github.com/erlware/relx" target="_blank" rel="external">relx</a>作为发布工具。并且将relx.config内容集成到rebar.config当中，通过<code>rebar new release [appname]</code>可创建一个发布，rebar.config内容如下：</p>
+<h3 id="三-发布"><a href="#三-发布" class="headerlink" title="三. 发布"></a>三. 发布</h3><h4 id="1-发布环境"><a href="#1-发布环境" class="headerlink" title="1. 发布环境"></a>1. 发布环境</h4><p>Rebar3放弃了<a href="http://erlang.org/doc/man/reltool.html" target="_blank" rel="external">reltool</a>而使用<a href="https://github.com/erlware/relx" target="_blank" rel="external">relx</a>作为发布工具。并且将relx.config内容集成到rebar.config当中，通过<code>rebar new release [appname]</code>可创建一个发布，rebar.config内容如下：</p>
 <pre><code>{erl_opts, [debug_info]}.
 {deps, []}.
 
-%% 定义默认发布环境(<span class="keyword">default</span>环境)
-{relx, [{release, { myapp, <span class="string">"0.1.0"</span> },
+%% 定义默认发布环境(default环境)
+{relx, [{release, { myapp, &quot;0.1.0&quot; },
          [myapp,
           sasl]},
 
-        {sys_config, <span class="string">"./config/sys.config"</span>},
-        {vm_args, <span class="string">"./config/vm.args"</span>},
+        {sys_config, &quot;./config/sys.config&quot;},
+        {vm_args, &quot;./config/vm.args&quot;},
 
     %% 当dev_mode==true时 _build/default/rel/myapp/lib/目录下的库其实是_build/default/lib目录下对应lib的软链接，这样重新编译后，无需重新发布，重启或热加载代码即可
         {dev_mode, true},
@@ -302,7 +279,7 @@ rebar3 new <span class="class"><span class="keyword">lib</span> [<span class="ti
 }.
 
 %% 定义其它发布环境
-%% 参数使用覆盖(override)机制，即这里面没有定义的参数，将使用默认发布环境(<span class="keyword">default</span>)配置
+%% 参数使用覆盖(override)机制，即这里面没有定义的参数，将使用默认发布环境(default)配置
 {profiles, [{prod, [{relx, [{dev_mode, false},
                             {include_erts, true}]}]
             }]
@@ -316,31 +293,31 @@ rebar3 new <span class="class"><span class="keyword">lib</span> [<span class="ti
 </ul>
 <p>不同发布环境将发布在不同的目录下，如prod环境默认将生成在<code>_build/prod/</code>下，无论顶层应用采用何种发布环境，依赖将始终只能使用prod环境发布。并且只有顶层依赖的default环境，可以被保存到rebar.lock中。</p>
 <p><code>rebar3 release</code>将按照default环境发布应用，通过<code>rebar3 as prod release</code>可以将应用在生产环境发布。具体环境配置及命令参考<a href="http://www.rebar3.org/docs/profiles" target="_blank" rel="external">Rebar3环境</a>。</p>
-<h4 id="2-_发布多个应用">2. 发布多个应用</h4><p>Rebar3支持在rebar.config中定义多个应用的发布，多个应用可以共享配置：</p>
-<pre><code>{relx, [{release, {myapp1, <span class="string">"0.0.1"</span>},
+<h4 id="2-发布多个应用"><a href="#2-发布多个应用" class="headerlink" title="2. 发布多个应用"></a>2. 发布多个应用</h4><p>Rebar3支持在rebar.config中定义多个应用的发布，多个应用可以共享配置：</p>
+<pre><code>{relx, [{release, {myapp1, &quot;0.0.1&quot;},
      [myapp1]},
-    {release, {myapp2, <span class="string">"0.1.0"</span>},
+    {release, {myapp2, &quot;0.1.0&quot;},
      [myapp2]},
 
      % 共用配置
-{sys_config, <span class="string">"config/sys.config"</span>},
-{vm_args, <span class="string">"config/vm.args"</span>},
+{sys_config, &quot;config/sys.config&quot;},
+{vm_args, &quot;config/vm.args&quot;},
 
     {dev_mode, true},
     {include_erts, false},
     {extended_start_script, true}]}.
 </code></pre><p>也可以独立配置：</p>
 <pre><code>{relx, [
-    {release, {myapp1, <span class="string">"0.0.1"</span>},
+    {release, {myapp1, &quot;0.0.1&quot;},
              [myapp1],
              % 注意配置顺序和格式 各应用的独立配置是一个PropList
-             [{sys_config, <span class="string">"config/sys1.config"</span>},
-        {vm_args, <span class="string">"config/vm1.args"</span>}]
+             [{sys_config, &quot;config/sys1.config&quot;},
+        {vm_args, &quot;config/vm1.args&quot;}]
     },
-        {release, {myapp2, <span class="string">"0.1.0"</span>},
+        {release, {myapp2, &quot;0.1.0&quot;},
              [myapp2],
-             [{sys_config, <span class="string">"config/sys1.config"</span>},
-        {vm_args, <span class="string">"config/vm1.args"</span>},
+             [{sys_config, &quot;config/sys1.config&quot;},
+        {vm_args, &quot;config/vm1.args&quot;},
         {overlay}]
     },    
 
@@ -348,16 +325,16 @@ rebar3 new <span class="class"><span class="keyword">lib</span> [<span class="ti
     {include_erts, false},
 
     {extended_start_script, true}]}.
-</code></pre><h4 id="3-_应用依赖">3. 应用依赖</h4><p>定义于rebar.config deps中的依赖被获取后放在<code>_build/default/lib</code>目录下，默认并不会打包到应用的发布目录<code>_build/default/rel/myapp/lib</code>中，你需要在relbar.config的relx中指定应用依赖：</p>
-<pre><code>{relx, [{release, { myapp, <span class="string">"0.1.0"</span> },
+</code></pre><h4 id="3-应用依赖"><a href="#3-应用依赖" class="headerlink" title="3. 应用依赖"></a>3. 应用依赖</h4><p>定义于rebar.config deps中的依赖被获取后放在<code>_build/default/lib</code>目录下，默认并不会打包到应用的发布目录<code>_build/default/rel/myapp/lib</code>中，你需要在relbar.config的relx中指定应用依赖：</p>
+<pre><code>{relx, [{release, { myapp, &quot;0.1.0&quot; },
          [
          % 指定应用依赖 mylib会先于myapp被启动
          mylib, 
          myapp]
          },
 
-        {sys_config, <span class="string">"./config/sys.config"</span>},
-        {vm_args, <span class="string">"./config/vm.args"</span>},
+        {sys_config, &quot;./config/sys.config&quot;},
+        {vm_args, &quot;./config/vm.args&quot;},
 
         {dev_mode, true},
         {include_erts, false},
@@ -365,17 +342,17 @@ rebar3 new <span class="class"><span class="keyword">lib</span> [<span class="ti
         {extended_start_script, true}]
 }.
 </code></pre><p>那么对于一些辅助lib呢，我们希望它被打包在应用发布目录中，但不希望它们被启动(它们可能根本不能启动)，一种方法是将mylib指定为<code>{mylib, load}</code>(参见<a href="https://github.com/erlware/relx/issues/483" target="_blank" rel="external">Issue1</a>, <a href="https://github.com/erlware/relx/issues/149" target="_blank" rel="external">Issue2</a>)，列表中的依赖项默认被relx解释为<code>{mylib, permanent}</code>，即以常驻的方式启动应用。</p>
-<h4 id="4-_Overlays">4. Overlays</h4><p>Overlay允许用户定义一些文件模板和部署准备工作，如拷贝文件，创建文件夹等：</p>
+<h4 id="4-Overlays"><a href="#4-Overlays" class="headerlink" title="4. Overlays"></a>4. Overlays</h4><p>Overlay允许用户定义一些文件模板和部署准备工作，如拷贝文件，创建文件夹等：</p>
 <pre><code>{relx, [
-    {overlay_vars, <span class="string">"vars.config"</span>},
-    {overlay, [{mkdir, <span class="string">"log/sasl"</span>},
-               {template, <span class="string">"priv/app.config"</span>, <span class="string">"etc/app.config"</span>}，
+    {overlay_vars, &quot;vars.config&quot;},
+    {overlay, [{mkdir, &quot;log/sasl&quot;},
+               {template, &quot;priv/app.config&quot;, &quot;etc/app.config&quot;}，
                % root_dir是relx提供的变量 代表项目根目录
-               {copy, <span class="string">"\{\{root_dir\}\}/configures"</span>, <span class="string">"./"</span>}]}
+               {copy, &quot;\{\{root_dir\}\}/configures&quot;, &quot;./&quot;}]}
 ]}.
 </code></pre><p>Overlay可以如sys_config和vm_config一样，放在各应用的独立发布配置中。</p>
 <p>更多关于Rebar3发布流程，发布配置，以及库升级等，参考<a href="http://www.rebar3.org/v3/docs/releases" target="_blank" rel="external">Rebar3发布</a>。</p>
-<h3 id="四-_总结">四. 总结</h3><p>Rebar3无疑是个好东西，更先进的依赖管理，多节点发布，发布环境的概念，都是Rebar2 + Reltool所不能实现的，当前我们项目就使用的Rebar2.x，用于部署一个多节点的集群，遇到的问题：</p>
+<h3 id="四-总结"><a href="#四-总结" class="headerlink" title="四. 总结"></a>四. 总结</h3><p>Rebar3无疑是个好东西，更先进的依赖管理，多节点发布，发布环境的概念，都是Rebar2 + Reltool所不能实现的，当前我们项目就使用的Rebar2.x，用于部署一个多节点的集群，遇到的问题：</p>
 <ul>
 <li>依赖管理：各本地版本不一致问题，Rebar3的lock为依赖的一致性提供了保证。</li>
 <li>多节点部署：Rebar2.x需要为每个节点创建release(create-node)，需要维护N份reltool.config和一份rebar.config。在Rebar3中只需一个rebar.config文件。并且可以灵活定义各节点配置文件(vm.args, sys.config)路径，更有利于项目结构管理和可读性。</li>
@@ -383,7 +360,7 @@ rebar3 new <span class="class"><span class="keyword">lib</span> [<span class="ti
 <li>环境管理：这一块的用处还有待挖掘和摸索。</li>
 </ul>
 <p>Rebar3目前主要的缺点，在于relx文档匮乏，提供了很多好东西，但能传达到用户让用户理解和用上的很少。翻遍了<a href="https://github.com/erlware/relx/wiki" target="_blank" rel="external">relx wiki</a>，也没有找到应用独立配置环境(sys_config, vm_args等)的方法，最后是看了其配置解析模块<a href="hub.com/erlware/relx/blob/master/src/rlx_config.erl">rlx_config.erl</a>才猜出来的格式= =。</p>
-<h3 id="五-_参考：">五. 参考：</h3><ol>
+<h3 id="五-参考："><a href="#五-参考：" class="headerlink" title="五. 参考："></a>五. 参考：</h3><ol>
 <li><a href="http://www.rebar3.org/docs/getting-started" target="_blank" rel="external">Rebar3文档</a></li>
 <li><a href="https://github.com/zyuyou/rebar3_docs" target="_blank" rel="external">Rebar3文档中文翻译(部分)</a></li>
 <li><a href="https://github.com/erlware/relx/wiki" target="_blank" rel="external">relx wiki</a></li>
@@ -391,20 +368,29 @@ rebar3 new <span class="class"><span class="keyword">lib</span> [<span class="ti
 </ol>
 
         </div>
-        
+
         <blockquote class="post-copyright">
-            <div class="content">
-               这里写留言或版权声明：<a href="/2016/09/erlang-rebar3/" target="_blank" rel="external">http://wudaijun.com/2016/09/erlang-rebar3/</a>
-            </div>
-            <footer>
-                <a href="http://wudaijun.com">
-                    <img src="/favicon.png" alt="wudaijun">
-                    wudaijun
-                </a>
-            </footer>
-        </blockquote>
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-09-09T18:17:06.000Z" itemprop="dateUpdated">2016-09-10 02:17:06</time>
+</span><br>
+
 
         
+        博客均为原创，转载请征得作者同意并注明出处，本文永久链接：<a href="/2016/09/erlang-rebar3/" target="_blank" rel="external">http://wudaijun.com/2016/09/erlang-rebar3/</a>
+        
+    </div>
+    <footer>
+        <a href="http://wudaijun.com">
+            <img src="/favicon.png" alt="wudaijun">
+            wudaijun
+        </a>
+    </footer>
+</blockquote>
+
+        
+
 
         <div class="post-footer">
             
@@ -412,51 +398,59 @@ rebar3 new <span class="class"><span class="keyword">lib</span> [<span class="ti
 
 
             
-            <div class="post-share-wrap">
-                <div class="post-share" id="post-share">
-    <div class="tit">分享到：</div>
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2016/09/erlang-rebar3/&title=《Rebar3 Erlang/OTP构建利器》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2016/09/erlang-rebar3/&title=《Rebar3 Erlang/OTP构建利器》 — wudaijun's blog&source=一. 依赖管理1. 包依赖和源码依赖Rebar3支持两种依赖：
+{deps,[
+  %% 包依赖
+  rebar,
+  {rebar,&quot;1.0...." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2016/09/erlang-rebar3/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Rebar3 Erlang/OTP构建利器》 — wudaijun's blog&url=http://wudaijun.com/2016/09/erlang-rebar3/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2016/09/erlang-rebar3/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
-                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
-                    <i class="icon icon-share-alt icon-lg"></i>
-                </a>
-            </div>
-            
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
 
         </div>
-    </div>   
+    </div>
 
     
 <nav class="post-nav flex-row flex-justify-between">
@@ -480,83 +474,143 @@ rebar3 new <span class="class"><span class="keyword">lib</span> [<span class="ti
 </nav>
 
 
-            
+
     
 
 
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'wudaijun'; // required: replace example with your forum shortname
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://wudaijun.com/2016/09/erlang-rebar3/index.html',
+        sourceId: 'erlang-rebar3',
+        productKey: '02b378614d264e81bca14ffaadf03446',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
 
 
 </article>
 
 
+
 </div>
-  </main>
-  <div class="mask" id="mask"></div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>wudaijun &copy; 2015 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
-<script>
-var BLOG_SHARE = {
-    title: "Rebar3 Erlang/OTP构建利器",
-    pic: "/favicon.png",
-    summary: document.getElementsByName('summary')[0].content,
-    url: "http://wudaijun.com/2016/09/erlang-rebar3/"
-};
-</script>
-<div class="global-share" id="global-share">
-    <div class="tit">分享到：</div>
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2016/09/erlang-rebar3/&title=《Rebar3 Erlang/OTP构建利器》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2016/09/erlang-rebar3/&title=《Rebar3 Erlang/OTP构建利器》 — wudaijun's blog&source=一. 依赖管理1. 包依赖和源码依赖Rebar3支持两种依赖：
+{deps,[
+  %% 包依赖
+  rebar,
+  {rebar,&quot;1.0...." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2016/09/erlang-rebar3/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Rebar3 Erlang/OTP构建利器》 — wudaijun's blog&url=http://wudaijun.com/2016/09/erlang-rebar3/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2016/09/erlang-rebar3/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script src="/js/main.min.js?v=1.1.4"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://wudaijun.com/2016/09/erlang-rebar3/" alt="微信分享二维码">
+</div>
 
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
@@ -564,7 +618,7 @@ var BLOG_SHARE = {
 </div>
 <template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -576,13 +630,14 @@ var BLOG_SHARE = {
 </li>
 </template>
 
-<script src="/js/search.min.js?v=1.1.4"></script>
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 

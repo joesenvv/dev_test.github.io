@@ -1,50 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  
-  
-  <title>开发笔记(7) 记线上一次回档BUG | wudaijun&#39;s blog | Coding is Funny</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="theme-color" content="#3F51B5">
-  
-  
-  <meta name="keywords" content="distribution,erlang">
-  <meta name="description" content="问题描述有十几个玩家报告被回档，几小时到一两天不等
-问题背景在我们的集群架构中，集群有若干GS节点，每个GS节点可部署N个GS服务器，整个集群所有的玩家进程注册于cluster，我们通过为每个服开一个player_mgr来维护单服玩家状态，player_mgr维护{player_id, agent_pid, player_pid}三元组，用户处理多点登录，单服逻辑，离线玩家LRU等。cluster">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>开发笔记(7) 记线上一次回档BUG | wudaijun&#39;s blog | Coding is Funny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="erlang,distribution">
+    <meta name="description" content="问题描述有十几个玩家报告被回档，几小时到一两天不等 问题背景在我们的集群架构中，集群有若干GS节点，每个GS节点可部署N个GS服务器，整个集群所有的玩家进程注册于cluster，我们通过为每个服开一个player_mgr来维护单服玩家状态，player_mgr维护{player_id, agent_pid, player_pid}三元组，用户处理多点登录，单服逻辑，离线玩家LRU等。cluster">
+<meta name="keywords" content="erlang,distribution">
 <meta property="og:type" content="article">
 <meta property="og:title" content="开发笔记(7) 记线上一次回档BUG">
 <meta property="og:url" content="http://wudaijun.com/2016/10/erlang-server-design7-cluster-bug-note/index.html">
-<meta property="og:site_name" content="wudaijun's blog">
-<meta property="og:description" content="问题描述有十几个玩家报告被回档，几小时到一两天不等
-问题背景在我们的集群架构中，集群有若干GS节点，每个GS节点可部署N个GS服务器，整个集群所有的玩家进程注册于cluster，我们通过为每个服开一个player_mgr来维护单服玩家状态，player_mgr维护{player_id, agent_pid, player_pid}三元组，用户处理多点登录，单服逻辑，离线玩家LRU等。cluster">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
+<meta property="og:description" content="问题描述有十几个玩家报告被回档，几小时到一两天不等 问题背景在我们的集群架构中，集群有若干GS节点，每个GS节点可部署N个GS服务器，整个集群所有的玩家进程注册于cluster，我们通过为每个服开一个player_mgr来维护单服玩家状态，player_mgr维护{player_id, agent_pid, player_pid}三元组，用户处理多点登录，单服逻辑，离线玩家LRU等。cluster">
 <meta property="og:updated_time" content="2016-10-18T06:40:30.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="开发笔记(7) 记线上一次回档BUG">
-<meta name="twitter:description" content="问题描述有十几个玩家报告被回档，几小时到一两天不等
-问题背景在我们的集群架构中，集群有若干GS节点，每个GS节点可部署N个GS服务器，整个集群所有的玩家进程注册于cluster，我们通过为每个服开一个player_mgr来维护单服玩家状态，player_mgr维护{player_id, agent_pid, player_pid}三元组，用户处理多点登录，单服逻辑，离线玩家LRU等。cluster">
-  
-    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
-  
-  <meta name="summary" content="&lt;h3 id=&quot;问题描述&quot;&gt;问题描述&lt;/h3&gt;&lt;p&gt;有十几个玩家报告被回档，几小时到一两天不等&lt;/p&gt;
-&lt;h3 id=&quot;问题背景&quot;&gt;问题背景&lt;/h3&gt;&lt;p&gt;在我们的&lt;a href=&quot;http://wudaijun.com/2016/01/erlang-server-design5-server-node/&quot;&gt;集群架构&lt;/a&gt;中，集群有若干GS节点，每个GS节点可部署N个GS服务器，整个集群所有的玩家进程注册于cluster，我们通过为每个服开一个player_mgr来维护单服玩家状态，player_mgr维护{player_id, agent_pid, player_pid}三元组，用户处理多点登录，单服逻辑，离线玩家LRU等。cluster本身只提供服务注册/注销，如果做服务替换(如agent)，确保服务的唯一性(如player)应该由外部逻辑来确保，cluster并不知晓内部各种服务的特性。player进程启动/终止时，会向player_mgr和cluster分别注册/注销自己。&lt;/p&gt;">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+<meta name="twitter:description" content="问题描述有十几个玩家报告被回档，几小时到一两天不等 问题背景在我们的集群架构中，集群有若干GS节点，每个GS节点可部署N个GS服务器，整个集群所有的玩家进程注册于cluster，我们通过为每个服开一个player_mgr来维护单服玩家状态，player_mgr维护{player_id, agent_pid, player_pid}三元组，用户处理多点登录，单服逻辑，离线玩家LRU等。cluster">
+    
+        <link rel="alternate" type="application/atom+xml" title="wudaijun&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <aside id="menu" class="hide" >
+    <aside id="menu" class="hide" >
   <div class="inner flex-row-vertical">
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap">
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
       <div class="brand">
-        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/favicon.png">
+        </a>
         <hgroup class="introduce">
           <h5 class="nickname">wudaijun</h5>
           <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
@@ -97,20 +104,12 @@
             </li>
         
       </ul>
-
-      <footer class="footer">
-  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
-  <p>wudaijun&#39;s blog &copy; 2017</p>
-  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
-</footer>
-
     </div>
   </div>
 </aside>
-  <main id="main">
-    <header class="top-header" id="header">
+
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -128,7 +127,7 @@
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
@@ -136,14 +135,23 @@
 </header>
 <header class="content-header post-header">
 
-    <div class="container">
+    <div class="container fade-scale">
         <h1 class="title">开发笔记(7) 记线上一次回档BUG</h1>
-        
-        
+        <h5 class="subtitle">
+            
+                <time datetime="2016-10-16T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2016-10-17
+</time>
 
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/gameserver/">gameserver</a></li></ul>
+
+            
+        </h5>
     </div>
 
     
+
 
 </header>
 
@@ -157,27 +165,33 @@
         </nav>
     </aside>
     
-<article id="post-erlang-server-design7-cluster-bug-note" 
-  class="post-article article-type-post" itemprop="blogPost">
+<article id="post-erlang-server-design7-cluster-bug-note"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
         <h1 class="post-card-title">开发笔记(7) 记线上一次回档BUG</h1>
         <div class="post-meta">
-            <time datetime="2016-10-16T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2016-10-17
-</time>
+            <time class="post-time" title="2016-10-17 00:00:00" datetime="2016-10-16T16:00:00.000Z"  itemprop="datePublished">2016-10-17</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/gameserver/">gameserver</a></li></ul>
 
 
 
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
-            <h3 id="问题描述">问题描述</h3><p>有十几个玩家报告被回档，几小时到一两天不等</p>
-<h3 id="问题背景">问题背景</h3><p>在我们的<a href="http://wudaijun.com/2016/01/erlang-server-design5-server-node/">集群架构</a>中，集群有若干GS节点，每个GS节点可部署N个GS服务器，整个集群所有的玩家进程注册于cluster，我们通过为每个服开一个player_mgr来维护单服玩家状态，player_mgr维护{player_id, agent_pid, player_pid}三元组，用户处理多点登录，单服逻辑，离线玩家LRU等。cluster本身只提供服务注册/注销，如果做服务替换(如agent)，确保服务的唯一性(如player)应该由外部逻辑来确保，cluster并不知晓内部各种服务的特性。player进程启动/终止时，会向player_mgr和cluster分别注册/注销自己。</p>
+            <h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>有十几个玩家报告被回档，几小时到一两天不等</p>
+<h3 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h3><p>在我们的<a href="http://wudaijun.com/2016/01/erlang-server-design5-server-node/">集群架构</a>中，集群有若干GS节点，每个GS节点可部署N个GS服务器，整个集群所有的玩家进程注册于cluster，我们通过为每个服开一个player_mgr来维护单服玩家状态，player_mgr维护{player_id, agent_pid, player_pid}三元组，用户处理多点登录，单服逻辑，离线玩家LRU等。cluster本身只提供服务注册/注销，如果做服务替换(如agent)，确保服务的唯一性(如player)应该由外部逻辑来确保，cluster并不知晓内部各种服务的特性。player进程启动/终止时，会向player_mgr和cluster分别注册/注销自己。</p>
 <a id="more"></a>
-<h3 id="问题追踪">问题追踪</h3><ol>
+<h3 id="问题追踪"><a href="#问题追踪" class="headerlink" title="问题追踪"></a>问题追踪</h3><ol>
 <li>error日志中出现几十个rewrite player process(重写cluster中player服务)的错误日志，并且这些玩家基本都属于一个公会</li>
 <li>所有玩家进程的启动(login, get_fork)均由player_mgr控制，player_mgr确保玩家进程唯一，依赖的是自身的State数据，而不是cluster，问题可能出在player_mgr 和 cluster 状态不一致上</li>
 <li>写了个检查脚本，查出仍有有个别玩家存在于cluster而不在player_mgr中，这类玩家在get_fork或login时，player_mgr会重新开一个player进程，导致rewrite player process，此时同一时刻就存在两个player进程(老玩家进程Pid0，新玩家进程Pid1)，已有Agent消息会被重新路由(通过cluster服务查找)到Pid1进程上，而Pid0不在cluster和player_mgr中，不会被终止，但会不断写盘，称第三方进程，这是导致玩家回档的根本原因</li>
@@ -185,17 +199,17 @@
 <li>在player_mgr LRU剔除玩家进程时，是先在自己State中删除玩家进程，再cast消失让玩家进程终止，最后在player_server:terminate中，再向player_mgr和cluster注销自己。那么存在这样一种情况：player_mgr LRU剔除玩家进程Pid0到 player_server:terminate从cluster中注销自己之间，新的login或get_fork请求到来，此时player_mgr再启动了Pid1，并且rewrite player process，那么当Pid0 terminate时，检查到cluster中当前服务不是自己，不会更新cluster，之后，Pid0还会向player_mgr注销自己，并且没有带上Pid进行Pid检查，因此将Pid1从player_mgr中删除了！至此，player_mgr和cluster出现了不一致，cluster中存在Pid1程，而player_mgr中没有。下一次玩家login或get_fork一个新的Pid2时，Pid1被rewrite，Pid1也就成了第三方进程</li>
 <li>上面的概率看起来很小，但由于公会等组逻辑，可能导致N个玩家同时被get_fork起来，而LRU又是player_mgr统一定期(10分钟)清理的，因此如果alliance前后10分钟get_fork两次，问题出现的概率就被放大了，这也是本次出问题的玩家基本都在一个公会的原因</li>
 </ol>
-<h3 id="问题来源">问题来源</h3><ol>
+<h3 id="问题来源"><a href="#问题来源" class="headerlink" title="问题来源"></a>问题来源</h3><ol>
 <li>player_mgr在没有确认玩家进程已经退出时(此时可能还有一堆消息没处理完)，就删除了它</li>
 <li>玩家进程在向player_mgr注销自己时，没有做Pid检查，注销了其它进程(没有考虑容错)</li>
 </ol>
-<h3 id="问题修复">问题修复</h3><p>线上热更的方案：</p>
+<h3 id="问题修复"><a href="#问题修复" class="headerlink" title="问题修复"></a>问题修复</h3><p>线上热更的方案：</p>
 <ol>
 <li>player_mgr和cluster均在player terminate时才确认注销</li>
 <li>服务注销时做Pid检查</li>
 <li>在玩家进程定期存盘时检查其cluster和player_mgr状态，并stop掉第三方进程</li>
 </ol>
-<h3 id="问题反思">问题反思</h3><p> 本质上来说，这次的问题源于：</p>
+<h3 id="问题反思"><a href="#问题反思" class="headerlink" title="问题反思"></a>问题反思</h3><p> 本质上来说，这次的问题源于：</p>
 <ol>
 <li>数据冗余导致短暂的不一致状态(player_mgr和cluster不一致)</li>
 <li>在这种不一致状态下的特定事件(player login/get_fork)，导致不一致的影响被放大(存在第三方玩家进程)</li>
@@ -215,20 +229,29 @@
 <p>最后，总结出的经验是，在分布式系统中，对问题的检查和修复，和问题的预防同样重要。</p>
 
         </div>
-        
+
         <blockquote class="post-copyright">
-            <div class="content">
-               这里写留言或版权声明：<a href="/2016/10/erlang-server-design7-cluster-bug-note/" target="_blank" rel="external">http://wudaijun.com/2016/10/erlang-server-design7-cluster-bug-note/</a>
-            </div>
-            <footer>
-                <a href="http://wudaijun.com">
-                    <img src="/favicon.png" alt="wudaijun">
-                    wudaijun
-                </a>
-            </footer>
-        </blockquote>
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-10-18T06:40:30.000Z" itemprop="dateUpdated">2016-10-18 14:40:30</time>
+</span><br>
+
 
         
+        博客均为原创，转载请征得作者同意并注明出处，本文永久链接：<a href="/2016/10/erlang-server-design7-cluster-bug-note/" target="_blank" rel="external">http://wudaijun.com/2016/10/erlang-server-design7-cluster-bug-note/</a>
+        
+    </div>
+    <footer>
+        <a href="http://wudaijun.com">
+            <img src="/favicon.png" alt="wudaijun">
+            wudaijun
+        </a>
+    </footer>
+</blockquote>
+
+        
+
 
         <div class="post-footer">
             
@@ -236,51 +259,56 @@
 
 
             
-            <div class="post-share-wrap">
-                <div class="post-share" id="post-share">
-    <div class="tit">分享到：</div>
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2016/10/erlang-server-design7-cluster-bug-note/&title=《开发笔记(7) 记线上一次回档BUG》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2016/10/erlang-server-design7-cluster-bug-note/&title=《开发笔记(7) 记线上一次回档BUG》 — wudaijun's blog&source=问题描述有十几个玩家报告被回档，几小时到一两天不等
+问题背景在我们的集群架构中，集群有若干GS节点，每个GS节点可部署N个GS服务器，整个集群所有的玩家进..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2016/10/erlang-server-design7-cluster-bug-note/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《开发笔记(7) 记线上一次回档BUG》 — wudaijun's blog&url=http://wudaijun.com/2016/10/erlang-server-design7-cluster-bug-note/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2016/10/erlang-server-design7-cluster-bug-note/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
-                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
-                    <i class="icon icon-share-alt icon-lg"></i>
-                </a>
-            </div>
-            
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
 
         </div>
-    </div>   
+    </div>
 
     
 <nav class="post-nav flex-row flex-justify-between">
@@ -304,83 +332,140 @@
 </nav>
 
 
-            
+
     
 
 
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'wudaijun'; // required: replace example with your forum shortname
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://wudaijun.com/2016/10/erlang-server-design7-cluster-bug-note/index.html',
+        sourceId: 'erlang-server-design7-cluster-bug-note',
+        productKey: '02b378614d264e81bca14ffaadf03446',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
 
 
 </article>
 
 
+
 </div>
-  </main>
-  <div class="mask" id="mask"></div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>wudaijun &copy; 2015 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
-<script>
-var BLOG_SHARE = {
-    title: "开发笔记(7) 记线上一次回档BUG",
-    pic: "/favicon.png",
-    summary: document.getElementsByName('summary')[0].content,
-    url: "http://wudaijun.com/2016/10/erlang-server-design7-cluster-bug-note/"
-};
-</script>
-<div class="global-share" id="global-share">
-    <div class="tit">分享到：</div>
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2016/10/erlang-server-design7-cluster-bug-note/&title=《开发笔记(7) 记线上一次回档BUG》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2016/10/erlang-server-design7-cluster-bug-note/&title=《开发笔记(7) 记线上一次回档BUG》 — wudaijun's blog&source=问题描述有十几个玩家报告被回档，几小时到一两天不等
+问题背景在我们的集群架构中，集群有若干GS节点，每个GS节点可部署N个GS服务器，整个集群所有的玩家进..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2016/10/erlang-server-design7-cluster-bug-note/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《开发笔记(7) 记线上一次回档BUG》 — wudaijun's blog&url=http://wudaijun.com/2016/10/erlang-server-design7-cluster-bug-note/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2016/10/erlang-server-design7-cluster-bug-note/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script src="/js/main.min.js?v=1.1.4"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://wudaijun.com/2016/10/erlang-server-design7-cluster-bug-note/" alt="微信分享二维码">
+</div>
 
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
@@ -388,7 +473,7 @@ var BLOG_SHARE = {
 </div>
 <template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -400,13 +485,14 @@ var BLOG_SHARE = {
 </li>
 </template>
 
-<script src="/js/search.min.js?v=1.1.4"></script>
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 

@@ -1,46 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  
-  
-  <title>lua 协程和状态 | wudaijun&#39;s blog | Coding is Funny</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="theme-color" content="#3F51B5">
-  
-  
-  <meta name="keywords" content="lua">
-  <meta name="description" content="协程(协同式多线程)是一种用户级的非抢占式线程。用户级是指它的切换和调度由用户控制，非抢占指一个协程只有在其挂起(yield)或者协程结束才会返回。协程和C线程一样，有自己的堆栈，自己的局部变量，自己的指令指针，并且和其它协程共享全局变量等信息。用户可以实现自己调度协程，这主要得益于yield函数可以自动保存协程当前上下文，这样当挂起的协程被唤醒(resume)时，会从yield处继续向下执行，看">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>lua 协程和状态 | wudaijun&#39;s blog | Coding is Funny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="lua">
+    <meta name="description" content="协程(协同式多线程)是一种用户级的非抢占式线程。用户级是指它的切换和调度由用户控制，非抢占指一个协程只有在其挂起(yield)或者协程结束才会返回。协程和C线程一样，有自己的堆栈，自己的局部变量，自己的指令指针，并且和其它协程共享全局变量等信息。用户可以实现自己调度协程，这主要得益于yield函数可以自动保存协程当前上下文，这样当挂起的协程被唤醒(resume)时，会从yield处继续向下执行，看">
+<meta name="keywords" content="lua">
 <meta property="og:type" content="article">
 <meta property="og:title" content="lua 协程和状态">
 <meta property="og:url" content="http://wudaijun.com/2015/01/lua-coroutine/index.html">
-<meta property="og:site_name" content="wudaijun's blog">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
 <meta property="og:description" content="协程(协同式多线程)是一种用户级的非抢占式线程。用户级是指它的切换和调度由用户控制，非抢占指一个协程只有在其挂起(yield)或者协程结束才会返回。协程和C线程一样，有自己的堆栈，自己的局部变量，自己的指令指针，并且和其它协程共享全局变量等信息。用户可以实现自己调度协程，这主要得益于yield函数可以自动保存协程当前上下文，这样当挂起的协程被唤醒(resume)时，会从yield处继续向下执行，看">
 <meta property="og:updated_time" content="2017-02-15T07:21:29.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="lua 协程和状态">
 <meta name="twitter:description" content="协程(协同式多线程)是一种用户级的非抢占式线程。用户级是指它的切换和调度由用户控制，非抢占指一个协程只有在其挂起(yield)或者协程结束才会返回。协程和C线程一样，有自己的堆栈，自己的局部变量，自己的指令指针，并且和其它协程共享全局变量等信息。用户可以实现自己调度协程，这主要得益于yield函数可以自动保存协程当前上下文，这样当挂起的协程被唤醒(resume)时，会从yield处继续向下执行，看">
-  
-    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
-  
-  <meta name="summary" content="&lt;p&gt;协程(协同式多线程)是一种用户级的非抢占式线程。用户级是指它的切换和调度由用户控制，非抢占指一个协程只有在其挂起(yield)或者协程结束才会返回。协程和C线程一样，有自己的堆栈，自己的局部变量，自己的指令指针，并且和其它协程共享全局变量等信息。用户可以实现自己调度协程，这主要得益于yield函数可以自动保存协程当前上下文，这样当挂起的协程被唤醒(resume)时，会从yield处继续向下执行，看起来就像是一个”可以返回多次的函数”。协程还有一个强大的功能就是可通过resume/yield来交换数据，这样使得它可以用于异步回调：当执行异步代码时，切换协程，执行完成后，再切换回来(附带异步执行结果)。由于切换都是用户控制的，在同一时刻只有一个协同程序在运行(这也是和传统线程最大的区别之一)，因此无需考虑同步和加锁的问题。&lt;/p&gt;">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+    
+        <link rel="alternate" type="application/atom+xml" title="wudaijun&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <aside id="menu" class="hide" >
+    <aside id="menu" class="hide" >
   <div class="inner flex-row-vertical">
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap">
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
       <div class="brand">
-        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/favicon.png">
+        </a>
         <hgroup class="introduce">
           <h5 class="nickname">wudaijun</h5>
           <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
@@ -93,20 +104,12 @@
             </li>
         
       </ul>
-
-      <footer class="footer">
-  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
-  <p>wudaijun&#39;s blog &copy; 2017</p>
-  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
-</footer>
-
     </div>
   </div>
 </aside>
-  <main id="main">
-    <header class="top-header" id="header">
+
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -124,7 +127,7 @@
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
@@ -132,14 +135,23 @@
 </header>
 <header class="content-header post-header">
 
-    <div class="container">
+    <div class="container fade-scale">
         <h1 class="title">lua 协程和状态</h1>
-        
-        
+        <h5 class="subtitle">
+            
+                <time datetime="2015-01-13T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2015-01-14
+</time>
 
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/lua/">lua</a></li></ul>
+
+            
+        </h5>
     </div>
 
     
+
 
 </header>
 
@@ -153,20 +165,26 @@
         </nav>
     </aside>
     
-<article id="post-lua-coroutine" 
-  class="post-article article-type-post" itemprop="blogPost">
+<article id="post-lua-coroutine"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
         <h1 class="post-card-title">lua 协程和状态</h1>
         <div class="post-meta">
-            <time datetime="2015-01-13T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2015-01-14
-</time>
+            <time class="post-time" title="2015-01-14 00:00:00" datetime="2015-01-13T16:00:00.000Z"  itemprop="datePublished">2015-01-14</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/lua/">lua</a></li></ul>
 
 
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
 
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
@@ -181,27 +199,36 @@
 </blockquote>
 </blockquote>
 <p>当调用<code>lua_newstate</code>时，实际上分为两步，1. 创建并初始化一个Lua虚拟机；2.创建一个主线程运行于虚拟机中。调用<code>lua_newthread</code>时，将在已有Lua虚拟机上，创建另一个协程执行环境，该协程与已有协程共享虚拟机状态。这两个函数返回不同的lua_State，但却共享同一个虚拟机状态，因此将lua_State理解为协程执行上下文可能更合适，lua_State本身也是一个类型为thread的GCObject，无需手动释放(Lua也没有提供对应close或destroy接口)。</p>
-<h3 id="两个例子">两个例子</h3><p>pil上关于协程有两个很好的例子。</p>
+<h3 id="两个例子"><a href="#两个例子" class="headerlink" title="两个例子"></a>两个例子</h3><p>pil上关于协程有两个很好的例子。</p>
 <p>在生产者消费者例子中，当消费者需要生产者的数据时(相当于一个异步回调)，切换到生产者协程(resume)，生产者开始运行，生产完成后，挂起自己(yield)并且传入生产的数据。此时调度回到消费者协程中，消费者从resume的返回值中得到数据，使用数据，在需要数据时再次唤醒生产者。这样我们像写同步代码一样(resume相当于函数调用，yield相当于函数返回)，完成了异步功能。而无需考虑传统生产者和消费者模型中的同步问题，因为执行顺序都由我们严格控制的。代码如下：</p>
-<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">pfun = <span class="function"><span class="keyword">function</span><span class="params">()</span></span></span><br><span class="line">	<span class="keyword">while</span> <span class="keyword">true</span> <span class="keyword">do</span></span><br><span class="line">		<span class="keyword">local</span> value = <span class="built_in">io</span>.read()</span><br><span class="line">		<span class="built_in">print</span>(<span class="string">"生产: "</span>, value)</span><br><span class="line">		<span class="built_in">coroutine</span>.yield(value)</span><br><span class="line">	<span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">cfun = <span class="function"><span class="keyword">function</span><span class="params">(p)</span></span></span><br><span class="line">	<span class="keyword">while</span> <span class="keyword">true</span> <span class="keyword">do</span></span><br><span class="line">		<span class="keyword">local</span> _, value = <span class="built_in">coroutine</span>.resume(p)</span><br><span class="line">		<span class="built_in">print</span>(<span class="string">"消费: "</span>, value)</span><br><span class="line">	<span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">p = <span class="built_in">coroutine</span>.create(pfun)</span><br><span class="line">cfun(p)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">pfun = function()</div><div class="line">	while true do</div><div class="line">		local value = io.read()</div><div class="line">		print(&quot;生产: &quot;, value)</div><div class="line">		coroutine.yield(value)</div><div class="line">	end</div><div class="line">end</div><div class="line"></div><div class="line">cfun = function(p)</div><div class="line">	while true do</div><div class="line">		local _, value = coroutine.resume(p)</div><div class="line">		print(&quot;消费: &quot;, value)</div><div class="line">	end</div><div class="line">end</div><div class="line"></div><div class="line">p = coroutine.create(pfun)</div><div class="line">cfun(p)</div></pre></td></tr></table></figure>
 <p>还有个例子是关于模拟多线程下载文件的，每个协程下载一个文件，由我们控制各个协程的调度，当某个协程暂时没有数据可读时(异步读取)，挂起(yield)自己，返回到调度器，开始调度(resume)下一个协程。这样总是能保证将时间片分给读取数据的协程上，而不是等待数据的协程上。当所有协程都没有数据可读时，分配器将进入忙查询，这样会空转CPU，可以通过select函数来优化，在所有协程都没有数据时，让出CPU。最终代码如下：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line">socket = require "socket"</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 下载文件 在超时时挂起(返回: 连接c) 在接收完成时结束协程(返回: nil)</span></span><br><span class="line">function download(host, file)</span><br><span class="line">	local c = assert(socket.connect(host, 80))</span><br><span class="line">	local count = 0</span><br><span class="line">	c:send("GET ".. file .. " HTTP/1.0\r\n\r\n")</span><br><span class="line">	while true <span class="operator"><span class="keyword">do</span></span><br><span class="line">		<span class="keyword">local</span> s, <span class="keyword">status</span> = receive(<span class="keyword">c</span>)	</span><br><span class="line">		<span class="keyword">if</span> <span class="keyword">status</span> == <span class="string">"closed"</span> <span class="keyword">then</span> break <span class="keyword">end</span></span><br><span class="line">		<span class="keyword">if</span> s <span class="keyword">then</span> </span><br><span class="line">			<span class="keyword">count</span> = <span class="keyword">count</span> + <span class="keyword">string</span>.<span class="keyword">len</span>(s) </span><br><span class="line">			break </span><br><span class="line">		<span class="keyword">end</span> </span><br><span class="line">	<span class="keyword">end</span></span><br><span class="line">	<span class="keyword">c</span>:<span class="keyword">close</span>()</span><br><span class="line">	print(<span class="string">"-- download "</span>, <span class="keyword">file</span>, <span class="string">" completed. file size: "</span>, <span class="keyword">count</span>)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> receive(<span class="keyword">conn</span>)</span><br><span class="line">	<span class="keyword">conn</span>:settimeout(<span class="number">0</span>)</span><br><span class="line">	<span class="keyword">local</span> s, <span class="keyword">status</span> = <span class="keyword">conn</span>:receive(<span class="string">"*a"</span>)</span><br><span class="line">	<span class="keyword">if</span> <span class="keyword">status</span> == <span class="string">"timeout"</span> <span class="keyword">then</span></span><br><span class="line">		coroutine.yield(<span class="keyword">conn</span>)</span><br><span class="line">	<span class="keyword">end</span></span><br><span class="line">	<span class="keyword">return</span> s, <span class="keyword">status</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 保存所有协程</span></span><br><span class="line"><span class="keyword">local</span> threads = &#123;&#125;</span><br><span class="line"><span class="comment">-- 创建一个协程 对应下载一个文件</span></span><br><span class="line"><span class="keyword">function</span> <span class="keyword">get</span>(host, <span class="keyword">file</span>)</span><br><span class="line">	<span class="keyword">local</span> co = coroutine.<span class="keyword">create</span>(<span class="keyword">function</span>() </span><br><span class="line">		download(host, <span class="keyword">file</span>)</span><br><span class="line">	<span class="keyword">end</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">table</span>.<span class="keyword">insert</span>(threads, co)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 调度线程</span></span><br><span class="line"><span class="keyword">function</span> dispatcher()</span><br><span class="line">	<span class="keyword">while</span> <span class="literal">true</span> <span class="keyword">do</span></span><br><span class="line">		<span class="keyword">local</span> conns = &#123;&#125;</span><br><span class="line">		<span class="keyword">local</span> <span class="keyword">n</span> = #threads</span><br><span class="line">		<span class="keyword">if</span> <span class="keyword">n</span> == <span class="number">0</span> <span class="keyword">then</span> break <span class="keyword">end</span></span><br><span class="line">		<span class="keyword">for</span> <span class="keyword">i</span> = <span class="number">1</span>,<span class="keyword">n</span> <span class="keyword">do</span></span><br><span class="line">			<span class="keyword">local</span> <span class="keyword">status</span>, <span class="keyword">c</span> = coroutine.<span class="keyword">resume</span>(threads[<span class="keyword">i</span>])</span><br><span class="line">			<span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">c</span> <span class="keyword">then</span> <span class="comment">-- 接收数据完成 即download 函数正常返回</span></span><br><span class="line">				<span class="keyword">table</span>.remove(threads, <span class="keyword">i</span>) <span class="comment">-- 移除协程</span></span><br><span class="line">				break <span class="comment">-- 重新遍历</span></span><br><span class="line">			<span class="keyword">else</span></span><br><span class="line">				<span class="keyword">table</span>.<span class="keyword">insert</span>(conns, <span class="keyword">c</span>)</span><br><span class="line">			<span class="keyword">end</span></span><br><span class="line">		<span class="keyword">end</span></span><br><span class="line">		<span class="keyword">if</span> #conns == <span class="keyword">n</span> <span class="keyword">then</span></span><br><span class="line">			socket.<span class="keyword">select</span>(conns)</span><br><span class="line">		<span class="keyword">end</span></span><br><span class="line">	<span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">get</span>(<span class="string">"www.baidu.com"</span>, <span class="string">"/index.html"</span>)</span><br><span class="line"><span class="keyword">get</span>(<span class="string">"wudaijun.com"</span>, <span class="string">"/2014/12/shared_ptr-reference/"</span>)</span><br><span class="line"><span class="keyword">get</span>(<span class="string">"wudaijun.com"</span>, <span class="string">"/2014/11/cpp-constructor/"</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> <span class="keyword">start</span> = os.<span class="keyword">time</span>()</span><br><span class="line">dispatcher()</span><br><span class="line"><span class="keyword">local</span> <span class="keyword">cost</span> = os.<span class="keyword">time</span>()-<span class="keyword">start</span></span><br><span class="line">print(<span class="string">"-- cost time: "</span>, <span class="keyword">cost</span>)</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div></pre></td><td class="code"><pre><div class="line">socket = require &quot;socket&quot;</div><div class="line"></div><div class="line">-- 下载文件 在超时时挂起(返回: 连接c) 在接收完成时结束协程(返回: nil)</div><div class="line">function download(host, file)</div><div class="line">	local c = assert(socket.connect(host, 80))</div><div class="line">	local count = 0</div><div class="line">	c:send(&quot;GET &quot;.. file .. &quot; HTTP/1.0\r\n\r\n&quot;)</div><div class="line">	while true do</div><div class="line">		local s, status = receive(c)	</div><div class="line">		if status == &quot;closed&quot; then break end</div><div class="line">		if s then </div><div class="line">			count = count + string.len(s) </div><div class="line">			break </div><div class="line">		end </div><div class="line">	end</div><div class="line">	c:close()</div><div class="line">	print(&quot;-- download &quot;, file, &quot; completed. file size: &quot;, count)</div><div class="line">end</div><div class="line"></div><div class="line">function receive(conn)</div><div class="line">	conn:settimeout(0)</div><div class="line">	local s, status = conn:receive(&quot;*a&quot;)</div><div class="line">	if status == &quot;timeout&quot; then</div><div class="line">		coroutine.yield(conn)</div><div class="line">	end</div><div class="line">	return s, status</div><div class="line">end</div><div class="line"></div><div class="line">-- 保存所有协程</div><div class="line">local threads = &#123;&#125;</div><div class="line">-- 创建一个协程 对应下载一个文件</div><div class="line">function get(host, file)</div><div class="line">	local co = coroutine.create(function() </div><div class="line">		download(host, file)</div><div class="line">	end)</div><div class="line"></div><div class="line">	table.insert(threads, co)</div><div class="line">end</div><div class="line"></div><div class="line">-- 调度线程</div><div class="line">function dispatcher()</div><div class="line">	while true do</div><div class="line">		local conns = &#123;&#125;</div><div class="line">		local n = #threads</div><div class="line">		if n == 0 then break end</div><div class="line">		for i = 1,n do</div><div class="line">			local status, c = coroutine.resume(threads[i])</div><div class="line">			if not c then -- 接收数据完成 即download 函数正常返回</div><div class="line">				table.remove(threads, i) -- 移除协程</div><div class="line">				break -- 重新遍历</div><div class="line">			else</div><div class="line">				table.insert(conns, c)</div><div class="line">			end</div><div class="line">		end</div><div class="line">		if #conns == n then</div><div class="line">			socket.select(conns)</div><div class="line">		end</div><div class="line">	end</div><div class="line">end</div><div class="line"></div><div class="line">get(&quot;www.baidu.com&quot;, &quot;/index.html&quot;)</div><div class="line">get(&quot;wudaijun.com&quot;, &quot;/2014/12/shared_ptr-reference/&quot;)</div><div class="line">get(&quot;wudaijun.com&quot;, &quot;/2014/11/cpp-constructor/&quot;)</div><div class="line"></div><div class="line">local start = os.time()</div><div class="line">dispatcher()</div><div class="line">local cost = os.time()-start</div><div class="line">print(&quot;-- cost time: &quot;, cost)</div></pre></td></tr></table></figure>
 
         </div>
-        
+
         <blockquote class="post-copyright">
-            <div class="content">
-               这里写留言或版权声明：<a href="/2015/01/lua-coroutine/" target="_blank" rel="external">http://wudaijun.com/2015/01/lua-coroutine/</a>
-            </div>
-            <footer>
-                <a href="http://wudaijun.com">
-                    <img src="/favicon.png" alt="wudaijun">
-                    wudaijun
-                </a>
-            </footer>
-        </blockquote>
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2017-02-15T07:21:29.000Z" itemprop="dateUpdated">2017-02-15 15:21:29</time>
+</span><br>
+
 
         
+        博客均为原创，转载请征得作者同意并注明出处，本文永久链接：<a href="/2015/01/lua-coroutine/" target="_blank" rel="external">http://wudaijun.com/2015/01/lua-coroutine/</a>
+        
+    </div>
+    <footer>
+        <a href="http://wudaijun.com">
+            <img src="/favicon.png" alt="wudaijun">
+            wudaijun
+        </a>
+    </footer>
+</blockquote>
+
+        
+
 
         <div class="post-footer">
             
@@ -209,51 +236,55 @@
 
 
             
-            <div class="post-share-wrap">
-                <div class="post-share" id="post-share">
-    <div class="tit">分享到：</div>
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2015/01/lua-coroutine/&title=《lua 协程和状态》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2015/01/lua-coroutine/&title=《lua 协程和状态》 — wudaijun's blog&source=协程(协同式多线程)是一种用户级的非抢占式线程。用户级是指它的切换和调度由用户控制，非抢占指一个协程只有在其挂起(yield)或者协程结束才会返回。协程和..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2015/01/lua-coroutine/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《lua 协程和状态》 — wudaijun's blog&url=http://wudaijun.com/2015/01/lua-coroutine/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2015/01/lua-coroutine/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
-                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
-                    <i class="icon icon-share-alt icon-lg"></i>
-                </a>
-            </div>
-            
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
 
         </div>
-    </div>   
+    </div>
 
     
 <nav class="post-nav flex-row flex-justify-between">
@@ -268,92 +299,148 @@
 
   
     <div class="waves-block waves-effect next">
-      <a href="/2015/01/skynet-luaservice/" id="post-next" class="post-nav-link">
+      <a href="/2015/01/false-sharing/" id="post-next" class="post-nav-link">
         <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
-        <h4 class="title">skynet lua服务</h4>
+        <h4 class="title">false sharing</h4>
       </a>
     </div>
   
 </nav>
 
 
-            
+
     
 
 
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'wudaijun'; // required: replace example with your forum shortname
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://wudaijun.com/2015/01/lua-coroutine/index.html',
+        sourceId: 'lua-coroutine',
+        productKey: '02b378614d264e81bca14ffaadf03446',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
 
 
 </article>
 
 
+
 </div>
-  </main>
-  <div class="mask" id="mask"></div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>wudaijun &copy; 2015 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
-<script>
-var BLOG_SHARE = {
-    title: "lua 协程和状态",
-    pic: "/favicon.png",
-    summary: document.getElementsByName('summary')[0].content,
-    url: "http://wudaijun.com/2015/01/lua-coroutine/"
-};
-</script>
-<div class="global-share" id="global-share">
-    <div class="tit">分享到：</div>
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2015/01/lua-coroutine/&title=《lua 协程和状态》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2015/01/lua-coroutine/&title=《lua 协程和状态》 — wudaijun's blog&source=协程(协同式多线程)是一种用户级的非抢占式线程。用户级是指它的切换和调度由用户控制，非抢占指一个协程只有在其挂起(yield)或者协程结束才会返回。协程和..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2015/01/lua-coroutine/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《lua 协程和状态》 — wudaijun's blog&url=http://wudaijun.com/2015/01/lua-coroutine/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2015/01/lua-coroutine/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script src="/js/main.min.js?v=1.1.4"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://wudaijun.com/2015/01/lua-coroutine/" alt="微信分享二维码">
+</div>
 
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
@@ -361,7 +448,7 @@ var BLOG_SHARE = {
 </div>
 <template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -373,13 +460,14 @@ var BLOG_SHARE = {
 </li>
 </template>
 
-<script src="/js/search.min.js?v=1.1.4"></script>
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 

@@ -1,68 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  
-  
-  <title>开发笔记(1) cluster server | wudaijun&#39;s blog | Coding is Funny</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="theme-color" content="#3F51B5">
-  
-  
-  <meta name="keywords" content="distribution,erlang">
-  <meta name="description" content="服务发现在游戏服务器中，通常有一些功能本身非常内聚，甚至是无状态的，在这种时候，我们应该将其单独地做成一个服务，而不是嵌入到GameServer中，这种思想就是所谓的服务(microservice)思想。
-服务发现本身可以看做是一个业务独立的”特殊服务”，它用于逻辑服务的注册/查找/配置信息共享。通常由如下三部分组成：
+    
 
-一个强一致，高可用的服务存储
-提供服务注册和服务健康状态监控的能力
-提供查找">
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>开发笔记(1) cluster server | wudaijun&#39;s blog | Coding is Funny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="erlang,distribution">
+    <meta name="description" content="服务发现在游戏服务器中，通常有一些功能本身非常内聚，甚至是无状态的，在这种时候，我们应该将其单独地做成一个服务，而不是嵌入到GameServer中，这种思想就是所谓的服务(microservice)思想。 服务发现本身可以看做是一个业务独立的”特殊服务”，它用于逻辑服务的注册/查找/配置信息共享。通常由如下三部分组成：  一个强一致，高可用的服务存储 提供服务注册和服务健康状态监控的能力 提供查找">
+<meta name="keywords" content="erlang,distribution">
 <meta property="og:type" content="article">
 <meta property="og:title" content="开发笔记(1) cluster server">
 <meta property="og:url" content="http://wudaijun.com/2015/08/erlang-server-design1-cluster-server/index.html">
-<meta property="og:site_name" content="wudaijun's blog">
-<meta property="og:description" content="服务发现在游戏服务器中，通常有一些功能本身非常内聚，甚至是无状态的，在这种时候，我们应该将其单独地做成一个服务，而不是嵌入到GameServer中，这种思想就是所谓的服务(microservice)思想。
-服务发现本身可以看做是一个业务独立的”特殊服务”，它用于逻辑服务的注册/查找/配置信息共享。通常由如下三部分组成：
-
-一个强一致，高可用的服务存储
-提供服务注册和服务健康状态监控的能力
-提供查找">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
+<meta property="og:description" content="服务发现在游戏服务器中，通常有一些功能本身非常内聚，甚至是无状态的，在这种时候，我们应该将其单独地做成一个服务，而不是嵌入到GameServer中，这种思想就是所谓的服务(microservice)思想。 服务发现本身可以看做是一个业务独立的”特殊服务”，它用于逻辑服务的注册/查找/配置信息共享。通常由如下三部分组成：  一个强一致，高可用的服务存储 提供服务注册和服务健康状态监控的能力 提供查找">
 <meta property="og:updated_time" content="2016-11-21T08:49:46.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="开发笔记(1) cluster server">
-<meta name="twitter:description" content="服务发现在游戏服务器中，通常有一些功能本身非常内聚，甚至是无状态的，在这种时候，我们应该将其单独地做成一个服务，而不是嵌入到GameServer中，这种思想就是所谓的服务(microservice)思想。
-服务发现本身可以看做是一个业务独立的”特殊服务”，它用于逻辑服务的注册/查找/配置信息共享。通常由如下三部分组成：
-
-一个强一致，高可用的服务存储
-提供服务注册和服务健康状态监控的能力
-提供查找">
-  
-    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
-  
-  <meta name="summary" content="&lt;h3 id=&quot;服务发现&quot;&gt;服务发现&lt;/h3&gt;&lt;p&gt;在游戏服务器中，通常有一些功能本身非常内聚，甚至是无状态的，在这种时候，我们应该将其单独地做成一个服务，而不是嵌入到GameServer中，这种思想就是所谓的服务(&lt;a href=&quot;http://martinfowler.com/articles/microservices.html#MicroservicesAndSoa&quot;&gt;microservice&lt;/a&gt;)思想。&lt;/p&gt;
-&lt;p&gt;服务发现本身可以看做是一个业务独立的”特殊服务”，它用于逻辑服务的注册/查找/配置信息共享。通常由如下三部分组成：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;一个强一致，高可用的服务存储&lt;/li&gt;
-&lt;li&gt;提供服务注册和服务健康状态监控的能力&lt;/li&gt;
-&lt;li&gt;提供查找服务，连接服务的能力&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;在分布式领域中，服务发现是一个非常实用和通用的组件，并且已经有一些比较成熟的组件，如&lt;a href=&quot;https://zookeeper.apache.org/&quot;&gt;zookeeper&lt;/a&gt;，&lt;a href=&quot;https://github.com/coreos/etcd&quot;&gt;etcd&lt;/a&gt;等。服务发现组件的好处有很多：微服理念，为负载均衡，灾难恢复提供基础。更多应用场景，可参见etcd的&lt;a href=&quot;http://www.infoq.com/cn/articles/etcd-interpretation-application-scenario-implement-principle&quot;&gt;这篇文章&lt;/a&gt;。&lt;/p&gt;">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+<meta name="twitter:description" content="服务发现在游戏服务器中，通常有一些功能本身非常内聚，甚至是无状态的，在这种时候，我们应该将其单独地做成一个服务，而不是嵌入到GameServer中，这种思想就是所谓的服务(microservice)思想。 服务发现本身可以看做是一个业务独立的”特殊服务”，它用于逻辑服务的注册/查找/配置信息共享。通常由如下三部分组成：  一个强一致，高可用的服务存储 提供服务注册和服务健康状态监控的能力 提供查找">
+    
+        <link rel="alternate" type="application/atom+xml" title="wudaijun&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <aside id="menu" class="hide" >
+    <aside id="menu" class="hide" >
   <div class="inner flex-row-vertical">
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap">
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
       <div class="brand">
-        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/favicon.png">
+        </a>
         <hgroup class="introduce">
           <h5 class="nickname">wudaijun</h5>
           <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
@@ -115,20 +104,12 @@
             </li>
         
       </ul>
-
-      <footer class="footer">
-  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
-  <p>wudaijun&#39;s blog &copy; 2017</p>
-  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
-</footer>
-
     </div>
   </div>
 </aside>
-  <main id="main">
-    <header class="top-header" id="header">
+
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -146,7 +127,7 @@
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
@@ -154,14 +135,23 @@
 </header>
 <header class="content-header post-header">
 
-    <div class="container">
+    <div class="container fade-scale">
         <h1 class="title">开发笔记(1) cluster server</h1>
-        
-        
+        <h5 class="subtitle">
+            
+                <time datetime="2015-08-05T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2015-08-06
+</time>
 
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
+
+            
+        </h5>
     </div>
 
     
+
 
 </header>
 
@@ -171,28 +161,34 @@
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#服务发现"><span class="post-toc-text">服务发现</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#cluster_server"><span class="post-toc-text">cluster_server</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#服务注册/查找，状态共享"><span class="post-toc-text">服务注册/查找，状态共享</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#服务创建，负载均衡"><span class="post-toc-text">服务创建，负载均衡</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#服务监控，灾难恢复"><span class="post-toc-text">服务监控，灾难恢复</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#注意事项"><span class="post-toc-text">注意事项</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#一致性问题"><span class="post-toc-text">一致性问题</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#全联通问题"><span class="post-toc-text">全联通问题</span></a></li></ol></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#服务发现"><span class="post-toc-text">服务发现</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#cluster-server"><span class="post-toc-text">cluster_server</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#服务注册-查找，状态共享"><span class="post-toc-text">服务注册/查找，状态共享</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#服务创建，负载均衡"><span class="post-toc-text">服务创建，负载均衡</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#服务监控，灾难恢复"><span class="post-toc-text">服务监控，灾难恢复</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#注意事项"><span class="post-toc-text">注意事项</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#一致性问题"><span class="post-toc-text">一致性问题</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#全联通问题"><span class="post-toc-text">全联通问题</span></a></li></ol></li></ol>
         </nav>
     </aside>
     
-<article id="post-erlang-server-design1-cluster-server" 
-  class="post-article article-type-post" itemprop="blogPost">
+<article id="post-erlang-server-design1-cluster-server"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
         <h1 class="post-card-title">开发笔记(1) cluster server</h1>
         <div class="post-meta">
-            <time datetime="2015-08-05T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2015-08-06
-</time>
+            <time class="post-time" title="2015-08-06 00:00:00" datetime="2015-08-05T16:00:00.000Z"  itemprop="datePublished">2015-08-06</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
 
 
 
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
-            <h3 id="服务发现">服务发现</h3><p>在游戏服务器中，通常有一些功能本身非常内聚，甚至是无状态的，在这种时候，我们应该将其单独地做成一个服务，而不是嵌入到GameServer中，这种思想就是所谓的服务(<a href="http://martinfowler.com/articles/microservices.html#MicroservicesAndSoa" target="_blank" rel="external">microservice</a>)思想。</p>
+            <h3 id="服务发现"><a href="#服务发现" class="headerlink" title="服务发现"></a>服务发现</h3><p>在游戏服务器中，通常有一些功能本身非常内聚，甚至是无状态的，在这种时候，我们应该将其单独地做成一个服务，而不是嵌入到GameServer中，这种思想就是所谓的服务(<a href="http://martinfowler.com/articles/microservices.html#MicroservicesAndSoa" target="_blank" rel="external">microservice</a>)思想。</p>
 <p>服务发现本身可以看做是一个业务独立的”特殊服务”，它用于逻辑服务的注册/查找/配置信息共享。通常由如下三部分组成：</p>
 <ul>
 <li>一个强一致，高可用的服务存储</li>
@@ -201,10 +197,10 @@
 </ul>
 <p>在分布式领域中，服务发现是一个非常实用和通用的组件，并且已经有一些比较成熟的组件，如<a href="https://zookeeper.apache.org/" target="_blank" rel="external">zookeeper</a>，<a href="https://github.com/coreos/etcd" target="_blank" rel="external">etcd</a>等。服务发现组件的好处有很多：微服理念，为负载均衡，灾难恢复提供基础。更多应用场景，可参见etcd的<a href="http://www.infoq.com/cn/articles/etcd-interpretation-application-scenario-implement-principle" target="_blank" rel="external">这篇文章</a>。</p>
 <a id="more"></a>
-<h3 id="cluster_server">cluster_server</h3><p>先来谈谈我们的集群划分，基于我们的服务器设计，整个集群由N个node组成，node可根据其职责来划分，如player_node，master_node，pvp_node，每个node上跑对应类型的进程，每种node可有多个。其中master_node负责监控/管理所有业务逻辑node，新加入的node只需和master_node连接，这种粒度的划分本身是有利弊的，我们在之后的开发中对它进行了<a href="http://wudaijun.com/2016/01/erlang-server-design5-server-node/">改进</a>，就我们本身cluster_server的设计初衷而言，本质职责是没变的。</p>
+<h3 id="cluster-server"><a href="#cluster-server" class="headerlink" title="cluster_server"></a>cluster_server</h3><p>先来谈谈我们的集群划分，基于我们的服务器设计，整个集群由N个node组成，node可根据其职责来划分，如player_node，master_node，pvp_node，每个node上跑对应类型的进程，每种node可有多个。其中master_node负责监控/管理所有业务逻辑node，新加入的node只需和master_node连接，这种粒度的划分本身是有利弊的，我们在之后的开发中对它进行了<a href="http://wudaijun.com/2016/01/erlang-server-design5-server-node/">改进</a>，就我们本身cluster_server的设计初衷而言，本质职责是没变的。</p>
 <p>在GS中，我们在查找某个服务时，如某个PlayerId对应的player_server，我无需知道这个player_server位于哪个player_node上，甚至无需知道是否在本台物理机上，我只需获取到这个player_server的Pid，即可与其通信。显然地，为了将服务的使用者和服务本身解耦，我们需要维护这样一个 PlayerId -&gt; player_server Pid 的映射表，并且这个表是集群共同访问的，这也就是服务发现的基本需求。</p>
-<h4 id="服务注册/查找，状态共享">服务注册/查找，状态共享</h4><p>在Erlang中，我们的服务本身通常是一个进程，即Pid，我们可以用分布式数据库mnesia实现一个简易的cluster_server，它处理的一件事是：根据不同Key值(Erlang Term)取出对应服务的Pid。cluster_server本身是节点唯一的进程，用于和mnesia交互，实现服务注册/服务查找。为了方便使用，我将Key定义为一个type加一个id，表的初步定义如下：</p>
-<pre><code>-<span class="keyword">record</span>(cluster_(<span class="keyword">TYPE</span>)_process, <span class="comment">{id, node, pid, share}</span>).  % <span class="keyword">TYPE</span>: pvp player 等  share: 用于状态共享
+<h4 id="服务注册-查找，状态共享"><a href="#服务注册-查找，状态共享" class="headerlink" title="服务注册/查找，状态共享"></a>服务注册/查找，状态共享</h4><p>在Erlang中，我们的服务本身通常是一个进程，即Pid，我们可以用分布式数据库mnesia实现一个简易的cluster_server，它处理的一件事是：根据不同Key值(Erlang Term)取出对应服务的Pid。cluster_server本身是节点唯一的进程，用于和mnesia交互，实现服务注册/服务查找。为了方便使用，我将Key定义为一个type加一个id，表的初步定义如下：</p>
+<pre><code>-record(cluster_(TYPE)_process, {id, node, pid, share}).  % TYPE: pvp player 等  share: 用于状态共享
 </code></pre><p>基于这张mnesia表，可以实现如下功能：</p>
 <ol>
 <li>服务注册：通过事务保证写入的原子性，将不同类型的服务写入对应的表中</li>
@@ -212,12 +208,12 @@
 <li>服务注销：在服务不可用或被终止时，通过事务删除对应表条目</li>
 <li>状态共享：通过share字段可以获知服务的当前状态或配置</li>
 </ol>
-<h4 id="服务创建，负载均衡">服务创建，负载均衡</h4><p>上面实现了最简单的服务注册/查找机制，服务本身的创建和维护由服务提供者管理，在GS集群中，通常我们是希望所有的服务被统一监控和管理，比如某个服务节点挂了，那么上面的所有服务将被注销(主动注销/失联注销)，这个时候应该允许使用者或master重启该服务，将该服务分配到其它可用节点上。</p>
+<h4 id="服务创建，负载均衡"><a href="#服务创建，负载均衡" class="headerlink" title="服务创建，负载均衡"></a>服务创建，负载均衡</h4><p>上面实现了最简单的服务注册/查找机制，服务本身的创建和维护由服务提供者管理，在GS集群中，通常我们是希望所有的服务被统一监控和管理，比如某个服务节点挂了，那么上面的所有服务将被注销(主动注销/失联注销)，这个时候应该允许使用者或master重启该服务，将该服务分配到其它可用节点上。</p>
 <p>因此我们还需要维护可用节点表，用于服务创建：</p>
-<pre><code>-record(cluster_(<span class="typedef"><span class="keyword">type</span>)_process, <span class="container">{id, node, pid, share}</span>).</span>
+<pre><code>-record(cluster_(type)_process, {id, node, pid, share}).
 </code></pre><p>通过share字段，可以获取到节点当前的状态信息，比如当前负载，这样做负载均衡就比较容易了，将服务创建的任务分发到当前负载较轻的节点即可。</p>
-<h4 id="服务监控，灾难恢复">服务监控，灾难恢复</h4><p>对于关键的服务或者是无状态的服务，可以通过master来监控其状态，在其不可用时，对其进行选择性恢复。比如当某服务所在物理机断电或断网，此时上面的服务都来不及注销自己，通过<code>monitor_node/2</code>，master会在数次心跳检测失败后，收到<code>nodedown</code>消息，此时master节点可以代为注销失联结节点上所有服务，并且决定这些服务是否需要重建在其它节点上。</p>
-<h3 id="注意事项">注意事项</h3><h4 id="一致性问题">一致性问题</h4><ul>
+<h4 id="服务监控，灾难恢复"><a href="#服务监控，灾难恢复" class="headerlink" title="服务监控，灾难恢复"></a>服务监控，灾难恢复</h4><p>对于关键的服务或者是无状态的服务，可以通过master来监控其状态，在其不可用时，对其进行选择性恢复。比如当某服务所在物理机断电或断网，此时上面的服务都来不及注销自己，通过<code>monitor_node/2</code>，master会在数次心跳检测失败后，收到<code>nodedown</code>消息，此时master节点可以代为注销失联结节点上所有服务，并且决定这些服务是否需要重建在其它节点上。</p>
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><h4 id="一致性问题"><a href="#一致性问题" class="headerlink" title="一致性问题"></a>一致性问题</h4><ul>
 <li>如果不使用事务，服务A可能覆写/误删服务B</li>
 <li>服务注册信息同步到其它节点的时间差，可能导致的不同步(服务的写入者无论是服务的发起方还是服务本身，都会存在这个问题)。</li>
 </ul>
@@ -236,25 +232,34 @@
 <p> 将一些频繁访问和使用的服务退化为ETS(特别是player和agent)，主要目的是减轻mnesia压力(28原则)，使mnesia可以安全的使用事务。但这部分服务也失去了使用mnesia的优势，个人觉得不如方案3。</p>
 </li>
 </ol>
-<h4 id="全联通问题">全联通问题</h4><p>mnesia必须建立在全联通网络上，在节点数量超过10个时，就需要关注这个问题了。</p>
+<h4 id="全联通问题"><a href="#全联通问题" class="headerlink" title="全联通问题"></a>全联通问题</h4><p>mnesia必须建立在全联通网络上，在节点数量超过10个时，就需要关注这个问题了。</p>
 <p>解决方案：</p>
 <p>可为节点分组(如5个一组)，设定代理节点，由代理节点组成mnesia集群。</p>
 
         </div>
-        
+
         <blockquote class="post-copyright">
-            <div class="content">
-               这里写留言或版权声明：<a href="/2015/08/erlang-server-design1-cluster-server/" target="_blank" rel="external">http://wudaijun.com/2015/08/erlang-server-design1-cluster-server/</a>
-            </div>
-            <footer>
-                <a href="http://wudaijun.com">
-                    <img src="/favicon.png" alt="wudaijun">
-                    wudaijun
-                </a>
-            </footer>
-        </blockquote>
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-11-21T08:49:46.000Z" itemprop="dateUpdated">2016-11-21 16:49:46</time>
+</span><br>
+
 
         
+        博客均为原创，转载请征得作者同意并注明出处，本文永久链接：<a href="/2015/08/erlang-server-design1-cluster-server/" target="_blank" rel="external">http://wudaijun.com/2015/08/erlang-server-design1-cluster-server/</a>
+        
+    </div>
+    <footer>
+        <a href="http://wudaijun.com">
+            <img src="/favicon.png" alt="wudaijun">
+            wudaijun
+        </a>
+    </footer>
+</blockquote>
+
+        
+
 
         <div class="post-footer">
             
@@ -262,51 +267,55 @@
 
 
             
-            <div class="post-share-wrap">
-                <div class="post-share" id="post-share">
-    <div class="tit">分享到：</div>
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2015/08/erlang-server-design1-cluster-server/&title=《开发笔记(1) cluster server》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2015/08/erlang-server-design1-cluster-server/&title=《开发笔记(1) cluster server》 — wudaijun's blog&source=服务发现在游戏服务器中，通常有一些功能本身非常内聚，甚至是无状态的，在这种时候，我们应该将其单独地做成一个服务，而不是嵌入到GameServer中，这种思..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2015/08/erlang-server-design1-cluster-server/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《开发笔记(1) cluster server》 — wudaijun's blog&url=http://wudaijun.com/2015/08/erlang-server-design1-cluster-server/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2015/08/erlang-server-design1-cluster-server/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
-                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
-                    <i class="icon icon-share-alt icon-lg"></i>
-                </a>
-            </div>
-            
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
 
         </div>
-    </div>   
+    </div>
 
     
 <nav class="post-nav flex-row flex-justify-between">
@@ -330,83 +339,139 @@
 </nav>
 
 
-            
+
     
 
 
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'wudaijun'; // required: replace example with your forum shortname
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://wudaijun.com/2015/08/erlang-server-design1-cluster-server/index.html',
+        sourceId: 'erlang-server-design1-cluster-server',
+        productKey: '02b378614d264e81bca14ffaadf03446',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
 
 
 </article>
 
 
+
 </div>
-  </main>
-  <div class="mask" id="mask"></div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>wudaijun &copy; 2015 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
-<script>
-var BLOG_SHARE = {
-    title: "开发笔记(1) cluster server",
-    pic: "/favicon.png",
-    summary: document.getElementsByName('summary')[0].content,
-    url: "http://wudaijun.com/2015/08/erlang-server-design1-cluster-server/"
-};
-</script>
-<div class="global-share" id="global-share">
-    <div class="tit">分享到：</div>
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2015/08/erlang-server-design1-cluster-server/&title=《开发笔记(1) cluster server》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2015/08/erlang-server-design1-cluster-server/&title=《开发笔记(1) cluster server》 — wudaijun's blog&source=服务发现在游戏服务器中，通常有一些功能本身非常内聚，甚至是无状态的，在这种时候，我们应该将其单独地做成一个服务，而不是嵌入到GameServer中，这种思..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2015/08/erlang-server-design1-cluster-server/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《开发笔记(1) cluster server》 — wudaijun's blog&url=http://wudaijun.com/2015/08/erlang-server-design1-cluster-server/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2015/08/erlang-server-design1-cluster-server/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script src="/js/main.min.js?v=1.1.4"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://wudaijun.com/2015/08/erlang-server-design1-cluster-server/" alt="微信分享二维码">
+</div>
 
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
@@ -414,7 +479,7 @@ var BLOG_SHARE = {
 </div>
 <template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -426,13 +491,14 @@ var BLOG_SHARE = {
 </li>
 </template>
 
-<script src="/js/search.min.js?v=1.1.4"></script>
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 

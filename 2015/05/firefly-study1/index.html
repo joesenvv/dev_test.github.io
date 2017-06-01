@@ -1,47 +1,59 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  
-  
-  <title>Firefly 学习(一) | wudaijun&#39;s blog | Coding is Funny</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="theme-color" content="#3F51B5">
-  
-  
-  <meta name="keywords" content="firefly,python">
-  <meta name="description" content="一. 简介firefly是一款python开发的开源游戏服务器框架，基于分布式，底层使用twisted。">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>Firefly 学习(一) | wudaijun&#39;s blog | Coding is Funny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="python,firefly">
+    <meta name="description" content="一. 简介firefly是一款python开发的开源游戏服务器框架，基于分布式，底层使用twisted。">
+<meta name="keywords" content="python,firefly">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Firefly 学习(一)">
 <meta property="og:url" content="http://wudaijun.com/2015/05/firefly-study1/index.html">
-<meta property="og:site_name" content="wudaijun's blog">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
 <meta property="og:description" content="一. 简介firefly是一款python开发的开源游戏服务器框架，基于分布式，底层使用twisted。">
 <meta property="og:image" content="http://wudaijun.com/assets/image/firefly_nodes.png">
 <meta property="og:updated_time" content="2016-09-20T14:51:49.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Firefly 学习(一)">
 <meta name="twitter:description" content="一. 简介firefly是一款python开发的开源游戏服务器框架，基于分布式，底层使用twisted。">
-  
-    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
-  
-  <meta name="summary" content="&lt;h2 id=&quot;一-_简介&quot;&gt;一. 简介&lt;/h2&gt;&lt;p&gt;firefly是一款python开发的开源游戏服务器框架，基于分布式，底层使用twisted。&lt;/p&gt;">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+<meta name="twitter:image" content="http://wudaijun.com/assets/image/firefly_nodes.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="wudaijun&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <aside id="menu" class="hide" >
+    <aside id="menu" class="hide" >
   <div class="inner flex-row-vertical">
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap">
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
       <div class="brand">
-        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/favicon.png">
+        </a>
         <hgroup class="introduce">
           <h5 class="nickname">wudaijun</h5>
           <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
@@ -94,20 +106,12 @@
             </li>
         
       </ul>
-
-      <footer class="footer">
-  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
-  <p>wudaijun&#39;s blog &copy; 2017</p>
-  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
-</footer>
-
     </div>
   </div>
 </aside>
-  <main id="main">
-    <header class="top-header" id="header">
+
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -125,7 +129,7 @@
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
@@ -133,14 +137,23 @@
 </header>
 <header class="content-header post-header">
 
-    <div class="container">
+    <div class="container fade-scale">
         <h1 class="title">Firefly 学习(一)</h1>
-        
-        
+        <h5 class="subtitle">
+            
+                <time datetime="2015-05-19T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2015-05-20
+</time>
 
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/gameserver/">gameserver</a></li></ul>
+
+            
+        </h5>
     </div>
 
     
+
 
 </header>
 
@@ -150,28 +163,34 @@
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#一-_简介"><span class="post-toc-text">一. 简介</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#二-_使用"><span class="post-toc-text">二. 使用</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-_流程"><span class="post-toc-text">1. 流程</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-_配置文件"><span class="post-toc-text">2. 配置文件</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#master节点"><span class="post-toc-text">master节点</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#分布式节点"><span class="post-toc-text">分布式节点</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-_公共入口"><span class="post-toc-text">3. 公共入口</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-_节点实现"><span class="post-toc-text">4. 节点实现</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6-_总结"><span class="post-toc-text">6. 总结</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#三-_实现原理"><span class="post-toc-text">三. 实现原理</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-master启动"><span class="post-toc-text">1.master启动</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-FFServer"><span class="post-toc-text">2.FFServer</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-_待续"><span class="post-toc-text">3. 待续</span></a></li></ol></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#一-简介"><span class="post-toc-text">一. 简介</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#二-使用"><span class="post-toc-text">二. 使用</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-流程"><span class="post-toc-text">1. 流程</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-配置文件"><span class="post-toc-text">2. 配置文件</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#master节点"><span class="post-toc-text">master节点</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#分布式节点"><span class="post-toc-text">分布式节点</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-公共入口"><span class="post-toc-text">3. 公共入口</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-节点实现"><span class="post-toc-text">4. 节点实现</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6-总结"><span class="post-toc-text">6. 总结</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#三-实现原理"><span class="post-toc-text">三. 实现原理</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-master启动"><span class="post-toc-text">1.master启动</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-FFServer"><span class="post-toc-text">2.FFServer</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-待续"><span class="post-toc-text">3. 待续</span></a></li></ol></li></ol>
         </nav>
     </aside>
     
-<article id="post-firefly-study1" 
-  class="post-article article-type-post" itemprop="blogPost">
+<article id="post-firefly-study1"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
         <h1 class="post-card-title">Firefly 学习(一)</h1>
         <div class="post-meta">
-            <time datetime="2015-05-19T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2015-05-20
-</time>
+            <time class="post-time" title="2015-05-20 00:00:00" datetime="2015-05-19T16:00:00.000Z"  itemprop="datePublished">2015-05-20</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/gameserver/">gameserver</a></li></ul>
 
 
 
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
-            <h2 id="一-_简介">一. 简介</h2><p>firefly是一款python开发的开源游戏服务器框架，基于分布式，底层使用twisted。</p>
+            <h2 id="一-简介"><a href="#一-简介" class="headerlink" title="一. 简介"></a>一. 简介</h2><p>firefly是一款python开发的开源游戏服务器框架，基于分布式，底层使用twisted。</p>
 <a id="more"></a>
 <p>具体介绍可参见：</p>
 <ul>
@@ -180,80 +199,86 @@
 <li><a href="firefly_doc">firefly官方Wiki</a></li>
 </ul>
 <p>firefly采用多进程方案，节点之间通过网络通信(当然你也可以创建单节点，独立完成大部分功能)，具有很好的可扩展性。</p>
-<h2 id="二-_使用">二. 使用</h2><p>作为一个Python初学者，下面只谈一些自己对firefly的一些肤浅认识。上面的途径可以获取到更完整和深入的资料。</p>
+<h2 id="二-使用"><a href="#二-使用" class="headerlink" title="二. 使用"></a>二. 使用</h2><p>作为一个Python初学者，下面只谈一些自己对firefly的一些肤浅认识。上面的途径可以获取到更完整和深入的资料。</p>
 <p>下面的Demo的源代码可在<a href="demo_github">我的Github</a>上下载。</p>
-<h3 id="1-_流程">1. 流程</h3><p>总体上看，如果你要使用firefly，所需要做的事就是：</p>
+<h3 id="1-流程"><a href="#1-流程" class="headerlink" title="1. 流程"></a>1. 流程</h3><p>总体上看，如果你要使用firefly，所需要做的事就是：</p>
 <ul>
 <li>通过配置文件定义所有节点，节点配置，节点实现文件，以及节点和节点之间的联系(通过网络端口)</li>
 <li>定义节点实现文件</li>
 <li>启动主节点</li>
 </ul>
 <p>firefly通过配置文件来设定你的分布式服务器，然后你只需创建和启动master节点，master服务器会启动配置文件中的各个子节点：</p>
-<pre><code><span class="keyword">if</span> __name__==<span class="string">"__main__"</span>:
-    from firefly<span class="class">.master</span><span class="class">.master</span> import Master
-    master = <span class="function"><span class="title">Master</span><span class="params">()</span></span>
-    master.<span class="function"><span class="title">config</span><span class="params">(<span class="string">'config.json'</span>,<span class="string">'appmain.py'</span>)</span></span>
-    master.<span class="function"><span class="title">start</span><span class="params">()</span></span>
+<pre><code>if __name__==&quot;__main__&quot;:
+    from firefly.master.master import Master
+    master = Master()
+    master.config(&apos;config.json&apos;,&apos;appmain.py&apos;)
+    master.start()
 </code></pre><p>config.json定义你的分布式服务，appmain.py是你的子节点公共入口，master节点已在master.start()中启动。</p>
-<h3 id="2-_配置文件">2. 配置文件</h3><p>下面是一份 config.json 实例，该配置文件配置了一个无盘节点，即没有使用数据库:</p>
+<h3 id="2-配置文件"><a href="#2-配置文件" class="headerlink" title="2. 配置文件"></a>2. 配置文件</h3><p>下面是一份 config.json 实例，该配置文件配置了一个无盘节点，即没有使用数据库:</p>
 <pre><code>{
-"<span class="attribute">master</span>":<span class="value">{"<span class="attribute">rootport</span>":<span class="value"><span class="number">9999</span></span>,"<span class="attribute">webport</span>":<span class="value"><span class="number">9998</span></span>}</span>,
-"<span class="attribute">servers</span>":<span class="value">{
-    "<span class="attribute">gate</span>":<span class="value">{"<span class="attribute">name</span>":<span class="value"><span class="string">"gate"</span></span>, "<span class="attribute">rootport</span>":<span class="value"><span class="number">10000</span></span>, "<span class="attribute">app</span>":<span class="value"><span class="string">"app.gateserver"</span></span>}</span>,
-    "<span class="attribute">net</span>":<span class="value">{"<span class="attribute">name</span>":<span class="value"><span class="string">"net"</span></span>, "<span class="attribute">netport</span>":<span class="value"><span class="number">10001</span></span>, "<span class="attribute">name</span>":<span class="value"><span class="string">"net"</span></span>, "<span class="attribute">remoteport</span>":<span class="value">[{"<span class="attribute">rootport</span>":<span class="value"><span class="number">10000</span></span>, "<span class="attribute">rootname</span>":<span class="value"><span class="string">"gate"</span></span>}]</span>, "<span class="attribute">app</span>":<span class="value"><span class="string">"app.netserver"</span></span>}</span>,
-    "<span class="attribute">game1</span>":<span class="value">{"<span class="attribute">name</span>":<span class="value"><span class="string">"game1"</span></span>, "<span class="attribute">remoteport</span>":<span class="value">[{"<span class="attribute">rootport</span>":<span class="value"><span class="number">10000</span></span>, "<span class="attribute">rootname</span>":<span class="value"><span class="string">"gate"</span></span>}]</span>, "<span class="attribute">app</span>":<span class="value"><span class="string">"app.game1server"</span></span>}
-</span>}
-</span>}
+&quot;master&quot;:{&quot;rootport&quot;:9999,&quot;webport&quot;:9998},
+&quot;servers&quot;:{
+    &quot;gate&quot;:{&quot;name&quot;:&quot;gate&quot;, &quot;rootport&quot;:10000, &quot;app&quot;:&quot;app.gateserver&quot;},
+    &quot;net&quot;:{&quot;name&quot;:&quot;net&quot;, &quot;netport&quot;:10001, &quot;name&quot;:&quot;net&quot;, &quot;remoteport&quot;:[{&quot;rootport&quot;:10000, &quot;rootname&quot;:&quot;gate&quot;}], &quot;app&quot;:&quot;app.netserver&quot;},
+    &quot;game1&quot;:{&quot;name&quot;:&quot;game1&quot;, &quot;remoteport&quot;:[{&quot;rootport&quot;:10000, &quot;rootname&quot;:&quot;gate&quot;}], &quot;app&quot;:&quot;app.game1server&quot;}
+}
+}
 </code></pre><p>通过配置文件已经能够很清楚地看懂该服务器的整个分布式情况：</p>
-<p><img src="/assets/image/firefly_nodes.png" alt="" title="firefly的分布式节点"></p>
-<h4 id="master节点">master节点</h4><p>master节点管理所有的节点，它有两个端口rootport和webport，顾名思义，rootport用于和和服务器中其它节点通信，webport用于后台管理，如关闭和重启所有子节点。调用master.start()后，框架会自动创建master节点并监听rootport和webport端口，后者通过<a href="flask">Flask</a>实现。</p>
-<h4 id="分布式节点">分布式节点</h4><p>如果将master节点称为整个服务器的根节点，那么servers中定义的节点即为分布式节点，样例config中定义了四个分布式节点，gate, dbfront, net, game1。每个节点都可以定义自己的父节点(通过remoteport，可有多个父节点)，并且关联节点的实现文件(位于config所在目录 app/*.py)。其中gate是net和game1的父节点，意味着如果有网络消息需要game1节点处理，那么消息将由net-&gt;gate-&gt;game1，同理消息响应途径为：game1-&gt;gate-&gt;net。</p>
-<h3 id="3-_公共入口">3. 公共入口</h3><p>appmain是我们定义的节点公共入口，它会由firefly通过<code>python appmain.py 节点名 配置路径</code>调用，节点名即为gate, dbfront, net, game1之一，配置路径即为 config.json。该入口允许我们对各分布式节点做一些预先特殊处理，在Demo的appmain.py中，仅仅是读取必须配置，通过一个firefly导出的统一节点类来启动节点:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding:utf8</span></span><br><span class="line"><span class="string">"""</span><br><span class="line">本模块在启动master时作为参数传入</span><br><span class="line">firefly会在每个Server(除了master)启动时都调用该模块:</span><br><span class="line">    cmds = 'python %s %s %s'%(self.mainpath, sername, self.configpath) [位于master/master.py, 其中self.mainpath即为本模块] </span><br><span class="line">"""</span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> json, sys</span><br><span class="line"><span class="keyword">from</span> firefly.server.server <span class="keyword">import</span> FFServer</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    args = sys.argv</span><br><span class="line">    servername = <span class="keyword">None</span></span><br><span class="line">    config = <span class="keyword">None</span></span><br><span class="line">    <span class="keyword">if</span> len(args) &gt; <span class="number">2</span>:</span><br><span class="line">        servername = servername = args[<span class="number">1</span>]</span><br><span class="line">        config = json.load(open(args[<span class="number">2</span>], <span class="string">'r'</span>))</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError</span><br><span class="line"></span><br><span class="line">    dbconf = config.get(<span class="string">'db'</span>, &#123;&#125;)</span><br><span class="line">    memconf = config.get(<span class="string">'memcached'</span>, &#123;&#125;)</span><br><span class="line">    servsconf = config.get(<span class="string">'servers'</span>, &#123;&#125;)</span><br><span class="line">    masterconf = config.get(<span class="string">'master'</span>,&#123;&#125;)</span><br><span class="line">    serverconf = servsconf.get(servername)</span><br><span class="line">    server = FFServer()</span><br><span class="line">    server.config(serverconf, dbconfig=dbconf, memconfig=memconf, masterconf=masterconf)</span><br><span class="line">    <span class="keyword">print</span> servername, <span class="string">'start'</span></span><br><span class="line">    server.start()</span><br><span class="line">    <span class="keyword">print</span> servername, <span class="string">'stop'</span></span><br></pre></td></tr></table></figure>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="/assets/image/firefly_nodes.png" alt="firefly的分布式节点" title="">
+                </div>
+                <div class="image-caption">firefly的分布式节点</div>
+            </figure>
+<h4 id="master节点"><a href="#master节点" class="headerlink" title="master节点"></a>master节点</h4><p>master节点管理所有的节点，它有两个端口rootport和webport，顾名思义，rootport用于和和服务器中其它节点通信，webport用于后台管理，如关闭和重启所有子节点。调用master.start()后，框架会自动创建master节点并监听rootport和webport端口，后者通过<a href="flask">Flask</a>实现。</p>
+<h4 id="分布式节点"><a href="#分布式节点" class="headerlink" title="分布式节点"></a>分布式节点</h4><p>如果将master节点称为整个服务器的根节点，那么servers中定义的节点即为分布式节点，样例config中定义了四个分布式节点，gate, dbfront, net, game1。每个节点都可以定义自己的父节点(通过remoteport，可有多个父节点)，并且关联节点的实现文件(位于config所在目录 app/*.py)。其中gate是net和game1的父节点，意味着如果有网络消息需要game1节点处理，那么消息将由net-&gt;gate-&gt;game1，同理消息响应途径为：game1-&gt;gate-&gt;net。</p>
+<h3 id="3-公共入口"><a href="#3-公共入口" class="headerlink" title="3. 公共入口"></a>3. 公共入口</h3><p>appmain是我们定义的节点公共入口，它会由firefly通过<code>python appmain.py 节点名 配置路径</code>调用，节点名即为gate, dbfront, net, game1之一，配置路径即为 config.json。该入口允许我们对各分布式节点做一些预先特殊处理，在Demo的appmain.py中，仅仅是读取必须配置，通过一个firefly导出的统一节点类来启动节点:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">#coding:utf8</div><div class="line">&quot;&quot;&quot;</div><div class="line">本模块在启动master时作为参数传入</div><div class="line">firefly会在每个Server(除了master)启动时都调用该模块:</div><div class="line">    cmds = &apos;python %s %s %s&apos;%(self.mainpath, sername, self.configpath) [位于master/master.py, 其中self.mainpath即为本模块] </div><div class="line">&quot;&quot;&quot;</div><div class="line">import os</div><div class="line">import json, sys</div><div class="line">from firefly.server.server import FFServer</div><div class="line"></div><div class="line">if __name__ == &apos;__main__&apos;:</div><div class="line">    args = sys.argv</div><div class="line">    servername = None</div><div class="line">    config = None</div><div class="line">    if len(args) &gt; 2:</div><div class="line">        servername = servername = args[1]</div><div class="line">        config = json.load(open(args[2], &apos;r&apos;))</div><div class="line">    else:</div><div class="line">        raise ValueError</div><div class="line"></div><div class="line">    dbconf = config.get(&apos;db&apos;, &#123;&#125;)</div><div class="line">    memconf = config.get(&apos;memcached&apos;, &#123;&#125;)</div><div class="line">    servsconf = config.get(&apos;servers&apos;, &#123;&#125;)</div><div class="line">    masterconf = config.get(&apos;master&apos;,&#123;&#125;)</div><div class="line">    serverconf = servsconf.get(servername)</div><div class="line">    server = FFServer()</div><div class="line">    server.config(serverconf, dbconfig=dbconf, memconfig=memconf, masterconf=masterconf)</div><div class="line">    print servername, &apos;start&apos;</div><div class="line">    server.start()</div><div class="line">    print servername, &apos;stop&apos;</div></pre></td></tr></table></figure>
 <p>appmain.py通过firefly的FFServer来启动节点，这里先不管FFServer如何区分各个节点。至此，我们的分布式服务器就算是启动了。</p>
-<h3 id="4-_节点实现">4. 节点实现</h3><p>最后需要我们关心的，就是节点实现了，不用多说，FFServer会根据你传入的节点实现文件，来实现节点的功能。而实际上我们需要做的事情是很少的，因为启动服务器，监听端口，节点间通信，甚至网络消息编解码等等这些功能，FFServer都帮你做了，后面会提到它如何区分和实现这些功能。</p>
+<h3 id="4-节点实现"><a href="#4-节点实现" class="headerlink" title="4. 节点实现"></a>4. 节点实现</h3><p>最后需要我们关心的，就是节点实现了，不用多说，FFServer会根据你传入的节点实现文件，来实现节点的功能。而实际上我们需要做的事情是很少的，因为启动服务器，监听端口，节点间通信，甚至网络消息编解码等等这些功能，FFServer都帮你做了，后面会提到它如何区分和实现这些功能。</p>
 <p>而我们要做的，就是通过装饰器响应消息就OK了，并且节点之间的消息转发也很方便：</p>
 <p><strong>netserver实现</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding:utf8</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> firefly.server.globalobject <span class="keyword">import</span> GlobalObject, netserviceHandle</span><br><span class="line"></span><br><span class="line"><span class="string">"""</span><br><span class="line">netservice 默认是 CommandService:</span><br><span class="line">    netservice = services.CommandService("netservice")  [位于server/server.py]</span><br><span class="line">    CommandService 的消息响应函数格式为: HandleName_CommandID(conn, data)</span><br><span class="line">    CommandService 会通过'_'解析出CommandID并注册HandleName_CommandId为其消息响应函数</span><br><span class="line">"""</span></span><br><span class="line"></span><br><span class="line"><span class="decorator">@netserviceHandle</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">netHandle_100</span><span class="params">(_conn, data)</span>:</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">"netHandle_100: "</span>, data</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"netHandle_100 completed"</span></span><br><span class="line"></span><br><span class="line"><span class="decorator">@netserviceHandle</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">netHandle_200</span><span class="params">(_conn, data)</span>:</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">"netHandle_200: "</span>, data, <span class="string">"forward to gate"</span></span><br><span class="line">    <span class="comment"># 转发到 gateserver.gateHandle1</span></span><br><span class="line">    <span class="comment"># 通过 GlobalObject().remote[父节点名]来得到父节点的远程调用对象</span></span><br><span class="line">    <span class="keyword">return</span> GlobalObject().remote[<span class="string">'gate'</span>].callRemote(<span class="string">'gateHandle1'</span>, data)</span><br><span class="line"></span><br><span class="line"><span class="decorator">@netserviceHandle</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">netHandle_300</span><span class="params">(_conn, data)</span>:</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">"netHandle_300: "</span>, data, <span class="string">"forward to gate"</span></span><br><span class="line">    <span class="keyword">return</span> GlobalObject().remote[<span class="string">'gate'</span>].callRemote(<span class="string">'gateHandle2'</span>, data)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">#coding:utf8</div><div class="line"></div><div class="line">from firefly.server.globalobject import GlobalObject, netserviceHandle</div><div class="line"></div><div class="line">&quot;&quot;&quot;</div><div class="line">netservice 默认是 CommandService:</div><div class="line">    netservice = services.CommandService(&quot;netservice&quot;)  [位于server/server.py]</div><div class="line">    CommandService 的消息响应函数格式为: HandleName_CommandID(conn, data)</div><div class="line">    CommandService 会通过&apos;_&apos;解析出CommandID并注册HandleName_CommandId为其消息响应函数</div><div class="line">&quot;&quot;&quot;</div><div class="line"></div><div class="line">@netserviceHandle</div><div class="line">def netHandle_100(_conn, data):</div><div class="line">    print &quot;netHandle_100: &quot;, data</div><div class="line">    return &quot;netHandle_100 completed&quot;</div><div class="line"></div><div class="line">@netserviceHandle</div><div class="line">def netHandle_200(_conn, data):</div><div class="line">    print &quot;netHandle_200: &quot;, data, &quot;forward to gate&quot;</div><div class="line">    # 转发到 gateserver.gateHandle1</div><div class="line">    # 通过 GlobalObject().remote[父节点名]来得到父节点的远程调用对象</div><div class="line">    return GlobalObject().remote[&apos;gate&apos;].callRemote(&apos;gateHandle1&apos;, data)</div><div class="line"></div><div class="line">@netserviceHandle</div><div class="line">def netHandle_300(_conn, data):</div><div class="line">    print &quot;netHandle_300: &quot;, data, &quot;forward to gate&quot;</div><div class="line">    return GlobalObject().remote[&apos;gate&apos;].callRemote(&apos;gateHandle2&apos;, data)</div></pre></td></tr></table></figure>
 <p><strong>gateserver实现</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> firefly.server.globalobject <span class="keyword">import</span> GlobalObject, rootserviceHandle</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="decorator">@rootserviceHandle</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gateHandle1</span><span class="params">(data)</span>:</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">"gateHandle: "</span>, data</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"gateHandle Completed"</span></span><br><span class="line"></span><br><span class="line"><span class="decorator">@rootserviceHandle</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gateHandle2</span><span class="params">(data)</span>:</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">"gateHandle2: "</span>, data, <span class="string">"forward to game1: "</span></span><br><span class="line">    <span class="comment"># 转发到 game1.game1Handle</span></span><br><span class="line">    <span class="comment"># 通过 GlobalObject().root.callChild(节点名，节点函数，参数)远程调用孩子节点</span></span><br><span class="line">    <span class="keyword">return</span> GlobalObject().root.callChild(<span class="string">"game1"</span>, <span class="string">"game1Handle"</span>, data)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">#coding:utf-8</div><div class="line"></div><div class="line">from firefly.server.globalobject import GlobalObject, rootserviceHandle</div><div class="line"></div><div class="line"></div><div class="line">@rootserviceHandle</div><div class="line">def gateHandle1(data):</div><div class="line">    print &quot;gateHandle: &quot;, data</div><div class="line">    return &quot;gateHandle Completed&quot;</div><div class="line"></div><div class="line">@rootserviceHandle</div><div class="line">def gateHandle2(data):</div><div class="line">    print &quot;gateHandle2: &quot;, data, &quot;forward to game1: &quot;</div><div class="line">    # 转发到 game1.game1Handle</div><div class="line">    # 通过 GlobalObject().root.callChild(节点名，节点函数，参数)远程调用孩子节点</div><div class="line">    return GlobalObject().root.callChild(&quot;game1&quot;, &quot;game1Handle&quot;, data)</div></pre></td></tr></table></figure>
 <p><strong>game1server实现</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> firefly.server.globalobject <span class="keyword">import</span> GlobalObject, remoteserviceHandle</span><br><span class="line"></span><br><span class="line"><span class="decorator">@remoteserviceHandle("gate")</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">game1Handle</span><span class="params">(data)</span>:</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">"game1Handle: "</span>, data</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"game1Handle completed"</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">from firefly.server.globalobject import GlobalObject, remoteserviceHandle</div><div class="line"></div><div class="line">@remoteserviceHandle(&quot;gate&quot;)</div><div class="line">def game1Handle(data):</div><div class="line">    print &quot;game1Handle: &quot;, data</div><div class="line">    return &quot;game1Handle completed&quot;</div></pre></td></tr></table></figure>
 <p>运行Demo，启动测试客户端，得到结果:</p>
 <p>Server端: </p>
-<pre><code>[firefly.netconnect.protoc.LiberateFactory] Client <span class="number">0</span> login <span class="keyword">in</span>.[<span class="number">127.0</span>.<span class="number">0.1</span>,<span class="number">61752</span>]
-[LiberateProtocol,<span class="number">0</span>,<span class="number">127.0</span>.<span class="number">0.1</span>] call <span class="function"><span class="keyword">method</span> <span class="title">netHandle_100</span> <span class="title">on</span> <span class="title">service</span>[<span class="title">single</span>]
-[<span class="title">LiberateProtocol</span>,0,127.0.0.1] <span class="title">netHandle_100</span>:</span>  msgdata
-[LiberateProtocol,<span class="number">0</span>,<span class="number">127.0</span>.<span class="number">0.1</span>] call <span class="function"><span class="keyword">method</span> <span class="title">netHandle_200</span> <span class="title">on</span> <span class="title">service</span>[<span class="title">single</span>]
-[<span class="title">LiberateProtocol</span>,0,127.0.0.1] <span class="title">netHandle_200</span>:</span>  msgdata <span class="keyword">forward</span> <span class="keyword">to</span> gate
-[BilateralBroker,<span class="number">0</span>,<span class="number">127.0</span>.<span class="number">0.1</span>] call <span class="function"><span class="keyword">method</span> <span class="title">gateHandle1</span> <span class="title">on</span> <span class="title">service</span>[<span class="title">single</span>]
-[<span class="title">BilateralBroker</span>,0,127.0.0.1] <span class="title">gateHandle</span>:</span>  msgdata
-[LiberateProtocol,<span class="number">0</span>,<span class="number">127.0</span>.<span class="number">0.1</span>] call <span class="function"><span class="keyword">method</span> <span class="title">netHandle_300</span> <span class="title">on</span> <span class="title">service</span>[<span class="title">single</span>]
-[<span class="title">LiberateProtocol</span>,0,127.0.0.1] <span class="title">netHandle_300</span>:</span>  msgdata <span class="keyword">forward</span> <span class="keyword">to</span> gate
-[BilateralBroker,<span class="number">0</span>,<span class="number">127.0</span>.<span class="number">0.1</span>] call <span class="function"><span class="keyword">method</span> <span class="title">gateHandle2</span> <span class="title">on</span> <span class="title">service</span>[<span class="title">single</span>]
-[<span class="title">BilateralBroker</span>,0,127.0.0.1] <span class="title">gateHandle2</span>:</span>  msgdata <span class="keyword">forward</span> <span class="keyword">to</span> game1:
-[Broker,client] call <span class="function"><span class="keyword">method</span> <span class="title">game1Handle</span> <span class="title">on</span> <span class="title">service</span>[<span class="title">single</span>]
-[<span class="title">Broker</span>,<span class="title">client</span>] <span class="title">game1Handle</span>:</span>  msgdata
-[LiberateProtocol,<span class="number">0</span>,<span class="number">127.0</span>.<span class="number">0.1</span>] Client <span class="number">0</span> login <span class="keyword">out</span>.
+<pre><code>[firefly.netconnect.protoc.LiberateFactory] Client 0 login in.[127.0.0.1,61752]
+[LiberateProtocol,0,127.0.0.1] call method netHandle_100 on service[single]
+[LiberateProtocol,0,127.0.0.1] netHandle_100:  msgdata
+[LiberateProtocol,0,127.0.0.1] call method netHandle_200 on service[single]
+[LiberateProtocol,0,127.0.0.1] netHandle_200:  msgdata forward to gate
+[BilateralBroker,0,127.0.0.1] call method gateHandle1 on service[single]
+[BilateralBroker,0,127.0.0.1] gateHandle:  msgdata
+[LiberateProtocol,0,127.0.0.1] call method netHandle_300 on service[single]
+[LiberateProtocol,0,127.0.0.1] netHandle_300:  msgdata forward to gate
+[BilateralBroker,0,127.0.0.1] call method gateHandle2 on service[single]
+[BilateralBroker,0,127.0.0.1] gateHandle2:  msgdata forward to game1:
+[Broker,client] call method game1Handle on service[single]
+[Broker,client] game1Handle:  msgdata
+[LiberateProtocol,0,127.0.0.1] Client 0 login out.
 </code></pre><p>Client端:</p>
-<pre><code><span class="code">----------------
+<pre><code>----------------
 send commandId: 100
 netHandle_100 completed
-----------------</span>
+----------------
 send commandId: 200
-<span class="header">gateHandle Completed
-----------------</span>
+gateHandle Completed
+----------------
 send commandId: 300
 game1Handle completed
-</code></pre><h3 id="6-_总结">6. 总结</h3><p>看起来，使用firefly确实很简单，通过配置文件即可完成强大的分布式部署，节点之间的通信协议，节点间消息以及网络消息的编解码，甚至重连机制框架都已经帮你完成。你只需通过python装饰器，来实现自己的请求响应逻辑即可。</p>
-<h2 id="三-_实现原理">三. 实现原理</h2><p>简单梳理一下firefly内部替我们完成的事。</p>
-<h3 id="1-master启动">1.master启动</h3><p>在我们的app入口文件中，通过master.start()启动服务器，master.start()完成了:</p>
+</code></pre><h3 id="6-总结"><a href="#6-总结" class="headerlink" title="6. 总结"></a>6. 总结</h3><p>看起来，使用firefly确实很简单，通过配置文件即可完成强大的分布式部署，节点之间的通信协议，节点间消息以及网络消息的编解码，甚至重连机制框架都已经帮你完成。你只需通过python装饰器，来实现自己的请求响应逻辑即可。</p>
+<h2 id="三-实现原理"><a href="#三-实现原理" class="headerlink" title="三. 实现原理"></a>三. 实现原理</h2><p>简单梳理一下firefly内部替我们完成的事。</p>
+<h3 id="1-master启动"><a href="#1-master启动" class="headerlink" title="1.master启动"></a>1.master启动</h3><p>在我们的app入口文件中，通过master.start()启动服务器，master.start()完成了:</p>
 <ul>
 <li>创建一个PBRoot 在rootport监听其它节点连接</li>
 <li>创建一个Flask  在webport 监听管理员命令</li>
 <li>遍历配置中的servers 通过<code>python appmain.py 节点名 配置文件</code>启动各个分布式节点，appmain.py由使用者编写和提供</li>
 </ul>
-<h3 id="2-FFServer">2.FFServer</h3><p>在appmain.py中，通过FFServer来创建和启动一个节点，firefly FFServer抽象一个服务进程，前面曾提到过，由于所有非master节点都通过FFServer启动，那么FFServer如何区分各节点功能和通讯协议？ 答案很简单，FFServer检查节点各项配置，为各项配置创建对应的组件，其中比较重要的有:</p>
+<h3 id="2-FFServer"><a href="#2-FFServer" class="headerlink" title="2.FFServer"></a>2.FFServer</h3><p>在appmain.py中，通过FFServer来创建和启动一个节点，firefly FFServer抽象一个服务进程，前面曾提到过，由于所有非master节点都通过FFServer启动，那么FFServer如何区分各节点功能和通讯协议？ 答案很简单，FFServer检查节点各项配置，为各项配置创建对应的组件，其中比较重要的有:</p>
 <ul>
 <li>webport 代表该节点希望提供web服务，FFServer通过Flask启动一个简单的web server</li>
 <li>rootport 代表该节点是一个父节点，创建并启动PBRoot类(master也有一个PBRoot成员)来监听其它节点的连接 </li>
@@ -267,22 +292,31 @@ game1Handle completed
 <li>import 节点关联的实现文件，该实现文件通过装饰器可以导入消息回调函数。</li>
 <li>连接master节点</li>
 </ul>
-<h3 id="3-_待续">3. 待续</h3>
+<h3 id="3-待续"><a href="#3-待续" class="headerlink" title="3. 待续"></a>3. 待续</h3>
         </div>
-        
+
         <blockquote class="post-copyright">
-            <div class="content">
-               这里写留言或版权声明：<a href="/2015/05/firefly-study1/" target="_blank" rel="external">http://wudaijun.com/2015/05/firefly-study1/</a>
-            </div>
-            <footer>
-                <a href="http://wudaijun.com">
-                    <img src="/favicon.png" alt="wudaijun">
-                    wudaijun
-                </a>
-            </footer>
-        </blockquote>
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-09-20T14:51:49.000Z" itemprop="dateUpdated">2016-09-20 22:51:49</time>
+</span><br>
+
 
         
+        博客均为原创，转载请征得作者同意并注明出处，本文永久链接：<a href="/2015/05/firefly-study1/" target="_blank" rel="external">http://wudaijun.com/2015/05/firefly-study1/</a>
+        
+    </div>
+    <footer>
+        <a href="http://wudaijun.com">
+            <img src="/favicon.png" alt="wudaijun">
+            wudaijun
+        </a>
+    </footer>
+</blockquote>
+
+        
+
 
         <div class="post-footer">
             
@@ -290,51 +324,55 @@ game1Handle completed
 
 
             
-            <div class="post-share-wrap">
-                <div class="post-share" id="post-share">
-    <div class="tit">分享到：</div>
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2015/05/firefly-study1/&title=《Firefly 学习(一)》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2015/05/firefly-study1/&title=《Firefly 学习(一)》 — wudaijun's blog&source=一. 简介firefly是一款python开发的开源游戏服务器框架，基于分布式，底层使用twisted。" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2015/05/firefly-study1/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Firefly 学习(一)》 — wudaijun's blog&url=http://wudaijun.com/2015/05/firefly-study1/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2015/05/firefly-study1/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
-                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
-                    <i class="icon icon-share-alt icon-lg"></i>
-                </a>
-            </div>
-            
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
 
         </div>
-    </div>   
+    </div>
 
     
 <nav class="post-nav flex-row flex-justify-between">
@@ -358,83 +396,139 @@ game1Handle completed
 </nav>
 
 
-            
+
     
 
 
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'wudaijun'; // required: replace example with your forum shortname
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://wudaijun.com/2015/05/firefly-study1/index.html',
+        sourceId: 'firefly-study1',
+        productKey: '02b378614d264e81bca14ffaadf03446',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
 
 
 </article>
 
 
+
 </div>
-  </main>
-  <div class="mask" id="mask"></div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>wudaijun &copy; 2015 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
-<script>
-var BLOG_SHARE = {
-    title: "Firefly 学习(一)",
-    pic: "/favicon.png",
-    summary: document.getElementsByName('summary')[0].content,
-    url: "http://wudaijun.com/2015/05/firefly-study1/"
-};
-</script>
-<div class="global-share" id="global-share">
-    <div class="tit">分享到：</div>
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2015/05/firefly-study1/&title=《Firefly 学习(一)》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2015/05/firefly-study1/&title=《Firefly 学习(一)》 — wudaijun's blog&source=一. 简介firefly是一款python开发的开源游戏服务器框架，基于分布式，底层使用twisted。" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2015/05/firefly-study1/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Firefly 学习(一)》 — wudaijun's blog&url=http://wudaijun.com/2015/05/firefly-study1/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2015/05/firefly-study1/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script src="/js/main.min.js?v=1.1.4"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://wudaijun.com/2015/05/firefly-study1/" alt="微信分享二维码">
+</div>
 
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
@@ -442,7 +536,7 @@ var BLOG_SHARE = {
 </div>
 <template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -454,13 +548,14 @@ var BLOG_SHARE = {
 </li>
 </template>
 
-<script src="/js/search.min.js?v=1.1.4"></script>
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 

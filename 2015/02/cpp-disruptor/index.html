@@ -1,50 +1,56 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  
-  
-  <title>c++ disruptor 无锁消息队列 | wudaijun&#39;s blog | Coding is Funny</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="theme-color" content="#3F51B5">
-  
-  
-  <meta name="keywords" content="">
-  <meta name="description" content="前段时间关注到disruptor，一个高并发框架。能够在无锁(lock-free)的情况下处理多生产者消费者的并发问题。它可以看作一个消息队列，通过CAS而不是锁来处理并发。
-因此实现了一个C++版本的disruptor，基于ring buffer，实现一个发送缓冲(多生产者，单消费者)。">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>c++ disruptor 无锁消息队列 | wudaijun&#39;s blog | Coding is Funny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="">
+    <meta name="description" content="前段时间关注到disruptor，一个高并发框架。能够在无锁(lock-free)的情况下处理多生产者消费者的并发问题。它可以看作一个消息队列，通过CAS而不是锁来处理并发。 因此实现了一个C++版本的disruptor，基于ring buffer，实现一个发送缓冲(多生产者，单消费者)。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="c++ disruptor 无锁消息队列">
 <meta property="og:url" content="http://wudaijun.com/2015/02/cpp-disruptor/index.html">
-<meta property="og:site_name" content="wudaijun's blog">
-<meta property="og:description" content="前段时间关注到disruptor，一个高并发框架。能够在无锁(lock-free)的情况下处理多生产者消费者的并发问题。它可以看作一个消息队列，通过CAS而不是锁来处理并发。
-因此实现了一个C++版本的disruptor，基于ring buffer，实现一个发送缓冲(多生产者，单消费者)。">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
+<meta property="og:description" content="前段时间关注到disruptor，一个高并发框架。能够在无锁(lock-free)的情况下处理多生产者消费者的并发问题。它可以看作一个消息队列，通过CAS而不是锁来处理并发。 因此实现了一个C++版本的disruptor，基于ring buffer，实现一个发送缓冲(多生产者，单消费者)。">
 <meta property="og:updated_time" content="2016-09-20T15:15:51.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="c++ disruptor 无锁消息队列">
-<meta name="twitter:description" content="前段时间关注到disruptor，一个高并发框架。能够在无锁(lock-free)的情况下处理多生产者消费者的并发问题。它可以看作一个消息队列，通过CAS而不是锁来处理并发。
-因此实现了一个C++版本的disruptor，基于ring buffer，实现一个发送缓冲(多生产者，单消费者)。">
-  
-    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
-  
-  <meta name="summary" content="&lt;p&gt;前段时间关注到&lt;a href=&quot;http://ifeve.com/disruptor/&quot; title=&quot;disruptor&quot;&gt;disruptor&lt;/a&gt;，一个高并发框架。能够在无锁(lock-free)的情况下处理多生产者消费者的并发问题。它可以看作一个消息队列，通过&lt;a href=&quot;http://coolshell.cn/articles/8239.html&quot; title=&quot;compare and swap&quot;&gt;CAS&lt;/a&gt;而不是锁来处理并发。&lt;/p&gt;
-&lt;p&gt;因此实现了一个C++版本的disruptor，基于ring buffer，实现一个发送缓冲(多生产者，单消费者)。&lt;/p&gt;">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+<meta name="twitter:description" content="前段时间关注到disruptor，一个高并发框架。能够在无锁(lock-free)的情况下处理多生产者消费者的并发问题。它可以看作一个消息队列，通过CAS而不是锁来处理并发。 因此实现了一个C++版本的disruptor，基于ring buffer，实现一个发送缓冲(多生产者，单消费者)。">
+    
+        <link rel="alternate" type="application/atom+xml" title="wudaijun&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <aside id="menu" class="hide" >
+    <aside id="menu" class="hide" >
   <div class="inner flex-row-vertical">
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap">
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
       <div class="brand">
-        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/favicon.png">
+        </a>
         <hgroup class="introduce">
           <h5 class="nickname">wudaijun</h5>
           <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
@@ -97,20 +103,12 @@
             </li>
         
       </ul>
-
-      <footer class="footer">
-  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
-  <p>wudaijun&#39;s blog &copy; 2017</p>
-  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
-</footer>
-
     </div>
   </div>
 </aside>
-  <main id="main">
-    <header class="top-header" id="header">
+
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -128,7 +126,7 @@
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
@@ -136,14 +134,23 @@
 </header>
 <header class="content-header post-header">
 
-    <div class="container">
+    <div class="container fade-scale">
         <h1 class="title">c++ disruptor 无锁消息队列</h1>
-        
-        
+        <h5 class="subtitle">
+            
+                <time datetime="2015-02-09T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2015-02-10
+</time>
 
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/c-c/">c/c++</a></li></ul>
+
+            
+        </h5>
     </div>
 
     
+
 
 </header>
 
@@ -153,110 +160,129 @@
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#写入缓冲"><span class="post-toc-text">写入缓冲</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#核心代码"><span class="post-toc-text">核心代码</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1-_对原子变量的访问"><span class="post-toc-text">1. 对原子变量的访问</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#2-_通过CAS保证顺序提交"><span class="post-toc-text">2. 通过CAS保证顺序提交</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#3-_单消费者无需原子变量"><span class="post-toc-text">3. 单消费者无需原子变量</span></a></li></ol></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#写入缓冲"><span class="post-toc-text">写入缓冲</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#核心代码"><span class="post-toc-text">核心代码</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1-对原子变量的访问"><span class="post-toc-text">1. 对原子变量的访问</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#2-通过CAS保证顺序提交"><span class="post-toc-text">2. 通过CAS保证顺序提交</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#3-单消费者无需原子变量"><span class="post-toc-text">3. 单消费者无需原子变量</span></a></li></ol></li></ol>
         </nav>
     </aside>
     
-<article id="post-cpp-disruptor" 
-  class="post-article article-type-post" itemprop="blogPost">
+<article id="post-cpp-disruptor"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
         <h1 class="post-card-title">c++ disruptor 无锁消息队列</h1>
         <div class="post-meta">
-            <time datetime="2015-02-09T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2015-02-10
-</time>
+            <time class="post-time" title="2015-02-10 00:00:00" datetime="2015-02-09T16:00:00.000Z"  itemprop="datePublished">2015-02-10</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/c-c/">c/c++</a></li></ul>
 
 
 
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
             <p>前段时间关注到<a href="http://ifeve.com/disruptor/" title="disruptor" target="_blank" rel="external">disruptor</a>，一个高并发框架。能够在无锁(lock-free)的情况下处理多生产者消费者的并发问题。它可以看作一个消息队列，通过<a href="http://coolshell.cn/articles/8239.html" title="compare and swap" target="_blank" rel="external">CAS</a>而不是锁来处理并发。</p>
 <p>因此实现了一个C++版本的disruptor，基于ring buffer，实现一个发送缓冲(多生产者，单消费者)。</p>
 <a id="more"></a>
-<h3 id="写入缓冲">写入缓冲</h3><p>某个生产者要写入数据时，先申请所需空间(需要共享当前分配位置)，然后直接执行写入，最后提交写入结果(需要共享当前写入位置)。整个写入过程由两个关键共享变量: <code>atomic_ullong _alloc_count</code>和<code>atomic_ullong _write_count</code>。前者负责管理和同步当前分配的空间，后者负责同步当前已经写入的空间。也就是说，整个过程分为三步：申请，写入，提交。</p>
+<h3 id="写入缓冲"><a href="#写入缓冲" class="headerlink" title="写入缓冲"></a>写入缓冲</h3><p>某个生产者要写入数据时，先申请所需空间(需要共享当前分配位置)，然后直接执行写入，最后提交写入结果(需要共享当前写入位置)。整个写入过程由两个关键共享变量: <code>atomic_ullong _alloc_count</code>和<code>atomic_ullong _write_count</code>。前者负责管理和同步当前分配的空间，后者负责同步当前已经写入的空间。也就是说，整个过程分为三步：申请，写入，提交。</p>
 <p>比如，有两个生产者P1和P2。P1申请到大小为50的空间，假设此时_alloc_count=10，那么P1将得到可写入位置10，此时_alloc_count更新为60。P1此时可以执行写入(无需上锁)。这个时候P2开始申请大小为10的空间，它将得到写入位置60，_alloc_count更新为70。因此实际上P1和P2是可以并发写的。如果P2比P1先写完，它会尝试提交，此时由于P1还没有提交它的写入结果，因此P2会自旋等待(不断尝试CAS操作)。直到P1提交写入结果后，P2才能提交。通过CAS可以保证这种提交顺序。提交操作会更新_write_count变量，提交之后的数据便可以被消费者读取使用。</p>
 <p>上面的描述并没有提到缓冲区不够的问题，为了判断缓冲区当前可写空间，还需要一个变量 <code>atomic_ullong _idle_count</code>用于记录当前缓冲区空闲大小。该变量在生产者申请空间后减小，在消费者使用数据后变大。初始等于整个ring buffer的大小。</p>
-<h3 id="核心代码">核心代码</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line">SendBuffer::SendBuffer(<span class="keyword">size_t</span> capacity <span class="comment">/* = 65536 */</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">size_t</span> fix_capacity = <span class="number">16</span>;</span><br><span class="line">    <span class="keyword">while</span> (fix_capacity &lt; capacity)</span><br><span class="line">        fix_capacity &lt;&lt;= <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    _capacity = fix_capacity;</span><br><span class="line">    _capacity_mask = _capacity - <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    _buffer = <span class="keyword">new</span> <span class="keyword">char</span>[_capacity];</span><br><span class="line"></span><br><span class="line">    _alloc_count = <span class="number">0</span>;</span><br><span class="line">    _read_count = <span class="number">0</span>;</span><br><span class="line">    _write_count = <span class="number">0</span>;</span><br><span class="line">    _idle_count = _capacity;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">SendBuffer::~SendBuffer()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">delete</span> []_buffer;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">bool</span> SendBuffer::Push(<span class="keyword">const</span> <span class="keyword">char</span>* data, <span class="keyword">size_t</span> len)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">nullptr</span> == data || len == <span class="number">0</span> || len &gt; _capacity)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> idle = _idle_count.fetch_sub(len);</span><br><span class="line">    <span class="keyword">if</span> (idle &gt;= len)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 1.申请写入空间</span></span><br><span class="line">        <span class="keyword">auto</span> alloc_start = _alloc_count.fetch_add(len);</span><br><span class="line">        <span class="keyword">auto</span> alloc_end = alloc_start + len;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2.执行写入</span></span><br><span class="line">        <span class="keyword">auto</span> fix_start = alloc_start &amp; _capacity_mask;</span><br><span class="line">        <span class="keyword">auto</span> fix_end = alloc_end &amp; _capacity_mask;</span><br><span class="line">        <span class="keyword">if</span> (fix_start &lt; fix_end)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">memcpy</span>(_buffer + fix_start, data, len);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span><span class="comment">// 分两段写</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">auto</span> first_len = _capacity - fix_start;</span><br><span class="line">            <span class="built_in">memcpy</span>(_buffer + fix_start, data, first_len);</span><br><span class="line">            <span class="built_in">memcpy</span>(_buffer, data + first_len, fix_end);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 3.提交写入结果</span></span><br><span class="line">        <span class="keyword">while</span> (<span class="literal">true</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">auto</span> tmp = alloc_start;</span><br><span class="line">            <span class="keyword">if</span> (_write_count.compare_exchange_weak(tmp, alloc_end))</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        _idle_count.fetch_add(len);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">char</span>* SendBuffer::Peek(<span class="keyword">size_t</span>&amp; len)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (_read_count &lt; _write_count)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">auto</span> can_read = _write_count - _read_count;</span><br><span class="line">        <span class="keyword">auto</span> fix_start = _read_count &amp; _capacity_mask;</span><br><span class="line">        <span class="keyword">auto</span> fix_end = (_read_count + can_read) &amp; _capacity_mask;</span><br><span class="line">        <span class="keyword">if</span> (fix_start &gt;= fix_end) </span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 只返回第一段</span></span><br><span class="line">            can_read = _capacity - fix_start;</span><br><span class="line">        &#125;</span><br><span class="line">        len = <span class="keyword">static_cast</span>&lt;<span class="keyword">size_t</span>&gt;(can_read);</span><br><span class="line">        <span class="keyword">return</span> _buffer + fix_start;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">bool</span> SendBuffer::Pop(<span class="keyword">size_t</span> len)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (_read_count + len &lt;= _write_count)</span><br><span class="line">    &#123;</span><br><span class="line">        _read_count += len;</span><br><span class="line">        _idle_count.fetch_add(len);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="核心代码"><a href="#核心代码" class="headerlink" title="核心代码"></a>核心代码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div></pre></td><td class="code"><pre><div class="line">SendBuffer::SendBuffer(size_t capacity /* = 65536 */)</div><div class="line">&#123;</div><div class="line">    size_t fix_capacity = 16;</div><div class="line">    while (fix_capacity &lt; capacity)</div><div class="line">        fix_capacity &lt;&lt;= 1;</div><div class="line"></div><div class="line">    _capacity = fix_capacity;</div><div class="line">    _capacity_mask = _capacity - 1;</div><div class="line"></div><div class="line">    _buffer = new char[_capacity];</div><div class="line"></div><div class="line">    _alloc_count = 0;</div><div class="line">    _read_count = 0;</div><div class="line">    _write_count = 0;</div><div class="line">    _idle_count = _capacity;</div><div class="line">&#125;</div><div class="line"></div><div class="line">SendBuffer::~SendBuffer()</div><div class="line">&#123;</div><div class="line">    delete []_buffer;</div><div class="line">&#125;</div><div class="line"></div><div class="line">bool SendBuffer::Push(const char* data, size_t len)</div><div class="line">&#123;</div><div class="line">    if (nullptr == data || len == 0 || len &gt; _capacity)</div><div class="line">        return false;</div><div class="line"></div><div class="line">    auto idle = _idle_count.fetch_sub(len);</div><div class="line">    if (idle &gt;= len)</div><div class="line">    &#123;</div><div class="line">        // 1.申请写入空间</div><div class="line">        auto alloc_start = _alloc_count.fetch_add(len);</div><div class="line">        auto alloc_end = alloc_start + len;</div><div class="line"></div><div class="line">        // 2.执行写入</div><div class="line">        auto fix_start = alloc_start &amp; _capacity_mask;</div><div class="line">        auto fix_end = alloc_end &amp; _capacity_mask;</div><div class="line">        if (fix_start &lt; fix_end)</div><div class="line">        &#123;</div><div class="line">            memcpy(_buffer + fix_start, data, len);</div><div class="line">        &#125;</div><div class="line">        else// 分两段写</div><div class="line">        &#123;</div><div class="line">            auto first_len = _capacity - fix_start;</div><div class="line">            memcpy(_buffer + fix_start, data, first_len);</div><div class="line">            memcpy(_buffer, data + first_len, fix_end);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        // 3.提交写入结果</div><div class="line">        while (true)</div><div class="line">        &#123;</div><div class="line">            auto tmp = alloc_start;</div><div class="line">            if (_write_count.compare_exchange_weak(tmp, alloc_end))</div><div class="line">                break;</div><div class="line">        &#125;</div><div class="line">        return true;</div><div class="line">    &#125;</div><div class="line">    else</div><div class="line">    &#123;</div><div class="line">        _idle_count.fetch_add(len);</div><div class="line">        return false;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">char* SendBuffer::Peek(size_t&amp; len)</div><div class="line">&#123;</div><div class="line">    if (_read_count &lt; _write_count)</div><div class="line">    &#123;</div><div class="line">        auto can_read = _write_count - _read_count;</div><div class="line">        auto fix_start = _read_count &amp; _capacity_mask;</div><div class="line">        auto fix_end = (_read_count + can_read) &amp; _capacity_mask;</div><div class="line">        if (fix_start &gt;= fix_end) </div><div class="line">        &#123;</div><div class="line">            // 只返回第一段</div><div class="line">            can_read = _capacity - fix_start;</div><div class="line">        &#125;</div><div class="line">        len = static_cast&lt;size_t&gt;(can_read);</div><div class="line">        return _buffer + fix_start;</div><div class="line">    &#125;</div><div class="line">    return nullptr;</div><div class="line">&#125;</div><div class="line"></div><div class="line">bool SendBuffer::Pop(size_t len)</div><div class="line">&#123;</div><div class="line">    if (_read_count + len &lt;= _write_count)</div><div class="line">    &#123;</div><div class="line">        _read_count += len;</div><div class="line">        _idle_count.fetch_add(len);</div><div class="line">        return true;</div><div class="line">    &#125;</div><div class="line">    return false;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>代码看起来不多，理解起来也不难。主要有以下三点：</p>
-<h4 id="1-_对原子变量的访问">1. 对原子变量的访问</h4><p>对原子变量的使用要特别小心，由于没有锁的保护，对原子变量的每一次访问都要考虑到它的值已经改变。比如在Push函数的申请空间操作中，你不能通过</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(_idle_count &gt; <span class="built_in">len</span>)</span><br><span class="line">&#123;</span><br><span class="line">	_idle_count.fetch_sub(<span class="built_in">len</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="1-对原子变量的访问"><a href="#1-对原子变量的访问" class="headerlink" title="1. 对原子变量的访问"></a>1. 对原子变量的访问</h4><p>对原子变量的使用要特别小心，由于没有锁的保护，对原子变量的每一次访问都要考虑到它的值已经改变。比如在Push函数的申请空间操作中，你不能通过</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">if(_idle_count &gt; len)</div><div class="line">&#123;</div><div class="line">	_idle_count.fetch_sub(len)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>来判断空闲空间是否足够，因为在if中它可能大于len，但是当你执行<code>_idle_count.fetch_sub(len)</code>时，它的值可能就改变了，不再满足 &gt; len。同理以下代码也是错的：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">_idle_count.fetch_sub(len);</span><br><span class="line"><span class="keyword">if</span>(_idle_count &gt; <span class="number">0</span>)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">//....</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">_idle_count.fetch_sub(len);</div><div class="line">if(_idle_count &gt; 0)</div><div class="line">&#123;</div><div class="line">	//....</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>对原子变量的访问应该做到”原子性”，即每次逻辑上使用，都只访问一次。这也是和传统锁不一样的地方。而引进_idle_count这个原子变量而不是使用_read_count和_alloc_count来算出空闲空间(<code>_capacity-(_alloc_count-_read_count)</code>)也是基于这个原因，多个生产者依赖于这个表达式的值，并且会对表达式的值造成更改(修改_alloc_count)，就会导致P1读取表达式值后，判断空闲空间足够，在P1更改_alloc_count前，P2生产者更改_alloc_count分配了空间，使得空闲空间已经不足。这种读写分步的操作必须通过原子变量来保证访问的一致性。</p>
 <p>而为什么我们在Peek中可以通过<code>_write_count - _read_count</code>来得到当前可读数据，是因为我们只有一个消费者依赖于<code>_write_count - _read_count</code>的值，并且其它生产者对_write_count做出的更改对消费者来说是”无害的”，即生产者只会使_write_count增加，让消费者读到更多的数据。</p>
-<h4 id="2-_通过CAS保证顺序提交">2. 通过CAS保证顺序提交</h4><p>在Push函数中的第三步提交中，生产者自旋等待，直到它前面(按照申请顺序)的所有生产者都已提交完毕，此时_write_count即为本生产者的写入位置alloc_start，代表alloc_start之前的缓冲区都已经提交完成，此时该你提交写入结果了。提交完成之后，更新_write_count，而消费者则根据_write_count来判断哪些内容是可读的。</p>
-<h4 id="3-_单消费者无需原子变量">3. 单消费者无需原子变量</h4><p>最后，由于只有一个消费者，因此_read_count不是原子变量。它只会在Peek和Pop中读取和修改。</p>
+<h4 id="2-通过CAS保证顺序提交"><a href="#2-通过CAS保证顺序提交" class="headerlink" title="2. 通过CAS保证顺序提交"></a>2. 通过CAS保证顺序提交</h4><p>在Push函数中的第三步提交中，生产者自旋等待，直到它前面(按照申请顺序)的所有生产者都已提交完毕，此时_write_count即为本生产者的写入位置alloc_start，代表alloc_start之前的缓冲区都已经提交完成，此时该你提交写入结果了。提交完成之后，更新_write_count，而消费者则根据_write_count来判断哪些内容是可读的。</p>
+<h4 id="3-单消费者无需原子变量"><a href="#3-单消费者无需原子变量" class="headerlink" title="3. 单消费者无需原子变量"></a>3. 单消费者无需原子变量</h4><p>最后，由于只有一个消费者，因此_read_count不是原子变量。它只会在Peek和Pop中读取和修改。</p>
 <p>源码地址：<a href="https://github.com/wudaijun/Code/tree/master/Demo/disruptor" target="_blank" rel="external">https://github.com/wudaijun/Code/tree/master/Demo/disruptor</a></p>
 
         </div>
-        
+
         <blockquote class="post-copyright">
-            <div class="content">
-               这里写留言或版权声明：<a href="/2015/02/cpp-disruptor/" target="_blank" rel="external">http://wudaijun.com/2015/02/cpp-disruptor/</a>
-            </div>
-            <footer>
-                <a href="http://wudaijun.com">
-                    <img src="/favicon.png" alt="wudaijun">
-                    wudaijun
-                </a>
-            </footer>
-        </blockquote>
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-09-20T15:15:51.000Z" itemprop="dateUpdated">2016-09-20 23:15:51</time>
+</span><br>
+
 
         
+        博客均为原创，转载请征得作者同意并注明出处，本文永久链接：<a href="/2015/02/cpp-disruptor/" target="_blank" rel="external">http://wudaijun.com/2015/02/cpp-disruptor/</a>
+        
+    </div>
+    <footer>
+        <a href="http://wudaijun.com">
+            <img src="/favicon.png" alt="wudaijun">
+            wudaijun
+        </a>
+    </footer>
+</blockquote>
+
+        
+
 
         <div class="post-footer">
             
 
             
-            <div class="post-share-wrap">
-                <div class="post-share" id="post-share">
-    <div class="tit">分享到：</div>
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2015/02/cpp-disruptor/&title=《c++ disruptor 无锁消息队列》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2015/02/cpp-disruptor/&title=《c++ disruptor 无锁消息队列》 — wudaijun's blog&source=前段时间关注到disruptor，一个高并发框架。能够在无锁(lock-free)的情况下处理多生产者消费者的并发问题。它可以看作一个消息队列，通过CAS..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2015/02/cpp-disruptor/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《c++ disruptor 无锁消息队列》 — wudaijun's blog&url=http://wudaijun.com/2015/02/cpp-disruptor/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2015/02/cpp-disruptor/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
-                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
-                    <i class="icon icon-share-alt icon-lg"></i>
-                </a>
-            </div>
-            
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
 
         </div>
-    </div>   
+    </div>
 
     
 <nav class="post-nav flex-row flex-justify-between">
@@ -280,83 +306,139 @@
 </nav>
 
 
-            
+
     
 
 
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'wudaijun'; // required: replace example with your forum shortname
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://wudaijun.com/2015/02/cpp-disruptor/index.html',
+        sourceId: 'cpp-disruptor',
+        productKey: '02b378614d264e81bca14ffaadf03446',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
 
 
 </article>
 
 
+
 </div>
-  </main>
-  <div class="mask" id="mask"></div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>wudaijun &copy; 2015 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
-<script>
-var BLOG_SHARE = {
-    title: "c++ disruptor 无锁消息队列",
-    pic: "/favicon.png",
-    summary: document.getElementsByName('summary')[0].content,
-    url: "http://wudaijun.com/2015/02/cpp-disruptor/"
-};
-</script>
-<div class="global-share" id="global-share">
-    <div class="tit">分享到：</div>
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2015/02/cpp-disruptor/&title=《c++ disruptor 无锁消息队列》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2015/02/cpp-disruptor/&title=《c++ disruptor 无锁消息队列》 — wudaijun's blog&source=前段时间关注到disruptor，一个高并发框架。能够在无锁(lock-free)的情况下处理多生产者消费者的并发问题。它可以看作一个消息队列，通过CAS..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2015/02/cpp-disruptor/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《c++ disruptor 无锁消息队列》 — wudaijun's blog&url=http://wudaijun.com/2015/02/cpp-disruptor/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2015/02/cpp-disruptor/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script src="/js/main.min.js?v=1.1.4"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://wudaijun.com/2015/02/cpp-disruptor/" alt="微信分享二维码">
+</div>
 
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
@@ -364,7 +446,7 @@ var BLOG_SHARE = {
 </div>
 <template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -376,13 +458,14 @@ var BLOG_SHARE = {
 </li>
 </template>
 
-<script src="/js/search.min.js?v=1.1.4"></script>
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 

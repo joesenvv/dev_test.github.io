@@ -1,66 +1,59 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  
-  
-  <title>Linux 作业管理 | wudaijun&#39;s blog | Coding is Funny</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="theme-color" content="#3F51B5">
-  
-  
-  <meta name="keywords" content="linux,os">
-  <meta name="description" content="进程组/会话简要概念：
+    
 
-进程组：N(N&amp;gt;=1)个进程的集合，通常在同一作业中关联起来(通过管道)。进程组的ID(PGID)即为进程组组长的PID。进程必定且只能属于一个进程组，只有进程组中一个进程存在，进程组就存在，与组长进程终止与否无关。进程组的概念提出主要是为了进程管理与信号分发
-会话：N(N&amp;gt;=1)个进程组的集合，创建会话的进程叫会话首进程。会话ID即为会话首进程PID
-控制终">
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>Linux 作业管理 | wudaijun&#39;s blog | Coding is Funny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="os,linux">
+    <meta name="description" content="进程组/会话简要概念：  进程组：N(N&amp;gt;=1)个进程的集合，通常在同一作业中关联起来(通过管道)。进程组的ID(PGID)即为进程组组长的PID。进程必定且只能属于一个进程组，只有进程组中一个进程存在，进程组就存在，与组长进程终止与否无关。进程组的概念提出主要是为了进程管理与信号分发 会话：N(N&amp;gt;=1)个进程组的集合，创建会话的进程叫会话首进程。会话ID即为会话首进程PID 控制终">
+<meta name="keywords" content="os,linux">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linux 作业管理">
 <meta property="og:url" content="http://wudaijun.com/2016/08/linux-job-control/index.html">
-<meta property="og:site_name" content="wudaijun's blog">
-<meta property="og:description" content="进程组/会话简要概念：
-
-进程组：N(N&amp;gt;=1)个进程的集合，通常在同一作业中关联起来(通过管道)。进程组的ID(PGID)即为进程组组长的PID。进程必定且只能属于一个进程组，只有进程组中一个进程存在，进程组就存在，与组长进程终止与否无关。进程组的概念提出主要是为了进程管理与信号分发
-会话：N(N&amp;gt;=1)个进程组的集合，创建会话的进程叫会话首进程。会话ID即为会话首进程PID
-控制终">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
+<meta property="og:description" content="进程组/会话简要概念：  进程组：N(N&amp;gt;=1)个进程的集合，通常在同一作业中关联起来(通过管道)。进程组的ID(PGID)即为进程组组长的PID。进程必定且只能属于一个进程组，只有进程组中一个进程存在，进程组就存在，与组长进程终止与否无关。进程组的概念提出主要是为了进程管理与信号分发 会话：N(N&amp;gt;=1)个进程组的集合，创建会话的进程叫会话首进程。会话ID即为会话首进程PID 控制终">
 <meta property="og:image" content="http://wudaijun.com/assets/image/linux/linux-session-process.png">
 <meta property="og:updated_time" content="2016-08-31T01:39:01.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux 作业管理">
-<meta name="twitter:description" content="进程组/会话简要概念：
-
-进程组：N(N&amp;gt;=1)个进程的集合，通常在同一作业中关联起来(通过管道)。进程组的ID(PGID)即为进程组组长的PID。进程必定且只能属于一个进程组，只有进程组中一个进程存在，进程组就存在，与组长进程终止与否无关。进程组的概念提出主要是为了进程管理与信号分发
-会话：N(N&amp;gt;=1)个进程组的集合，创建会话的进程叫会话首进程。会话ID即为会话首进程PID
-控制终">
-  
-    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
-  
-  <meta name="summary" content="&lt;h3 id=&quot;进程组/会话&quot;&gt;进程组/会话&lt;/h3&gt;&lt;p&gt;简要概念：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;进程组：N(N&amp;gt;=1)个进程的集合，通常在同一作业中关联起来(通过管道)。进程组的ID(PGID)即为进程组组长的PID。进程必定且只能属于一个进程组，只有进程组中一个进程存在，进程组就存在，与组长进程终止与否无关。进程组的概念提出主要是为了进程管理与信号分发&lt;/li&gt;
-&lt;li&gt;会话：N(N&amp;gt;=1)个进程组的集合，创建会话的进程叫会话首进程。会话ID即为会话首进程PID&lt;/li&gt;
-&lt;li&gt;控制终端：如果会话有控制终端，建立与控制终端连接的会话首进程叫控制进程(通常就是Shell进程)，当前与终端交互的进程组为前台进程组，其余进程组成为后台进程组&lt;/li&gt;
-&lt;li&gt;无论合适输入终端的退出键，都会将退出信号发送到前台进程组的所有进程&lt;/li&gt;
-&lt;li&gt;如果控制终端断开连接，则将挂掉信号(SIGHUP)发送至控制进程(会话首进程)，SIGHUP信号默认将导致控制进程终止&lt;/li&gt;
-&lt;/ul&gt;">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+<meta name="twitter:description" content="进程组/会话简要概念：  进程组：N(N&amp;gt;=1)个进程的集合，通常在同一作业中关联起来(通过管道)。进程组的ID(PGID)即为进程组组长的PID。进程必定且只能属于一个进程组，只有进程组中一个进程存在，进程组就存在，与组长进程终止与否无关。进程组的概念提出主要是为了进程管理与信号分发 会话：N(N&amp;gt;=1)个进程组的集合，创建会话的进程叫会话首进程。会话ID即为会话首进程PID 控制终">
+<meta name="twitter:image" content="http://wudaijun.com/assets/image/linux/linux-session-process.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="wudaijun&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <aside id="menu" class="hide" >
+    <aside id="menu" class="hide" >
   <div class="inner flex-row-vertical">
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap">
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
       <div class="brand">
-        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/favicon.png">
+        </a>
         <hgroup class="introduce">
           <h5 class="nickname">wudaijun</h5>
           <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
@@ -113,20 +106,12 @@
             </li>
         
       </ul>
-
-      <footer class="footer">
-  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
-  <p>wudaijun&#39;s blog &copy; 2017</p>
-  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
-</footer>
-
     </div>
   </div>
 </aside>
-  <main id="main">
-    <header class="top-header" id="header">
+
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -144,7 +129,7 @@
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
@@ -152,14 +137,23 @@
 </header>
 <header class="content-header post-header">
 
-    <div class="container">
+    <div class="container fade-scale">
         <h1 class="title">Linux 作业管理</h1>
-        
-        
+        <h5 class="subtitle">
+            
+                <time datetime="2016-08-29T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2016-08-30
+</time>
 
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/os/">os</a></li></ul>
+
+            
+        </h5>
     </div>
 
     
+
 
 </header>
 
@@ -169,28 +163,34 @@
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#进程组/会话"><span class="post-toc-text">进程组/会话</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#作业控制信号"><span class="post-toc-text">作业控制信号</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#作业管理"><span class="post-toc-text">作业管理</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#脱机管理"><span class="post-toc-text">脱机管理</span></a></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#进程组-会话"><span class="post-toc-text">进程组/会话</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#作业控制信号"><span class="post-toc-text">作业控制信号</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#作业管理"><span class="post-toc-text">作业管理</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#脱机管理"><span class="post-toc-text">脱机管理</span></a></li></ol>
         </nav>
     </aside>
     
-<article id="post-linux-job-control" 
-  class="post-article article-type-post" itemprop="blogPost">
+<article id="post-linux-job-control"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
         <h1 class="post-card-title">Linux 作业管理</h1>
         <div class="post-meta">
-            <time datetime="2016-08-29T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2016-08-30
-</time>
+            <time class="post-time" title="2016-08-30 00:00:00" datetime="2016-08-29T16:00:00.000Z"  itemprop="datePublished">2016-08-30</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/os/">os</a></li></ul>
 
 
 
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
-            <h3 id="进程组/会话">进程组/会话</h3><p>简要概念：</p>
+            <h3 id="进程组-会话"><a href="#进程组-会话" class="headerlink" title="进程组/会话"></a>进程组/会话</h3><p>简要概念：</p>
 <ul>
 <li>进程组：N(N&gt;=1)个进程的集合，通常在同一作业中关联起来(通过管道)。进程组的ID(PGID)即为进程组组长的PID。进程必定且只能属于一个进程组，只有进程组中一个进程存在，进程组就存在，与组长进程终止与否无关。进程组的概念提出主要是为了进程管理与信号分发</li>
 <li>会话：N(N&gt;=1)个进程组的集合，创建会话的进程叫会话首进程。会话ID即为会话首进程PID</li>
@@ -200,11 +200,11 @@
 </ul>
 <a id="more"></a>
 <p>例如，打开Bash，输入：</p>
-<pre><code>proc1 |<span class="string"> proc2 &amp;
-proc3 </span>|<span class="string"> proc4 </span>|<span class="string"> proc5</span>
+<pre><code>proc1 | proc2 &amp;
+proc3 | proc4 | proc5
 </code></pre><p>进程关系如下图所示：</p>
 <p><img src="/assets/image/linux/linux-session-process.png" alt="" title="进程组，会话和控制终端"></p>
-<h3 id="作业控制信号">作业控制信号</h3><ul>
+<h3 id="作业控制信号"><a href="#作业控制信号" class="headerlink" title="作业控制信号"></a>作业控制信号</h3><ul>
 <li>SIGCHLD: 子进程终止</li>
 <li>SIGTTIN: 后台进程组成员读控制终端</li>
 <li>SIGTTOU: 后台进程组写控制终端</li>
@@ -216,30 +216,30 @@ proc3 </span>|<span class="string"> proc4 </span>|<span class="string"> proc5</s
 </ul>
 <p>SIGCHILD信号在子进程终止或停止时向父进程发送，系统默认将忽略该信号，如果父进程希望知晓子进程状态变更，应捕获该信号。</p>
 <p>对于SIGTTIN和SIGTTOU信号，在后台作业尝试读取控制终端时，终端驱动程序知道它是个后台作业，于是将向改进程发送SIGTTIN信号，该信号默认将导致进程被挂起(停止)：</p>
-<pre><code>▶ /usr/<span class="keyword">local</span>/opt/coreutils/libexec/gnubin/<span class="keyword">cat</span> &gt; <span class="keyword">file</span> &amp;                                                                                                                   
+<pre><code>▶ /usr/local/opt/coreutils/libexec/gnubin/cat &gt; file &amp;                                                                                                                   
 [1] 44978
-[1]  + 44978 suspended (tty <span class="keyword">input</span>)  /usr/<span class="keyword">local</span>/opt/coreutils/libexec/gnubin/<span class="keyword">cat</span> &gt; <span class="keyword">file</span>
+[1]  + 44978 suspended (tty input)  /usr/local/opt/coreutils/libexec/gnubin/cat &gt; file
 ▶ fg                                                                                                                                                                     
-[1]  + 44978 continued  /usr/<span class="keyword">local</span>/opt/coreutils/libexec/gnubin/<span class="keyword">cat</span> &gt; <span class="keyword">file</span>
-Hello World! <span class="comment">// 重新获得终端 读取输入</span>
-[Ctrl+<span class="keyword">D</span>] <span class="comment">// 键入EOF</span>
+[1]  + 44978 continued  /usr/local/opt/coreutils/libexec/gnubin/cat &gt; file
+Hello World! // 重新获得终端 读取输入
+[Ctrl+D] // 键入EOF
 </code></pre><p>当后台作业尝试写终端时，默认情况下，后台作业的输出将成功输出到控制终端，但我们可以通过stty命令禁止后台作业向控制终端写，此时终端驱动程序向进程发送SIGTTOU信号：</p>
-<pre><code>▶ <span class="regexp">/usr/</span>local<span class="regexp">/opt/</span>coreutils<span class="regexp">/libexec/</span>gnubin/cat file &amp;
-[<span class="number">1</span>] <span class="number">46166</span>
+<pre><code>▶ /usr/local/opt/coreutils/libexec/gnubin/cat file &amp;
+[1] 46166
 Hello World!
-[<span class="number">1</span>]  + <span class="number">46166</span> done       <span class="regexp">/usr/</span>local<span class="regexp">/opt/</span>coreutils<span class="regexp">/libexec/</span>gnubin/cat file
-▶ stty tostop  <span class="comment">// 禁止后台作业向控制终端写</span>
-▶ <span class="regexp">/usr/</span>local<span class="regexp">/opt/</span>coreutils<span class="regexp">/libexec/</span>gnubin/cat file &amp; 
-[<span class="number">1</span>] <span class="number">46290</span>
-[<span class="number">1</span>]  + <span class="number">46290</span> suspended (tty output)  <span class="regexp">/usr/</span>local<span class="regexp">/opt/</span>coreutils<span class="regexp">/libexec/</span>gnubin/cat file
+[1]  + 46166 done       /usr/local/opt/coreutils/libexec/gnubin/cat file
+▶ stty tostop  // 禁止后台作业向控制终端写
+▶ /usr/local/opt/coreutils/libexec/gnubin/cat file &amp; 
+[1] 46290
+[1]  + 46290 suspended (tty output)  /usr/local/opt/coreutils/libexec/gnubin/cat file
 ▶ fg
-[<span class="number">1</span>]  + <span class="number">46290</span> continued  <span class="regexp">/usr/</span>local<span class="regexp">/opt/</span>coreutils<span class="regexp">/libexec/</span>gnubin/cat file
+[1]  + 46290 continued  /usr/local/opt/coreutils/libexec/gnubin/cat file
 Hello World!
 </code></pre><p>注意，在MacOS X上，自带的cat程序有BUG，不是interrupt-safe的，在MacOS X上，尝试恢复cat程序的执行将得到<code>cat: stdin: Interrupted system call</code>错误，<a href="http://factor-language.blogspot.com/2010/09/two-things-every-unix-developer-should.html" target="_blank" rel="external">这篇文章</a>和APUE 9.8节均提到了这个问题，因此我使用的是brew安装的GNU版本cat命令，安装方案参见<a href="https://www.topbug.net/blog/2013/04/14/install-and-use-gnu-command-line-tools-in-mac-os-x/" target="_blank" rel="external">这里</a>。</p>
 <p>关于SIGTSTP和SIGSTOP的区别，前者通常由键盘产生，可被捕获，当通过Ctrl+Z将前台作业放入后台时，前台作业收到该信号，意思是”从哪儿来到哪儿去”。而SIGSTOP通常由kill产生，不可被捕获或忽略，意思是”在那里待着别动”。两者均可由SIGCONT信号恢复运行。</p>
 <p>对于键盘输入产生的信号，控制进程将信号发送至前台进程组的所有进程。</p>
 <p>作业控制信号间有某些交互，当对一个进程产生四种停止信号(SIGTSTP,SIGSTOP,SIGTTIN,SIGTTOU)中的一种时，对该进程的任意未决SIGCONT信号将被丢弃，同样，当产生SIGCONT信号时，对同一进程的任意停止信号将被丢弃。</p>
-<h3 id="作业管理">作业管理</h3><ul>
+<h3 id="作业管理"><a href="#作业管理" class="headerlink" title="作业管理"></a>作业管理</h3><ul>
 <li>&amp; 将作业放入后台执行，如果没有进行重定向，数据流仍然会输出到前台</li>
 <li>Ctrl+C 强制中断前台当前作业执行</li>
 <li>Ctrl+Z 将作业挂到后台</li>
@@ -249,27 +249,36 @@ Hello World!
 <li>kill -signal %作业ID 向指定作业的所有进程发送信号</li>
 </ul>
 <p>作业管理的后台不是系统后台，因此，上述的任务管理依旧与终端有关，当远程连接的终端断开连接时，SIGHUP信号默认将导致改会话上所有的任务都会被中断。</p>
-<h3 id="脱机管理">脱机管理</h3><ul>
+<h3 id="脱机管理"><a href="#脱机管理" class="headerlink" title="脱机管理"></a>脱机管理</h3><ul>
 <li>nohup: nohup CMD &amp; 将任务放在后台执行，并忽略SIGHUP挂掉信号，但是在人机交互上比较麻烦</li>
 <li>screen: 一个可以在多个进程之间多路复用一个物理终端的窗口管理器，在远端服务器上运行screen，开启一个新会话并执行任务，在终端断开后，任务继续执行，下次登录再attach上screen会话即可，Linux发行版自带</li>
 <li>tmux: 功能类似于screen，但在分屏切换，配置方面更强大，完全可作为本地终端使用</li>
 </ul>
 
         </div>
-        
+
         <blockquote class="post-copyright">
-            <div class="content">
-               这里写留言或版权声明：<a href="/2016/08/linux-job-control/" target="_blank" rel="external">http://wudaijun.com/2016/08/linux-job-control/</a>
-            </div>
-            <footer>
-                <a href="http://wudaijun.com">
-                    <img src="/favicon.png" alt="wudaijun">
-                    wudaijun
-                </a>
-            </footer>
-        </blockquote>
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-08-31T01:39:01.000Z" itemprop="dateUpdated">2016-08-31 09:39:01</time>
+</span><br>
+
 
         
+        博客均为原创，转载请征得作者同意并注明出处，本文永久链接：<a href="/2016/08/linux-job-control/" target="_blank" rel="external">http://wudaijun.com/2016/08/linux-job-control/</a>
+        
+    </div>
+    <footer>
+        <a href="http://wudaijun.com">
+            <img src="/favicon.png" alt="wudaijun">
+            wudaijun
+        </a>
+    </footer>
+</blockquote>
+
+        
+
 
         <div class="post-footer">
             
@@ -277,51 +286,57 @@ Hello World!
 
 
             
-            <div class="post-share-wrap">
-                <div class="post-share" id="post-share">
-    <div class="tit">分享到：</div>
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2016/08/linux-job-control/&title=《Linux 作业管理》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2016/08/linux-job-control/&title=《Linux 作业管理》 — wudaijun's blog&source=进程组/会话简要概念：
+
+进程组：N(N&gt;=1)个进程的集合，通常在同一作业中关联起来(通过管道)。进程组的ID(PGID)即为进程组组长的PID。..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2016/08/linux-job-control/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Linux 作业管理》 — wudaijun's blog&url=http://wudaijun.com/2016/08/linux-job-control/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2016/08/linux-job-control/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
-                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
-                    <i class="icon icon-share-alt icon-lg"></i>
-                </a>
-            </div>
-            
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
 
         </div>
-    </div>   
+    </div>
 
     
 <nav class="post-nav flex-row flex-justify-between">
@@ -345,83 +360,141 @@ Hello World!
 </nav>
 
 
-            
+
     
 
 
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'wudaijun'; // required: replace example with your forum shortname
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://wudaijun.com/2016/08/linux-job-control/index.html',
+        sourceId: 'linux-job-control',
+        productKey: '02b378614d264e81bca14ffaadf03446',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
 
 
 </article>
 
 
+
 </div>
-  </main>
-  <div class="mask" id="mask"></div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>wudaijun &copy; 2015 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
-<script>
-var BLOG_SHARE = {
-    title: "Linux 作业管理",
-    pic: "/favicon.png",
-    summary: document.getElementsByName('summary')[0].content,
-    url: "http://wudaijun.com/2016/08/linux-job-control/"
-};
-</script>
-<div class="global-share" id="global-share">
-    <div class="tit">分享到：</div>
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2016/08/linux-job-control/&title=《Linux 作业管理》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2016/08/linux-job-control/&title=《Linux 作业管理》 — wudaijun's blog&source=进程组/会话简要概念：
+
+进程组：N(N&gt;=1)个进程的集合，通常在同一作业中关联起来(通过管道)。进程组的ID(PGID)即为进程组组长的PID。..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2016/08/linux-job-control/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Linux 作业管理》 — wudaijun's blog&url=http://wudaijun.com/2016/08/linux-job-control/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2016/08/linux-job-control/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script src="/js/main.min.js?v=1.1.4"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://wudaijun.com/2016/08/linux-job-control/" alt="微信分享二维码">
+</div>
 
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
@@ -429,7 +502,7 @@ var BLOG_SHARE = {
 </div>
 <template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -441,13 +514,14 @@ var BLOG_SHARE = {
 </li>
 </template>
 
-<script src="/js/search.min.js?v=1.1.4"></script>
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 

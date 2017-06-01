@@ -1,46 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  
-  
-  <title>开发笔记(2) 服务器Lua战斗 | wudaijun&#39;s blog | Coding is Funny</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="theme-color" content="#3F51B5">
-  
-  
-  <meta name="keywords" content="erlang">
-  <meta name="description" content="服务器战斗系统是自动战斗的，没有玩家实际操作，因此实际上是一份客户端的Lua战斗代码，这里讨论如何在Erlang中植入Lua代码。">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>开发笔记(2) 服务器Lua战斗 | wudaijun&#39;s blog | Coding is Funny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="erlang">
+    <meta name="description" content="服务器战斗系统是自动战斗的，没有玩家实际操作，因此实际上是一份客户端的Lua战斗代码，这里讨论如何在Erlang中植入Lua代码。">
+<meta name="keywords" content="erlang">
 <meta property="og:type" content="article">
 <meta property="og:title" content="开发笔记(2) 服务器Lua战斗">
 <meta property="og:url" content="http://wudaijun.com/2015/09/erlang-server-design2-erlang-lua-battle/index.html">
-<meta property="og:site_name" content="wudaijun's blog">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
 <meta property="og:description" content="服务器战斗系统是自动战斗的，没有玩家实际操作，因此实际上是一份客户端的Lua战斗代码，这里讨论如何在Erlang中植入Lua代码。">
 <meta property="og:updated_time" content="2016-03-26T13:45:56.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="开发笔记(2) 服务器Lua战斗">
 <meta name="twitter:description" content="服务器战斗系统是自动战斗的，没有玩家实际操作，因此实际上是一份客户端的Lua战斗代码，这里讨论如何在Erlang中植入Lua代码。">
-  
-    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
-  
-  <meta name="summary" content="&lt;p&gt;服务器战斗系统是自动战斗的，没有玩家实际操作，因此实际上是一份客户端的Lua战斗代码，这里讨论如何在Erlang中植入Lua代码。&lt;/p&gt;">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+    
+        <link rel="alternate" type="application/atom+xml" title="wudaijun&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <aside id="menu" class="hide" >
+    <aside id="menu" class="hide" >
   <div class="inner flex-row-vertical">
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap">
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
       <div class="brand">
-        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/favicon.png">
+        </a>
         <hgroup class="introduce">
           <h5 class="nickname">wudaijun</h5>
           <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
@@ -93,20 +104,12 @@
             </li>
         
       </ul>
-
-      <footer class="footer">
-  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
-  <p>wudaijun&#39;s blog &copy; 2017</p>
-  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
-</footer>
-
     </div>
   </div>
 </aside>
-  <main id="main">
-    <header class="top-header" id="header">
+
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -124,7 +127,7 @@
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
@@ -132,14 +135,23 @@
 </header>
 <header class="content-header post-header">
 
-    <div class="container">
+    <div class="container fade-scale">
         <h1 class="title">开发笔记(2) 服务器Lua战斗</h1>
-        
-        
+        <h5 class="subtitle">
+            
+                <time datetime="2015-09-15T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2015-09-16
+</time>
 
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
+
+            
+        </h5>
     </div>
 
     
+
 
 </header>
 
@@ -149,44 +161,50 @@
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-_Port_Driver"><span class="post-toc-text">1. Port Driver</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-_异步nif"><span class="post-toc-text">2. 异步nif</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-_序列化数据"><span class="post-toc-text">3. 序列化数据</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-_进程池"><span class="post-toc-text">4. 进程池</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-_无状态服务"><span class="post-toc-text">5. 无状态服务</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6-_Lua代码热更"><span class="post-toc-text">6. Lua代码热更</span></a></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-Port-Driver"><span class="post-toc-text">1. Port Driver</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-异步nif"><span class="post-toc-text">2. 异步nif</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-序列化数据"><span class="post-toc-text">3. 序列化数据</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-进程池"><span class="post-toc-text">4. 进程池</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-无状态服务"><span class="post-toc-text">5. 无状态服务</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6-Lua代码热更"><span class="post-toc-text">6. Lua代码热更</span></a></li></ol>
         </nav>
     </aside>
     
-<article id="post-erlang-server-design2-erlang-lua-battle" 
-  class="post-article article-type-post" itemprop="blogPost">
+<article id="post-erlang-server-design2-erlang-lua-battle"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
         <h1 class="post-card-title">开发笔记(2) 服务器Lua战斗</h1>
         <div class="post-meta">
-            <time datetime="2015-09-15T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2015-09-16
-</time>
+            <time class="post-time" title="2015-09-16 00:00:00" datetime="2015-09-15T16:00:00.000Z"  itemprop="datePublished">2015-09-16</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
 
 
 
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
             <p>服务器战斗系统是自动战斗的，没有玩家实际操作，因此实际上是一份客户端的Lua战斗代码，这里讨论如何在Erlang中植入Lua代码。</p>
 <a id="more"></a>
-<h3 id="1-_Port_Driver">1. Port Driver</h3><p>最开始，出于简单考虑，我使用Port Driver的方式来挂接战斗模块，使用<a href="https://github.com/Motiejus/erlualib" target="_blank" rel="external">erlualib</a>库，通过<code>luam:one_call</code>执行调用，进行了简单的时间统计，其中new_state&lt;1ms，dostring: 600ms，call: 20-300ms。</p>
+<h3 id="1-Port-Driver"><a href="#1-Port-Driver" class="headerlink" title="1. Port Driver"></a>1. Port Driver</h3><p>最开始，出于简单考虑，我使用Port Driver的方式来挂接战斗模块，使用<a href="https://github.com/Motiejus/erlualib" target="_blank" rel="external">erlualib</a>库，通过<code>luam:one_call</code>执行调用，进行了简单的时间统计，其中new_state&lt;1ms，dostring: 600ms，call: 20-300ms。</p>
 <p>由于是3D+NvN的战斗，整个Lua代码跑起来还是很耗时的，跑一场战斗需要接近1s的时间。由于Port Driver中的Lua代码是在虚拟机调度线程上下文中执行的，而Erlang虚拟机无法对原生代码进行公平调度，这会使在Lua代码执行期间，该调度器上其它任务都被挂起，得不到正常调度。</p>
-<h3 id="2-_异步nif">2. 异步nif</h3><p>为了避免阻塞调度，Port driver是行不通的，我们还剩两种方案：</p>
+<h3 id="2-异步nif"><a href="#2-异步nif" class="headerlink" title="2. 异步nif"></a>2. 异步nif</h3><p>为了避免阻塞调度，Port driver是行不通的，我们还剩两种方案：</p>
 <ol>
 <li>用Ports，将战斗独立为一个操作系统进程</li>
 <li>异步nif</li>
 </ol>
 <p>考虑到尽量利用Erlang Node以及以后手动PVP的可能性，我选择了方案二，而刚好同事写了一个<a href="https://github.com/zhuoyikang/elua" target="_blank" rel="external">异步nif库</a>，也就拿来测试了。所谓异步nif，就是在nif内部提供一个C原生线程池，来做nif实际的工作，而Erlang虚拟机内只需要receive阻塞等待结果即可，Erlang层面的阻塞是可被调度的，也就是不会影响到节点上其它进程的公平调度。</p>
 <p>简单介绍一下elua，elua内部提供一个线程池，每个线程都有自己的任务队列，同一个lua state上的操作将会被推送到同一个线程的任务队列中(通过简单hash)，以保证lua state不被并发。elua使用和定制都非常灵活，可以很轻松地添加nif接口和自定义数据类型的序列化。</p>
-<h3 id="3-_序列化数据">3. 序列化数据</h3><p>在erlualib中，数据序列化是在erlang层完成的，erlang层通过<code>lua:push_xxx</code>来将基本数据(bool,integer,atom)一个个压入Lua栈，每一次push操作，都是一次port_command，而战斗入口的数据是比较繁杂的，英雄成长，技能，装备属性等等，涉及很多key-value，一来是序列化效率低，二来是这种数据结构不能兼容于客户端。同一套战斗入口数据，最好能同时用于服务器和客户端的战斗模块。</p>
+<h3 id="3-序列化数据"><a href="#3-序列化数据" class="headerlink" title="3. 序列化数据"></a>3. 序列化数据</h3><p>在erlualib中，数据序列化是在erlang层完成的，erlang层通过<code>lua:push_xxx</code>来将基本数据(bool,integer,atom)一个个压入Lua栈，每一次push操作，都是一次port_command，而战斗入口的数据是比较繁杂的，英雄成长，技能，装备属性等等，涉及很多key-value，一来是序列化效率低，二来是这种数据结构不能兼容于客户端。同一套战斗入口数据，最好能同时用于服务器和客户端的战斗模块。</p>
 <p>因此在elua中，我选择使用protobuf，通过二进制传输战斗入口数据，这个二进制流也可以传输给客户端，用于支持重放。</p>
-<h3 id="4-_进程池">4. 进程池</h3><p>由于每场战斗是独立的，原则上对lua state是没有依赖的，事先分配一个lua state池，将耗时的dostring操作提前完成，每场战斗取出一个可用的lua state，然后spawn一个battle_worker进程来跑战斗，跑完之后将战斗结果cast回逻辑进程，进行后续逻辑处理。这样receive阻塞放在battle_worker中，实际Lua代码执行由elua线程池完成，对逻辑进程来说，是完全异步的。</p>
+<h3 id="4-进程池"><a href="#4-进程池" class="headerlink" title="4. 进程池"></a>4. 进程池</h3><p>由于每场战斗是独立的，原则上对lua state是没有依赖的，事先分配一个lua state池，将耗时的dostring操作提前完成，每场战斗取出一个可用的lua state，然后spawn一个battle_worker进程来跑战斗，跑完之后将战斗结果cast回逻辑进程，进行后续逻辑处理。这样receive阻塞放在battle_worker中，实际Lua代码执行由elua线程池完成，对逻辑进程来说，是完全异步的。</p>
 <p>受限于elua内部的C线程(称为worker)和CPU核心数的多少，并不是erlang process越多，战斗就跑得越快，当战斗请求过多时，请求被阻塞在elua内部各个worker的任务队列中。并且spawn的process不够健壮，也没有重启机制。显然我们应该让worker process常驻，并且通过gen_server+sup实现，worker process的个数可以刚好等于elua worker的个数，这样process和worker可以直接保持一对一的关系，修改elua任务分配hash算法，让process[i]的战斗请求将分发到worker[i]的任务队列。这样我们只需把process的分配调度做好，elua即可高效地利用起来。每个process持有一个lua state，保证lua state不被并发。当战斗请求过多时，消息将阻塞在process的消息队列中，而不是elua worker的任务队列中。</p>
 <p>另外，如果战斗模块负荷较重，可以将elua线程池的大小设为Erlang虚拟机可用的CPU个数-1，这样即使elua所有线程忙碌，也不会占用全部的CPU，进一步保证节点其它进程得到调度。</p>
-<h3 id="5-_无状态服务">5. 无状态服务</h3><p>到这里，我们讨论的都是如何将Lua代码嵌入在逻辑服务器中，如pvp_server，这样做实际上还有两点隐患：</p>
+<h3 id="5-无状态服务"><a href="#5-无状态服务" class="headerlink" title="5. 无状态服务"></a>5. 无状态服务</h3><p>到这里，我们讨论的都是如何将Lua代码嵌入在逻辑服务器中，如pvp_server，这样做实际上还有两点隐患：</p>
 <ol>
 <li>多个pvp_server不能有效地利用同一个pvp_node资源，因为它们具有各自的worker proces pool</li>
 <li>我们都假设elua和Lua战斗代码是足够健壮的，虽然Lua代码本身的异常可以通过<code>lua_pcall</code>捕获，但是Lua虚拟机本身的状态异常，如内存增长，仍然是不稳定的因素，可能会影响到整个pvp_node的逻辑处理</li>
@@ -201,25 +219,34 @@
 <li>elua crash: battle_node crash -&gt; 该节点不可用 -&gt; 外部请求仍然可能路由到该节点 -&gt; 战斗超时 -&gt; cluster_server检测到(节点心跳机制)该节点不可响应 -&gt; 在集群中删除该节点 -&gt; 外部请求路由到其它可用节点</li>
 </ul>
 <p>并且整个战斗系统的伸缩性很强，可以通过简单添加机器来缓解服务器战斗压力。</p>
-<h3 id="6-_Lua代码热更">6. Lua代码热更</h3><p>这个是Lua的强项，直接通过elua再次dofile Lua入口文件即可，但是要保证该Lua入口不具备副作用，如对一些全局符号进行了改写，否则下一次直接dofile，将叠加这种副作用从而导致代码异常。如果有一些全局初始化操作，应该单独抽离出来，放在另一个Lua文件中，只在创建Lua虚拟机时执行。</p>
+<h3 id="6-Lua代码热更"><a href="#6-Lua代码热更" class="headerlink" title="6. Lua代码热更"></a>6. Lua代码热更</h3><p>这个是Lua的强项，直接通过elua再次dofile Lua入口文件即可，但是要保证该Lua入口不具备副作用，如对一些全局符号进行了改写，否则下一次直接dofile，将叠加这种副作用从而导致代码异常。如果有一些全局初始化操作，应该单独抽离出来，放在另一个Lua文件中，只在创建Lua虚拟机时执行。</p>
 <p>另一种热更方案是，每次都重新创建一个Lua虚拟机，这样可以保证每次热更后的Lua虚拟机状态都得以重置恢复。</p>
 <p>最重要的是，这一切，所有外部请求来说，都是透明的。</p>
 
         </div>
-        
+
         <blockquote class="post-copyright">
-            <div class="content">
-               这里写留言或版权声明：<a href="/2015/09/erlang-server-design2-erlang-lua-battle/" target="_blank" rel="external">http://wudaijun.com/2015/09/erlang-server-design2-erlang-lua-battle/</a>
-            </div>
-            <footer>
-                <a href="http://wudaijun.com">
-                    <img src="/favicon.png" alt="wudaijun">
-                    wudaijun
-                </a>
-            </footer>
-        </blockquote>
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-03-26T13:45:56.000Z" itemprop="dateUpdated">2016-03-26 21:45:56</time>
+</span><br>
+
 
         
+        博客均为原创，转载请征得作者同意并注明出处，本文永久链接：<a href="/2015/09/erlang-server-design2-erlang-lua-battle/" target="_blank" rel="external">http://wudaijun.com/2015/09/erlang-server-design2-erlang-lua-battle/</a>
+        
+    </div>
+    <footer>
+        <a href="http://wudaijun.com">
+            <img src="/favicon.png" alt="wudaijun">
+            wudaijun
+        </a>
+    </footer>
+</blockquote>
+
+        
+
 
         <div class="post-footer">
             
@@ -227,51 +254,55 @@
 
 
             
-            <div class="post-share-wrap">
-                <div class="post-share" id="post-share">
-    <div class="tit">分享到：</div>
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2015/09/erlang-server-design2-erlang-lua-battle/&title=《开发笔记(2) 服务器Lua战斗》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2015/09/erlang-server-design2-erlang-lua-battle/&title=《开发笔记(2) 服务器Lua战斗》 — wudaijun's blog&source=服务器战斗系统是自动战斗的，没有玩家实际操作，因此实际上是一份客户端的Lua战斗代码，这里讨论如何在Erlang中植入Lua代码。" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2015/09/erlang-server-design2-erlang-lua-battle/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《开发笔记(2) 服务器Lua战斗》 — wudaijun's blog&url=http://wudaijun.com/2015/09/erlang-server-design2-erlang-lua-battle/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2015/09/erlang-server-design2-erlang-lua-battle/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
-                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
-                    <i class="icon icon-share-alt icon-lg"></i>
-                </a>
-            </div>
-            
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
 
         </div>
-    </div>   
+    </div>
 
     
 <nav class="post-nav flex-row flex-justify-between">
@@ -295,83 +326,139 @@
 </nav>
 
 
-            
+
     
 
 
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'wudaijun'; // required: replace example with your forum shortname
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://wudaijun.com/2015/09/erlang-server-design2-erlang-lua-battle/index.html',
+        sourceId: 'erlang-server-design2-erlang-lua-battle',
+        productKey: '02b378614d264e81bca14ffaadf03446',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
 
 
 </article>
 
 
+
 </div>
-  </main>
-  <div class="mask" id="mask"></div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>wudaijun &copy; 2015 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
-<script>
-var BLOG_SHARE = {
-    title: "开发笔记(2) 服务器Lua战斗",
-    pic: "/favicon.png",
-    summary: document.getElementsByName('summary')[0].content,
-    url: "http://wudaijun.com/2015/09/erlang-server-design2-erlang-lua-battle/"
-};
-</script>
-<div class="global-share" id="global-share">
-    <div class="tit">分享到：</div>
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2015/09/erlang-server-design2-erlang-lua-battle/&title=《开发笔记(2) 服务器Lua战斗》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2015/09/erlang-server-design2-erlang-lua-battle/&title=《开发笔记(2) 服务器Lua战斗》 — wudaijun's blog&source=服务器战斗系统是自动战斗的，没有玩家实际操作，因此实际上是一份客户端的Lua战斗代码，这里讨论如何在Erlang中植入Lua代码。" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2015/09/erlang-server-design2-erlang-lua-battle/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《开发笔记(2) 服务器Lua战斗》 — wudaijun's blog&url=http://wudaijun.com/2015/09/erlang-server-design2-erlang-lua-battle/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2015/09/erlang-server-design2-erlang-lua-battle/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script src="/js/main.min.js?v=1.1.4"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://wudaijun.com/2015/09/erlang-server-design2-erlang-lua-battle/" alt="微信分享二维码">
+</div>
 
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
@@ -379,7 +466,7 @@ var BLOG_SHARE = {
 </div>
 <template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -391,13 +478,14 @@ var BLOG_SHARE = {
 </li>
 </template>
 
-<script src="/js/search.min.js?v=1.1.4"></script>
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 

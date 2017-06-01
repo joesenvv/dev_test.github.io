@@ -1,46 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  
-  
-  <title>C++ 构造语义 | wudaijun&#39;s blog | Coding is Funny</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="theme-color" content="#3F51B5">
-  
-  
-  <meta name="keywords" content="c/c++">
-  <meta name="description" content="本文是《深度探索C++对象模型》的读书笔记，主要根据自己的理解整理一下C++对象构造的实现细节以及其在实际编程中所带来的影响。">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>C++ 构造语义 | wudaijun&#39;s blog | Coding is Funny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="c/c++">
+    <meta name="description" content="本文是《深度探索C++对象模型》的读书笔记，主要根据自己的理解整理一下C++对象构造的实现细节以及其在实际编程中所带来的影响。">
+<meta name="keywords" content="c&#x2F;c++">
 <meta property="og:type" content="article">
 <meta property="og:title" content="C++ 构造语义">
 <meta property="og:url" content="http://wudaijun.com/2014/11/cpp-constructor/index.html">
-<meta property="og:site_name" content="wudaijun's blog">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
 <meta property="og:description" content="本文是《深度探索C++对象模型》的读书笔记，主要根据自己的理解整理一下C++对象构造的实现细节以及其在实际编程中所带来的影响。">
 <meta property="og:updated_time" content="2016-09-24T08:57:15.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="C++ 构造语义">
 <meta name="twitter:description" content="本文是《深度探索C++对象模型》的读书笔记，主要根据自己的理解整理一下C++对象构造的实现细节以及其在实际编程中所带来的影响。">
-  
-    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
-  
-  <meta name="summary" content="&lt;p&gt;本文是《深度探索C++对象模型》的读书笔记，主要根据自己的理解整理一下C++对象构造的实现细节以及其在实际编程中所带来的影响。&lt;/p&gt;">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+    
+        <link rel="alternate" type="application/atom+xml" title="wudaijun&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <aside id="menu" class="hide" >
+    <aside id="menu" class="hide" >
   <div class="inner flex-row-vertical">
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap">
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
       <div class="brand">
-        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/favicon.png">
+        </a>
         <hgroup class="introduce">
           <h5 class="nickname">wudaijun</h5>
           <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
@@ -93,20 +104,12 @@
             </li>
         
       </ul>
-
-      <footer class="footer">
-  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
-  <p>wudaijun&#39;s blog &copy; 2017</p>
-  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
-</footer>
-
     </div>
   </div>
 </aside>
-  <main id="main">
-    <header class="top-header" id="header">
+
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -124,7 +127,7 @@
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
@@ -132,14 +135,23 @@
 </header>
 <header class="content-header post-header">
 
-    <div class="container">
+    <div class="container fade-scale">
         <h1 class="title">C++ 构造语义</h1>
-        
-        
+        <h5 class="subtitle">
+            
+                <time datetime="2014-11-24T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2014-11-25
+</time>
 
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/c-c/">c/c++</a></li></ul>
+
+            
+        </h5>
     </div>
 
     
+
 
 </header>
 
@@ -149,30 +161,36 @@
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#一-_构造函数"><span class="post-toc-text">一. 构造函数</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#a-_类中有_“带_nontrivial_default_constructor”_的对象成员"><span class="post-toc-text">a. 类中有 “带 nontrivial default constructor” 的对象成员</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#b-_类继承于_“带_nontrivial_default_constructor”_的基类"><span class="post-toc-text">b. 类继承于 “带 nontrivial default constructor” 的基类</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#c-_类中有虚函数(或继承体系中有虚函数)"><span class="post-toc-text">c. 类中有虚函数(或继承体系中有虚函数)</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#d-_类的继承体系中具有虚基类"><span class="post-toc-text">d. 类的继承体系中具有虚基类</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#总结"><span class="post-toc-text">总结</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#二-_复制构造函数"><span class="post-toc-text">二. 复制构造函数</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#三-_trivial的一些扩展"><span class="post-toc-text">三. trivial的一些扩展</span></a></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#一-构造函数"><span class="post-toc-text">一. 构造函数</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#a-类中有-“带-nontrivial-default-constructor”-的对象成员"><span class="post-toc-text">a. 类中有 “带 nontrivial default constructor” 的对象成员</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#b-类继承于-“带-nontrivial-default-constructor”-的基类"><span class="post-toc-text">b. 类继承于 “带 nontrivial default constructor” 的基类</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#c-类中有虚函数-或继承体系中有虚函数"><span class="post-toc-text">c. 类中有虚函数(或继承体系中有虚函数)</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#d-类的继承体系中具有虚基类"><span class="post-toc-text">d. 类的继承体系中具有虚基类</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#总结"><span class="post-toc-text">总结</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#二-复制构造函数"><span class="post-toc-text">二. 复制构造函数</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#三-trivial的一些扩展"><span class="post-toc-text">三. trivial的一些扩展</span></a></li></ol>
         </nav>
     </aside>
     
-<article id="post-cpp-constructor" 
-  class="post-article article-type-post" itemprop="blogPost">
+<article id="post-cpp-constructor"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
         <h1 class="post-card-title">C++ 构造语义</h1>
         <div class="post-meta">
-            <time datetime="2014-11-24T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2014-11-25
-</time>
+            <time class="post-time" title="2014-11-25 00:00:00" datetime="2014-11-24T16:00:00.000Z"  itemprop="datePublished">2014-11-25</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/c-c/">c/c++</a></li></ul>
 
 
 
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
             <p>本文是《深度探索C++对象模型》的读书笔记，主要根据自己的理解整理一下C++对象构造的实现细节以及其在实际编程中所带来的影响。</p>
 <a id="more"></a>
-<h2 id="一-_构造函数">一. 构造函数</h2><p>C++95标准对构造函数如下描述：</p>
+<h2 id="一-构造函数"><a href="#一-构造函数" class="headerlink" title="一. 构造函数"></a>一. 构造函数</h2><p>C++95标准对构造函数如下描述：</p>
 <blockquote>
 <p>对于 class X，如果没有任何user-declared constructor，那么会有一个default constructor被<strong>隐式声明</strong>出来…..一个被隐式声明出来的 default constructor 将是一个<strong>trivial(浅薄无能的，没啥用的) constructor</strong> ……</p>
 </blockquote>
@@ -182,19 +200,19 @@
 <p>另外，一个定义了 user-decalred constructor(用户定义的任何构造函数) 的类被视为具有 nontrivial constructor。</p>
 <p>下面将着重讨论编译器隐式声明的构造函数在哪种情况下需要被合成(nontrivial)，哪种情况下无需被合成(trivial)：</p>
 <p>考虑下面这个类：</p>
-<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">A</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="keyword">int</span> _ivalue;</span><br><span class="line">	<span class="keyword">float</span> _fvalue;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">class A</div><div class="line">&#123;</div><div class="line">private:</div><div class="line">	int _ivalue;</div><div class="line">	float _fvalue;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
 <p>对于类A来说，编译器将为其隐式声明的默认构造函数被视为trivial。因为编译器无需在其声明的构造函数中，对A类对象进行任何额外处理。注意，编译器生成的默认构造函数不会对 _ivalue 和 _fvalue 进行初始化。因此在这种情况下，编译器隐式生成的默认构造函数可有可无，视之为”trivial”。</p>
 <p>而对于如下四种情况，编译器隐式生成的默认构造函数(以下简称”隐式构造函数”)是 nontrivial default constructor ：</p>
-<h4 id="a-_类中有_“带_nontrivial_default_constructor”_的对象成员">a. 类中有 “带 nontrivial default constructor” 的对象成员</h4><p>注意，这里的notrivial default constructor包括<strong>用户定义的任何构造函数</strong>或者<strong>编译器生成的notrivial构造函数</strong>。这实际上是一个递归定义，当类X中有具备notrivial default constructor的对象成员Y _y时，X的隐式构造函数需要调用Y的默认构造函数完成对成员_y的构造。如：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">class</span> <span class="tag">B</span></span><br><span class="line"><span class="rules">&#123;</span><br><span class="line"><span class="rule"><span class="attribute">private</span>:<span class="value"></span><br><span class="line">	A _a</span></span>;</span><br><span class="line">&#125;</span>;</span><br><span class="line"></span><br><span class="line"><span class="tag">class</span> <span class="tag">C</span></span><br><span class="line"><span class="rules">&#123;</span><br><span class="line"><span class="rule"><span class="attribute">private</span>:<span class="value"></span><br><span class="line">	std::string _str</span></span>;</span><br><span class="line">&#125;</span>;</span><br></pre></td></tr></table></figure>
+<h4 id="a-类中有-“带-nontrivial-default-constructor”-的对象成员"><a href="#a-类中有-“带-nontrivial-default-constructor”-的对象成员" class="headerlink" title="a. 类中有 “带 nontrivial default constructor” 的对象成员"></a>a. 类中有 “带 nontrivial default constructor” 的对象成员</h4><p>注意，这里的notrivial default constructor包括<strong>用户定义的任何构造函数</strong>或者<strong>编译器生成的notrivial构造函数</strong>。这实际上是一个递归定义，当类X中有具备notrivial default constructor的对象成员Y _y时，X的隐式构造函数需要调用Y的默认构造函数完成对成员_y的构造。如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">class B</div><div class="line">&#123;</div><div class="line">private:</div><div class="line">	A _a;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">class C</div><div class="line">&#123;</div><div class="line">private:</div><div class="line">	std::string _str;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
 <p>我们说类B中的对象成员 A _a “不带default constructor”，因为它只有一个隐式生成的 trivial default constructor。因此B的隐式构造函数中，无需操心对成员_a的构造。因而实际上B的隐式构造函数也被视为trivial(无关紧要)。而对于类C，由于其对象成员类型string具备用户(库作者)声明的默认构造函数，因此string的构造函数是nontrivial，所以编译器在为C合成的默认构造函数中，需要调用string的默认构造函数来为_str初始化，此时C的构造函数便不再是”无关紧要”的，被视为 nontrivial。</p>
-<h4 id="b-_类继承于_“带_nontrivial_default_constructor”_的基类">b. 类继承于 “带 nontrivial default constructor” 的基类</h4><p>情形b和情形a类似：当类具有 “带 nontrivial default constructor”的基类时，编译器隐式生成的默认构造函数需要调用基类的默认构造函数确保基类的正确初始化。此时该类构造函数视为nontrivial。</p>
-<h4 id="c-_类中有虚函数(或继承体系中有虚函数)">c. 类中有虚函数(或继承体系中有虚函数)</h4><p>在这种情况下，编译器生成的隐式构造函数需要完成对虚函数表vtable的构造，并且将vtable的指针安插到对象中(通常是头四个字节)。此时的隐式构造函数自然是必不可少(nontrivial)。</p>
-<h4 id="d-_类的继承体系中具有虚基类">d. 类的继承体系中具有虚基类</h4><p>和情形c一样，编译器需要在合成的构造函数中，对虚基类进行处理(处理方式和虚函数类似，通过一个指针来指向虚基类，以保证虚基类在其继承体系中，只有一份内容)，这样才能保证程序能在运行中正确存取虚基类数据。被视为nontrivial。</p>
-<h4 id="总结">总结</h4><p>编译器隐式声明的默认构造函数，是 trivial or nontrivial，取决于编译器是否需要在构造函数中做一些额外的处理，主要包括对象成员和基类的初始化(取决于对象成员或基类有无nontrivial default constructor)，以及对虚函数和虚基类的处理(取决于在其继承体系中是否有虚函数或虚基类)。这些工作使隐式构造函数不再是可有可无。</p>
+<h4 id="b-类继承于-“带-nontrivial-default-constructor”-的基类"><a href="#b-类继承于-“带-nontrivial-default-constructor”-的基类" class="headerlink" title="b. 类继承于 “带 nontrivial default constructor” 的基类"></a>b. 类继承于 “带 nontrivial default constructor” 的基类</h4><p>情形b和情形a类似：当类具有 “带 nontrivial default constructor”的基类时，编译器隐式生成的默认构造函数需要调用基类的默认构造函数确保基类的正确初始化。此时该类构造函数视为nontrivial。</p>
+<h4 id="c-类中有虚函数-或继承体系中有虚函数"><a href="#c-类中有虚函数-或继承体系中有虚函数" class="headerlink" title="c. 类中有虚函数(或继承体系中有虚函数)"></a>c. 类中有虚函数(或继承体系中有虚函数)</h4><p>在这种情况下，编译器生成的隐式构造函数需要完成对虚函数表vtable的构造，并且将vtable的指针安插到对象中(通常是头四个字节)。此时的隐式构造函数自然是必不可少(nontrivial)。</p>
+<h4 id="d-类的继承体系中具有虚基类"><a href="#d-类的继承体系中具有虚基类" class="headerlink" title="d. 类的继承体系中具有虚基类"></a>d. 类的继承体系中具有虚基类</h4><p>和情形c一样，编译器需要在合成的构造函数中，对虚基类进行处理(处理方式和虚函数类似，通过一个指针来指向虚基类，以保证虚基类在其继承体系中，只有一份内容)，这样才能保证程序能在运行中正确存取虚基类数据。被视为nontrivial。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>编译器隐式声明的默认构造函数，是 trivial or nontrivial，取决于编译器是否需要在构造函数中做一些额外的处理，主要包括对象成员和基类的初始化(取决于对象成员或基类有无nontrivial default constructor)，以及对虚函数和虚基类的处理(取决于在其继承体系中是否有虚函数或虚基类)。这些工作使隐式构造函数不再是可有可无。</p>
 <p>不存在以上四种情况并且没有用户定义的任何构造函数时，隐式构造函数也被称作 implicit trivial default constructors。这类构造函数实际上并不会被编译器合成出来。这也是对 trivial 和 nontrivial 的直观理解。</p>
 <p>而实际上，即使你定义了自己的构造函数，如果类中满足以上四种情形之一，编译器也会将你的构造函数展开，将必要的处理(如vtable的构造)植入到你的构造函数中(一般是你的构造代码之前)。不过仍然请注意，一旦你定义了自己的构造函数，哪怕该函数什么也不做，该类也将被视为具备 nontrivial constrcutor。</p>
-<h2 id="二-_复制构造函数">二. 复制构造函数</h2><p>就像 default constructor 一样，C++ Standard 上说，如果 class 没有声明一个 copy constructor，就会有隐式的声明(implicitly declared)或隐式的定义(implicitly defined)出现，和以前一样，C++ Standard 把 copy constructor 区分为 trivial 和 nontrivial 两种，只有 nontrivial 的实例才会被合成于程序之中。决定一个 copy constructor 是否为 trivial 的标准在于 class 是否展现出所谓的 “bitwise copy semantics(按位拷贝语义)”。</p>
+<h2 id="二-复制构造函数"><a href="#二-复制构造函数" class="headerlink" title="二. 复制构造函数"></a>二. 复制构造函数</h2><p>就像 default constructor 一样，C++ Standard 上说，如果 class 没有声明一个 copy constructor，就会有隐式的声明(implicitly declared)或隐式的定义(implicitly defined)出现，和以前一样，C++ Standard 把 copy constructor 区分为 trivial 和 nontrivial 两种，只有 nontrivial 的实例才会被合成于程序之中。决定一个 copy constructor 是否为 trivial 的标准在于 class 是否展现出所谓的 “bitwise copy semantics(按位拷贝语义)”。</p>
 <p>“按位拷贝语义”是指该类对象之间的拷贝构造，可以通过简单的”位拷贝”(memcpy)来完成，并且与该对象拷贝的原本语义一致。例如 上面的类A，它便具有按位拷贝语义。因此它的拷贝构造函数也是 trivial copy constructor。这样的拷贝构造函数不会被编译器合成到程序中。直接将其作为内存块拷贝即可(类似于 int double 之类的基本类型)。</p>
 <p>那么类何时不具有按位拷贝语义？ 和构造函数一样，当编译器声明的拷贝构造函数需要替程序做一些事情时，视为nontrivial。具有也有如下四种情况：</p>
 <ol>
@@ -205,18 +223,18 @@
 </ol>
 <p>对于1，2，复制构造函数需要通过调用基类或对象成员的 nontrivial 拷贝构造函数来保证它们的正确拷贝。</p>
 <p>而对于3，考虑如下情形：</p>
-<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// class Derive public派生于 class Base</span></span><br><span class="line">Derive <span class="keyword">d</span>;</span><br><span class="line">Derive d2 = <span class="keyword">d</span>;</span><br><span class="line">Base b = <span class="keyword">d</span>; <span class="comment">// 发生切割(sliced)行为</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">// class Derive public派生于 class Base</div><div class="line">Derive d;</div><div class="line">Derive d2 = d;</div><div class="line">Base b = d; // 发生切割(sliced)行为</div></pre></td></tr></table></figure>
 <p>对于d2对象，编译器使用位拷贝并无问题(假设Derive并不存在1，2，4所述情况)，因为d和d2的虚函数表均来自于Derive。而对于<code>Base b = d;</code>编译器需要保证对象b的虚函数表为Base的虚函数表，而不是从对象d直接位拷贝过来的Derive类的虚函数表。否则在通过b调用Derive特有而基类Base没有的虚函数时，会发生崩溃(因为Base的虚函数表不含该函数)。因此对于有虚函数的类，编译器必须对该类的虚函数表”负责”，保证其正确初始化。</p>
 <p>对于4，和情况3一样，编译器需要确保被构造的对象指向虚基类的指针(virtual base class point)得到正确初始化。</p>
 <p>当类不满足以上四种情况时，我们说它的copy constructor为trivial。编译器不会合成trivial copy constrcutor到程序中。在拷贝对象时，执行简单的内存块拷贝。</p>
-<h2 id="三-_trivial的一些扩展">三. trivial的一些扩展</h2><p>在std中，提供了对某个类各个trivial属性的判别。如：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="preprocessor">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> A</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    A()</span><br><span class="line">    &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">int</span> _i;</span><br><span class="line">    <span class="keyword">char</span>* _str;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> B : <span class="keyword">public</span> A</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">double</span> _d;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span><br><span class="line"></span>&#123;</span><br><span class="line">	<span class="comment">// 0 A 有 user-declared constructor</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="built_in">std</span>::is_trivially_constructible&lt;A&gt;::value &lt;&lt; <span class="built_in">std</span>::endl; </span><br><span class="line">	<span class="comment">// 1 A 没有 user-declared copy constructor 并且不含abcd情形       </span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="built_in">std</span>::is_trivially_copy_constructible&lt;A&gt;::value &lt;&lt; <span class="built_in">std</span>::endl;   </span><br><span class="line"></span><br><span class="line">	<span class="comment">// 0 B 需要调用A::A() 完成对基类的构造</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="built_in">std</span>::is_trivially_constructible&lt;B&gt;::value &lt;&lt; <span class="built_in">std</span>::endl;</span><br><span class="line">	<span class="comment">// 1 B 没有 user-declared copy constructor 并且基类 A 没有 nontrivial copy constructor        </span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="built_in">std</span>::is_trivially_copy_constructible&lt;B&gt;::value &lt;&lt; <span class="built_in">std</span>::endl;   </span><br><span class="line">    </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="built_in">std</span>::is_trivial&lt;A&gt;::value &lt;&lt; <span class="built_in">std</span>::endl;	<span class="comment">// 0</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="built_in">std</span>::is_trivial&lt;B&gt;::value &lt;&lt; <span class="built_in">std</span>::endl;    <span class="comment">// 0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="三-trivial的一些扩展"><a href="#三-trivial的一些扩展" class="headerlink" title="三. trivial的一些扩展"></a>三. trivial的一些扩展</h2><p>在std中，提供了对某个类各个trivial属性的判别。如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">#include &lt;iostream&gt;</div><div class="line"></div><div class="line">class A</div><div class="line">&#123;</div><div class="line">public:</div><div class="line">    A()</div><div class="line">    &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">private:</div><div class="line">    int _i;</div><div class="line">    char* _str;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">class B : public A</div><div class="line">&#123;</div><div class="line"></div><div class="line">private:</div><div class="line">    double _d;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">int main()</div><div class="line">&#123;</div><div class="line">	// 0 A 有 user-declared constructor</div><div class="line">    std::cout &lt;&lt; std::is_trivially_constructible&lt;A&gt;::value &lt;&lt; std::endl; </div><div class="line">	// 1 A 没有 user-declared copy constructor 并且不含abcd情形       </div><div class="line">    std::cout &lt;&lt; std::is_trivially_copy_constructible&lt;A&gt;::value &lt;&lt; std::endl;   </div><div class="line"></div><div class="line">	// 0 B 需要调用A::A() 完成对基类的构造</div><div class="line">    std::cout &lt;&lt; std::is_trivially_constructible&lt;B&gt;::value &lt;&lt; std::endl;</div><div class="line">	// 1 B 没有 user-declared copy constructor 并且基类 A 没有 nontrivial copy constructor        </div><div class="line">    std::cout &lt;&lt; std::is_trivially_copy_constructible&lt;B&gt;::value &lt;&lt; std::endl;   </div><div class="line">    </div><div class="line">    std::cout &lt;&lt; std::is_trivial&lt;A&gt;::value &lt;&lt; std::endl;	// 0</div><div class="line">    std::cout &lt;&lt; std::is_trivial&lt;B&gt;::value &lt;&lt; std::endl;    // 0</div><div class="line"></div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>std::is_<em>*</em>是c++11引入的关于类型特性(type_traits)的一些列模板，它们可以在编译器就获得有关类型的特性信息。也就是说：</p>
-<pre><code><span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="built_in">std</span>::is_trivial&lt;A&gt;::value &lt;&lt; <span class="built_in">std</span>::endl;
+<pre><code>std::cout &lt;&lt; std::is_trivial&lt;A&gt;::value &lt;&lt; std::endl;
 </code></pre><p>在运行时相当于：</p>
-<pre><code><span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="number">1</span> &lt;&lt; <span class="built_in">std</span>::endl;
+<pre><code>std::cout &lt;&lt; 1 &lt;&lt; std::endl;
 </code></pre><p>这种编译期获得结果的特性让我们可以结合 static_assert 完成更多的事情。如：</p>
-<pre><code>static_assert(<span class="symbol">std:</span><span class="symbol">:is_trivially_constructible&lt;A&gt;</span><span class="symbol">:</span><span class="symbol">:value</span>, <span class="string">"A is not pod type"</span>);
+<pre><code>static_assert(std::is_trivially_constructible&lt;A&gt;::value, &quot;A is not pod type&quot;);
 </code></pre><p>那么如果A不具备 trivial constructor，那么我们可以在程序编译期得到一个编译错误：A is not pod type</p>
 <p>std::is_trivial判断一个类型是否为trivial类型。C++标准把trivial类型定义如下： </p>
 <ul>
@@ -234,20 +252,29 @@
 <p>由于类A和类B均有 nontrivial constructor 因此它们都不是trivial类型。</p>
 
         </div>
-        
+
         <blockquote class="post-copyright">
-            <div class="content">
-               这里写留言或版权声明：<a href="/2014/11/cpp-constructor/" target="_blank" rel="external">http://wudaijun.com/2014/11/cpp-constructor/</a>
-            </div>
-            <footer>
-                <a href="http://wudaijun.com">
-                    <img src="/favicon.png" alt="wudaijun">
-                    wudaijun
-                </a>
-            </footer>
-        </blockquote>
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-09-24T08:57:15.000Z" itemprop="dateUpdated">2016-09-24 16:57:15</time>
+</span><br>
+
 
         
+        博客均为原创，转载请征得作者同意并注明出处，本文永久链接：<a href="/2014/11/cpp-constructor/" target="_blank" rel="external">http://wudaijun.com/2014/11/cpp-constructor/</a>
+        
+    </div>
+    <footer>
+        <a href="http://wudaijun.com">
+            <img src="/favicon.png" alt="wudaijun">
+            wudaijun
+        </a>
+    </footer>
+</blockquote>
+
+        
+
 
         <div class="post-footer">
             
@@ -255,51 +282,55 @@
 
 
             
-            <div class="post-share-wrap">
-                <div class="post-share" id="post-share">
-    <div class="tit">分享到：</div>
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2014/11/cpp-constructor/&title=《C++ 构造语义》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2014/11/cpp-constructor/&title=《C++ 构造语义》 — wudaijun's blog&source=本文是《深度探索C++对象模型》的读书笔记，主要根据自己的理解整理一下C++对象构造的实现细节以及其在实际编程中所带来的影响。" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2014/11/cpp-constructor/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《C++ 构造语义》 — wudaijun's blog&url=http://wudaijun.com/2014/11/cpp-constructor/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2014/11/cpp-constructor/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
-                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
-                    <i class="icon icon-share-alt icon-lg"></i>
-                </a>
-            </div>
-            
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
 
         </div>
-    </div>   
+    </div>
 
     
 <nav class="post-nav flex-row flex-justify-between">
@@ -323,83 +354,139 @@
 </nav>
 
 
-            
+
     
 
 
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'wudaijun'; // required: replace example with your forum shortname
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://wudaijun.com/2014/11/cpp-constructor/index.html',
+        sourceId: 'cpp-constructor',
+        productKey: '02b378614d264e81bca14ffaadf03446',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
 
 
 </article>
 
 
+
 </div>
-  </main>
-  <div class="mask" id="mask"></div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>wudaijun &copy; 2015 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
-<script>
-var BLOG_SHARE = {
-    title: "C++ 构造语义",
-    pic: "/favicon.png",
-    summary: document.getElementsByName('summary')[0].content,
-    url: "http://wudaijun.com/2014/11/cpp-constructor/"
-};
-</script>
-<div class="global-share" id="global-share">
-    <div class="tit">分享到：</div>
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2014/11/cpp-constructor/&title=《C++ 构造语义》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2014/11/cpp-constructor/&title=《C++ 构造语义》 — wudaijun's blog&source=本文是《深度探索C++对象模型》的读书笔记，主要根据自己的理解整理一下C++对象构造的实现细节以及其在实际编程中所带来的影响。" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2014/11/cpp-constructor/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《C++ 构造语义》 — wudaijun's blog&url=http://wudaijun.com/2014/11/cpp-constructor/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2014/11/cpp-constructor/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script src="/js/main.min.js?v=1.1.4"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://wudaijun.com/2014/11/cpp-constructor/" alt="微信分享二维码">
+</div>
 
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
@@ -407,7 +494,7 @@ var BLOG_SHARE = {
 </div>
 <template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -419,13 +506,14 @@ var BLOG_SHARE = {
 </li>
 </template>
 
-<script src="/js/search.min.js?v=1.1.4"></script>
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 

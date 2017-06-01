@@ -1,46 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  
-  
-  <title>lua 与 C 交互 | wudaijun&#39;s blog | Coding is Funny</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="theme-color" content="#3F51B5">
-  
-  
-  <meta name="keywords" content="lua">
-  <meta name="description" content="lua和C交互的核心就是lua栈，lua和C的所有数据交互都是通过lua栈来完成的。">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>lua 与 C 交互 | wudaijun&#39;s blog | Coding is Funny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="lua">
+    <meta name="description" content="lua和C交互的核心就是lua栈，lua和C的所有数据交互都是通过lua栈来完成的。">
+<meta name="keywords" content="lua">
 <meta property="og:type" content="article">
 <meta property="og:title" content="lua 与 C 交互">
 <meta property="og:url" content="http://wudaijun.com/2014/12/lua-C/index.html">
-<meta property="og:site_name" content="wudaijun's blog">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
 <meta property="og:description" content="lua和C交互的核心就是lua栈，lua和C的所有数据交互都是通过lua栈来完成的。">
 <meta property="og:updated_time" content="2016-09-20T14:58:45.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="lua 与 C 交互">
 <meta name="twitter:description" content="lua和C交互的核心就是lua栈，lua和C的所有数据交互都是通过lua栈来完成的。">
-  
-    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
-  
-  <meta name="summary" content="&lt;p&gt;lua和C交互的核心就是lua栈，lua和C的所有数据交互都是通过lua栈来完成的。&lt;/p&gt;">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+    
+        <link rel="alternate" type="application/atom+xml" title="wudaijun&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <aside id="menu" class="hide" >
+    <aside id="menu" class="hide" >
   <div class="inner flex-row-vertical">
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap">
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
       <div class="brand">
-        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/favicon.png">
+        </a>
         <hgroup class="introduce">
           <h5 class="nickname">wudaijun</h5>
           <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
@@ -93,20 +104,12 @@
             </li>
         
       </ul>
-
-      <footer class="footer">
-  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
-  <p>wudaijun&#39;s blog &copy; 2017</p>
-  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
-</footer>
-
     </div>
   </div>
 </aside>
-  <main id="main">
-    <header class="top-header" id="header">
+
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -124,7 +127,7 @@
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
@@ -132,14 +135,23 @@
 </header>
 <header class="content-header post-header">
 
-    <div class="container">
+    <div class="container fade-scale">
         <h1 class="title">lua 与 C 交互</h1>
-        
-        
+        <h5 class="subtitle">
+            
+                <time datetime="2014-12-30T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2014-12-31
+</time>
 
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/lua/">lua</a></li></ul>
+
+            
+        </h5>
     </div>
 
     
+
 
 </header>
 
@@ -149,98 +161,104 @@
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#一-_C调用lua"><span class="post-toc-text">一. C调用lua</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#二-_在lua脚本中调用C："><span class="post-toc-text">二. 在lua脚本中调用C：</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#三-_将C函数封装为一个库，为lua所用"><span class="post-toc-text">三. 将C函数封装为一个库，为lua所用</span></a></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#一-C调用lua"><span class="post-toc-text">一. C调用lua</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#二-在lua脚本中调用C："><span class="post-toc-text">二. 在lua脚本中调用C：</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#三-将C函数封装为一个库，为lua所用"><span class="post-toc-text">三. 将C函数封装为一个库，为lua所用</span></a></li></ol>
         </nav>
     </aside>
     
-<article id="post-lua-C" 
-  class="post-article article-type-post" itemprop="blogPost">
+<article id="post-lua-C"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
         <h1 class="post-card-title">lua 与 C 交互</h1>
         <div class="post-meta">
-            <time datetime="2014-12-30T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2014-12-31
-</time>
+            <time class="post-time" title="2014-12-31 00:00:00" datetime="2014-12-30T16:00:00.000Z"  itemprop="datePublished">2014-12-31</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/lua/">lua</a></li></ul>
 
 
 
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
             <p>lua和C交互的核心就是lua栈，lua和C的所有数据交互都是通过lua栈来完成的。</p>
 <a id="more"></a>
-<h3 id="一-_C调用lua">一. C调用lua</h3><p>C调用lua很简单，通常C以lua作为配置脚本，在运行时读取脚本数据，主要步骤：</p>
+<h3 id="一-C调用lua"><a href="#一-C调用lua" class="headerlink" title="一. C调用lua"></a>一. C调用lua</h3><p>C调用lua很简单，通常C以lua作为配置脚本，在运行时读取脚本数据，主要步骤：</p>
 <ol>
 <li>加载脚本    luaL_loadfile </li>
 <li>运行脚本  lua_pcall </li>
 <li>获取数据  lua_getglobal …. </li>
 <li>使用数据  lua_tostring lua_pcall …</li>
 </ol>
-<h3 id="二-_在lua脚本中调用C：">二. 在lua脚本中调用C：</h3><p>在C程序中，使用lua作为脚本，但是要在运行脚本时，访问C中定义的一些变量或函数。</p>
+<h3 id="二-在lua脚本中调用C："><a href="#二-在lua脚本中调用C：" class="headerlink" title="二. 在lua脚本中调用C："></a>二. 在lua脚本中调用C：</h3><p>在C程序中，使用lua作为脚本，但是要在运行脚本时，访问C中定义的一些变量或函数。</p>
 <ol>
 <li>将C变量或函数(遵从指定函数原型，见下面三 Step 1)push到lua栈中</li>
 <li>通过lua_setglobal为当前lua栈顶的函数或变量命名，这样在lua中可通过该名字完成对变量或函数的使用</li>
 <li>之后可在加载的lua脚本中使用C变量或函数</li>
 </ol>
-<h3 id="三-_将C函数封装为一个库，为lua所用">三. 将C函数封装为一个库，为lua所用</h3><p>将C函数编译为动态库文件，这样可以在lua主程序中，加载这个库文件，并使用其中的C函数。</p>
+<h3 id="三-将C函数封装为一个库，为lua所用"><a href="#三-将C函数封装为一个库，为lua所用" class="headerlink" title="三. 将C函数封装为一个库，为lua所用"></a>三. 将C函数封装为一个库，为lua所用</h3><p>将C函数编译为动态库文件，这样可以在lua主程序中，加载这个库文件，并使用其中的C函数。</p>
 <p><strong>Step 1</strong>. 在mylib.c中定义给lua调用的C函数 函数原型为： int (lua_State*)<br>如：</p>
-<pre><code><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">c_addsub</span><span class="params">(lua_State* L)</span>
-</span>{
-    <span class="keyword">double</span> a = luaL_checknumber(L,<span class="number">1</span>); <span class="comment">// 获取参数1</span>
-    <span class="keyword">double</span> b = luaL_checknumber(L,<span class="number">2</span>); <span class="comment">// 获取参数2</span>
-    lua_pushnumber(L, a+b); <span class="comment">// 压入返回值1</span>
-    lua_pushnumber(L, a-b); <span class="comment">// 压入返回值2</span>
-    <span class="keyword">return</span> <span class="number">2</span>; <span class="comment">// 两个返回值</span>
+<pre><code>static int c_addsub(lua_State* L)
+{
+    double a = luaL_checknumber(L,1); // 获取参数1
+    double b = luaL_checknumber(L,2); // 获取参数2
+    lua_pushnumber(L, a+b); // 压入返回值1
+    lua_pushnumber(L, a-b); // 压入返回值2
+    return 2; // 两个返回值
 }
 </code></pre><p><strong>Step 2</strong>. 在mylib.c中定义一个注册函数，用于lua在加载C动态库时，调用该函数完成对库中所导出的C函数的注册。<br>如：</p>
-<pre><code><span class="comment">// 将C模块中要导出的C函数放入到luaL_Reg结构体数组内</span>
-<span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">struct</span> luaL_Reg l[] = {
-    {<span class="string">"addsub"</span>, c_addsub},
-    {<span class="literal">NULL</span>, <span class="literal">NULL</span>} <span class="comment">// 以NULL标识结束</span>
+<pre><code>// 将C模块中要导出的C函数放入到luaL_Reg结构体数组内
+static const struct luaL_Reg l[] = {
+    {&quot;addsub&quot;, c_addsub},
+    {NULL, NULL} // 以NULL标识结束
 };
 
-<span class="comment">// 该函数在导入C库时调用 完成对库中导出的函数的注册</span>
-<span class="comment">// 必须是non-static</span>
-<span class="function"><span class="keyword">int</span> <span class="title">luaopen_mylib</span><span class="params">(lua_State* L)</span>
-</span>{
-    <span class="comment">// 完成实际的注册工作</span>
-    <span class="comment">// 注册方式一: luaL_openlib(lua_State* L, const char* name, const luaL_Reg* l, int nup)</span>
-    <span class="comment">//   L : lua_State</span>
-    <span class="comment">// name: 表明该C库被加载后，所导出的函数位于哪一个全局table之下 </span>
-    <span class="comment">//       这里是"clib" 那么之后lua中通过clib.addsub完成对C函数的调用</span>
-    <span class="comment">//   l : 要导出的函数的lua_Reg结构体数组</span>
-    <span class="comment">//         luaL_openlib自动将该数组内的name-function对注册并填充到第二参数指定的table下</span>
-    <span class="comment">// nup : upvalue的个数，如果不为0，则注册的所有函数都共享这些upvalues</span>
-    luaL_openlib(L, <span class="string">"clib"</span>, l, <span class="number">0</span>);
+// 该函数在导入C库时调用 完成对库中导出的函数的注册
+// 必须是non-static
+int luaopen_mylib(lua_State* L)
+{
+    // 完成实际的注册工作
+    // 注册方式一: luaL_openlib(lua_State* L, const char* name, const luaL_Reg* l, int nup)
+    //   L : lua_State
+    // name: 表明该C库被加载后，所导出的函数位于哪一个全局table之下 
+    //       这里是&quot;clib&quot; 那么之后lua中通过clib.addsub完成对C函数的调用
+    //   l : 要导出的函数的lua_Reg结构体数组
+    //         luaL_openlib自动将该数组内的name-function对注册并填充到第二参数指定的table下
+    // nup : upvalue的个数，如果不为0，则注册的所有函数都共享这些upvalues
+    luaL_openlib(L, &quot;clib&quot;, l, 0);
 
-    <span class="comment">// 注册方式二: luaL_newlibtable + luaL_setfuncs (等价于lua_newlib)</span>
-    <span class="comment">// luaL_newlibtable(L, l);</span>
-    <span class="comment">// luaL_setfuncs(L, l, 0);</span>
-    <span class="comment">// 前两句等价于：</span>
-    <span class="comment">// luaL_newlib(L, l);</span>
+    // 注册方式二: luaL_newlibtable + luaL_setfuncs (等价于lua_newlib)
+    // luaL_newlibtable(L, l);
+    // luaL_setfuncs(L, l, 0);
+    // 前两句等价于：
+    // luaL_newlib(L, l);
 
-    <span class="comment">// 将包含name-cfunction键值对的table返回给lua</span>
-    <span class="keyword">return</span> <span class="number">1</span>;
+    // 将包含name-cfunction键值对的table返回给lua
+    return 1;
 }
 </code></pre><p>注意上面方式一和方式二的主要区别：前者(luaL_openlib)为name-cfunction对在lua中注册了一个名字(“clib”)。而后者(luaL_newlib)没有，它只是将这个table返回给了lua。可在lua层通过赋值为其命名。自然，通过 <code>luaL_openlib</code> 和 <code>return 1</code>可以将name-cfuncton对注册到两个lua table下。</p>
 <p>关于luaL_openlib函数，在官方文档中没有找到它，lua5.2文档中给出的是luaL_newlibtable和lua_setfuncs等新API用以替代以前的luaL_register，而事实上根据前面lua和C交互的基本元素，我们可以自己实现一个类似lua_openlib的注册函数：</p>
-<pre><code><span class="function"><span class="keyword">int</span> <span class="title">luaopen_mylib</span><span class="params">(lua_State* L)</span>
-</span>{
-    <span class="comment">// luaL_openlib(L, "clib", clib, 0);</span>
-    <span class="keyword">int</span> i = <span class="number">0</span>;
-    lua_newtable(L); <span class="comment">// push a new table</span>
-    <span class="keyword">while</span>(clib[i].name != <span class="literal">NULL</span>)
+<pre><code>int luaopen_mylib(lua_State* L)
+{
+    // luaL_openlib(L, &quot;clib&quot;, clib, 0);
+    int i = 0;
+    lua_newtable(L); // push a new table
+    while(clib[i].name != NULL)
     {
-        lua_pushstring(L, clib[i].name); <span class="comment">// push name</span>
-        lua_pushcfunction(L, clib[i].func); <span class="comment">// push function</span>
-        lua_settable(L, -<span class="number">3</span>); <span class="comment">// table[name] = function</span>
+        lua_pushstring(L, clib[i].name); // push name
+        lua_pushcfunction(L, clib[i].func); // push function
+        lua_settable(L, -3); // table[name] = function
         ++i;
     }
-    lua_setglobal(L, <span class="string">"clib"</span>); <span class="comment">// set table name</span>
-    <span class="keyword">return</span> <span class="number">1</span>;        
+    lua_setglobal(L, &quot;clib&quot;); // set table name
+    return 1;        
 }
 </code></pre><p>因此实际上将C作为动态库和前面二中的交互核心是一样的，只是将C作为动态库时，需要提供一个”入口函数”，用以在加载该动态库后执行，完成对库中所有导出函数的注册。</p>
 <p><strong>Step 3</strong>. 将相关C文件编译成动态链接库:</p>
@@ -249,27 +267,27 @@
 <p>gcc -O2 <strong>-bundle -undefined dynamic_lookup</strong> -o mylib.so mylib.o</p>
 <p><strong>Step 4</strong>. 在lua中加载C动态库</p>
 <p>方式一 : 使用 loadlib</p>
-<pre><code>-<span class="ruby">-加载<span class="constant">C</span>动态库 并将luaopen_mylib函数 导出到mylib变量中
-</span>mylib = loadlib("./mylib.so", "luaopen_mylib") 
+<pre><code>--加载C动态库 并将luaopen_mylib函数 导出到mylib变量中
+mylib = loadlib(&quot;./mylib.so&quot;, &quot;luaopen_mylib&quot;) 
 
--<span class="ruby">-调用mylib() 将执行lua_openmylib函数 完成对<span class="constant">C</span>动态库中所有导出函数的注册
-</span>-<span class="ruby">-将<span class="constant">C</span>中返回的name-cfunction table赋给clualib变量
-</span>clualib = mylib()
+--调用mylib() 将执行lua_openmylib函数 完成对C动态库中所有导出函数的注册
+--将C中返回的name-cfunction table赋给clualib变量
+clualib = mylib()
 
--<span class="ruby">-通过clualib完成<span class="constant">C</span>函数的调用
-</span>sum, diff = clualib.addsub(5.6, 2.4);
+--通过clualib完成C函数的调用
+sum, diff = clualib.addsub(5.6, 2.4);
 
--<span class="ruby">-针对于<span class="constant">Step</span> <span class="number">2</span>中的注册方式一，还可以通过luaL_openlib中传入的clib来使用<span class="constant">C</span>函数 
-</span>sum, diff = clib.addsub(5.6, 2.4)
+--针对于Step 2中的注册方式一，还可以通过luaL_openlib中传入的clib来使用C函数 
+sum, diff = clib.addsub(5.6, 2.4)
 </code></pre><p>loadlib会读取动态库文件的符号表，得到luaopen_mylib函数的实现，并导出到mylib变量中，通过执行mylib()，即可执行luaopen_mylib完成对整个C库导出函数的注册。luaopen_mylib将注册完成后的name-cfunction对返回给lua，lua可以通过<code>clualib = mylib()</code>为这个注册完成之后的table命名。之后可通过clualib调用C函数。</p>
 <p>另外，luaL_openlib函数可以直接导出name-cfunction对并为其在lua中注册一个名字，因此通过clib也可以完成对C函数的调用。</p>
 <p>方式二 : 使用 require</p>
-<pre><code>clualib = <span class="function"><span class="title">require</span><span class="params">(<span class="string">"mylib"</span>)</span></span>
+<pre><code>clualib = require(&quot;mylib&quot;)
 
-sum,diff = clualib.<span class="function"><span class="title">addsub</span><span class="params">(<span class="number">5.6</span>, <span class="number">2.4</span>)</span></span>
+sum,diff = clualib.addsub(5.6, 2.4)
 
 -- 对于luaL_openlib完成的注册，仍然可以通过clib来访问C函数
-sum, diff = clib.<span class="function"><span class="title">addsub</span><span class="params">(<span class="number">5.6</span>, <span class="number">2.4</span>)</span></span>
+sum, diff = clib.addsub(5.6, 2.4)
 </code></pre><p>require的工作原理：</p>
 <p>当你在脚本中使用require加载一个模块xxx的时候，首先它会在Lua的环境路径中寻找以xxx命名的DLL，如果找到了，则会在这个DLL中寻找luaopen_xxx的函数用于加载模块。我们只需要将自己需要导出给Lua调用的C内容通过这个函数导出就可以了。</p>
 <p>比如我们通过require(“mylib”)来导入模块，lua找到mylib.so库文件，并查找luaopen_mylib函数，然后调用该函数。因此我们需要注意两点：</p>
@@ -279,36 +297,45 @@ sum, diff = clib.<span class="function"><span class="title">addsub</span><span c
 </ol>
 <p>require的优势在于自动化，而loadlib方式则更加灵活，loadlib可以指定注册函数名字，注册函数可以无需按照luaopen_xxx格式命名。</p>
 <p>在一些库中，使用require(“mylib.core”)之类的格式来导入C模块，没有任何库文件时，通过require的报错可以看到其查找路径和规则：</p>
-<pre><code>lua: testmylib.lua:1: module 'mylib.core' not found:
-<span class="keyword">no</span> field package.preload['mylib.core']
-<span class="keyword">no</span> <span class="keyword">file</span> '/usr/<span class="keyword">local</span>/share/lua/5.2/mylib/core.lua'
-<span class="keyword">no</span> <span class="keyword">file</span> '/usr/<span class="keyword">local</span>/share/lua/5.2/mylib/core/init.lua'
-<span class="keyword">no</span> <span class="keyword">file</span> '/usr/<span class="keyword">local</span>/lib/lua/5.2/mylib/core.lua'
-<span class="keyword">no</span> <span class="keyword">file</span> '/usr/<span class="keyword">local</span>/lib/lua/5.2/mylib/core/init.lua'
-<span class="keyword">no</span> <span class="keyword">file</span> './mylib/core.lua'
-<span class="keyword">no</span> <span class="keyword">file</span> '/usr/<span class="keyword">local</span>/lib/lua/5.2/mylib/core.<span class="keyword">so</span>'
-<span class="keyword">no</span> <span class="keyword">file</span> '/usr/<span class="keyword">local</span>/lib/lua/5.2/loadall.<span class="keyword">so</span>'
-<span class="keyword">no</span> <span class="keyword">file</span> './mylib/core.<span class="keyword">so</span>'
-<span class="keyword">no</span> <span class="keyword">file</span> '/usr/<span class="keyword">local</span>/lib/lua/5.2/mylib.<span class="keyword">so</span>'
-<span class="keyword">no</span> <span class="keyword">file</span> '/usr/<span class="keyword">local</span>/lib/lua/5.2/loadall.<span class="keyword">so</span>'
-<span class="keyword">no</span> <span class="keyword">file</span> './mylib.<span class="keyword">so</span>'
+<pre><code>lua: testmylib.lua:1: module &apos;mylib.core&apos; not found:
+no field package.preload[&apos;mylib.core&apos;]
+no file &apos;/usr/local/share/lua/5.2/mylib/core.lua&apos;
+no file &apos;/usr/local/share/lua/5.2/mylib/core/init.lua&apos;
+no file &apos;/usr/local/lib/lua/5.2/mylib/core.lua&apos;
+no file &apos;/usr/local/lib/lua/5.2/mylib/core/init.lua&apos;
+no file &apos;./mylib/core.lua&apos;
+no file &apos;/usr/local/lib/lua/5.2/mylib/core.so&apos;
+no file &apos;/usr/local/lib/lua/5.2/loadall.so&apos;
+no file &apos;./mylib/core.so&apos;
+no file &apos;/usr/local/lib/lua/5.2/mylib.so&apos;
+no file &apos;/usr/local/lib/lua/5.2/loadall.so&apos;
+no file &apos;./mylib.so&apos;
 </code></pre><p>先查找 PATH/mylib/core.so 如果没有，则直接使用 PATH/mylib.so。而C中的导出函数命名则必须为: luaopen_mylib_core(lua_State* L)。 </p>
 
         </div>
-        
+
         <blockquote class="post-copyright">
-            <div class="content">
-               这里写留言或版权声明：<a href="/2014/12/lua-C/" target="_blank" rel="external">http://wudaijun.com/2014/12/lua-C/</a>
-            </div>
-            <footer>
-                <a href="http://wudaijun.com">
-                    <img src="/favicon.png" alt="wudaijun">
-                    wudaijun
-                </a>
-            </footer>
-        </blockquote>
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-09-20T14:58:45.000Z" itemprop="dateUpdated">2016-09-20 22:58:45</time>
+</span><br>
+
 
         
+        博客均为原创，转载请征得作者同意并注明出处，本文永久链接：<a href="/2014/12/lua-C/" target="_blank" rel="external">http://wudaijun.com/2014/12/lua-C/</a>
+        
+    </div>
+    <footer>
+        <a href="http://wudaijun.com">
+            <img src="/favicon.png" alt="wudaijun">
+            wudaijun
+        </a>
+    </footer>
+</blockquote>
+
+        
+
 
         <div class="post-footer">
             
@@ -316,51 +343,55 @@ sum, diff = clib.<span class="function"><span class="title">addsub</span><span c
 
 
             
-            <div class="post-share-wrap">
-                <div class="post-share" id="post-share">
-    <div class="tit">分享到：</div>
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2014/12/lua-C/&title=《lua 与 C 交互》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2014/12/lua-C/&title=《lua 与 C 交互》 — wudaijun's blog&source=lua和C交互的核心就是lua栈，lua和C的所有数据交互都是通过lua栈来完成的。" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2014/12/lua-C/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《lua 与 C 交互》 — wudaijun's blog&url=http://wudaijun.com/2014/12/lua-C/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2014/12/lua-C/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
-                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
-                    <i class="icon icon-share-alt icon-lg"></i>
-                </a>
-            </div>
-            
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
 
         </div>
-    </div>   
+    </div>
 
     
 <nav class="post-nav flex-row flex-justify-between">
@@ -384,83 +415,139 @@ sum, diff = clib.<span class="function"><span class="title">addsub</span><span c
 </nav>
 
 
-            
+
     
 
 
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'wudaijun'; // required: replace example with your forum shortname
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://wudaijun.com/2014/12/lua-C/index.html',
+        sourceId: 'lua-C',
+        productKey: '02b378614d264e81bca14ffaadf03446',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
 
 
 </article>
 
 
+
 </div>
-  </main>
-  <div class="mask" id="mask"></div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>wudaijun &copy; 2015 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
-<script>
-var BLOG_SHARE = {
-    title: "lua 与 C 交互",
-    pic: "/favicon.png",
-    summary: document.getElementsByName('summary')[0].content,
-    url: "http://wudaijun.com/2014/12/lua-C/"
-};
-</script>
-<div class="global-share" id="global-share">
-    <div class="tit">分享到：</div>
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2014/12/lua-C/&title=《lua 与 C 交互》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2014/12/lua-C/&title=《lua 与 C 交互》 — wudaijun's blog&source=lua和C交互的核心就是lua栈，lua和C的所有数据交互都是通过lua栈来完成的。" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2014/12/lua-C/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《lua 与 C 交互》 — wudaijun's blog&url=http://wudaijun.com/2014/12/lua-C/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2014/12/lua-C/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script src="/js/main.min.js?v=1.1.4"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://wudaijun.com/2014/12/lua-C/" alt="微信分享二维码">
+</div>
 
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
@@ -468,7 +555,7 @@ var BLOG_SHARE = {
 </div>
 <template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -480,13 +567,14 @@ var BLOG_SHARE = {
 </li>
 </template>
 
-<script src="/js/search.min.js?v=1.1.4"></script>
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 

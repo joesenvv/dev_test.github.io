@@ -1,62 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  
-  
-  <title>MongoDB 状态监控 | wudaijun&#39;s blog | Coding is Funny</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="theme-color" content="#3F51B5">
-  
-  
-  <meta name="keywords" content="mongodb">
-  <meta name="description" content="一. 关键指标
-慢查询：当MongoDB处理能力不足时，找出系统中的慢查询，分析原因，看能否通过建立索引或重新设计schema改进
-内存使用：MongoDB吃内存(特别是MMAPv1)，至少要给MongoDB足够的内存存放索引，最理想的情况是能够存放所有数据。当内存占用过高，或者page faults过高时，考虑能不能给MongoDB预留更多的内存。
-磁盘占用：特别是对于MMAPv1，涉及到磁盘占">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>MongoDB 状态监控 | wudaijun&#39;s blog | Coding is Funny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="mongodb">
+    <meta name="description" content="一. 关键指标 慢查询：当MongoDB处理能力不足时，找出系统中的慢查询，分析原因，看能否通过建立索引或重新设计schema改进 内存使用：MongoDB吃内存(特别是MMAPv1)，至少要给MongoDB足够的内存存放索引，最理想的情况是能够存放所有数据。当内存占用过高，或者page faults过高时，考虑能不能给MongoDB预留更多的内存。 磁盘占用：特别是对于MMAPv1，涉及到磁盘占">
+<meta name="keywords" content="mongodb">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MongoDB 状态监控">
 <meta property="og:url" content="http://wudaijun.com/2016/07/monitor-mongodb/index.html">
-<meta property="og:site_name" content="wudaijun's blog">
-<meta property="og:description" content="一. 关键指标
-慢查询：当MongoDB处理能力不足时，找出系统中的慢查询，分析原因，看能否通过建立索引或重新设计schema改进
-内存使用：MongoDB吃内存(特别是MMAPv1)，至少要给MongoDB足够的内存存放索引，最理想的情况是能够存放所有数据。当内存占用过高，或者page faults过高时，考虑能不能给MongoDB预留更多的内存。
-磁盘占用：特别是对于MMAPv1，涉及到磁盘占">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
+<meta property="og:description" content="一. 关键指标 慢查询：当MongoDB处理能力不足时，找出系统中的慢查询，分析原因，看能否通过建立索引或重新设计schema改进 内存使用：MongoDB吃内存(特别是MMAPv1)，至少要给MongoDB足够的内存存放索引，最理想的情况是能够存放所有数据。当内存占用过高，或者page faults过高时，考虑能不能给MongoDB预留更多的内存。 磁盘占用：特别是对于MMAPv1，涉及到磁盘占">
 <meta property="og:updated_time" content="2016-07-12T11:50:02.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MongoDB 状态监控">
-<meta name="twitter:description" content="一. 关键指标
-慢查询：当MongoDB处理能力不足时，找出系统中的慢查询，分析原因，看能否通过建立索引或重新设计schema改进
-内存使用：MongoDB吃内存(特别是MMAPv1)，至少要给MongoDB足够的内存存放索引，最理想的情况是能够存放所有数据。当内存占用过高，或者page faults过高时，考虑能不能给MongoDB预留更多的内存。
-磁盘占用：特别是对于MMAPv1，涉及到磁盘占">
-  
-    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
-  
-  <meta name="summary" content="&lt;h2 id=&quot;一-_关键指标&quot;&gt;一. 关键指标&lt;/h2&gt;&lt;ul&gt;
-&lt;li&gt;慢查询：当MongoDB处理能力不足时，找出系统中的慢查询，分析原因，看能否通过建立索引或重新设计schema改进&lt;/li&gt;
-&lt;li&gt;内存使用：MongoDB吃内存(特别是MMAPv1)，至少要给MongoDB足够的内存存放索引，最理想的情况是能够存放所有数据。当内存占用过高，或者page faults过高时，考虑能不能给MongoDB预留更多的内存。&lt;/li&gt;
-&lt;li&gt;磁盘占用：特别是对于MMAPv1，涉及到磁盘占用的因素有很多，不合理的schema(文档频繁移动)或集合/文档的删除都可能会导致磁盘空间利用不足。前期需要设计好schema，后期维护也需要定期整理磁盘数据。&lt;/li&gt;
-&lt;li&gt;连接数：MongoDB为每个连接分配一个线程，因此连接是占资源的，并且也不是越多连接越好。合理地控制连接数。&lt;/li&gt;
-&lt;li&gt;索引不命中：查看所有查询的索引不命中情况，尽量让所有查询都通过索引&lt;/li&gt;
-&lt;li&gt;锁等待：锁等待的原因有很多，连接数过多，操作频繁，慢操作，schema设计过于反范式化等，可从上面的原因针对性解决。&lt;/li&gt;
-&lt;/ul&gt;">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+<meta name="twitter:description" content="一. 关键指标 慢查询：当MongoDB处理能力不足时，找出系统中的慢查询，分析原因，看能否通过建立索引或重新设计schema改进 内存使用：MongoDB吃内存(特别是MMAPv1)，至少要给MongoDB足够的内存存放索引，最理想的情况是能够存放所有数据。当内存占用过高，或者page faults过高时，考虑能不能给MongoDB预留更多的内存。 磁盘占用：特别是对于MMAPv1，涉及到磁盘占">
+    
+        <link rel="alternate" type="application/atom+xml" title="wudaijun&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <aside id="menu" class="hide" >
+    <aside id="menu" class="hide" >
   <div class="inner flex-row-vertical">
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap">
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
       <div class="brand">
-        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/favicon.png">
+        </a>
         <hgroup class="introduce">
           <h5 class="nickname">wudaijun</h5>
           <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
@@ -109,20 +104,12 @@
             </li>
         
       </ul>
-
-      <footer class="footer">
-  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
-  <p>wudaijun&#39;s blog &copy; 2017</p>
-  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
-</footer>
-
     </div>
   </div>
 </aside>
-  <main id="main">
-    <header class="top-header" id="header">
+
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -140,7 +127,7 @@
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
@@ -148,14 +135,23 @@
 </header>
 <header class="content-header post-header">
 
-    <div class="container">
+    <div class="container fade-scale">
         <h1 class="title">MongoDB 状态监控</h1>
-        
-        
+        <h5 class="subtitle">
+            
+                <time datetime="2016-07-04T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2016-07-05
+</time>
 
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/database/">database</a></li></ul>
+
+            
+        </h5>
     </div>
 
     
+
 
 </header>
 
@@ -165,28 +161,34 @@
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#一-_关键指标"><span class="post-toc-text">一. 关键指标</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#二-_监控工具"><span class="post-toc-text">二. 监控工具</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-_mongostat"><span class="post-toc-text">1. mongostat</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-_db-serverStatus()"><span class="post-toc-text">2. db.serverStatus()</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-_Profiler"><span class="post-toc-text">3. Profiler</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-_db-currentOp()"><span class="post-toc-text">4. db.currentOp()</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-_db-stats()"><span class="post-toc-text">5. db.stats()</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6-_db-collStats()"><span class="post-toc-text">6. db.collStats()</span></a></li></ol></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#一-关键指标"><span class="post-toc-text">一. 关键指标</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#二-监控工具"><span class="post-toc-text">二. 监控工具</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-mongostat"><span class="post-toc-text">1. mongostat</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-db-serverStatus"><span class="post-toc-text">2. db.serverStatus()</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-Profiler"><span class="post-toc-text">3. Profiler</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-db-currentOp"><span class="post-toc-text">4. db.currentOp()</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-db-stats"><span class="post-toc-text">5. db.stats()</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6-db-collStats"><span class="post-toc-text">6. db.collStats()</span></a></li></ol></li></ol>
         </nav>
     </aside>
     
-<article id="post-monitor-mongodb" 
-  class="post-article article-type-post" itemprop="blogPost">
+<article id="post-monitor-mongodb"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
         <h1 class="post-card-title">MongoDB 状态监控</h1>
         <div class="post-meta">
-            <time datetime="2016-07-04T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2016-07-05
-</time>
+            <time class="post-time" title="2016-07-05 00:00:00" datetime="2016-07-04T16:00:00.000Z"  itemprop="datePublished">2016-07-05</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/database/">database</a></li></ul>
 
 
 
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
-            <h2 id="一-_关键指标">一. 关键指标</h2><ul>
+            <h2 id="一-关键指标"><a href="#一-关键指标" class="headerlink" title="一. 关键指标"></a>一. 关键指标</h2><ul>
 <li>慢查询：当MongoDB处理能力不足时，找出系统中的慢查询，分析原因，看能否通过建立索引或重新设计schema改进</li>
 <li>内存使用：MongoDB吃内存(特别是MMAPv1)，至少要给MongoDB足够的内存存放索引，最理想的情况是能够存放所有数据。当内存占用过高，或者page faults过高时，考虑能不能给MongoDB预留更多的内存。</li>
 <li>磁盘占用：特别是对于MMAPv1，涉及到磁盘占用的因素有很多，不合理的schema(文档频繁移动)或集合/文档的删除都可能会导致磁盘空间利用不足。前期需要设计好schema，后期维护也需要定期整理磁盘数据。</li>
@@ -195,15 +197,15 @@
 <li>锁等待：锁等待的原因有很多，连接数过多，操作频繁，慢操作，schema设计过于反范式化等，可从上面的原因针对性解决。</li>
 </ul>
 <a id="more"></a>
-<h2 id="二-_监控工具">二. 监控工具</h2><h3 id="1-_mongostat">1. mongostat</h3><p>mongodb自带的状态检测工具，按照固定时间间隔(默认1s)获取mongodb的当前运行状态，适用于对临时异常状态的监控：</p>
-<pre><code><span class="comment">// from MongoDB 3.0 MMAPv1</span>
+<h2 id="二-监控工具"><a href="#二-监控工具" class="headerlink" title="二. 监控工具"></a>二. 监控工具</h2><h3 id="1-mongostat"><a href="#1-mongostat" class="headerlink" title="1. mongostat"></a>1. mongostat</h3><p>mongodb自带的状态检测工具，按照固定时间间隔(默认1s)获取mongodb的当前运行状态，适用于对临时异常状态的监控：</p>
+<pre><code>// from MongoDB 3.0 MMAPv1
 ▶ mongostat
-insert query update <span class="keyword">delete</span> getmore command flushes mapped vsize    res faults qr|qw ar|aw netIn netOut conn     time
-    *<span class="number">0</span>    <span class="number">40</span>      <span class="number">1</span>     *<span class="number">0</span>       <span class="number">0</span>     <span class="number">1</span>|<span class="number">0</span>       <span class="number">0</span>   <span class="number">4.3</span>G <span class="number">11.1</span>G <span class="number">150.0</span>M      <span class="number">0</span>   <span class="number">0</span>|<span class="number">0</span>   <span class="number">0</span>|<span class="number">0</span>    <span class="number">2</span>k    <span class="number">12</span>k  <span class="number">201</span> <span class="number">19</span>:<span class="number">07</span>:<span class="number">04</span>
-    *<span class="number">0</span>    <span class="number">20</span>     *<span class="number">0</span>     *<span class="number">0</span>       <span class="number">0</span>     <span class="number">1</span>|<span class="number">0</span>       <span class="number">0</span>   <span class="number">4.3</span>G <span class="number">11.1</span>G <span class="number">150.0</span>M      <span class="number">0</span>   <span class="number">0</span>|<span class="number">0</span>   <span class="number">0</span>|<span class="number">0</span>    <span class="number">1</span>k    <span class="number">11</span>k  <span class="number">201</span> <span class="number">19</span>:<span class="number">07</span>:<span class="number">05</span>
-    *<span class="number">0</span>    *<span class="number">0</span>      <span class="number">1</span>     *<span class="number">0</span>       <span class="number">0</span>     <span class="number">1</span>|<span class="number">0</span>       <span class="number">0</span>   <span class="number">4.3</span>G <span class="number">11.1</span>G <span class="number">150.0</span>M      <span class="number">0</span>   <span class="number">0</span>|<span class="number">0</span>   <span class="number">0</span>|<span class="number">0</span>  <span class="number">244</span>b    <span class="number">10</span>k  <span class="number">201</span> <span class="number">19</span>:<span class="number">07</span>:<span class="number">06</span>
-    *<span class="number">0</span>    <span class="number">20</span>     *<span class="number">0</span>     *<span class="number">0</span>       <span class="number">0</span>     <span class="number">1</span>|<span class="number">0</span>       <span class="number">0</span>   <span class="number">4.3</span>G <span class="number">11.1</span>G <span class="number">150.0</span>M      <span class="number">0</span>   <span class="number">0</span>|<span class="number">0</span>   <span class="number">0</span>|<span class="number">0</span>    <span class="number">1</span>k    <span class="number">11</span>k  <span class="number">201</span> <span class="number">19</span>:<span class="number">07</span>:<span class="number">07</span>
-    *<span class="number">0</span>    <span class="number">20</span>     *<span class="number">0</span>     *<span class="number">0</span>       <span class="number">0</span>     <span class="number">2</span>|<span class="number">0</span>       <span class="number">0</span>   <span class="number">4.3</span>G <span class="number">11.1</span>G <span class="number">150.0</span>M      <span class="number">0</span>   <span class="number">0</span>|<span class="number">0</span>   <span class="number">0</span>|<span class="number">0</span>    <span class="number">1</span>k    <span class="number">11</span>k  <span class="number">201</span> <span class="number">19</span>:<span class="number">07</span>:<span class="number">08</span>
+insert query update delete getmore command flushes mapped vsize    res faults qr|qw ar|aw netIn netOut conn     time
+    *0    40      1     *0       0     1|0       0   4.3G 11.1G 150.0M      0   0|0   0|0    2k    12k  201 19:07:04
+    *0    20     *0     *0       0     1|0       0   4.3G 11.1G 150.0M      0   0|0   0|0    1k    11k  201 19:07:05
+    *0    *0      1     *0       0     1|0       0   4.3G 11.1G 150.0M      0   0|0   0|0  244b    10k  201 19:07:06
+    *0    20     *0     *0       0     1|0       0   4.3G 11.1G 150.0M      0   0|0   0|0    1k    11k  201 19:07:07
+    *0    20     *0     *0       0     2|0       0   4.3G 11.1G 150.0M      0   0|0   0|0    1k    11k  201 19:07:08
 </code></pre><p>具体各列的意义都很简单，见官方文档即可。比较重要的字段有：</p>
 <ul>
 <li>res:      常驻内存大小</li>
@@ -218,7 +220,7 @@ insert query update <span class="keyword">delete</span> getmore command flushes 
 <li>lrt/lwt:  读取/写入锁的平均获取时间(微妙)</li>
 </ul>
 <p>更多<a href="https://docs.mongodb.com/manual/reference/program/mongostat/" target="_blank" rel="external">参考</a>。</p>
-<h3 id="2-_db-serverStatus()">2. db.serverStatus()</h3><p>返回数据库服务器信息，该命令返回的数据量很大，但执行很快，不会对数据库性能造成影响，其中比较重要的字段有：</p>
+<h3 id="2-db-serverStatus"><a href="#2-db-serverStatus" class="headerlink" title="2. db.serverStatus()"></a>2. db.serverStatus()</h3><p>返回数据库服务器信息，该命令返回的数据量很大，但执行很快，不会对数据库性能造成影响，其中比较重要的字段有：</p>
 <ul>
 <li>db.serverStatus().mem: 当前数据库内存使用情况</li>
 <li>db.serverStatus().connections: 当前数据库服务器的连接情况</li>
@@ -227,7 +229,7 @@ insert query update <span class="keyword">delete</span> getmore command flushes 
 <li>db.serverStatus().backgroundFlushing: 数据库后台刷盘情况(默认60s)一次，仅针对MMAPv1存储引擎</li>
 </ul>
 <p>更多<a href="https://docs.mongodb.com/manual/reference/command/serverStatus/" target="_blank" rel="external">参考</a>。</p>
-<h3 id="3-_Profiler">3. Profiler</h3><p>主要用于分析查询性能，默认是关闭的，Profiler获取关于查询/写入/命令等操作的详细执行数据，并将这些分析数据写入system.profile集合。Profiler有三个Level：</p>
+<h3 id="3-Profiler"><a href="#3-Profiler" class="headerlink" title="3. Profiler"></a>3. Profiler</h3><p>主要用于分析查询性能，默认是关闭的，Profiler获取关于查询/写入/命令等操作的详细执行数据，并将这些分析数据写入system.profile集合。Profiler有三个Level：</p>
 <ul>
 <li>Level 0: 意味着关闭Profiler，并不收集任何数据，也是mongod的默认配置。注意mongod总是会将”慢操作”(执行时间超过<a href="https://docs.mongodb.com/manual/reference/configuration-options/#operationProfiling.slowOpThresholdMs" target="_blank" rel="external">slowOpThresholdMs</a>，默认100ms)的操作写入mongod日志(不是system.profile集合)</li>
 <li>Level 1: 只收集所有慢操作的信息，慢操作执行时间可通过<a href="https://docs.mongodb.com/manual/tutorial/manage-the-database-profiler/#database-profiling-specify-slowms-threshold" target="_blank" rel="external">修改slowOpThresholdMs参数</a>指定</li>
@@ -235,54 +237,63 @@ insert query update <span class="keyword">delete</span> getmore command flushes 
 </ul>
 <p>需要注意，一个操作执行慢，可能是索引不合理，也可能是page fault从磁盘读数据等原因导致。需要进一步分析。</p>
 <p>使用示例：</p>
-<pre><code>&gt; db.setProfilingLevel(<span class="number">2</span>)
-{ <span class="string">"was"</span> : <span class="number">0</span>, <span class="string">"slowms"</span> : <span class="number">100</span>, <span class="string">"ok"</span> : <span class="number">1</span> }
+<pre><code>&gt; db.setProfilingLevel(2)
+{ &quot;was&quot; : 0, &quot;slowms&quot; : 100, &quot;ok&quot; : 1 }
 &gt;
 &gt; db.getProfilingStatus()
-{ <span class="string">"was"</span> : <span class="number">2</span>, <span class="string">"slowms"</span> : <span class="number">100</span> }
-&gt; db.user.insert({<span class="string">"name"</span>:<span class="string">"wdj"</span>})
-WriteResult({ <span class="string">"nInserted"</span> : <span class="number">1</span> })
+{ &quot;was&quot; : 2, &quot;slowms&quot; : 100 }
+&gt; db.user.insert({&quot;name&quot;:&quot;wdj&quot;})
+WriteResult({ &quot;nInserted&quot; : 1 })
 &gt; db.system.profile.find()
-{ <span class="string">"op"</span> : <span class="string">"insert"</span>, <span class="string">"ns"</span> : <span class="string">"test.user"</span>, <span class="string">"query"</span> : { <span class="string">"insert"</span> : <span class="string">"user"</span>, <span class="string">"documents"</span> : [ { <span class="string">"_id"</span> : ObjectId(<span class="string">"577e62991fa7b960bb8bf0af"</span>), <span class="string">"name"</span> : <span class="string">"wdj"</span> } ], <span class="string">"ordered"</span> : <span class="literal">true</span> }, <span class="string">"ninserted"</span> : <span class="number">1</span>, <span class="string">"keyUpdates"</span> : <span class="number">0</span>, <span class="string">"writeConflicts"</span> : <span class="number">0</span>, <span class="string">"numYield"</span> : <span class="number">0</span>, <span class="string">"locks"</span> : { <span class="string">"Global"</span> : { <span class="string">"acquireCount"</span> : { <span class="string">"r"</span> : NumberLong(<span class="number">2</span>), <span class="string">"w"</span> : NumberLong(<span class="number">2</span>) } }, <span class="string">"Database"</span> : { <span class="string">"acquireCount"</span> : { <span class="string">"w"</span> : NumberLong(<span class="number">1</span>), <span class="string">"W"</span> : NumberLong(<span class="number">1</span>) } }, <span class="string">"Collection"</span> : { <span class="string">"acquireCount"</span> : { <span class="string">"w"</span> : NumberLong(<span class="number">1</span>), <span class="string">"W"</span> : NumberLong(<span class="number">1</span>) } } }, <span class="string">"responseLength"</span> : <span class="number">25</span>, <span class="string">"protocol"</span> : <span class="string">"op_command"</span>, <span class="string">"millis"</span> : <span class="number">32</span>, <span class="string">"execStats"</span> : {  }, <span class="string">"ts"</span> : ISODate(<span class="string">"2016-07-07T14:09:29.690Z"</span>), <span class="string">"client"</span> : <span class="string">"127.0.0.1"</span>, <span class="string">"allUsers"</span> : [ ], <span class="string">"user"</span> : <span class="string">""</span> }
+{ &quot;op&quot; : &quot;insert&quot;, &quot;ns&quot; : &quot;test.user&quot;, &quot;query&quot; : { &quot;insert&quot; : &quot;user&quot;, &quot;documents&quot; : [ { &quot;_id&quot; : ObjectId(&quot;577e62991fa7b960bb8bf0af&quot;), &quot;name&quot; : &quot;wdj&quot; } ], &quot;ordered&quot; : true }, &quot;ninserted&quot; : 1, &quot;keyUpdates&quot; : 0, &quot;writeConflicts&quot; : 0, &quot;numYield&quot; : 0, &quot;locks&quot; : { &quot;Global&quot; : { &quot;acquireCount&quot; : { &quot;r&quot; : NumberLong(2), &quot;w&quot; : NumberLong(2) } }, &quot;Database&quot; : { &quot;acquireCount&quot; : { &quot;w&quot; : NumberLong(1), &quot;W&quot; : NumberLong(1) } }, &quot;Collection&quot; : { &quot;acquireCount&quot; : { &quot;w&quot; : NumberLong(1), &quot;W&quot; : NumberLong(1) } } }, &quot;responseLength&quot; : 25, &quot;protocol&quot; : &quot;op_command&quot;, &quot;millis&quot; : 32, &quot;execStats&quot; : {  }, &quot;ts&quot; : ISODate(&quot;2016-07-07T14:09:29.690Z&quot;), &quot;client&quot; : &quot;127.0.0.1&quot;, &quot;allUsers&quot; : [ ], &quot;user&quot; : &quot;&quot; }
 &gt;
 </code></pre><p>system.profile集合中，关键字段：op(操作类型), ns(操作集合), ts(操作时间)，millis(执行时间ms),query(操作详情)。</p>
 <p>更多<a href="https://docs.mongodb.com/manual/tutorial/manage-the-database-profiler/" target="_blank" rel="external">参考</a>。</p>
-<h3 id="4-_db-currentOp()">4. db.currentOp()</h3><p>当MongoDB比较繁忙或者在执行比较慢的命令时，可能会阻塞之后的操作(视数据库和操作的并发级别而定)。可通过db.currentOp()来获取当前正在进行的操作，并可通过db.killOp()来干掉它。</p>
+<h3 id="4-db-currentOp"><a href="#4-db-currentOp" class="headerlink" title="4. db.currentOp()"></a>4. db.currentOp()</h3><p>当MongoDB比较繁忙或者在执行比较慢的命令时，可能会阻塞之后的操作(视数据库和操作的并发级别而定)。可通过db.currentOp()来获取当前正在进行的操作，并可通过db.killOp()来干掉它。</p>
 <p>更多<a href="https://docs.mongodb.com/manual/reference/method/db.currentOp/" target="_blank" rel="external">参考</a>。</p>
-<h3 id="5-_db-stats()">5. db.stats()</h3><p>返回对应数据库的信息，包括集合数量，文档总大小，文档平均大小，索引数量，索引大小等静态信息：</p>
+<h3 id="5-db-stats"><a href="#5-db-stats" class="headerlink" title="5. db.stats()"></a>5. db.stats()</h3><p>返回对应数据库的信息，包括集合数量，文档总大小，文档平均大小，索引数量，索引大小等静态信息：</p>
 <pre><code>&gt; db.stats()
 {
-        <span class="string">"db"</span> : <span class="string">"test"</span>,
-        <span class="string">"collections"</span> : <span class="number">2</span>,
-        <span class="string">"objects"</span> : <span class="number">3</span>,
-        <span class="string">"avgObjSize"</span> : <span class="number">430</span>,
-        <span class="string">"dataSize"</span> : <span class="number">1290</span>,
-        <span class="string">"storageSize"</span> : <span class="number">49152</span>,
-        <span class="string">"numExtents"</span> : <span class="number">0</span>,
-        <span class="string">"indexes"</span> : <span class="number">1</span>,
-        <span class="string">"indexSize"</span> : <span class="number">16384</span>,
-        <span class="string">"ok"</span> : <span class="number">1</span>
+        &quot;db&quot; : &quot;test&quot;,
+        &quot;collections&quot; : 2,
+        &quot;objects&quot; : 3,
+        &quot;avgObjSize&quot; : 430,
+        &quot;dataSize&quot; : 1290,
+        &quot;storageSize&quot; : 49152,
+        &quot;numExtents&quot; : 0,
+        &quot;indexes&quot; : 1,
+        &quot;indexSize&quot; : 16384,
+        &quot;ok&quot; : 1
 }
 &gt;
 </code></pre><p>更多<a href="https://docs.mongodb.com/manual/reference/command/dbStats/" target="_blank" rel="external">参考</a>。</p>
-<h3 id="6-_db-collStats()">6. db.collStats()</h3><p>返回集合详细信息.</p>
+<h3 id="6-db-collStats"><a href="#6-db-collStats" class="headerlink" title="6. db.collStats()"></a>6. db.collStats()</h3><p>返回集合详细信息.</p>
 <p>更多<a href="https://docs.mongodb.com/manual/reference/command/collStats/#dbcmd.collStats" target="_blank" rel="external">参考</a>。</p>
 
         </div>
-        
+
         <blockquote class="post-copyright">
-            <div class="content">
-               这里写留言或版权声明：<a href="/2016/07/monitor-mongodb/" target="_blank" rel="external">http://wudaijun.com/2016/07/monitor-mongodb/</a>
-            </div>
-            <footer>
-                <a href="http://wudaijun.com">
-                    <img src="/favicon.png" alt="wudaijun">
-                    wudaijun
-                </a>
-            </footer>
-        </blockquote>
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-07-12T11:50:02.000Z" itemprop="dateUpdated">2016-07-12 19:50:02</time>
+</span><br>
+
 
         
+        博客均为原创，转载请征得作者同意并注明出处，本文永久链接：<a href="/2016/07/monitor-mongodb/" target="_blank" rel="external">http://wudaijun.com/2016/07/monitor-mongodb/</a>
+        
+    </div>
+    <footer>
+        <a href="http://wudaijun.com">
+            <img src="/favicon.png" alt="wudaijun">
+            wudaijun
+        </a>
+    </footer>
+</blockquote>
+
+        
+
 
         <div class="post-footer">
             
@@ -290,51 +301,57 @@ WriteResult({ <span class="string">"nInserted"</span> : <span class="number">1</
 
 
             
-            <div class="post-share-wrap">
-                <div class="post-share" id="post-share">
-    <div class="tit">分享到：</div>
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2016/07/monitor-mongodb/&title=《MongoDB 状态监控》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2016/07/monitor-mongodb/&title=《MongoDB 状态监控》 — wudaijun's blog&source=一. 关键指标
+慢查询：当MongoDB处理能力不足时，找出系统中的慢查询，分析原因，看能否通过建立索引或重新设计schema改进
+内存使用：MongoD..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2016/07/monitor-mongodb/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《MongoDB 状态监控》 — wudaijun's blog&url=http://wudaijun.com/2016/07/monitor-mongodb/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2016/07/monitor-mongodb/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
-                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
-                    <i class="icon icon-share-alt icon-lg"></i>
-                </a>
-            </div>
-            
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
 
         </div>
-    </div>   
+    </div>
 
     
 <nav class="post-nav flex-row flex-justify-between">
@@ -358,83 +375,141 @@ WriteResult({ <span class="string">"nInserted"</span> : <span class="number">1</
 </nav>
 
 
-            
+
     
 
 
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'wudaijun'; // required: replace example with your forum shortname
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://wudaijun.com/2016/07/monitor-mongodb/index.html',
+        sourceId: 'monitor-mongodb',
+        productKey: '02b378614d264e81bca14ffaadf03446',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
 
 
 </article>
 
 
+
 </div>
-  </main>
-  <div class="mask" id="mask"></div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>wudaijun &copy; 2015 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
-<script>
-var BLOG_SHARE = {
-    title: "MongoDB 状态监控",
-    pic: "/favicon.png",
-    summary: document.getElementsByName('summary')[0].content,
-    url: "http://wudaijun.com/2016/07/monitor-mongodb/"
-};
-</script>
-<div class="global-share" id="global-share">
-    <div class="tit">分享到：</div>
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2016/07/monitor-mongodb/&title=《MongoDB 状态监控》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2016/07/monitor-mongodb/&title=《MongoDB 状态监控》 — wudaijun's blog&source=一. 关键指标
+慢查询：当MongoDB处理能力不足时，找出系统中的慢查询，分析原因，看能否通过建立索引或重新设计schema改进
+内存使用：MongoD..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2016/07/monitor-mongodb/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《MongoDB 状态监控》 — wudaijun's blog&url=http://wudaijun.com/2016/07/monitor-mongodb/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2016/07/monitor-mongodb/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script src="/js/main.min.js?v=1.1.4"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://wudaijun.com/2016/07/monitor-mongodb/" alt="微信分享二维码">
+</div>
 
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
@@ -442,7 +517,7 @@ var BLOG_SHARE = {
 </div>
 <template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -454,13 +529,14 @@ var BLOG_SHARE = {
 </li>
 </template>
 
-<script src="/js/search.min.js?v=1.1.4"></script>
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 

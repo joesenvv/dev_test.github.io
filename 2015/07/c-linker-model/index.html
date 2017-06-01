@@ -1,67 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  
-  
-  <title>C链接模型_符号解析 | wudaijun&#39;s blog | Coding is Funny</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="theme-color" content="#3F51B5">
-  
-  
-  <meta name="keywords" content="c/c++">
-  <meta name="description" content="链接器的工作主要分为两个阶段：符号解析和重定位。本文简单介绍符号解析过程。
-符号解析的功能是将每个模块符号引用绑定到一个确切的符号定义。
-1. 符号分类
-全局符号：非静态全局变量，非静态函数
-外部符号：定义于其它模块，而被本模块引用的全局变量和函数
-本地符号：静态变量(包括全局和局部)，静态函数">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>C链接模型_符号解析 | wudaijun&#39;s blog | Coding is Funny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="c/c++">
+    <meta name="description" content="链接器的工作主要分为两个阶段：符号解析和重定位。本文简单介绍符号解析过程。 符号解析的功能是将每个模块符号引用绑定到一个确切的符号定义。 1. 符号分类 全局符号：非静态全局变量，非静态函数 外部符号：定义于其它模块，而被本模块引用的全局变量和函数 本地符号：静态变量(包括全局和局部)，静态函数">
+<meta name="keywords" content="c&#x2F;c++">
 <meta property="og:type" content="article">
 <meta property="og:title" content="C链接模型_符号解析">
 <meta property="og:url" content="http://wudaijun.com/2015/07/c-linker-model/index.html">
-<meta property="og:site_name" content="wudaijun's blog">
-<meta property="og:description" content="链接器的工作主要分为两个阶段：符号解析和重定位。本文简单介绍符号解析过程。
-符号解析的功能是将每个模块符号引用绑定到一个确切的符号定义。
-1. 符号分类
-全局符号：非静态全局变量，非静态函数
-外部符号：定义于其它模块，而被本模块引用的全局变量和函数
-本地符号：静态变量(包括全局和局部)，静态函数">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
+<meta property="og:description" content="链接器的工作主要分为两个阶段：符号解析和重定位。本文简单介绍符号解析过程。 符号解析的功能是将每个模块符号引用绑定到一个确切的符号定义。 1. 符号分类 全局符号：非静态全局变量，非静态函数 外部符号：定义于其它模块，而被本模块引用的全局变量和函数 本地符号：静态变量(包括全局和局部)，静态函数">
 <meta property="og:updated_time" content="2015-09-22T02:25:54.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="C链接模型_符号解析">
-<meta name="twitter:description" content="链接器的工作主要分为两个阶段：符号解析和重定位。本文简单介绍符号解析过程。
-符号解析的功能是将每个模块符号引用绑定到一个确切的符号定义。
-1. 符号分类
-全局符号：非静态全局变量，非静态函数
-外部符号：定义于其它模块，而被本模块引用的全局变量和函数
-本地符号：静态变量(包括全局和局部)，静态函数">
-  
-    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
-  
-  <meta name="summary" content="&lt;p&gt;链接器的工作主要分为两个阶段：符号解析和重定位。本文简单介绍符号解析过程。&lt;/p&gt;
-&lt;p&gt;符号解析的功能是将每个模块符号引用绑定到一个确切的符号定义。&lt;/p&gt;
-&lt;h3 id=&quot;1-_符号分类&quot;&gt;1. 符号分类&lt;/h3&gt;&lt;ul&gt;
-&lt;li&gt;全局符号：非静态全局变量，非静态函数&lt;/li&gt;
-&lt;li&gt;外部符号：定义于其它模块，而被本模块引用的全局变量和函数&lt;/li&gt;
-&lt;li&gt;本地符号：静态变量(包括全局和局部)，静态函数&lt;/li&gt;
-&lt;/ul&gt;">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+<meta name="twitter:description" content="链接器的工作主要分为两个阶段：符号解析和重定位。本文简单介绍符号解析过程。 符号解析的功能是将每个模块符号引用绑定到一个确切的符号定义。 1. 符号分类 全局符号：非静态全局变量，非静态函数 外部符号：定义于其它模块，而被本模块引用的全局变量和函数 本地符号：静态变量(包括全局和局部)，静态函数">
+    
+        <link rel="alternate" type="application/atom+xml" title="wudaijun&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <aside id="menu" class="hide" >
+    <aside id="menu" class="hide" >
   <div class="inner flex-row-vertical">
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap">
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
       <div class="brand">
-        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/favicon.png">
+        </a>
         <hgroup class="introduce">
           <h5 class="nickname">wudaijun</h5>
           <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
@@ -114,20 +104,12 @@
             </li>
         
       </ul>
-
-      <footer class="footer">
-  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
-  <p>wudaijun&#39;s blog &copy; 2017</p>
-  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
-</footer>
-
     </div>
   </div>
 </aside>
-  <main id="main">
-    <header class="top-header" id="header">
+
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -145,7 +127,7 @@
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
@@ -153,14 +135,23 @@
 </header>
 <header class="content-header post-header">
 
-    <div class="container">
+    <div class="container fade-scale">
         <h1 class="title">C链接模型_符号解析</h1>
-        
-        
+        <h5 class="subtitle">
+            
+                <time datetime="2015-07-19T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2015-07-20
+</time>
 
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/c-c/">c/c++</a></li></ul>
+
+            
+        </h5>
     </div>
 
     
+
 
 </header>
 
@@ -170,37 +161,43 @@
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-_符号分类"><span class="post-toc-text">1. 符号分类</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-_符号决议"><span class="post-toc-text">2. 符号决议</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-_总结"><span class="post-toc-text">3. 总结</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-_C++的符号决议"><span class="post-toc-text">4. C++的符号决议</span></a></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-符号分类"><span class="post-toc-text">1. 符号分类</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-符号决议"><span class="post-toc-text">2. 符号决议</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-总结"><span class="post-toc-text">3. 总结</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-C-的符号决议"><span class="post-toc-text">4. C++的符号决议</span></a></li></ol>
         </nav>
     </aside>
     
-<article id="post-c-linker-model" 
-  class="post-article article-type-post" itemprop="blogPost">
+<article id="post-c-linker-model"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
         <h1 class="post-card-title">C链接模型_符号解析</h1>
         <div class="post-meta">
-            <time datetime="2015-07-19T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2015-07-20
-</time>
+            <time class="post-time" title="2015-07-20 00:00:00" datetime="2015-07-19T16:00:00.000Z"  itemprop="datePublished">2015-07-20</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/c-c/">c/c++</a></li></ul>
 
 
 
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
             <p>链接器的工作主要分为两个阶段：符号解析和重定位。本文简单介绍符号解析过程。</p>
 <p>符号解析的功能是将每个模块符号引用绑定到一个确切的符号定义。</p>
-<h3 id="1-_符号分类">1. 符号分类</h3><ul>
+<h3 id="1-符号分类"><a href="#1-符号分类" class="headerlink" title="1. 符号分类"></a>1. 符号分类</h3><ul>
 <li>全局符号：非静态全局变量，非静态函数</li>
 <li>外部符号：定义于其它模块，而被本模块引用的全局变量和函数</li>
 <li>本地符号：静态变量(包括全局和局部)，静态函数</li>
 </ul>
 <a id="more"></a>
 <p>对于静态局部变量，编译器会为其生成唯一的名字。如x.fun1，x.fun2。本地符号对链接器来说是不可见的。</p>
-<h3 id="2-_符号决议">2. 符号决议</h3><p>当编译器遇到一个不是本模块定义的符号时，会假设该函数由其它模块定义，并生成一个链接器符号表条目，交由链接器处理。如果链接器在它的任何输入模块都没有找到该符号，会给出一个类似<code>undefined reference to &#39;xxx&#39;</code>的链接错误。而如果链接器在输入模块中找到了一个以上的外部符号定义，这个时候就需要链接器进行符号决议，链接器对多个外部符号定义可能并不报错甚至警告，而是按照它的规则去选择其中一个符号定义。</p>
+<h3 id="2-符号决议"><a href="#2-符号决议" class="headerlink" title="2. 符号决议"></a>2. 符号决议</h3><p>当编译器遇到一个不是本模块定义的符号时，会假设该函数由其它模块定义，并生成一个链接器符号表条目，交由链接器处理。如果链接器在它的任何输入模块都没有找到该符号，会给出一个类似<code>undefined reference to &#39;xxx&#39;</code>的链接错误。而如果链接器在输入模块中找到了一个以上的外部符号定义，这个时候就需要链接器进行符号决议，链接器对多个外部符号定义可能并不报错甚至警告，而是按照它的规则去选择其中一个符号定义。</p>
 <p>链接器将各个模块输出的全局符号，分类为<strong>强符号</strong>和<strong>弱符号</strong>：</p>
 <ul>
 <li>强符号：函数和已初始化的全局变量</li>
@@ -214,105 +211,114 @@
 </ul>
 <p>上面的规则是很多链接错误的根源，因为编译器在决议时可能默默地替你作出了决定，你并不知晓。根据上面的规则，可以引出下面几个经典例子：</p>
 <p>例1：</p>
-<pre><code><span class="comment">// in lib1.c</span>
-<span class="keyword">int</span> x;
-<span class="function"><span class="keyword">void</span> <span class="title">f</span><span class="params">()</span>
-</span>{
-    x = <span class="number">1235</span>;
+<pre><code>// in lib1.c
+int x;
+void f()
+{
+    x = 1235;
 }
 
-<span class="comment">// in main1.c</span>
-<span class="preprocessor">#<span class="keyword">include</span><span class="string">&lt;stdio.h&gt;</span></span>
-<span class="function"><span class="keyword">void</span> <span class="title">f</span><span class="params">(<span class="keyword">void</span>)</span></span>;
+// in main1.c
+#include&lt;stdio.h&gt;
+void f(void);
 
-<span class="keyword">int</span> x = <span class="number">1234</span>;
+int x = 1234;
 
-<span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span>
-</span>{
+int main(void)
+{
     f();
-    <span class="built_in">printf</span>(<span class="string">"x=%d\n"</span>, x);
-    <span class="keyword">return</span> <span class="number">0</span>;
+    printf(&quot;x=%d\n&quot;, x);
+    return 0;
 }
 </code></pre><p>上面的代码中，main函数printf输出： <code>x=1235</code>。因为链接器通过规则2决议符号x的定义为main.c中的强符号定义，而lib.c的作者并不知情，他对x的使用和修改影响到了main.c。这种交互修改，相互影响将会很复杂，因为大家都以为自己在做对的事情，在用对的变量。而整个决议过程，链接器悄无声息地完成了。</p>
 <p>例2：</p>
-<pre><code><span class="comment">// in lib2.c</span>
-<span class="keyword">double</span> x;
-<span class="function"><span class="keyword">void</span> <span class="title">f</span><span class="params">()</span>
-</span>{
-    x = -<span class="number">0.0</span>;
+<pre><code>// in lib2.c
+double x;
+void f()
+{
+    x = -0.0;
 }
 
-<span class="comment">// in main2.c</span>
-<span class="preprocessor">#<span class="keyword">include</span><span class="string">&lt;stdio.h&gt;</span></span>
-<span class="function"><span class="keyword">void</span> <span class="title">f</span><span class="params">(<span class="keyword">void</span>)</span></span>;
+// in main2.c
+#include&lt;stdio.h&gt;
+void f(void);
 
-<span class="keyword">int</span> x = <span class="number">1234</span>;
-<span class="keyword">int</span> y = <span class="number">1235</span>;
+int x = 1234;
+int y = 1235;
 
-<span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span>
-</span>{
+int main()
+{
     f();
-    <span class="built_in">printf</span>(<span class="string">"x=0x%x y=0x%x \n"</span>, x, y);
-    <span class="keyword">return</span> <span class="number">0</span>;
+    printf(&quot;x=0x%x y=0x%x \n&quot;, x, y);
+    return 0;
 }
 </code></pre><p>这种情况下，程序得到输出： <code>x=0x0 y=0x80000000</code>，而链接器(gcc ld)也终于给出一条警告：</p>
 <p><code>ld: warning: tentative definition of &#39;_x&#39; with size 8 from &#39;obj/Debug/lib2.o&#39; is being replaced by real definition of smaller size 4 from &#39;obj/Debug/main2.o&#39;</code></p>
 <p>链接器决议的是符号地址，而相邻的全局变量可能在.data段中的内存地址也相邻，因此也就引发了更复杂的问题。这一点和栈溢出很像，但是比栈溢出更复杂，因为问题出在多个模块之间，而不是在一个函数内部。</p>
 <p>例3：</p>
-<pre><code><span class="comment">// in lib3.c</span>
-<span class="keyword">struct</span>
+<pre><code>// in lib3.c
+struct
 {
-    <span class="keyword">int</span> a;
-    <span class="keyword">int</span> b;
+    int a;
+    int b;
 } x;
 
-<span class="function"><span class="keyword">void</span> <span class="title">f</span><span class="params">()</span>
-</span>{
-    x.a = <span class="number">123</span>;
-    x.b = <span class="number">456</span>;
-    <span class="built_in">printf</span>(<span class="string">"in f(): sizeof(x)=%d, (&amp;x)=0x%08x\n"</span>, <span class="keyword">sizeof</span>(x), &amp;x);
+void f()
+{
+    x.a = 123;
+    x.b = 456;
+    printf(&quot;in f(): sizeof(x)=%d, (&amp;x)=0x%08x\n&quot;, sizeof(x), &amp;x);
 }
 
-<span class="comment">// in main3.c</span>
-<span class="preprocessor">#<span class="keyword">include</span><span class="string">&lt;stdio.h&gt;</span></span>
-<span class="function"><span class="keyword">void</span> <span class="title">f</span><span class="params">(<span class="keyword">void</span>)</span></span>;
+// in main3.c
+#include&lt;stdio.h&gt;
+void f(void);
 
-<span class="keyword">int</span> x;
-<span class="keyword">int</span> y;
+int x;
+int y;
 
-<span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span>
-</span>{
+int main()
+{
     f();
-    <span class="built_in">printf</span>(<span class="string">"in main(): sizeof(x)=%d, (&amp;x)=0x%08x, (&amp;x)=0x%08x, x=%d,y=%d \n"</span>, <span class="keyword">sizeof</span>(x), &amp;x, &amp;y, x, y);
-    <span class="keyword">return</span> <span class="number">0</span>;
+    printf(&quot;in main(): sizeof(x)=%d, (&amp;x)=0x%08x, (&amp;x)=0x%08x, x=%d,y=%d \n&quot;, sizeof(x), &amp;x, &amp;y, x, y);
+    return 0;
 }
 </code></pre><p>程序输出：</p>
-<pre><code><span class="keyword">in</span> <span class="function"><span class="title">f</span><span class="params">()</span></span>: <span class="function"><span class="title">sizeof</span><span class="params">(x)</span></span>=<span class="number">8</span>, (&amp;x)=<span class="number">0</span>x02489018
-<span class="keyword">in</span> <span class="function"><span class="title">main</span><span class="params">()</span></span>: <span class="function"><span class="title">sizeof</span><span class="params">(x)</span></span>=<span class="number">4</span>, (&amp;x)=<span class="number">0</span>x02489018, (&amp;y)=<span class="number">0</span>x02489020, x=<span class="number">123</span>,y=<span class="number">0</span>
+<pre><code>in f(): sizeof(x)=8, (&amp;x)=0x02489018
+in main(): sizeof(x)=4, (&amp;x)=0x02489018, (&amp;y)=0x02489020, x=123,y=0
 </code></pre><p>始终记住，外部符号决议的是地址，因此无论lib3.c和main3.c中，符号x地址都是唯一的，无论其被定义了几次。其次sizeof是编译器决议，与链接无关，编译器只看得到本模块的定义或声明。最后，由于符号x决议到lib3.c中的x，其size是8，因此main3.c中的y的地址比x大8，这是由链接器将lib3.o和main3.o合并后填入可执行文件的.data段的。因此y是无关变量，被初始化为0，注意和例2的区别。</p>
-<h3 id="3-_总结">3. 总结</h3><p>由于符号决议容易引发的种种问题，我们在写C的时候应注意：</p>
+<h3 id="3-总结"><a href="#3-总结" class="headerlink" title="3. 总结"></a>3. 总结</h3><p>由于符号决议容易引发的种种问题，我们在写C的时候应注意：</p>
 <ul>
 <li>尽量用static属性隐藏变量和函数在模块内的声明，就像在C++中尽量用private保护类私有成员一样。</li>
 <li>少定义弱符号，尽量初始化全局变量，这样链接器会根据规则1给出多个符号定义的错误。</li>
 <li>为链接器设置必要选项，如gcc的 -fno-common，这样在遇到多重符号定义时，链接器会给出警告。</li>
 </ul>
-<h3 id="4-_C++的符号决议">4. C++的符号决议</h3><p>C++并不支持强弱符号同时存在，所有符号都只能有一个定义(函数重载通过改写函数符号来确保其唯一)，因此在很大程度上避免了C中的链接器困扰。</p>
+<h3 id="4-C-的符号决议"><a href="#4-C-的符号决议" class="headerlink" title="4. C++的符号决议"></a>4. C++的符号决议</h3><p>C++并不支持强弱符号同时存在，所有符号都只能有一个定义(函数重载通过改写函数符号来确保其唯一)，因此在很大程度上避免了C中的链接器困扰。</p>
 
         </div>
-        
+
         <blockquote class="post-copyright">
-            <div class="content">
-               这里写留言或版权声明：<a href="/2015/07/c-linker-model/" target="_blank" rel="external">http://wudaijun.com/2015/07/c-linker-model/</a>
-            </div>
-            <footer>
-                <a href="http://wudaijun.com">
-                    <img src="/favicon.png" alt="wudaijun">
-                    wudaijun
-                </a>
-            </footer>
-        </blockquote>
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2015-09-22T02:25:54.000Z" itemprop="dateUpdated">2015-09-22 10:25:54</time>
+</span><br>
+
 
         
+        博客均为原创，转载请征得作者同意并注明出处，本文永久链接：<a href="/2015/07/c-linker-model/" target="_blank" rel="external">http://wudaijun.com/2015/07/c-linker-model/</a>
+        
+    </div>
+    <footer>
+        <a href="http://wudaijun.com">
+            <img src="/favicon.png" alt="wudaijun">
+            wudaijun
+        </a>
+    </footer>
+</blockquote>
+
+        
+
 
         <div class="post-footer">
             
@@ -320,51 +326,58 @@
 
 
             
-            <div class="post-share-wrap">
-                <div class="post-share" id="post-share">
-    <div class="tit">分享到：</div>
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2015/07/c-linker-model/&title=《C链接模型_符号解析》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2015/07/c-linker-model/&title=《C链接模型_符号解析》 — wudaijun's blog&source=链接器的工作主要分为两个阶段：符号解析和重定位。本文简单介绍符号解析过程。
+符号解析的功能是将每个模块符号引用绑定到一个确切的符号定义。
+1. 符号分类
+..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2015/07/c-linker-model/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《C链接模型_符号解析》 — wudaijun's blog&url=http://wudaijun.com/2015/07/c-linker-model/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2015/07/c-linker-model/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
-                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
-                    <i class="icon icon-share-alt icon-lg"></i>
-                </a>
-            </div>
-            
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
 
         </div>
-    </div>   
+    </div>
 
     
 <nav class="post-nav flex-row flex-justify-between">
@@ -388,83 +401,142 @@
 </nav>
 
 
-            
+
     
 
 
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'wudaijun'; // required: replace example with your forum shortname
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://wudaijun.com/2015/07/c-linker-model/index.html',
+        sourceId: 'c-linker-model',
+        productKey: '02b378614d264e81bca14ffaadf03446',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
 
 
 </article>
 
 
+
 </div>
-  </main>
-  <div class="mask" id="mask"></div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>wudaijun &copy; 2015 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
-<script>
-var BLOG_SHARE = {
-    title: "C链接模型_符号解析",
-    pic: "/favicon.png",
-    summary: document.getElementsByName('summary')[0].content,
-    url: "http://wudaijun.com/2015/07/c-linker-model/"
-};
-</script>
-<div class="global-share" id="global-share">
-    <div class="tit">分享到：</div>
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2015/07/c-linker-model/&title=《C链接模型_符号解析》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2015/07/c-linker-model/&title=《C链接模型_符号解析》 — wudaijun's blog&source=链接器的工作主要分为两个阶段：符号解析和重定位。本文简单介绍符号解析过程。
+符号解析的功能是将每个模块符号引用绑定到一个确切的符号定义。
+1. 符号分类
+..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2015/07/c-linker-model/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《C链接模型_符号解析》 — wudaijun's blog&url=http://wudaijun.com/2015/07/c-linker-model/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2015/07/c-linker-model/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script src="/js/main.min.js?v=1.1.4"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://wudaijun.com/2015/07/c-linker-model/" alt="微信分享二维码">
+</div>
 
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
@@ -472,7 +544,7 @@ var BLOG_SHARE = {
 </div>
 <template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -484,13 +556,14 @@ var BLOG_SHARE = {
 </li>
 </template>
 
-<script src="/js/search.min.js?v=1.1.4"></script>
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 

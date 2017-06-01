@@ -1,46 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  
-  
-  <title>开发笔记(4) SLG 地图 | wudaijun&#39;s blog | Coding is Funny</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="theme-color" content="#3F51B5">
-  
-  
-  <meta name="keywords" content="erlang">
-  <meta name="description" content="数据组织我们将地图上的数据分为动态数据(行军)和静态数据(点数据)，因为行军过程不会对地图上的点造成影响(飞行)，并且不考虑实时碰撞，因此行军的逻辑是非常轻的，将其剥离出地图点数据，处理起来会更简单。也就是说，行军是地图上特殊的一类事件，而不是动态的点。">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>开发笔记(4) SLG 地图 | wudaijun&#39;s blog | Coding is Funny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="erlang">
+    <meta name="description" content="数据组织我们将地图上的数据分为动态数据(行军)和静态数据(点数据)，因为行军过程不会对地图上的点造成影响(飞行)，并且不考虑实时碰撞，因此行军的逻辑是非常轻的，将其剥离出地图点数据，处理起来会更简单。也就是说，行军是地图上特殊的一类事件，而不是动态的点。">
+<meta name="keywords" content="erlang">
 <meta property="og:type" content="article">
 <meta property="og:title" content="开发笔记(4) SLG 地图">
 <meta property="og:url" content="http://wudaijun.com/2015/11/erlang-server-design4-slg-map/index.html">
-<meta property="og:site_name" content="wudaijun's blog">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
 <meta property="og:description" content="数据组织我们将地图上的数据分为动态数据(行军)和静态数据(点数据)，因为行军过程不会对地图上的点造成影响(飞行)，并且不考虑实时碰撞，因此行军的逻辑是非常轻的，将其剥离出地图点数据，处理起来会更简单。也就是说，行军是地图上特殊的一类事件，而不是动态的点。">
 <meta property="og:updated_time" content="2015-11-13T10:18:15.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="开发笔记(4) SLG 地图">
 <meta name="twitter:description" content="数据组织我们将地图上的数据分为动态数据(行军)和静态数据(点数据)，因为行军过程不会对地图上的点造成影响(飞行)，并且不考虑实时碰撞，因此行军的逻辑是非常轻的，将其剥离出地图点数据，处理起来会更简单。也就是说，行军是地图上特殊的一类事件，而不是动态的点。">
-  
-    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
-  
-  <meta name="summary" content="&lt;h3 id=&quot;数据组织&quot;&gt;数据组织&lt;/h3&gt;&lt;p&gt;我们将地图上的数据分为动态数据(行军)和静态数据(点数据)，因为行军过程不会对地图上的点造成影响(飞行)，并且不考虑实时碰撞，因此行军的逻辑是非常轻的，将其剥离出地图点数据，处理起来会更简单。也就是说，行军是地图上特殊的一类事件，而不是动态的点。&lt;/p&gt;">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+    
+        <link rel="alternate" type="application/atom+xml" title="wudaijun&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <aside id="menu" class="hide" >
+    <aside id="menu" class="hide" >
   <div class="inner flex-row-vertical">
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap">
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
       <div class="brand">
-        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/favicon.png">
+        </a>
         <hgroup class="introduce">
           <h5 class="nickname">wudaijun</h5>
           <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
@@ -93,20 +104,12 @@
             </li>
         
       </ul>
-
-      <footer class="footer">
-  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
-  <p>wudaijun&#39;s blog &copy; 2017</p>
-  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
-</footer>
-
     </div>
   </div>
 </aside>
-  <main id="main">
-    <header class="top-header" id="header">
+
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -124,7 +127,7 @@
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
@@ -132,14 +135,23 @@
 </header>
 <header class="content-header post-header">
 
-    <div class="container">
+    <div class="container fade-scale">
         <h1 class="title">开发笔记(4) SLG 地图</h1>
-        
-        
+        <h5 class="subtitle">
+            
+                <time datetime="2015-11-12T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2015-11-13
+</time>
 
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
+
+            
+        </h5>
     </div>
 
     
+
 
 </header>
 
@@ -153,59 +165,74 @@
         </nav>
     </aside>
     
-<article id="post-erlang-server-design4-slg-map" 
-  class="post-article article-type-post" itemprop="blogPost">
+<article id="post-erlang-server-design4-slg-map"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
         <h1 class="post-card-title">开发笔记(4) SLG 地图</h1>
         <div class="post-meta">
-            <time datetime="2015-11-12T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2015-11-13
-</time>
+            <time class="post-time" title="2015-11-13 00:00:00" datetime="2015-11-12T16:00:00.000Z"  itemprop="datePublished">2015-11-13</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
 
 
 
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
-            <h3 id="数据组织">数据组织</h3><p>我们将地图上的数据分为动态数据(行军)和静态数据(点数据)，因为行军过程不会对地图上的点造成影响(飞行)，并且不考虑实时碰撞，因此行军的逻辑是非常轻的，将其剥离出地图点数据，处理起来会更简单。也就是说，行军是地图上特殊的一类事件，而不是动态的点。</p>
+            <h3 id="数据组织"><a href="#数据组织" class="headerlink" title="数据组织"></a>数据组织</h3><p>我们将地图上的数据分为动态数据(行军)和静态数据(点数据)，因为行军过程不会对地图上的点造成影响(飞行)，并且不考虑实时碰撞，因此行军的逻辑是非常轻的，将其剥离出地图点数据，处理起来会更简单。也就是说，行军是地图上特殊的一类事件，而不是动态的点。</p>
 <a id="more"></a>
-<h3 id="数据同步">数据同步</h3><h4 id="主动拉取">主动拉取</h4><p>主动拉取是指玩家在拖动屏幕时，能够看到地图上实时的点信息和行军信息。</p>
+<h3 id="数据同步"><a href="#数据同步" class="headerlink" title="数据同步"></a>数据同步</h3><h4 id="主动拉取"><a href="#主动拉取" class="headerlink" title="主动拉取"></a>主动拉取</h4><p>主动拉取是指玩家在拖动屏幕时，能够看到地图上实时的点信息和行军信息。</p>
 <ul>
 <li><p>静态数据：最简单的处理，将玩家屏幕的中心点周围一定范围(&gt;=玩家屏幕大小)的点信息，发送给客户端，但这样有一个问题，玩家稍微移动屏幕(中心点变动)，都会导致频繁的请求和数据包，因此我们需要一定程度的”缓冲和限制”来避免频繁的请求。在这个基础上，我们在地图上建立了块(Block)这个概念，一个Block大概可以看做玩家屏幕大小的一个区块，玩家在拖动屏幕中，只有屏幕中心点跨Block了，才发送拉取数据请求，而每次拉取，服务器会将以该Block为中心的九宫格Blocks都发送给客户端，用于客户端平滑过渡。</p>
 </li>
 <li><p>动态数据：目前只考虑行军，在行军建立时，算出行军所经历的所有Block，将行军这个事件挂在这些Block上，当玩家拉取该Block的数据时，取出这些行军信息，发送客户端。客户端根据行军上面的时间戳等信息，推算出行军当前位置。</p>
 </li>
 </ul>
-<h4 id="实时推送">实时推送</h4><p>实时推送，是指玩家在屏幕上不进行任何操作，也能看到屏幕所在范围地图上发生的实时信息。这是通过视口(ViewPort)来实现的，视口是一个抽象的概念，可以看做玩家屏幕，玩家视口挂在哪个Block上，玩家就能实时收到该Block上的变化通知，默认情况下，玩家的视口挂载在主城所在的位置，随着玩家屏幕拖送，玩家的视口也会挂载在不同Block上。在服务器上，视口可以简单表示为PlayerId。</p>
+<h4 id="实时推送"><a href="#实时推送" class="headerlink" title="实时推送"></a>实时推送</h4><p>实时推送，是指玩家在屏幕上不进行任何操作，也能看到屏幕所在范围地图上发生的实时信息。这是通过视口(ViewPort)来实现的，视口是一个抽象的概念，可以看做玩家屏幕，玩家视口挂在哪个Block上，玩家就能实时收到该Block上的变化通知，默认情况下，玩家的视口挂载在主城所在的位置，随着玩家屏幕拖送，玩家的视口也会挂载在不同Block上。在服务器上，视口可以简单表示为PlayerId。</p>
 <ul>
 <li>当一个点数据变动时，底层会自动通知它所在Block上所有的玩家(视口)</li>
 <li>新建行军时，底层会实时通知相关Block，并且将该事件ID挂在Block事件队列上。当有新视口挂载在这些Block上时，将得到通知</li>
 <li>行军结束后，通知相关Block，并且将事件ID从相关Block事件队列上移除</li>
 <li>当玩家离开地图后，清除玩家视口信息</li>
 </ul>
-<h3 id="行军设计">行军设计</h3><p>一个典型的场景是，玩家选定一支队伍，然后派出行军，采矿/战斗/XXX，回城。在这上面，最开始我们的设计是，行军是队伍的一种状态，是队伍信息的一部分，行军抵达，只是队伍状态由行军转换为了采矿/战斗，这样实际上行军和队伍是一个东西。这样后来在分离出其它玩家/NPC的行军信息时就会很困难。</p>
+<h3 id="行军设计"><a href="#行军设计" class="headerlink" title="行军设计"></a>行军设计</h3><p>一个典型的场景是，玩家选定一支队伍，然后派出行军，采矿/战斗/XXX，回城。在这上面，最开始我们的设计是，行军是队伍的一种状态，是队伍信息的一部分，行军抵达，只是队伍状态由行军转换为了采矿/战斗，这样实际上行军和队伍是一个东西。这样后来在分离出其它玩家/NPC的行军信息时就会很困难。</p>
 <p>最后我们将行军单独抽了出来，行军可以承载任何类型的可移动单位，行军和可移动单位相互索引，这样行军本身只携带很少量的信息，并且到达目的地之后就会被删除。</p>
-<h3 id="模块设计">模块设计</h3><p>两个模块分别用于管理点和行军，外加共用底层模块来管理Block并支撑数据同步。Block模块需要维护三个映射: <code>Player2Blocks</code>，<code>Block2Players</code>，<code>Block2Events</code>，显然，在这套机制上，一个玩家是可以有多个视口的。</p>
+<h3 id="模块设计"><a href="#模块设计" class="headerlink" title="模块设计"></a>模块设计</h3><p>两个模块分别用于管理点和行军，外加共用底层模块来管理Block并支撑数据同步。Block模块需要维护三个映射: <code>Player2Blocks</code>，<code>Block2Players</code>，<code>Block2Events</code>，显然，在这套机制上，一个玩家是可以有多个视口的。</p>
 <p>由于将数据同步机制做在了底层，因此优化的空间是比较大的。对于操作地图点的API，可以给出一个sync选项，用于标明是否需要底层自动通知，这样上层在操作多个点时，可以在修改完之后一并通知。对于事件信息，可以优先将消息发送给事件相关的玩家(如行军所属玩家和行军的目标玩家)等。</p>
 
         </div>
-        
+
         <blockquote class="post-copyright">
-            <div class="content">
-               这里写留言或版权声明：<a href="/2015/11/erlang-server-design4-slg-map/" target="_blank" rel="external">http://wudaijun.com/2015/11/erlang-server-design4-slg-map/</a>
-            </div>
-            <footer>
-                <a href="http://wudaijun.com">
-                    <img src="/favicon.png" alt="wudaijun">
-                    wudaijun
-                </a>
-            </footer>
-        </blockquote>
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2015-11-13T10:18:15.000Z" itemprop="dateUpdated">2015-11-13 18:18:15</time>
+</span><br>
+
 
         
+        博客均为原创，转载请征得作者同意并注明出处，本文永久链接：<a href="/2015/11/erlang-server-design4-slg-map/" target="_blank" rel="external">http://wudaijun.com/2015/11/erlang-server-design4-slg-map/</a>
+        
+    </div>
+    <footer>
+        <a href="http://wudaijun.com">
+            <img src="/favicon.png" alt="wudaijun">
+            wudaijun
+        </a>
+    </footer>
+</blockquote>
+
+        
+
 
         <div class="post-footer">
             
@@ -213,51 +240,55 @@
 
 
             
-            <div class="post-share-wrap">
-                <div class="post-share" id="post-share">
-    <div class="tit">分享到：</div>
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2015/11/erlang-server-design4-slg-map/&title=《开发笔记(4) SLG 地图》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2015/11/erlang-server-design4-slg-map/&title=《开发笔记(4) SLG 地图》 — wudaijun's blog&source=数据组织我们将地图上的数据分为动态数据(行军)和静态数据(点数据)，因为行军过程不会对地图上的点造成影响(飞行)，并且不考虑实时碰撞，因此行军的逻辑是非常..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2015/11/erlang-server-design4-slg-map/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《开发笔记(4) SLG 地图》 — wudaijun's blog&url=http://wudaijun.com/2015/11/erlang-server-design4-slg-map/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2015/11/erlang-server-design4-slg-map/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
-                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
-                    <i class="icon icon-share-alt icon-lg"></i>
-                </a>
-            </div>
-            
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
 
         </div>
-    </div>   
+    </div>
 
     
 <nav class="post-nav flex-row flex-justify-between">
@@ -281,83 +312,139 @@
 </nav>
 
 
-            
+
     
 
 
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'wudaijun'; // required: replace example with your forum shortname
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://wudaijun.com/2015/11/erlang-server-design4-slg-map/index.html',
+        sourceId: 'erlang-server-design4-slg-map',
+        productKey: '02b378614d264e81bca14ffaadf03446',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
 
 
 </article>
 
 
+
 </div>
-  </main>
-  <div class="mask" id="mask"></div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>wudaijun &copy; 2015 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
-<script>
-var BLOG_SHARE = {
-    title: "开发笔记(4) SLG 地图",
-    pic: "/favicon.png",
-    summary: document.getElementsByName('summary')[0].content,
-    url: "http://wudaijun.com/2015/11/erlang-server-design4-slg-map/"
-};
-</script>
-<div class="global-share" id="global-share">
-    <div class="tit">分享到：</div>
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2015/11/erlang-server-design4-slg-map/&title=《开发笔记(4) SLG 地图》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2015/11/erlang-server-design4-slg-map/&title=《开发笔记(4) SLG 地图》 — wudaijun's blog&source=数据组织我们将地图上的数据分为动态数据(行军)和静态数据(点数据)，因为行军过程不会对地图上的点造成影响(飞行)，并且不考虑实时碰撞，因此行军的逻辑是非常..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2015/11/erlang-server-design4-slg-map/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《开发笔记(4) SLG 地图》 — wudaijun's blog&url=http://wudaijun.com/2015/11/erlang-server-design4-slg-map/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2015/11/erlang-server-design4-slg-map/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script src="/js/main.min.js?v=1.1.4"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://wudaijun.com/2015/11/erlang-server-design4-slg-map/" alt="微信分享二维码">
+</div>
 
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
@@ -365,7 +452,7 @@ var BLOG_SHARE = {
 </div>
 <template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -377,13 +464,14 @@ var BLOG_SHARE = {
 </li>
 </template>
 
-<script src="/js/search.min.js?v=1.1.4"></script>
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 

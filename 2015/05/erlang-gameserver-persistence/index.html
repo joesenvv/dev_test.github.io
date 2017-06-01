@@ -1,46 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  
-  
-  <title>Erlang 服务器落地机制 | wudaijun&#39;s blog | Coding is Funny</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="theme-color" content="#3F51B5">
-  
-  
-  <meta name="keywords" content="erlang">
-  <meta name="description" content="游戏服务器中用得最多的就是gen_server，比如游戏中的Player进程，由于gen_server提供的完善的进程设施，我们无需过多地担心进程崩溃而造成的数据丢失的问题(至少还有个terminate用于做善后工作)。因此在进行数据写回时，可以通过定时写回的机制来减轻数据库负担。这一点也是C服务器望尘莫及的。">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>Erlang 服务器落地机制 | wudaijun&#39;s blog | Coding is Funny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="erlang">
+    <meta name="description" content="游戏服务器中用得最多的就是gen_server，比如游戏中的Player进程，由于gen_server提供的完善的进程设施，我们无需过多地担心进程崩溃而造成的数据丢失的问题(至少还有个terminate用于做善后工作)。因此在进行数据写回时，可以通过定时写回的机制来减轻数据库负担。这一点也是C服务器望尘莫及的。">
+<meta name="keywords" content="erlang">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Erlang 服务器落地机制">
 <meta property="og:url" content="http://wudaijun.com/2015/05/erlang-gameserver-persistence/index.html">
-<meta property="og:site_name" content="wudaijun's blog">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
 <meta property="og:description" content="游戏服务器中用得最多的就是gen_server，比如游戏中的Player进程，由于gen_server提供的完善的进程设施，我们无需过多地担心进程崩溃而造成的数据丢失的问题(至少还有个terminate用于做善后工作)。因此在进行数据写回时，可以通过定时写回的机制来减轻数据库负担。这一点也是C服务器望尘莫及的。">
 <meta property="og:updated_time" content="2015-09-22T02:25:54.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Erlang 服务器落地机制">
 <meta name="twitter:description" content="游戏服务器中用得最多的就是gen_server，比如游戏中的Player进程，由于gen_server提供的完善的进程设施，我们无需过多地担心进程崩溃而造成的数据丢失的问题(至少还有个terminate用于做善后工作)。因此在进行数据写回时，可以通过定时写回的机制来减轻数据库负担。这一点也是C服务器望尘莫及的。">
-  
-    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
-  
-  <meta name="summary" content="&lt;p&gt;游戏服务器中用得最多的就是gen_server，比如游戏中的Player进程，由于gen_server提供的完善的进程设施，我们无需过多地担心进程崩溃而造成的数据丢失的问题(至少还有个terminate用于做善后工作)。因此在进行数据写回时，可以通过定时写回的机制来减轻数据库负担。这一点也是C服务器望尘莫及的。&lt;/p&gt;">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+    
+        <link rel="alternate" type="application/atom+xml" title="wudaijun&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <aside id="menu" class="hide" >
+    <aside id="menu" class="hide" >
   <div class="inner flex-row-vertical">
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap">
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
       <div class="brand">
-        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/favicon.png">
+        </a>
         <hgroup class="introduce">
           <h5 class="nickname">wudaijun</h5>
           <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
@@ -93,20 +104,12 @@
             </li>
         
       </ul>
-
-      <footer class="footer">
-  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
-  <p>wudaijun&#39;s blog &copy; 2017</p>
-  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
-</footer>
-
     </div>
   </div>
 </aside>
-  <main id="main">
-    <header class="top-header" id="header">
+
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -124,7 +127,7 @@
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
@@ -132,14 +135,23 @@
 </header>
 <header class="content-header post-header">
 
-    <div class="container">
+    <div class="container fade-scale">
         <h1 class="title">Erlang 服务器落地机制</h1>
-        
-        
+        <h5 class="subtitle">
+            
+                <time datetime="2015-05-07T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2015-05-08
+</time>
 
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
+
+            
+        </h5>
     </div>
 
     
+
 
 </header>
 
@@ -149,30 +161,36 @@
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#落地流程"><span class="post-toc-text">落地流程</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#实现机制"><span class="post-toc-text">实现机制</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#player_model"><span class="post-toc-text">player_model</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#state"><span class="post-toc-text">state</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#数据加载"><span class="post-toc-text">数据加载</span></a></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#落地流程"><span class="post-toc-text">落地流程</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#实现机制"><span class="post-toc-text">实现机制</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#player-model"><span class="post-toc-text">player_model</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#state"><span class="post-toc-text">state</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#数据加载"><span class="post-toc-text">数据加载</span></a></li></ol>
         </nav>
     </aside>
     
-<article id="post-erlang-gameserver-persistence" 
-  class="post-article article-type-post" itemprop="blogPost">
+<article id="post-erlang-gameserver-persistence"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
         <h1 class="post-card-title">Erlang 服务器落地机制</h1>
         <div class="post-meta">
-            <time datetime="2015-05-07T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2015-05-08
-</time>
+            <time class="post-time" title="2015-05-08 00:00:00" datetime="2015-05-07T16:00:00.000Z"  itemprop="datePublished">2015-05-08</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
 
 
 
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
             <p>游戏服务器中用得最多的就是gen_server，比如游戏中的Player进程，由于gen_server提供的完善的进程设施，我们无需过多地担心进程崩溃而造成的数据丢失的问题(至少还有个terminate用于做善后工作)。因此在进行数据写回时，可以通过定时写回的机制来减轻数据库负担。这一点也是C服务器望尘莫及的。</p>
 <a id="more"></a>
-<h2 id="落地流程">落地流程</h2><p>落地时机应由PlayerManager触发，PlayerManager管理所有的Player进程，每隔一段时间进行数据落地。为了避免同时对所有玩家落地造成的热点，可以将Player进程简单分区，每次对其中一个区进行落地，如此轮流。</p>
+<h2 id="落地流程"><a href="#落地流程" class="headerlink" title="落地流程"></a>落地流程</h2><p>落地时机应由PlayerManager触发，PlayerManager管理所有的Player进程，每隔一段时间进行数据落地。为了避免同时对所有玩家落地造成的热点，可以将Player进程简单分区，每次对其中一个区进行落地，如此轮流。</p>
 <p>落地操作交由Player进程，因为我们的绝大部分关于Player的数据都是放在进程字典中的。</p>
 <p>Player进程首先遍历其相关的所有Model，取出其中变化的数据，然后更新数据库。</p>
 <p>为了模块化，将相关模块描述为：</p>
@@ -182,17 +200,17 @@
 <li>state: 辅助管理所在进程的进程字典，跟踪数据变化。提供查询和更改进程字典，获取进程字典变化数据的接口。</li>
 <li>model: 数据层，负责和数据库交互，提供insert, update等基本接口</li>
 </ul>
-<h2 id="实现机制">实现机制</h2><p>落地实现最核心的两个模块是 player_model 和 state，前者负责Player所有数据的初始化和落地，后者负责管理Player进程字典数据，并且追踪数据的变更状态。</p>
-<h3 id="player_model">player_model</h3><p>player_model 建立了业务层到模型层的映射，它仅提供两个最重要的接口：init(PlayerId) 和 save(PlayerId)，分别负责Player所有模块的初始化(数据库 -&gt; 进程字典)和落地(进程字典 -&gt; 数据库)。</p>
+<h2 id="实现机制"><a href="#实现机制" class="headerlink" title="实现机制"></a>实现机制</h2><p>落地实现最核心的两个模块是 player_model 和 state，前者负责Player所有数据的初始化和落地，后者负责管理Player进程字典数据，并且追踪数据的变更状态。</p>
+<h3 id="player-model"><a href="#player-model" class="headerlink" title="player_model"></a>player_model</h3><p>player_model 建立了业务层到模型层的映射，它仅提供两个最重要的接口：init(PlayerId) 和 save(PlayerId)，分别负责Player所有模块的初始化(数据库 -&gt; 进程字典)和落地(进程字典 -&gt; 数据库)。</p>
 <p>在player_model中，有所有Model的相关信息，包括名字，类型和所在模块等等。</p>
-<pre><code><span class="function"><span class="title">module_map</span><span class="params">()</span> -&gt;</span>
+<pre><code>module_map() -&gt;
   [
-   <span class="tuple">{player_info, <span class="tuple">{?<span class="variable">INFO_STATE</span>, single}</span>, 
-    model_user, ?<span class="function_name">model_record</span>(db_user_info)}</span>,
+   {player_info, {?INFO_STATE, single}, 
+    model_user, ?model_record(db_user_info)},
 
     .....
-    <span class="comment">%{业务逻辑模块, 进程字典中的Key和存储类型 single or list},</span>
-    <span class="comment">%{数据存储模块, 数据存储字段}</span>
+    %{业务逻辑模块, 进程字典中的Key和存储类型 single or list},
+    %{数据存储模块, 数据存储字段}
   ]
 </code></pre><p>这样业务逻辑层和Model层被关联起来，对于save来说，最重要的是第二个字段和第三个字段，分别代表该Model在进程字典的状态，以及Model名。save流程主要如下：</p>
 <ol>
@@ -206,28 +224,28 @@
 <li>对于list 和 single两种类型的Model需要分开处理，它们获取变更数据和回写的接口不一样，这可能还需要Model层的支持。这一点在下面state模块介绍中会提到。</li>
 </ul>
 <p>关于获取Model在进程字典中状态管理，通过state模块来管理。</p>
-<h3 id="state">state</h3><p>state模块管理进程字典中的数据，进程字典虽然为简单的Key-Value，但对于我们的Model来说，Value可能为单个记录(如玩家信息)或列表(如玩家建筑列表)。</p>
+<h3 id="state"><a href="#state" class="headerlink" title="state"></a>state</h3><p>state模块管理进程字典中的数据，进程字典虽然为简单的Key-Value，但对于我们的Model来说，Value可能为单个记录(如玩家信息)或列表(如玩家建筑列表)。</p>
 <p>最简单的情况是，我们单独用一个进程字典，如{Name, state}来获取Model的数据状态，数据状态可分为 origin(初始化) new(创建未保存)， update(更新) delete(删除) 在数据更新时，修改状态，在每次落地同步时，取出所有被修改的Model，并且进行落地同步。之后将数据的状态重置为origin。</p>
 <p>然而这种做法对于list类型的Model效率太低，一是业务逻辑上的每次更改都需要改动每个数组，典型的例子是任务列表，玩家对某个任务领奖，导致整个任务列表的拷贝，还可能产生不必要的查找过程。更不可忍受的是，数据落地时，也将重写整个任务列表到数据库。</p>
 <p>因此还有另一种方案：将list Model中的记录分开存放，并且分别标记状态，提高查找和回写效率：</p>
-<pre><code><span class="comment">%% ------ list Model ----------</span>
+<pre><code>%% ------ list Model ----------
 
-<span class="comment">% 存放list中各个key的状态</span>
-{<span class="variable">Name</span>, <span class="function_or_atom">list</span>} <span class="arrow">-&gt;</span> [{<span class="function_or_atom">key1</span>, <span class="function_or_atom">update</span>}, {<span class="function_or_atom">key2</span>, <span class="function_or_atom">delete</span>}, ...]
+% 存放list中各个key的状态
+{Name, list} -&gt; [{key1, update}, {key2, delete}, ...]
 
-<span class="comment">% 存放列表中各元素的实际数据</span>
-{<span class="variable">Name</span>, <span class="variable">Key</span>} <span class="arrow">-&gt;</span>    <span class="variable">Data</span>
+% 存放列表中各元素的实际数据
+{Name, Key} -&gt;    Data
 
-<span class="comment">% 存放被删除的元素列表(将不能通过{Name, Key}找到)</span>
-{<span class="variable">Name</span>, <span class="function_or_atom">delete</span>} <span class="arrow">-&gt;</span> [<span class="variable">DeleteData1</span>, <span class="variable">DeleteData2</span>, ....]
+% 存放被删除的元素列表(将不能通过{Name, Key}找到)
+{Name, delete} -&gt; [DeleteData1, DeleteData2, ....]
 
-<span class="comment">%% ------- single Model -------</span>
+%% ------- single Model -------
 
-<span class="comment">% 通过 Name 存取</span>
-<span class="variable">Name</span> <span class="arrow">-&gt;</span> <span class="variable">Value</span>
+% 通过 Name 存取
+Name -&gt; Value
 
-<span class="comment">% 存放Model的更改状态</span>
-{<span class="variable">Name</span>, <span class="function_or_atom">state</span>} <span class="arrow">-&gt;</span> <span class="variable">State</span>
+% 存放Model的更改状态
+{Name, state} -&gt; State
 </code></pre><p>如此便对Model进行了高效灵活的管理，大大减少了回写数据量。</p>
 <p>state封装了进程字典的增删查改操作，并维护进程字典状态。</p>
 <p>读取直接通过<code>erlang:get(Name, Key)</code>，对于任务列表来说，这个Key通常是任务ID</p>
@@ -244,38 +262,47 @@
 <li>对Name执行修改</li>
 </ol>
 <p>落地相关接口：</p>
-<pre><code><span class="xml"></span><span class="perl">% 获取list Model中的变更数据</span><span class="xml">
-</span><span class="perl">% 返回: {InsertList, UpdateList, DeleteList}</span><span class="xml">
+<pre><code>% 获取list Model中的变更数据
+% 返回: {InsertList, UpdateList, DeleteList}
 get_list_changed(Name)
-</span><span class="perl">
-% 获取single Model中的数据状态</span><span class="xml">
-</span><span class="perl">% 返回: {State, Value}</span><span class="xml">
+
+% 获取single Model中的数据状态
+% 返回: {State, Value}
 get_single_changed(Name)
-</span><span class="perl">
-% 重置list Model中的数据状态为origin 并且删除所有状态为<span class="keyword">delete</span>的数据</span><span class="xml">
+
+% 重置list Model中的数据状态为origin 并且删除所有状态为delete的数据
 reset_list(Name)
-</span><span class="perl">
-% 重置single Model</span><span class="xml">
-reset_single(Name)</span>
+
+% 重置single Model
+reset_single(Name)
 </code></pre><p>player_mode根据module_map中的条目依次获取变更数据，在使用model模块更新时，可让model模块也提供对single和list两种类型回写的支持。提供各个Model的特殊化处理，如有些Model可以忽略删除列表。</p>
-<h2 id="数据加载">数据加载</h2><p>最后再谈谈关于这套框架的数据加载，player_model提供一个init(PlayerId)完成数据的加载，module_map中业务逻辑模块到数据Model层的映射，也是为此准备的。</p>
+<h2 id="数据加载"><a href="#数据加载" class="headerlink" title="数据加载"></a>数据加载</h2><p>最后再谈谈关于这套框架的数据加载，player_model提供一个init(PlayerId)完成数据的加载，module_map中业务逻辑模块到数据Model层的映射，也是为此准备的。</p>
 <p>player_model遍历module_map，调用Model:get(PlayerId)，取出各个Model的数据，然后通过module_map找到对应的业务逻辑模块，回调业务逻辑层初始化函数，该函数可默认指定，比如叫init_callback，每个module_map中的业务逻辑模块都需要提供init_callback进行初始化处理，如同步客户端等等，之后也由init_callback决定是否将数据存往进程字典(通过state模块)。</p>
 
         </div>
-        
+
         <blockquote class="post-copyright">
-            <div class="content">
-               这里写留言或版权声明：<a href="/2015/05/erlang-gameserver-persistence/" target="_blank" rel="external">http://wudaijun.com/2015/05/erlang-gameserver-persistence/</a>
-            </div>
-            <footer>
-                <a href="http://wudaijun.com">
-                    <img src="/favicon.png" alt="wudaijun">
-                    wudaijun
-                </a>
-            </footer>
-        </blockquote>
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2015-09-22T02:25:54.000Z" itemprop="dateUpdated">2015-09-22 10:25:54</time>
+</span><br>
+
 
         
+        博客均为原创，转载请征得作者同意并注明出处，本文永久链接：<a href="/2015/05/erlang-gameserver-persistence/" target="_blank" rel="external">http://wudaijun.com/2015/05/erlang-gameserver-persistence/</a>
+        
+    </div>
+    <footer>
+        <a href="http://wudaijun.com">
+            <img src="/favicon.png" alt="wudaijun">
+            wudaijun
+        </a>
+    </footer>
+</blockquote>
+
+        
+
 
         <div class="post-footer">
             
@@ -283,51 +310,55 @@ reset_single(Name)</span>
 
 
             
-            <div class="post-share-wrap">
-                <div class="post-share" id="post-share">
-    <div class="tit">分享到：</div>
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2015/05/erlang-gameserver-persistence/&title=《Erlang 服务器落地机制》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2015/05/erlang-gameserver-persistence/&title=《Erlang 服务器落地机制》 — wudaijun's blog&source=游戏服务器中用得最多的就是gen_server，比如游戏中的Player进程，由于gen_server提供的完善的进程设施，我们无需过多地担心进程崩溃而造..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2015/05/erlang-gameserver-persistence/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Erlang 服务器落地机制》 — wudaijun's blog&url=http://wudaijun.com/2015/05/erlang-gameserver-persistence/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2015/05/erlang-gameserver-persistence/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
-                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
-                    <i class="icon icon-share-alt icon-lg"></i>
-                </a>
-            </div>
-            
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
 
         </div>
-    </div>   
+    </div>
 
     
 <nav class="post-nav flex-row flex-justify-between">
@@ -351,83 +382,139 @@ reset_single(Name)</span>
 </nav>
 
 
-            
+
     
 
 
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'wudaijun'; // required: replace example with your forum shortname
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://wudaijun.com/2015/05/erlang-gameserver-persistence/index.html',
+        sourceId: 'erlang-gameserver-persistence',
+        productKey: '02b378614d264e81bca14ffaadf03446',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
 
 
 </article>
 
 
+
 </div>
-  </main>
-  <div class="mask" id="mask"></div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>wudaijun &copy; 2015 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
-<script>
-var BLOG_SHARE = {
-    title: "Erlang 服务器落地机制",
-    pic: "/favicon.png",
-    summary: document.getElementsByName('summary')[0].content,
-    url: "http://wudaijun.com/2015/05/erlang-gameserver-persistence/"
-};
-</script>
-<div class="global-share" id="global-share">
-    <div class="tit">分享到：</div>
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2015/05/erlang-gameserver-persistence/&title=《Erlang 服务器落地机制》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2015/05/erlang-gameserver-persistence/&title=《Erlang 服务器落地机制》 — wudaijun's blog&source=游戏服务器中用得最多的就是gen_server，比如游戏中的Player进程，由于gen_server提供的完善的进程设施，我们无需过多地担心进程崩溃而造..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2015/05/erlang-gameserver-persistence/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Erlang 服务器落地机制》 — wudaijun's blog&url=http://wudaijun.com/2015/05/erlang-gameserver-persistence/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2015/05/erlang-gameserver-persistence/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script src="/js/main.min.js?v=1.1.4"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://wudaijun.com/2015/05/erlang-gameserver-persistence/" alt="微信分享二维码">
+</div>
 
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
@@ -435,7 +522,7 @@ var BLOG_SHARE = {
 </div>
 <template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -447,13 +534,14 @@ var BLOG_SHARE = {
 </li>
 </template>
 
-<script src="/js/search.min.js?v=1.1.4"></script>
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 

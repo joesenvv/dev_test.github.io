@@ -1,69 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  
-  
-  <title>Erlang Unicode编码 | wudaijun&#39;s blog | Coding is Funny</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="theme-color" content="#3F51B5">
-  
-  
-  <meta name="keywords" content="erlang">
-  <meta name="description" content="Unicode基础编码方式定义字符集中每个字符的codepoint(数字编码)
+    
 
-ASCII: 不用多说，编码空间为7位(0-127)
-ISO 8859-1: 又称Latin-1，以ASCII为基础，在空置的0xA0-0xFF的范围内，加入96个字母及符号。编码空间为8位(0-255)
-UCS-2: 16位编码空间 又称基本多文种平面或零平面
-UCS-4: 32位编码空间 在UCS-2基本上，加入">
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>Erlang Unicode编码 | wudaijun&#39;s blog | Coding is Funny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="erlang">
+    <meta name="description" content="Unicode基础编码方式定义字符集中每个字符的codepoint(数字编码)  ASCII: 不用多说，编码空间为7位(0-127) ISO 8859-1: 又称Latin-1，以ASCII为基础，在空置的0xA0-0xFF的范围内，加入96个字母及符号。编码空间为8位(0-255) UCS-2: 16位编码空间 又称基本多文种平面或零平面 UCS-4: 32位编码空间 在UCS-2基本上，加入">
+<meta name="keywords" content="erlang">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Erlang Unicode编码">
 <meta property="og:url" content="http://wudaijun.com/2016/12/unicode-in-erlang/index.html">
-<meta property="og:site_name" content="wudaijun's blog">
-<meta property="og:description" content="Unicode基础编码方式定义字符集中每个字符的codepoint(数字编码)
-
-ASCII: 不用多说，编码空间为7位(0-127)
-ISO 8859-1: 又称Latin-1，以ASCII为基础，在空置的0xA0-0xFF的范围内，加入96个字母及符号。编码空间为8位(0-255)
-UCS-2: 16位编码空间 又称基本多文种平面或零平面
-UCS-4: 32位编码空间 在UCS-2基本上，加入">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
+<meta property="og:description" content="Unicode基础编码方式定义字符集中每个字符的codepoint(数字编码)  ASCII: 不用多说，编码空间为7位(0-127) ISO 8859-1: 又称Latin-1，以ASCII为基础，在空置的0xA0-0xFF的范围内，加入96个字母及符号。编码空间为8位(0-255) UCS-2: 16位编码空间 又称基本多文种平面或零平面 UCS-4: 32位编码空间 在UCS-2基本上，加入">
 <meta property="og:updated_time" content="2017-02-22T02:45:49.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Erlang Unicode编码">
-<meta name="twitter:description" content="Unicode基础编码方式定义字符集中每个字符的codepoint(数字编码)
-
-ASCII: 不用多说，编码空间为7位(0-127)
-ISO 8859-1: 又称Latin-1，以ASCII为基础，在空置的0xA0-0xFF的范围内，加入96个字母及符号。编码空间为8位(0-255)
-UCS-2: 16位编码空间 又称基本多文种平面或零平面
-UCS-4: 32位编码空间 在UCS-2基本上，加入">
-  
-    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
-  
-  <meta name="summary" content="&lt;h2 id=&quot;Unicode基础&quot;&gt;Unicode基础&lt;/h2&gt;&lt;h3 id=&quot;编码方式&quot;&gt;编码方式&lt;/h3&gt;&lt;p&gt;定义字符集中每个字符的&lt;strong&gt;codepoint(数字编码)&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;ASCII: 不用多说，编码空间为7位(0-127)&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;https://zh.wikipedia.org/wiki/ISO/IEC_8859-1&quot;&gt;ISO 8859-1&lt;/a&gt;: 又称Latin-1，以ASCII为基础，在空置的0xA0-0xFF的范围内，加入96个字母及符号。编码空间为8位(0-255)&lt;/li&gt;
-&lt;li&gt;UCS-2: 16位编码空间 又称基本多文种平面或零平面&lt;/li&gt;
-&lt;li&gt;UCS-4: 32位编码空间 在UCS-2基本上，加入辅助平面(目前有16个辅助平面，至少需要21位)&lt;/li&gt;
-&lt;li&gt;注1: UCS(Universal Character Set, &lt;a href=&quot;https://zh.wikipedia.org/wiki/%E9%80%9A%E7%94%A8%E5%AD%97%E7%AC%A6%E9%9B%86&quot;&gt;通用字符集&lt;/a&gt;)&lt;/li&gt;
-&lt;li&gt;注2: 以上四种编码都是向前兼容的，通常我们所说的Unicode编码指UCS-2和UCS-4，目前广泛运用的是UCS-2&lt;/li&gt;
-&lt;/ul&gt;">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+<meta name="twitter:description" content="Unicode基础编码方式定义字符集中每个字符的codepoint(数字编码)  ASCII: 不用多说，编码空间为7位(0-127) ISO 8859-1: 又称Latin-1，以ASCII为基础，在空置的0xA0-0xFF的范围内，加入96个字母及符号。编码空间为8位(0-255) UCS-2: 16位编码空间 又称基本多文种平面或零平面 UCS-4: 32位编码空间 在UCS-2基本上，加入">
+    
+        <link rel="alternate" type="application/atom+xml" title="wudaijun&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <aside id="menu" class="hide" >
+    <aside id="menu" class="hide" >
   <div class="inner flex-row-vertical">
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap">
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
       <div class="brand">
-        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/favicon.png">
+        </a>
         <hgroup class="introduce">
           <h5 class="nickname">wudaijun</h5>
           <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
@@ -116,20 +104,12 @@ UCS-4: 32位编码空间 在UCS-2基本上，加入">
             </li>
         
       </ul>
-
-      <footer class="footer">
-  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
-  <p>wudaijun&#39;s blog &copy; 2017</p>
-  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
-</footer>
-
     </div>
   </div>
 </aside>
-  <main id="main">
-    <header class="top-header" id="header">
+
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -147,7 +127,7 @@ UCS-4: 32位编码空间 在UCS-2基本上，加入">
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
@@ -155,14 +135,23 @@ UCS-4: 32位编码空间 在UCS-2基本上，加入">
 </header>
 <header class="content-header post-header">
 
-    <div class="container">
+    <div class="container fade-scale">
         <h1 class="title">Erlang Unicode编码</h1>
-        
-        
+        <h5 class="subtitle">
+            
+                <time datetime="2016-12-16T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2016-12-17
+</time>
 
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
+
+            
+        </h5>
     </div>
 
     
+
 
 </header>
 
@@ -176,24 +165,30 @@ UCS-4: 32位编码空间 在UCS-2基本上，加入">
         </nav>
     </aside>
     
-<article id="post-unicode-in-erlang" 
-  class="post-article article-type-post" itemprop="blogPost">
+<article id="post-unicode-in-erlang"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
         <h1 class="post-card-title">Erlang Unicode编码</h1>
         <div class="post-meta">
-            <time datetime="2016-12-16T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2016-12-17
-</time>
+            <time class="post-time" title="2016-12-17 00:00:00" datetime="2016-12-16T16:00:00.000Z"  itemprop="datePublished">2016-12-17</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
 
 
 
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
-            <h2 id="Unicode基础">Unicode基础</h2><h3 id="编码方式">编码方式</h3><p>定义字符集中每个字符的<strong>codepoint(数字编码)</strong></p>
+            <h2 id="Unicode基础"><a href="#Unicode基础" class="headerlink" title="Unicode基础"></a>Unicode基础</h2><h3 id="编码方式"><a href="#编码方式" class="headerlink" title="编码方式"></a>编码方式</h3><p>定义字符集中每个字符的<strong>codepoint(数字编码)</strong></p>
 <ul>
 <li>ASCII: 不用多说，编码空间为7位(0-127)</li>
 <li><a href="https://zh.wikipedia.org/wiki/ISO/IEC_8859-1" target="_blank" rel="external">ISO 8859-1</a>: 又称Latin-1，以ASCII为基础，在空置的0xA0-0xFF的范围内，加入96个字母及符号。编码空间为8位(0-255)</li>
@@ -203,7 +198,7 @@ UCS-4: 32位编码空间 在UCS-2基本上，加入">
 <li>注2: 以上四种编码都是向前兼容的，通常我们所说的Unicode编码指UCS-2和UCS-4，目前广泛运用的是UCS-2</li>
 </ul>
 <a id="more"></a>
-<h3 id="实现方式">实现方式</h3><p>实现方式将字符的数字编码存储在计算机字节中，由于节省空间和平台差异性等，衍生不同的实现方式</p>
+<h3 id="实现方式"><a href="#实现方式" class="headerlink" title="实现方式"></a>实现方式</h3><p>实现方式将字符的数字编码存储在计算机字节中，由于节省空间和平台差异性等，衍生不同的实现方式</p>
 <ul>
 <li><a href="https://zh.wikipedia.org/wiki/UTF-8" target="_blank" rel="external">UTF-8</a>: 一种变长编码，使用1-3个字节编码UCS-2字符集，1-6个字节可编码UCS-4字符集(目前只用最多四个字节即可表示UCS-4所定义的17个平面)。优点是兼容ASCII，节省空间，并且不存在字节序的问题</li>
 <li><a href="https://zh.wikipedia.org/wiki/UTF-16" target="_blank" rel="external">UTF-16</a>: 和UTF-8类似，使用2个字节来编码UCS-2字符集(UCS-2中有预留的位用于实现UTF-16扩展多字节)，使用4个字节来编码UCS-4字符集。由于使用两个字节作为基本编码单位，UTF-16存在字节序的问题，通常使用BOM来解决</li>
@@ -211,48 +206,48 @@ UCS-4: 32位编码空间 在UCS-2基本上，加入">
 <li>注1: UTF(Unicode Transformation Format, Unicode转换格式)</li>
 <li>注2: BOM(byte-order mark, <a href="https://zh.wikipedia.org/wiki/%E4%BD%8D%E5%85%83%E7%B5%84%E9%A0%86%E5%BA%8F%E8%A8%98%E8%99%9F" target="_blank" rel="external">字节顺序标记</a>)</li>
 </ul>
-<h2 id="Erlang中的Unicode">Erlang中的Unicode</h2><h3 id="Unicode表示">Unicode表示</h3><pre><code><span class="comment">%% 环境 Mac OSX Yosemite &amp; Erlang OTP/19</span>
-<span class="variable">Eshell</span> <span class="variable">V8</span>.<span class="number">1</span>  (<span class="function_or_atom">abort</span> <span class="function_or_atom">with</span> ^<span class="variable">G</span>)
-<span class="prompt">1&gt; </span><span class="variable">L</span> = <span class="string">"中文"</span>.
-[<span class="number">20013</span>,<span class="number">25991</span>] <span class="comment">% Erlang lists存放的是字符的Unicode编码</span>
-<span class="prompt">2&gt; </span><span class="variable">B</span> = &lt;&lt;<span class="string">"中文"</span>&gt;&gt;.
-&lt;&lt;<span class="number">45</span>,<span class="number">135</span>&gt;&gt; <span class="comment">% Erlang只知"中文"的Unicode编码[20013,25991]，并不知应该用何种实现方式(UTF8或其他)，默认它会将Unicode编码 rem 256，产生0-255间的编码(并按照Lantin-1解码)</span>
+<h2 id="Erlang中的Unicode"><a href="#Erlang中的Unicode" class="headerlink" title="Erlang中的Unicode"></a>Erlang中的Unicode</h2><h3 id="Unicode表示"><a href="#Unicode表示" class="headerlink" title="Unicode表示"></a>Unicode表示</h3><pre><code>%% 环境 Mac OSX Yosemite &amp; Erlang OTP/19
+Eshell V8.1  (abort with ^G)
+1&gt; L = &quot;中文&quot;.
+[20013,25991] % Erlang lists存放的是字符的Unicode编码
+2&gt; B = &lt;&lt;&quot;中文&quot;&gt;&gt;.
+&lt;&lt;45,135&gt;&gt; % Erlang只知&quot;中文&quot;的Unicode编码[20013,25991]，并不知应该用何种实现方式(UTF8或其他)，默认它会将Unicode编码 rem 256，产生0-255间的编码(并按照Lantin-1解码)
 
-<span class="comment">% 下面我们将考虑将"中文"转换为binary</span>
-<span class="comment">% 方案一. erlang:list_to_binary -&gt; error</span>
-<span class="prompt">3&gt; </span><span class="function_or_atom">list_to_binary</span>(<span class="variable">L</span>). <span class="comment">% 该函数支持的list只能是iolist(见后面术语参考)，否则Erlang并不知道你想将字符串转换为何种编码格式的binary</span>
-** <span class="function_or_atom">exception</span> <span class="function_or_atom">error</span>: <span class="function_or_atom">bad</span> <span class="function_or_atom">argument</span>
-     <span class="function_or_atom">in</span> <span class="function_or_atom">function</span>  <span class="function_or_atom">list_to_binary</span>/<span class="number">1</span>
-        <span class="function_or_atom">called</span> <span class="function_or_atom">as</span> <span class="function_or_atom">list_to_binary</span>([<span class="number">20013</span>,<span class="number">25991</span>])
+% 下面我们将考虑将&quot;中文&quot;转换为binary
+% 方案一. erlang:list_to_binary -&gt; error
+3&gt; list_to_binary(L). % 该函数支持的list只能是iolist(见后面术语参考)，否则Erlang并不知道你想将字符串转换为何种编码格式的binary
+** exception error: bad argument
+     in function  list_to_binary/1
+        called as list_to_binary([20013,25991])
 
-<span class="comment">% 方案二. unicode:characters_to_binary -&gt; ok</span>
-<span class="prompt">4&gt; </span><span class="variable">UTF8</span> = <span class="function_or_atom">unicode:characters_to_binary</span>(<span class="variable">L</span>).<span class="comment">% 将L中的unicode编码转换为UTF8 binary</span>
-&lt;<span class="number">228</span>,<span class="number">184</span>,<span class="number">173</span>,<span class="number">230</span>,<span class="number">150</span>,<span class="number">135</span>&gt;&gt;
-<span class="prompt">5&gt; </span><span class="variable">UTF16Big</span> = <span class="function_or_atom">unicode:characters_to_binary</span>(<span class="variable">UTF8</span>,<span class="function_or_atom">utf8</span>,<span class="function_or_atom">utf16</span>).
-&lt;&lt;<span class="number">78</span>,<span class="number">45</span>,<span class="number">101</span>,<span class="number">135</span>&gt;&gt; <span class="comment">% 默认为Big Endian</span>
-<span class="prompt">6&gt; </span><span class="variable">UTF16Little</span> = <span class="function_or_atom">unicode:characters_to_binary</span>(<span class="variable">UTF8</span>,<span class="function_or_atom">utf8</span>,{<span class="function_or_atom">utf16</span>,<span class="function_or_atom">little</span>}).
-&lt;&lt;<span class="number">45</span>,<span class="number">78</span>,<span class="number">135</span>,<span class="number">101</span>&gt;&gt;
+% 方案二. unicode:characters_to_binary -&gt; ok
+4&gt; UTF8 = unicode:characters_to_binary(L).% 将L中的unicode编码转换为UTF8 binary
+&lt;228,184,173,230,150,135&gt;&gt;
+5&gt; UTF16Big = unicode:characters_to_binary(UTF8,utf8,utf16).
+&lt;&lt;78,45,101,135&gt;&gt; % 默认为Big Endian
+6&gt; UTF16Little = unicode:characters_to_binary(UTF8,utf8,{utf16,little}).
+&lt;&lt;45,78,135,101&gt;&gt;
 
-<span class="comment">% 方案三. 利用binary构造语法构建</span>
-<span class="prompt">7&gt; </span><span class="variable">UTF8</span> = &lt;&lt;<span class="string">"中文"</span>/<span class="function_or_atom">utf8</span>&gt;&gt;.
-&lt;&lt;<span class="number">228</span>,<span class="number">184</span>,<span class="number">173</span>,<span class="number">230</span>,<span class="number">150</span>,<span class="number">135</span>&gt;&gt;
-<span class="prompt">8&gt; </span><span class="variable">UTF8</span> = &lt;&lt;<span class="variable">L</span>/<span class="function_or_atom">utf8</span>&gt;&gt;. <span class="comment">% Why ?</span>
-** <span class="function_or_atom">exception</span> <span class="function_or_atom">error</span>: <span class="function_or_atom">bad</span> <span class="function_or_atom">argument</span>
+% 方案三. 利用binary构造语法构建
+7&gt; UTF8 = &lt;&lt;&quot;中文&quot;/utf8&gt;&gt;.
+&lt;&lt;228,184,173,230,150,135&gt;&gt;
+8&gt; UTF8 = &lt;&lt;L/utf8&gt;&gt;. % Why ?
+** exception error: bad argument
 </code></pre><p>在Erlang中，字符串就是整数列表，并且这个整数可以无限大，lists将保存其中每个字符的Unicode编码，只要lists中的整数是有效的Unicode codepoint，就可以找到对应的字符。因此也就不存在UTF8/UTF16格式的lists字符串一说。而binary的处理则要麻烦一些，Erlang用UTF8作为Unicode在binary上的实现方式，unicode模块提供了这方面丰富的unicode编码处理接口。</p>
-<h3 id="Unicode使用">Unicode使用</h3><pre><code><span class="prompt">8&gt; </span><span class="function_or_atom">io:format</span>(<span class="string">"~s"</span>, [<span class="variable">L</span>]).
-** <span class="function_or_atom">exception</span> <span class="function_or_atom">error</span>: <span class="function_or_atom">bad</span> <span class="function_or_atom">argument</span>
- <span class="function_or_atom">in</span> <span class="function_or_atom">function</span>  <span class="function_or_atom">io:format</span>/<span class="number">3</span>
-    <span class="function_or_atom">called</span> <span class="function_or_atom">as</span> <span class="function_or_atom">io:format</span>(&lt;<span class="number">0.50</span>.<span class="number">0</span>&gt;,<span class="string">"~s"</span>,[[<span class="number">20013</span>,<span class="number">25991</span>]])
-<span class="prompt">9&gt; </span><span class="function_or_atom">io:format</span>(<span class="string">"~p"</span>, [<span class="variable">L</span>]).
-[<span class="number">20013</span>,<span class="number">25991</span>]<span class="ok">ok</span>
-<span class="prompt">10&gt; </span><span class="function_or_atom">io:format</span>(<span class="string">"~ts"</span>, [<span class="variable">L</span>]).
-中文<span class="ok">ok</span>
-<span class="prompt">11&gt; </span><span class="function_or_atom">io:format</span>(<span class="string">"~s"</span>, [<span class="variable">UTF8</span>]).
-ä¸­æ<span class="ok">ok</span>
-<span class="prompt">12&gt; </span><span class="function_or_atom">io:format</span>(<span class="string">"~p"</span>, [<span class="variable">UTF8</span>]).
-&lt;&lt;<span class="number">228</span>,<span class="number">184</span>,<span class="number">173</span>,<span class="number">230</span>,<span class="number">150</span>,<span class="number">135</span>&gt;&gt;<span class="ok">ok</span>
-<span class="prompt">13&gt; </span><span class="function_or_atom">io:format</span>(<span class="string">"~ts"</span>, [<span class="variable">UTF8</span>]).
-中文<span class="ok">ok</span>
+<h3 id="Unicode使用"><a href="#Unicode使用" class="headerlink" title="Unicode使用"></a>Unicode使用</h3><pre><code>8&gt; io:format(&quot;~s&quot;, [L]).
+** exception error: bad argument
+ in function  io:format/3
+    called as io:format(&lt;0.50.0&gt;,&quot;~s&quot;,[[20013,25991]])
+9&gt; io:format(&quot;~p&quot;, [L]).
+[20013,25991]ok
+10&gt; io:format(&quot;~ts&quot;, [L]).
+中文ok
+11&gt; io:format(&quot;~s&quot;, [UTF8]).
+ä¸­æok
+12&gt; io:format(&quot;~p&quot;, [UTF8]).
+&lt;&lt;228,184,173,230,150,135&gt;&gt;ok
+13&gt; io:format(&quot;~ts&quot;, [UTF8]).
+中文ok
 </code></pre><p>先解释几个Erlang术语：</p>
 <ul>
 <li><a href="http://www.cnblogs.com/me-sa/archive/2012/01/31/erlang0034.html" target="_blank" rel="external">iolist</a>: 0-255编码(Latin-1)的lists，binary，或它们的嵌套，如<code>[[&quot;123&quot;,&lt;&lt;&quot;456&quot;&gt;&gt;],&lt;&lt;&quot;789&quot;&gt;&gt;]</code></li>
@@ -269,20 +264,29 @@ UCS-4: 32位编码空间 在UCS-2基本上，加入">
 </ol>
 
         </div>
-        
+
         <blockquote class="post-copyright">
-            <div class="content">
-               这里写留言或版权声明：<a href="/2016/12/unicode-in-erlang/" target="_blank" rel="external">http://wudaijun.com/2016/12/unicode-in-erlang/</a>
-            </div>
-            <footer>
-                <a href="http://wudaijun.com">
-                    <img src="/favicon.png" alt="wudaijun">
-                    wudaijun
-                </a>
-            </footer>
-        </blockquote>
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2017-02-22T02:45:49.000Z" itemprop="dateUpdated">2017-02-22 10:45:49</time>
+</span><br>
+
 
         
+        博客均为原创，转载请征得作者同意并注明出处，本文永久链接：<a href="/2016/12/unicode-in-erlang/" target="_blank" rel="external">http://wudaijun.com/2016/12/unicode-in-erlang/</a>
+        
+    </div>
+    <footer>
+        <a href="http://wudaijun.com">
+            <img src="/favicon.png" alt="wudaijun">
+            wudaijun
+        </a>
+    </footer>
+</blockquote>
+
+        
+
 
         <div class="post-footer">
             
@@ -290,51 +294,58 @@ UCS-4: 32位编码空间 在UCS-2基本上，加入">
 
 
             
-            <div class="post-share-wrap">
-                <div class="post-share" id="post-share">
-    <div class="tit">分享到：</div>
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2016/12/unicode-in-erlang/&title=《Erlang Unicode编码》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2016/12/unicode-in-erlang/&title=《Erlang Unicode编码》 — wudaijun's blog&source=Unicode基础编码方式定义字符集中每个字符的codepoint(数字编码)
+
+ASCII: 不用多说，编码空间为7位(0-127)
+ISO 8859-..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2016/12/unicode-in-erlang/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Erlang Unicode编码》 — wudaijun's blog&url=http://wudaijun.com/2016/12/unicode-in-erlang/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2016/12/unicode-in-erlang/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
-                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
-                    <i class="icon icon-share-alt icon-lg"></i>
-                </a>
-            </div>
-            
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
 
         </div>
-    </div>   
+    </div>
 
     
 <nav class="post-nav flex-row flex-justify-between">
@@ -358,83 +369,142 @@ UCS-4: 32位编码空间 在UCS-2基本上，加入">
 </nav>
 
 
-            
+
     
 
 
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'wudaijun'; // required: replace example with your forum shortname
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://wudaijun.com/2016/12/unicode-in-erlang/index.html',
+        sourceId: 'unicode-in-erlang',
+        productKey: '02b378614d264e81bca14ffaadf03446',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
 
 
 </article>
 
 
+
 </div>
-  </main>
-  <div class="mask" id="mask"></div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>wudaijun &copy; 2015 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
-<script>
-var BLOG_SHARE = {
-    title: "Erlang Unicode编码",
-    pic: "/favicon.png",
-    summary: document.getElementsByName('summary')[0].content,
-    url: "http://wudaijun.com/2016/12/unicode-in-erlang/"
-};
-</script>
-<div class="global-share" id="global-share">
-    <div class="tit">分享到：</div>
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2016/12/unicode-in-erlang/&title=《Erlang Unicode编码》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2016/12/unicode-in-erlang/&title=《Erlang Unicode编码》 — wudaijun's blog&source=Unicode基础编码方式定义字符集中每个字符的codepoint(数字编码)
+
+ASCII: 不用多说，编码空间为7位(0-127)
+ISO 8859-..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2016/12/unicode-in-erlang/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Erlang Unicode编码》 — wudaijun's blog&url=http://wudaijun.com/2016/12/unicode-in-erlang/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2016/12/unicode-in-erlang/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script src="/js/main.min.js?v=1.1.4"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://wudaijun.com/2016/12/unicode-in-erlang/" alt="微信分享二维码">
+</div>
 
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
@@ -442,7 +512,7 @@ var BLOG_SHARE = {
 </div>
 <template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -454,13 +524,14 @@ var BLOG_SHARE = {
 </li>
 </template>
 
-<script src="/js/search.min.js?v=1.1.4"></script>
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 

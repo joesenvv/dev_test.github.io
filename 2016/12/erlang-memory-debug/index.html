@@ -1,64 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  
-  
-  <title>Erlang 内存问题诊断 | wudaijun&#39;s blog | Coding is Funny</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="theme-color" content="#3F51B5">
-  
-  
-  <meta name="keywords" content="erlang">
-  <meta name="description" content="通过erlang:memory()查看节点内存占用总览，需要通过静态和动态两个维度对内存进行考核：
+    
 
-静态: 各类内存占用比例，是否有某种类的内存占用了节点总内存的绝大部分
-动态: 各类内存增长特性，如增长速度，或是否长期增长而不回收(atom除外)
+    
 
-找出有疑似内存泄露的种类后，再进行下一步分析
-atomatom不会被GC，这意味着我们应该对atom内存增长更加重视而不是忽略。在编写代码时，尽量">
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>Erlang 内存问题诊断 | wudaijun&#39;s blog | Coding is Funny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="erlang">
+    <meta name="description" content="通过erlang:memory()查看节点内存占用总览，需要通过静态和动态两个维度对内存进行考核：  静态: 各类内存占用比例，是否有某种类的内存占用了节点总内存的绝大部分 动态: 各类内存增长特性，如增长速度，或是否长期增长而不回收(atom除外)  找出有疑似内存泄露的种类后，再进行下一步分析 atomatom不会被GC，这意味着我们应该对atom内存增长更加重视而不是忽略。在编写代码时，尽量">
+<meta name="keywords" content="erlang">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Erlang 内存问题诊断">
 <meta property="og:url" content="http://wudaijun.com/2016/12/erlang-memory-debug/index.html">
-<meta property="og:site_name" content="wudaijun's blog">
-<meta property="og:description" content="通过erlang:memory()查看节点内存占用总览，需要通过静态和动态两个维度对内存进行考核：
-
-静态: 各类内存占用比例，是否有某种类的内存占用了节点总内存的绝大部分
-动态: 各类内存增长特性，如增长速度，或是否长期增长而不回收(atom除外)
-
-找出有疑似内存泄露的种类后，再进行下一步分析
-atomatom不会被GC，这意味着我们应该对atom内存增长更加重视而不是忽略。在编写代码时，尽量">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
+<meta property="og:description" content="通过erlang:memory()查看节点内存占用总览，需要通过静态和动态两个维度对内存进行考核：  静态: 各类内存占用比例，是否有某种类的内存占用了节点总内存的绝大部分 动态: 各类内存增长特性，如增长速度，或是否长期增长而不回收(atom除外)  找出有疑似内存泄露的种类后，再进行下一步分析 atomatom不会被GC，这意味着我们应该对atom内存增长更加重视而不是忽略。在编写代码时，尽量">
 <meta property="og:updated_time" content="2016-12-27T09:05:15.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Erlang 内存问题诊断">
-<meta name="twitter:description" content="通过erlang:memory()查看节点内存占用总览，需要通过静态和动态两个维度对内存进行考核：
-
-静态: 各类内存占用比例，是否有某种类的内存占用了节点总内存的绝大部分
-动态: 各类内存增长特性，如增长速度，或是否长期增长而不回收(atom除外)
-
-找出有疑似内存泄露的种类后，再进行下一步分析
-atomatom不会被GC，这意味着我们应该对atom内存增长更加重视而不是忽略。在编写代码时，尽量">
-  
-    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
-  
-  <meta name="summary" content="null">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+<meta name="twitter:description" content="通过erlang:memory()查看节点内存占用总览，需要通过静态和动态两个维度对内存进行考核：  静态: 各类内存占用比例，是否有某种类的内存占用了节点总内存的绝大部分 动态: 各类内存增长特性，如增长速度，或是否长期增长而不回收(atom除外)  找出有疑似内存泄露的种类后，再进行下一步分析 atomatom不会被GC，这意味着我们应该对atom内存增长更加重视而不是忽略。在编写代码时，尽量">
+    
+        <link rel="alternate" type="application/atom+xml" title="wudaijun&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <aside id="menu" class="hide" >
+    <aside id="menu" class="hide" >
   <div class="inner flex-row-vertical">
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap">
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
       <div class="brand">
-        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/favicon.png">
+        </a>
         <hgroup class="introduce">
           <h5 class="nickname">wudaijun</h5>
           <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
@@ -111,20 +104,12 @@ atomatom不会被GC，这意味着我们应该对atom内存增长更加重视而
             </li>
         
       </ul>
-
-      <footer class="footer">
-  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
-  <p>wudaijun&#39;s blog &copy; 2017</p>
-  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
-</footer>
-
     </div>
   </div>
 </aside>
-  <main id="main">
-    <header class="top-header" id="header">
+
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -142,7 +127,7 @@ atomatom不会被GC，这意味着我们应该对atom内存增长更加重视而
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
@@ -150,14 +135,23 @@ atomatom不会被GC，这意味着我们应该对atom内存增长更加重视而
 </header>
 <header class="content-header post-header">
 
-    <div class="container">
+    <div class="container fade-scale">
         <h1 class="title">Erlang 内存问题诊断</h1>
-        
-        
+        <h5 class="subtitle">
+            
+                <time datetime="2016-12-25T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2016-12-26
+</time>
 
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
+
+            
+        </h5>
     </div>
 
     
+
 
 </header>
 
@@ -167,24 +161,30 @@ atomatom不会被GC，这意味着我们应该对atom内存增长更加重视而
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#atom"><span class="post-toc-text">atom</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#ets"><span class="post-toc-text">ets</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#process"><span class="post-toc-text">process</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#binary"><span class="post-toc-text">binary</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#driver/nif"><span class="post-toc-text">driver/nif</span></a></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#atom"><span class="post-toc-text">atom</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#ets"><span class="post-toc-text">ets</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#process"><span class="post-toc-text">process</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#binary"><span class="post-toc-text">binary</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#driver-nif"><span class="post-toc-text">driver/nif</span></a></li></ol>
         </nav>
     </aside>
     
-<article id="post-erlang-memory-debug" 
-  class="post-article article-type-post" itemprop="blogPost">
+<article id="post-erlang-memory-debug"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
         <h1 class="post-card-title">Erlang 内存问题诊断</h1>
         <div class="post-meta">
-            <time datetime="2016-12-25T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2016-12-26
-</time>
+            <time class="post-time" title="2016-12-26 00:00:00" datetime="2016-12-25T16:00:00.000Z"  itemprop="datePublished">2016-12-26</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
 
 
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
 
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
@@ -194,25 +194,25 @@ atomatom不会被GC，这意味着我们应该对atom内存增长更加重视而
 <li>动态: 各类内存增长特性，如增长速度，或是否长期增长而不回收(atom除外)</li>
 </ul>
 <p>找出有疑似内存泄露的种类后，再进行下一步分析</p>
-<h3 id="atom">atom</h3><p>atom不会被GC，这意味着我们应该对atom内存增长更加重视而不是忽略。在编写代码时，尽量避免动态生成atom，因为一旦你的输入源不可靠或受到攻击(特别针对网络消息)，atom内存增长可能导致节点crash。可以考虑将atom生成函数替换为更安全的版本：</p>
-<pre><code>list_to_atom/<span class="number">1</span> -&gt; list_to_existing_atom/<span class="number">1</span>
-binary_to_atom/<span class="number">2</span> -&gt; binary_to_existing_atom/<span class="number">2</span>
-<span class="function"><span class="title">binary_to_term</span><span class="params">(Bin)</span></span> -&gt; <span class="function"><span class="title">binary_to_term</span><span class="params">(Bin,[safe])</span></span>
-</code></pre><h3 id="ets">ets</h3><p>ets内存占用通常是由于表过大，通过<code>ets:i().</code>查看ets表条目数，大小，占用内存等。</p>
-<h3 id="process">process</h3><p>进程内存占用过高可能有两方面原因，进程数量过大和进程占用内存过高。针对于前者，首先找出那些没有被链接或监控的”孤儿进程”：</p>
-<pre><code>[<span class="name">P</span> || <span class="name">P</span>&lt;-<span class="atom">processes</span>(),
-    [{<span class="name">_</span>,<span class="name">Ls</span>},{<span class="name">_</span>,<span class="name">Ms</span>}] &lt;- [<span class="atom">process_info</span>(<span class="name">P</span>,[<span class="atom">links</span>,<span class="atom">monitors</span>])],
-    []==<span class="name">Ls</span>,[]==<span class="name">Ms</span>].
+<h3 id="atom"><a href="#atom" class="headerlink" title="atom"></a>atom</h3><p>atom不会被GC，这意味着我们应该对atom内存增长更加重视而不是忽略。在编写代码时，尽量避免动态生成atom，因为一旦你的输入源不可靠或受到攻击(特别针对网络消息)，atom内存增长可能导致节点crash。可以考虑将atom生成函数替换为更安全的版本：</p>
+<pre><code>list_to_atom/1 -&gt; list_to_existing_atom/1
+binary_to_atom/2 -&gt; binary_to_existing_atom/2
+binary_to_term(Bin) -&gt; binary_to_term(Bin,[safe])
+</code></pre><h3 id="ets"><a href="#ets" class="headerlink" title="ets"></a>ets</h3><p>ets内存占用通常是由于表过大，通过<code>ets:i().</code>查看ets表条目数，大小，占用内存等。</p>
+<h3 id="process"><a href="#process" class="headerlink" title="process"></a>process</h3><p>进程内存占用过高可能有两方面原因，进程数量过大和进程占用内存过高。针对于前者，首先找出那些没有被链接或监控的”孤儿进程”：</p>
+<pre><code>[P || P&lt;-processes(),
+    [{_,Ls},{_,Ms}] &lt;- [process_info(P,[links,monitors])],
+    []==Ls,[]==Ms].
 </code></pre><p>或通过<code>supervisor:count_children/1</code>查看sup下进程数量和状态。</p>
 <p>而如果是进程所占内存过高，则可将内存占用最高的几个进程找出来进行检查:</p>
-<pre><code>recon:proc_count(memory, <span class="number">10</span>). % 打印占用内存最高的<span class="number">10</span>个进程
-recon:proc_count(message_queue_len, <span class="number">10</span>). % 打印消息队列最长的<span class="number">10</span>个进程
-</code></pre><h3 id="binary">binary</h3><p>erlang binary大致上分为两种，heap binary(&lt;=64字节)和refc binary(&gt;64字节)，分别位于进程堆和全局堆上，进程通过ProBin持有refc binary的引用，当refc binary引用计数为0时，被GC。关于binary的详细实现，参考<a href="http://wudaijun.com/2015/12/erlang-datastructures/">Erlang常用数据结构实现</a>。</p>
+<pre><code>recon:proc_count(memory, 10). % 打印占用内存最高的10个进程
+recon:proc_count(message_queue_len, 10). % 打印消息队列最长的10个进程
+</code></pre><h3 id="binary"><a href="#binary" class="headerlink" title="binary"></a>binary</h3><p>erlang binary大致上分为两种，heap binary(&lt;=64字节)和refc binary(&gt;64字节)，分别位于进程堆和全局堆上，进程通过ProBin持有refc binary的引用，当refc binary引用计数为0时，被GC。关于binary的详细实现，参考<a href="http://wudaijun.com/2015/12/erlang-datastructures/">Erlang常用数据结构实现</a>。</p>
 <p>recon提供的关于binary问题检测的函数有：</p>
-<pre><code>% 打印出引用的refc binary内存最高的<span class="keyword">N</span>个进程
-recon:proc_count(binary_memory, <span class="keyword">N</span>)
-% 对所有进程执行GC 打印出GC前后ProcBin个数减少数量最多的<span class="keyword">N</span>个进程
-recon:bin_leak(<span class="keyword">N</span>)
+<pre><code>% 打印出引用的refc binary内存最高的N个进程
+recon:proc_count(binary_memory, N)
+% 对所有进程执行GC 打印出GC前后ProcBin个数减少数量最多的N个进程
+recon:bin_leak(N)
 </code></pre><p>以上两个函数，通常可以找出有问题的进程，然后针对进程的业务逻辑和上下文进行优化。通常来说，针对于refc binary，有如下思路：</p>
 <ul>
 <li>每过一段时间手动GC(高效，不优雅)</li>
@@ -226,24 +226,33 @@ recon:bin_leak(<span class="keyword">N</span>)
 <li>避免中间件接触到refc binary，由中间件进程返回目标进程的Pid，由原始调用者来进行binary转发</li>
 <li>调整中间件进程的GC频率(fullsweep_after)</li>
 </ul>
-<h3 id="driver/nif">driver/nif</h3><p>另一部分非Erlang虚拟机管制的内存通常来自于第三方Driver或NIF，要确认是否是这部分内存出了问题，可通过<code>recon_alloc:memory(allocated).</code>和OS所报告的内存占用进行对比，可以大概得到C Driver或NIF分配的内存，再根据该部分内存的增长情况和占用比例来判断是否出现问题。</p>
+<h3 id="driver-nif"><a href="#driver-nif" class="headerlink" title="driver/nif"></a>driver/nif</h3><p>另一部分非Erlang虚拟机管制的内存通常来自于第三方Driver或NIF，要确认是否是这部分内存出了问题，可通过<code>recon_alloc:memory(allocated).</code>和OS所报告的内存占用进行对比，可以大概得到C Driver或NIF分配的内存，再根据该部分内存的增长情况和占用比例来判断是否出现问题。</p>
 <p>如果是纯C，那么内存使用应该是相对稳定并且可预估的，如果还挂接了Lua这类动态语言，调试起来要麻烦一些，在我们的服务器中，Lua部分是无状态的，可以直接重新加载Lua虚拟机。其它的调试手段，则要透过Lua层面的GC机制去解决问题了。</p>
 
         </div>
-        
+
         <blockquote class="post-copyright">
-            <div class="content">
-               这里写留言或版权声明：<a href="/2016/12/erlang-memory-debug/" target="_blank" rel="external">http://wudaijun.com/2016/12/erlang-memory-debug/</a>
-            </div>
-            <footer>
-                <a href="http://wudaijun.com">
-                    <img src="/favicon.png" alt="wudaijun">
-                    wudaijun
-                </a>
-            </footer>
-        </blockquote>
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2016-12-27T09:05:15.000Z" itemprop="dateUpdated">2016-12-27 17:05:15</time>
+</span><br>
+
 
         
+        博客均为原创，转载请征得作者同意并注明出处，本文永久链接：<a href="/2016/12/erlang-memory-debug/" target="_blank" rel="external">http://wudaijun.com/2016/12/erlang-memory-debug/</a>
+        
+    </div>
+    <footer>
+        <a href="http://wudaijun.com">
+            <img src="/favicon.png" alt="wudaijun">
+            wudaijun
+        </a>
+    </footer>
+</blockquote>
+
+        
+
 
         <div class="post-footer">
             
@@ -251,51 +260,55 @@ recon:bin_leak(<span class="keyword">N</span>)
 
 
             
-            <div class="post-share-wrap">
-                <div class="post-share" id="post-share">
-    <div class="tit">分享到：</div>
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2016/12/erlang-memory-debug/&title=《Erlang 内存问题诊断》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2016/12/erlang-memory-debug/&title=《Erlang 内存问题诊断》 — wudaijun's blog&source=" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2016/12/erlang-memory-debug/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Erlang 内存问题诊断》 — wudaijun's blog&url=http://wudaijun.com/2016/12/erlang-memory-debug/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2016/12/erlang-memory-debug/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
-                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
-                    <i class="icon icon-share-alt icon-lg"></i>
-                </a>
-            </div>
-            
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
 
         </div>
-    </div>   
+    </div>
 
     
 <nav class="post-nav flex-row flex-justify-between">
@@ -319,83 +332,139 @@ recon:bin_leak(<span class="keyword">N</span>)
 </nav>
 
 
-            
+
     
 
 
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'wudaijun'; // required: replace example with your forum shortname
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://wudaijun.com/2016/12/erlang-memory-debug/index.html',
+        sourceId: 'erlang-memory-debug',
+        productKey: '02b378614d264e81bca14ffaadf03446',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
 
 
 </article>
 
 
+
 </div>
-  </main>
-  <div class="mask" id="mask"></div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>wudaijun &copy; 2015 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
-<script>
-var BLOG_SHARE = {
-    title: "Erlang 内存问题诊断",
-    pic: "/favicon.png",
-    summary: document.getElementsByName('summary')[0].content,
-    url: "http://wudaijun.com/2016/12/erlang-memory-debug/"
-};
-</script>
-<div class="global-share" id="global-share">
-    <div class="tit">分享到：</div>
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2016/12/erlang-memory-debug/&title=《Erlang 内存问题诊断》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2016/12/erlang-memory-debug/&title=《Erlang 内存问题诊断》 — wudaijun's blog&source=" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2016/12/erlang-memory-debug/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Erlang 内存问题诊断》 — wudaijun's blog&url=http://wudaijun.com/2016/12/erlang-memory-debug/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2016/12/erlang-memory-debug/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script src="/js/main.min.js?v=1.1.4"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://wudaijun.com/2016/12/erlang-memory-debug/" alt="微信分享二维码">
+</div>
 
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
@@ -403,7 +472,7 @@ var BLOG_SHARE = {
 </div>
 <template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -415,13 +484,14 @@ var BLOG_SHARE = {
 </li>
 </template>
 
-<script src="/js/search.min.js?v=1.1.4"></script>
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 

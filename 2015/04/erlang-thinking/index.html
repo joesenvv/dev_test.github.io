@@ -1,46 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  
-  
-  <title>Erlang 随想 | wudaijun&#39;s blog | Coding is Funny</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="theme-color" content="#3F51B5">
-  
-  
-  <meta name="keywords" content="erlang">
-  <meta name="description" content="接触Erlang不到两个月时间，之前一直用C++开发。Erlang这门语言确实带给我更多的思考。">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>Erlang 随想 | wudaijun&#39;s blog | Coding is Funny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="erlang">
+    <meta name="description" content="接触Erlang不到两个月时间，之前一直用C++开发。Erlang这门语言确实带给我更多的思考。">
+<meta name="keywords" content="erlang">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Erlang 随想">
 <meta property="og:url" content="http://wudaijun.com/2015/04/erlang-thinking/index.html">
-<meta property="og:site_name" content="wudaijun's blog">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
 <meta property="og:description" content="接触Erlang不到两个月时间，之前一直用C++开发。Erlang这门语言确实带给我更多的思考。">
 <meta property="og:updated_time" content="2015-09-22T02:25:54.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Erlang 随想">
 <meta name="twitter:description" content="接触Erlang不到两个月时间，之前一直用C++开发。Erlang这门语言确实带给我更多的思考。">
-  
-    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
-  
-  <meta name="summary" content="&lt;p&gt;接触Erlang不到两个月时间，之前一直用C++开发。Erlang这门语言确实带给我更多的思考。&lt;/p&gt;">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+    
+        <link rel="alternate" type="application/atom+xml" title="wudaijun&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <aside id="menu" class="hide" >
+    <aside id="menu" class="hide" >
   <div class="inner flex-row-vertical">
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap">
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
       <div class="brand">
-        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/favicon.png">
+        </a>
         <hgroup class="introduce">
           <h5 class="nickname">wudaijun</h5>
           <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
@@ -93,20 +104,12 @@
             </li>
         
       </ul>
-
-      <footer class="footer">
-  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
-  <p>wudaijun&#39;s blog &copy; 2017</p>
-  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
-</footer>
-
     </div>
   </div>
 </aside>
-  <main id="main">
-    <header class="top-header" id="header">
+
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -124,7 +127,7 @@
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
@@ -132,14 +135,23 @@
 </header>
 <header class="content-header post-header">
 
-    <div class="container">
+    <div class="container fade-scale">
         <h1 class="title">Erlang 随想</h1>
-        
-        
+        <h5 class="subtitle">
+            
+                <time datetime="2015-04-21T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2015-04-22
+</time>
 
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
+
+            
+        </h5>
     </div>
 
     
+
 
 </header>
 
@@ -153,51 +165,66 @@
         </nav>
     </aside>
     
-<article id="post-erlang-thinking" 
-  class="post-article article-type-post" itemprop="blogPost">
+<article id="post-erlang-thinking"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
         <h1 class="post-card-title">Erlang 随想</h1>
         <div class="post-meta">
-            <time datetime="2015-04-21T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2015-04-22
-</time>
+            <time class="post-time" title="2015-04-22 00:00:00" datetime="2015-04-21T16:00:00.000Z"  itemprop="datePublished">2015-04-22</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
 
 
 
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
             <p>接触Erlang不到两个月时间，之前一直用C++开发。Erlang这门语言确实带给我更多的思考。</p>
 <a id="more"></a>
-<h3 id="并发模型">并发模型</h3><p>在C++游戏服务器中，我们想要实现一个logger，支持多线程调用。因此该日志系统必须是线程安全的(c++标准输出<code>std::cout</code>不是线程安全的)。对应的主要有两种实现策略：</p>
-<h4 id="1-共享资源">1.共享资源</h4><p>常规的思维是，为了实现这个功能，去定义一个接口(函数或类)，可提供给所有用户(线程)使用。但由于多个用户共享一个IO设备资源，因此需要在接口内部通过锁或其它同步方式来实现对资源的访问控制。而锁的设计与调试历来是并发程序中最耗费精力的一部分，并且由于代码在调用线程的上下文中执行，因此接口内部发生故障也会影响到调用线程，如死循环，内存越界等。即隔离性差(包括线程之间的隔离，和模块之间的解耦)。</p>
-<h4 id="2-消息传递">2.消息传递</h4><p>另一种方式是，将logger抽象为一个单独的执行体，它可以是一个单独的线程，由它来独占IO设备资源，其它线程想要使用IO设备，都需要通知(发送消息)logger线程，由logger线程来操作IO。这样就不会出现资源访问控制的问题。当然你需要自己实现一个线程安全的消息队列，但这毕竟是公共设施，是属于框架层的。<a href="https://github.com/wudaijun/NGServer" target="_blank" rel="external">NGServer</a>和<a href="https://github.com/cloudwu/skynet" target="_blank" rel="external">skynet</a>就是这么做的。消息传递方式的瓶颈在于消息拷贝。</p>
+<h3 id="并发模型"><a href="#并发模型" class="headerlink" title="并发模型"></a>并发模型</h3><p>在C++游戏服务器中，我们想要实现一个logger，支持多线程调用。因此该日志系统必须是线程安全的(c++标准输出<code>std::cout</code>不是线程安全的)。对应的主要有两种实现策略：</p>
+<h4 id="1-共享资源"><a href="#1-共享资源" class="headerlink" title="1.共享资源"></a>1.共享资源</h4><p>常规的思维是，为了实现这个功能，去定义一个接口(函数或类)，可提供给所有用户(线程)使用。但由于多个用户共享一个IO设备资源，因此需要在接口内部通过锁或其它同步方式来实现对资源的访问控制。而锁的设计与调试历来是并发程序中最耗费精力的一部分，并且由于代码在调用线程的上下文中执行，因此接口内部发生故障也会影响到调用线程，如死循环，内存越界等。即隔离性差(包括线程之间的隔离，和模块之间的解耦)。</p>
+<h4 id="2-消息传递"><a href="#2-消息传递" class="headerlink" title="2.消息传递"></a>2.消息传递</h4><p>另一种方式是，将logger抽象为一个单独的执行体，它可以是一个单独的线程，由它来独占IO设备资源，其它线程想要使用IO设备，都需要通知(发送消息)logger线程，由logger线程来操作IO。这样就不会出现资源访问控制的问题。当然你需要自己实现一个线程安全的消息队列，但这毕竟是公共设施，是属于框架层的。<a href="https://github.com/wudaijun/NGServer" target="_blank" rel="external">NGServer</a>和<a href="https://github.com/cloudwu/skynet" target="_blank" rel="external">skynet</a>就是这么做的。消息传递方式的瓶颈在于消息拷贝。</p>
 <p>再举一个例子，针对于排行榜系统，玩家需要不定期的读取排行榜，而其它玩家的数据变动也会影响到排行榜数据，如果使用共享内存的方式，你可能会使用读写锁，双缓冲，share_ptr copy on write，等多种方式来优化线程之间的同步问题。但仍然是如履薄冰，因为某一次死锁或出错，都可能造成整个游戏服务器宕机。事实上排行榜系统并不是很重要，我们宁愿它无法正常服务，也不应该影响到游戏的正常逻辑。</p>
 <p>通过将排行榜独立为一个服务，利用消息传递进行读取于写入，可以很大程度减轻服务之间相互影响的可能性，但往往游戏中的这一类系统太多，一是不能很好地控制和管理这些服务，二是服务之间的消息协议会越来越繁多和复杂，skynet设计者云风也<a href="http://blog.codingnow.com/2012/09/the_design_of_skynet.html" target="_blank" rel="external">提到了这一点</a>。</p>
 <hr>
-<h3 id="Erlang">Erlang</h3><p>终于主角出场了，Erlang是消息传递的忠实拥护者，并且构建了大量的基础设施来更好支持这一特性。我觉得Erlang的精髓在于<strong>面向进程</strong>和<strong>变量不可变语义</strong>。</p>
-<h4 id="1-面向进程">1.面向进程</h4><p>Erlang中的服务就是进程，Erlang中的进程比C++的线程更轻量，可以轻易数万数十万级别。Erlang进程相关的基础设施，包括消息队列，调度算法，消息编码都已经千锤百炼，拿来即用。加之工业级的OTP，消息分发和回调也完成了大半，并且更好地支持了容错和热更等机制。</p>
+<h3 id="Erlang"><a href="#Erlang" class="headerlink" title="Erlang"></a>Erlang</h3><p>终于主角出场了，Erlang是消息传递的忠实拥护者，并且构建了大量的基础设施来更好支持这一特性。我觉得Erlang的精髓在于<strong>面向进程</strong>和<strong>变量不可变语义</strong>。</p>
+<h4 id="1-面向进程"><a href="#1-面向进程" class="headerlink" title="1.面向进程"></a>1.面向进程</h4><p>Erlang中的服务就是进程，Erlang中的进程比C++的线程更轻量，可以轻易数万数十万级别。Erlang进程相关的基础设施，包括消息队列，调度算法，消息编码都已经千锤百炼，拿来即用。加之工业级的OTP，消息分发和回调也完成了大半，并且更好地支持了容错和热更等机制。</p>
 <p>Erlang中将逻辑抽象成进程，而不是对象，Erlang不支持面向对象。上面提到的日志和排行榜，都可以抽象成一个Erlang进程，让它来负责相关的处理。不需要锁，同时也增加了隔离性，<strong>Erlang进程封装了状态</strong>。</p>
-<h4 id="2-变量不可变">2.变量不可变</h4><p>Erlang是函数式编程语言，遵循变量不可变语义，一个变量自绑定值起，就一直代表某个值。这种语义刚开始虽然会带来一些不便，但是附带的好处却是巨大的：变量不可变进一步降低了Erlang进程之间相互影响的可能性。例如在NGServer中，你可以通过在线程之间传递指针共享信息，这样做虽通常是为了效率起见，而缺点在于线程之前的关联度增加，并且指针本身的管理和释放也并非易事。在Erlang中，所有的消息都执行拷贝，并且不存在指针引用，因此进程中拿到的消息都是独立的，不变的，这样大幅度降低了犯错的可能性。</p>
+<h4 id="2-变量不可变"><a href="#2-变量不可变" class="headerlink" title="2.变量不可变"></a>2.变量不可变</h4><p>Erlang是函数式编程语言，遵循变量不可变语义，一个变量自绑定值起，就一直代表某个值。这种语义刚开始虽然会带来一些不便，但是附带的好处却是巨大的：变量不可变进一步降低了Erlang进程之间相互影响的可能性。例如在NGServer中，你可以通过在线程之间传递指针共享信息，这样做虽通常是为了效率起见，而缺点在于线程之前的关联度增加，并且指针本身的管理和释放也并非易事。在Erlang中，所有的消息都执行拷贝，并且不存在指针引用，因此进程中拿到的消息都是独立的，不变的，这样大幅度降低了犯错的可能性。</p>
 
         </div>
-        
+
         <blockquote class="post-copyright">
-            <div class="content">
-               这里写留言或版权声明：<a href="/2015/04/erlang-thinking/" target="_blank" rel="external">http://wudaijun.com/2015/04/erlang-thinking/</a>
-            </div>
-            <footer>
-                <a href="http://wudaijun.com">
-                    <img src="/favicon.png" alt="wudaijun">
-                    wudaijun
-                </a>
-            </footer>
-        </blockquote>
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2015-09-22T02:25:54.000Z" itemprop="dateUpdated">2015-09-22 10:25:54</time>
+</span><br>
+
 
         
+        博客均为原创，转载请征得作者同意并注明出处，本文永久链接：<a href="/2015/04/erlang-thinking/" target="_blank" rel="external">http://wudaijun.com/2015/04/erlang-thinking/</a>
+        
+    </div>
+    <footer>
+        <a href="http://wudaijun.com">
+            <img src="/favicon.png" alt="wudaijun">
+            wudaijun
+        </a>
+    </footer>
+</blockquote>
+
+        
+
 
         <div class="post-footer">
             
@@ -205,51 +232,55 @@
 
 
             
-            <div class="post-share-wrap">
-                <div class="post-share" id="post-share">
-    <div class="tit">分享到：</div>
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2015/04/erlang-thinking/&title=《Erlang 随想》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2015/04/erlang-thinking/&title=《Erlang 随想》 — wudaijun's blog&source=接触Erlang不到两个月时间，之前一直用C++开发。Erlang这门语言确实带给我更多的思考。" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2015/04/erlang-thinking/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Erlang 随想》 — wudaijun's blog&url=http://wudaijun.com/2015/04/erlang-thinking/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2015/04/erlang-thinking/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
-                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
-                    <i class="icon icon-share-alt icon-lg"></i>
-                </a>
-            </div>
-            
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
 
         </div>
-    </div>   
+    </div>
 
     
 <nav class="post-nav flex-row flex-justify-between">
@@ -273,83 +304,139 @@
 </nav>
 
 
-            
+
     
 
 
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'wudaijun'; // required: replace example with your forum shortname
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://wudaijun.com/2015/04/erlang-thinking/index.html',
+        sourceId: 'erlang-thinking',
+        productKey: '02b378614d264e81bca14ffaadf03446',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
 
 
 </article>
 
 
+
 </div>
-  </main>
-  <div class="mask" id="mask"></div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>wudaijun &copy; 2015 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
-<script>
-var BLOG_SHARE = {
-    title: "Erlang 随想",
-    pic: "/favicon.png",
-    summary: document.getElementsByName('summary')[0].content,
-    url: "http://wudaijun.com/2015/04/erlang-thinking/"
-};
-</script>
-<div class="global-share" id="global-share">
-    <div class="tit">分享到：</div>
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2015/04/erlang-thinking/&title=《Erlang 随想》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2015/04/erlang-thinking/&title=《Erlang 随想》 — wudaijun's blog&source=接触Erlang不到两个月时间，之前一直用C++开发。Erlang这门语言确实带给我更多的思考。" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2015/04/erlang-thinking/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Erlang 随想》 — wudaijun's blog&url=http://wudaijun.com/2015/04/erlang-thinking/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2015/04/erlang-thinking/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script src="/js/main.min.js?v=1.1.4"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://wudaijun.com/2015/04/erlang-thinking/" alt="微信分享二维码">
+</div>
 
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
@@ -357,7 +444,7 @@ var BLOG_SHARE = {
 </div>
 <template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -369,13 +456,14 @@ var BLOG_SHARE = {
 </li>
 </template>
 
-<script src="/js/search.min.js?v=1.1.4"></script>
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 

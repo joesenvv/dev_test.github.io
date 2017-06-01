@@ -1,67 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  
-  
-  <title>Erlang 状态监控 | wudaijun&#39;s blog | Coding is Funny</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="theme-color" content="#3F51B5">
-  
-  
-  <meta name="keywords" content="erlang">
-  <meta name="description" content="一. 接入远程节点1. JCLerl -sname n2 -setcookie 123
-(n2@T4F-MBP-11)1&amp;gt;        //^G
-User switch command
- --&amp;gt; r &apos;n1@T4F-MBP-11&apos;
- --&amp;gt; c
-Eshell V8.1  (abort with ^G)
-(n1@T4F-MBP-11)1&amp;gt;
-2. remsherl -setc">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>Erlang 状态监控 | wudaijun&#39;s blog | Coding is Funny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="erlang">
+    <meta name="description" content="一. 接入远程节点1. JCLerl -sname n2 -setcookie 123 (n2@T4F-MBP-11)1&amp;gt;        //^G User switch command  --&amp;gt; r &amp;apos;n1@T4F-MBP-11&amp;apos;  --&amp;gt; c Eshell V8.1  (abort with ^G) (n1@T4F-MBP-11)1&amp;gt; 2. rems">
+<meta name="keywords" content="erlang">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Erlang 状态监控">
 <meta property="og:url" content="http://wudaijun.com/2016/05/erlang-debug-online/index.html">
-<meta property="og:site_name" content="wudaijun's blog">
-<meta property="og:description" content="一. 接入远程节点1. JCLerl -sname n2 -setcookie 123
-(n2@T4F-MBP-11)1&amp;gt;        //^G
-User switch command
- --&amp;gt; r &apos;n1@T4F-MBP-11&apos;
- --&amp;gt; c
-Eshell V8.1  (abort with ^G)
-(n1@T4F-MBP-11)1&amp;gt;
-2. remsherl -setc">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
+<meta property="og:description" content="一. 接入远程节点1. JCLerl -sname n2 -setcookie 123 (n2@T4F-MBP-11)1&amp;gt;        //^G User switch command  --&amp;gt; r &amp;apos;n1@T4F-MBP-11&amp;apos;  --&amp;gt; c Eshell V8.1  (abort with ^G) (n1@T4F-MBP-11)1&amp;gt; 2. rems">
 <meta property="og:updated_time" content="2017-01-12T11:50:38.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Erlang 状态监控">
-<meta name="twitter:description" content="一. 接入远程节点1. JCLerl -sname n2 -setcookie 123
-(n2@T4F-MBP-11)1&amp;gt;        //^G
-User switch command
- --&amp;gt; r &apos;n1@T4F-MBP-11&apos;
- --&amp;gt; c
-Eshell V8.1  (abort with ^G)
-(n1@T4F-MBP-11)1&amp;gt;
-2. remsherl -setc">
-  
-    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
-  
-  <meta name="summary" content="null">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+<meta name="twitter:description" content="一. 接入远程节点1. JCLerl -sname n2 -setcookie 123 (n2@T4F-MBP-11)1&amp;gt;        //^G User switch command  --&amp;gt; r &amp;apos;n1@T4F-MBP-11&amp;apos;  --&amp;gt; c Eshell V8.1  (abort with ^G) (n1@T4F-MBP-11)1&amp;gt; 2. rems">
+    
+        <link rel="alternate" type="application/atom+xml" title="wudaijun&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <aside id="menu" class="hide" >
+    <aside id="menu" class="hide" >
   <div class="inner flex-row-vertical">
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap">
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
       <div class="brand">
-        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/favicon.png">
+        </a>
         <hgroup class="introduce">
           <h5 class="nickname">wudaijun</h5>
           <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
@@ -114,20 +104,12 @@ Eshell V8.1  (abort with ^G)
             </li>
         
       </ul>
-
-      <footer class="footer">
-  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
-  <p>wudaijun&#39;s blog &copy; 2017</p>
-  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
-</footer>
-
     </div>
   </div>
 </aside>
-  <main id="main">
-    <header class="top-header" id="header">
+
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -145,7 +127,7 @@ Eshell V8.1  (abort with ^G)
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
@@ -153,14 +135,23 @@ Eshell V8.1  (abort with ^G)
 </header>
 <header class="content-header post-header">
 
-    <div class="container">
+    <div class="container fade-scale">
         <h1 class="title">Erlang 状态监控</h1>
-        
-        
+        <h5 class="subtitle">
+            
+                <time datetime="2016-05-25T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2016-05-26
+</time>
 
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
+
+            
+        </h5>
     </div>
 
     
+
 
 </header>
 
@@ -170,97 +161,103 @@ Eshell V8.1  (abort with ^G)
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#一-_接入远程节点"><span class="post-toc-text">一. 接入远程节点</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-_JCL"><span class="post-toc-text">1. JCL</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-_remsh"><span class="post-toc-text">2. remsh</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-_erl_call"><span class="post-toc-text">3. erl_call</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-_run_erl"><span class="post-toc-text">4. run_erl</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-_ssh"><span class="post-toc-text">5. ssh</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#二-_etop"><span class="post-toc-text">二. etop</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#三-_erlang_API"><span class="post-toc-text">三. erlang API</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-_内存"><span class="post-toc-text">1. 内存</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-_CPU"><span class="post-toc-text">2. CPU</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-_进程"><span class="post-toc-text">3. 进程</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#四-_recon"><span class="post-toc-text">四. recon</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#五-_更多资料"><span class="post-toc-text">五. 更多资料</span></a></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#一-接入远程节点"><span class="post-toc-text">一. 接入远程节点</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-JCL"><span class="post-toc-text">1. JCL</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-remsh"><span class="post-toc-text">2. remsh</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-erl-call"><span class="post-toc-text">3. erl_call</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-run-erl"><span class="post-toc-text">4. run_erl</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5-ssh"><span class="post-toc-text">5. ssh</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#二-etop"><span class="post-toc-text">二. etop</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#三-erlang-API"><span class="post-toc-text">三. erlang API</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-内存"><span class="post-toc-text">1. 内存</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-CPU"><span class="post-toc-text">2. CPU</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-进程"><span class="post-toc-text">3. 进程</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#四-recon"><span class="post-toc-text">四. recon</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#五-更多资料"><span class="post-toc-text">五. 更多资料</span></a></li></ol>
         </nav>
     </aside>
     
-<article id="post-erlang-debug-online" 
-  class="post-article article-type-post" itemprop="blogPost">
+<article id="post-erlang-debug-online"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
         <h1 class="post-card-title">Erlang 状态监控</h1>
         <div class="post-meta">
-            <time datetime="2016-05-25T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2016-05-26
-</time>
+            <time class="post-time" title="2016-05-26 00:00:00" datetime="2016-05-25T16:00:00.000Z"  itemprop="datePublished">2016-05-26</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
 
 
 
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
-            <h2 id="一-_接入远程节点">一. 接入远程节点</h2><h3 id="1-_JCL">1. JCL</h3><pre><code>erl -sname n2 -setcookie <span class="number">123</span>
-(n2@T4F-MBP-<span class="number">11</span>)<span class="number">1</span>&gt;       <span class="comment"> //^G</span>
-User <span class="keyword">switch</span> <span class="command"><span class="keyword">command</span></span>
- <span class="comment">--&gt; r 'n1@T4F-MBP-11'</span>
- <span class="comment">--&gt; c</span>
-Eshell V8<span class="number">.1</span>  (abort <span class="operator">with</span> ^G)
-(n1@T4F-MBP-<span class="number">11</span>)<span class="number">1</span>&gt;
-</code></pre><h3 id="2-_remsh">2. remsh</h3><pre><code>erl -setcookie abc -name node_2@<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> -remsh node_1@<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>
+            <h2 id="一-接入远程节点"><a href="#一-接入远程节点" class="headerlink" title="一. 接入远程节点"></a>一. 接入远程节点</h2><h3 id="1-JCL"><a href="#1-JCL" class="headerlink" title="1. JCL"></a>1. JCL</h3><pre><code>erl -sname n2 -setcookie 123
+(n2@T4F-MBP-11)1&gt;        //^G
+User switch command
+ --&gt; r &apos;n1@T4F-MBP-11&apos;
+ --&gt; c
+Eshell V8.1  (abort with ^G)
+(n1@T4F-MBP-11)1&gt;
+</code></pre><h3 id="2-remsh"><a href="#2-remsh" class="headerlink" title="2. remsh"></a>2. remsh</h3><pre><code>erl -setcookie abc -name node_2@127.0.0.1 -remsh node_1@127.0.0.1
 </code></pre><p>和第一种JCL方式是同一个原理，这也是rebar2 remote_console的实现方式。</p>
-<h3 id="3-_erl_call">3. <a href="http://erlang.org/doc/man/erl_call.html" target="_blank" rel="external">erl_call</a></h3><pre><code>erl_call <span class="operator">-s</span> <span class="operator">-a</span> <span class="string">'erlang memory '</span> -name node_1@<span class="number">127.0</span>.<span class="number">0.1</span> -c abc
-</code></pre><h3 id="4-_run_erl">4. <a href="http://erlang.org/doc/man/run_erl.html" target="_blank" rel="external">run_erl</a></h3><pre><code>run_erl -daemon tmp/ <span class="command">log</span>/ <span class="string">"exec erl -eval 't:start_link().'"</span>
+<h3 id="3-erl-call"><a href="#3-erl-call" class="headerlink" title="3. erl_call"></a>3. <a href="http://erlang.org/doc/man/erl_call.html" target="_blank" rel="external">erl_call</a></h3><pre><code>erl_call -s -a &apos;erlang memory &apos; -name node_1@127.0.0.1 -c abc
+</code></pre><h3 id="4-run-erl"><a href="#4-run-erl" class="headerlink" title="4. run_erl"></a>4. <a href="http://erlang.org/doc/man/run_erl.html" target="_blank" rel="external">run_erl</a></h3><pre><code>run_erl -daemon tmp/ log/ &quot;exec erl -eval &apos;t:start_link().&apos;&quot;
 </code></pre><p><code>run_erl</code>是随OTP发布的命令，它通过管道来与Erlang节点交互，仅类Unix系统下可用。上面的命令启动Erlang节点，将tmp/目录设为节点管道目录，之后<code>run_erl</code>会在tmp下创建<code>erlang.pipe.1.r erlang.pipe.1.w</code>两个管道文件，外部系统可通过该管道文件向节点写入/读取数据。可用OTP提供的<code>to_erl</code>命令通过管道连接到节点:</p>
-<pre><code><span class="function_or_atom">to_erl</span> <span class="function_or_atom">tmp</span>/
-<span class="variable">Attaching</span> <span class="function_or_atom">to</span> <span class="function_or_atom">tmp</span>/<span class="function_or_atom">erlang</span>.<span class="function_or_atom">pipe</span>.<span class="number">1</span> (^<span class="variable">D</span> <span class="function_or_atom">to</span> <span class="function_or_atom">exit</span>)
-<span class="prompt">1&gt; </span>
+<pre><code>to_erl tmp/
+Attaching to tmp/erlang.pipe.1 (^D to exit)
+1&gt; 
 </code></pre><p>需要注意的当前你是直接通过Unix管道和节点交互的，并不存在中间代理节点(和remsh方式不同)，因此在这种情况下使用JCL <code>^G+q</code>会终止目标节点。如果要退出attach模式而不影响目标节点，使用<code>^D</code>。</p>
 <p><code>run_erl</code>另一个作用是输出重定向，上例中将所有输出(包括虚拟机和nif输出)重定向到log/erlang.log.*，这对多日志渠道(lager,io:format,c,lua等)的混合调试是有所帮助的。</p>
 <p>rebar2便通过<code>run_erl</code>实现节点启动，并使用<code>to_erl</code>实现<code>attach</code>命令。</p>
-<h3 id="5-_ssh">5. ssh</h3><pre><code>---------- <span class="variable">Server</span>:  -----------
-$ <span class="function_or_atom">mkdir</span> /<span class="function_or_atom">tmp</span>/<span class="function_or_atom">ssh</span>
-$ <span class="function_or_atom">ssh</span>-<span class="function_or_atom">keygen</span> -<span class="function_or_atom">t</span> <span class="function_or_atom">rsa</span> -<span class="function_or_atom">f</span> /<span class="function_or_atom">tmp</span>/<span class="function_or_atom">ssh</span>/<span class="function_or_atom">ssh_host_rsa_key</span>
-$ <span class="function_or_atom">ssh</span>-<span class="function_or_atom">keygen</span> -<span class="function_or_atom">t</span> <span class="function_or_atom">rsa1</span> -<span class="function_or_atom">f</span> /<span class="function_or_atom">tmp</span>/<span class="function_or_atom">ssh</span>/<span class="function_or_atom">ssh_host_key</span>
-$ <span class="function_or_atom">ssh</span>-<span class="function_or_atom">keygen</span> -<span class="function_or_atom">t</span> <span class="function_or_atom">dsa</span> -<span class="function_or_atom">f</span> /<span class="function_or_atom">tmp</span>/<span class="function_or_atom">ssh</span>/<span class="function_or_atom">ssh_host_dsa_key</span>
-$ <span class="function_or_atom">erl</span>
-<span class="prompt">1&gt; </span><span class="function_or_atom">application:ensure_all_started</span>(<span class="function_or_atom">ssh</span>).
-{<span class="ok">ok</span>,[<span class="function_or_atom">crypto</span>,<span class="function_or_atom">asn1</span>,<span class="function_or_atom">public_key</span>,<span class="function_or_atom">ssh</span>]}
-<span class="prompt">2&gt; </span><span class="function_or_atom">ssh:daemon</span>(<span class="number">8989</span>, [{<span class="function_or_atom">system_dir</span>, <span class="string">"/tmp/ssh"</span>},
-<span class="prompt">2&gt; </span>{<span class="function_or_atom">user_dir</span>, <span class="string">"/home/ferd/.ssh"</span>}]).
-{<span class="ok">ok</span>,&lt;<span class="number">0.52</span>.<span class="number">0</span>&gt;}
+<h3 id="5-ssh"><a href="#5-ssh" class="headerlink" title="5. ssh"></a>5. ssh</h3><pre><code>---------- Server:  -----------
+$ mkdir /tmp/ssh
+$ ssh-keygen -t rsa -f /tmp/ssh/ssh_host_rsa_key
+$ ssh-keygen -t rsa1 -f /tmp/ssh/ssh_host_key
+$ ssh-keygen -t dsa -f /tmp/ssh/ssh_host_dsa_key
+$ erl
+1&gt; application:ensure_all_started(ssh).
+{ok,[crypto,asn1,public_key,ssh]}
+2&gt; ssh:daemon(8989, [{system_dir, &quot;/tmp/ssh&quot;},
+2&gt; {user_dir, &quot;/home/ferd/.ssh&quot;}]).
+{ok,&lt;0.52.0&gt;}
 
----------- <span class="variable">Client</span> -------------
-$ <span class="function_or_atom">ssh</span> -<span class="function_or_atom">p</span> <span class="number">8989</span> <span class="function_or_atom">ferd</span>@<span class="number">127.0</span>.<span class="number">0.1</span>
-<span class="variable">Eshell</span> <span class="variable">Vx</span>.<span class="function_or_atom">x</span>.<span class="function_or_atom">x</span> (<span class="function_or_atom">abort</span> <span class="function_or_atom">with</span> ^<span class="variable">G</span>)
-<span class="number">1</span>&gt;
-</code></pre><h2 id="二-_etop">二. etop</h2><p>etop是Erlang提供的类似于top命令，它的输出格式和功能都与top类似，提供了必要的节点信息和进程信息。常用用法：</p>
-<pre><code>% 查看占用CPU最高的进程 每<span class="number">10</span>秒输出一次
-&gt; spawn(fun() -&gt; etop:<span class="built_in">start</span>([{interval,<span class="number">10</span>}, {<span class="built_in">sort</span>, runtime}]) <span class="keyword">end</span>). 
-% 查看占用内存最高的进程 每<span class="number">10</span>秒输出一次 输出进程数量为<span class="number">20</span>
-&gt; spawn(fun() -&gt; etop:<span class="built_in">start</span>([{interval,<span class="number">10</span>}, {<span class="built_in">sort</span>, memory}, {<span class="keyword">lines</span>,<span class="number">20</span>}]) <span class="keyword">end</span>). 
+---------- Client -------------
+$ ssh -p 8989 ferd@127.0.0.1
+Eshell Vx.x.x (abort with ^G)
+1&gt;
+</code></pre><h2 id="二-etop"><a href="#二-etop" class="headerlink" title="二. etop"></a>二. etop</h2><p>etop是Erlang提供的类似于top命令，它的输出格式和功能都与top类似，提供了必要的节点信息和进程信息。常用用法：</p>
+<pre><code>% 查看占用CPU最高的进程 每10秒输出一次
+&gt; spawn(fun() -&gt; etop:start([{interval,10}, {sort, runtime}]) end). 
+% 查看占用内存最高的进程 每10秒输出一次 输出进程数量为20
+&gt; spawn(fun() -&gt; etop:start([{interval,10}, {sort, memory}, {lines,20}]) end). 
 % 连接远程节点方式一
-&gt; erl -name abcd@<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> -hidden -s etop -output <span class="keyword">text</span> -<span class="built_in">sort</span> memory -<span class="keyword">lines</span> <span class="number">20</span> -node <span class="string">'server_node@127.0.0.1'</span> -setcookie galaxy_server
+&gt; erl -name abcd@127.0.0.1 -hidden -s etop -output text -sort memory -lines 20 -node &apos;server_node@127.0.0.1&apos; -setcookie galaxy_server
 % 连接远程节点方式二
-&gt; erl -name abc@<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> -hidden  -setcookie galaxy_server
-&gt; etop:<span class="built_in">start</span>([{node,<span class="string">'server_node@127.0.0.1'</span>}, {output, <span class="keyword">text</span>}, {<span class="keyword">lines</span>, <span class="number">20</span>},  {<span class="built_in">sort</span>, memory}]).
+&gt; erl -name abc@127.0.0.1 -hidden  -setcookie galaxy_server
+&gt; etop:start([{node,&apos;server_node@127.0.0.1&apos;}, {output, text}, {lines, 20},  {sort, memory}]).
 % 连接远程节点方式三
-&gt; erl -name abc@<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> -setcookie galaxy_server
-&gt;  rpc:call(<span class="string">'server_node@127.0.0.1'</span>, etop, <span class="built_in">start</span>, [[{output, <span class="keyword">text</span>}, {<span class="keyword">lines</span>, <span class="number">20</span>},  {<span class="built_in">sort</span>, memory}]]).
+&gt; erl -name abc@127.0.0.1 -setcookie galaxy_server
+&gt;  rpc:call(&apos;server_node@127.0.0.1&apos;, etop, start, [[{output, text}, {lines, 20},  {sort, memory}]]).
 </code></pre><p>输出样例(截断为前5条)：</p>
 <pre><code>========================================================================================
- 'def@127.0.0.1'                                                           09:38:01
- <span class="operator"><span class="keyword">Load</span>:  cpu         <span class="number">0</span>               <span class="keyword">Memory</span>:  total       <span class="number">14212</span>    <span class="built_in">binary</span>         <span class="number">40</span>
-        procs      <span class="number">35</span>                        processes    <span class="number">4398</span>    code         <span class="number">4666</span>
-        runq        <span class="number">0</span>                        atom          <span class="number">198</span>    ets           <span class="number">304</span>
+ &apos;def@127.0.0.1&apos;                                                           09:38:01
+ Load:  cpu         0               Memory:  total       14212    binary         40
+        procs      35                        processes    4398    code         4666
+        runq        0                        atom          198    ets           304
 
-Pid            <span class="keyword">Name</span> <span class="keyword">or</span> <span class="keyword">Initial</span> Func    <span class="keyword">Time</span>    Reds  <span class="keyword">Memory</span>    MsgQ <span class="keyword">Current</span> <span class="keyword">Function</span>
-<span class="comment">----------------------------------------------------------------------------------------</span>
-&lt;<span class="number">6858.7</span><span class="number">.0</span>&gt;     application_controll     <span class="string">'-'</span>    <span class="number">7830</span>  <span class="number">426552</span>       <span class="number">0</span> gen_server:<span class="keyword">loop</span>/<span class="number">6</span>
-&lt;<span class="number">6858.12</span><span class="number">.0</span>&gt;    code_server              <span class="string">'-'</span>  <span class="number">125106</span>  <span class="number">284656</span>       <span class="number">0</span> code_server:<span class="keyword">loop</span>/<span class="number">1</span>
-&lt;<span class="number">6858.33</span><span class="number">.0</span>&gt;    erlang:<span class="keyword">apply</span>/<span class="number">2</span>           <span class="string">'-'</span>   <span class="number">10300</span>  <span class="number">230552</span>       <span class="number">0</span> shell:get_command1/<span class="number">5</span>
-&lt;<span class="number">6858.3</span><span class="number">.0</span>&gt;     erl_prim_loader          <span class="string">'-'</span>  <span class="number">211750</span>  <span class="number">122040</span>       <span class="number">0</span> erl_prim_loader:<span class="keyword">loop</span>
-&lt;<span class="number">6858.0</span><span class="number">.0</span>&gt;     init                     <span class="string">'-'</span>    <span class="number">3775</span>   <span class="number">18600</span>       <span class="number">0</span> init:<span class="keyword">loop</span>/<span class="number">1</span>
-========================================================================================</span>
+Pid            Name or Initial Func    Time    Reds  Memory    MsgQ Current Function
+----------------------------------------------------------------------------------------
+&lt;6858.7.0&gt;     application_controll     &apos;-&apos;    7830  426552       0 gen_server:loop/6
+&lt;6858.12.0&gt;    code_server              &apos;-&apos;  125106  284656       0 code_server:loop/1
+&lt;6858.33.0&gt;    erlang:apply/2           &apos;-&apos;   10300  230552       0 shell:get_command1/5
+&lt;6858.3.0&gt;     erl_prim_loader          &apos;-&apos;  211750  122040       0 erl_prim_loader:loop
+&lt;6858.0.0&gt;     init                     &apos;-&apos;    3775   18600       0 init:loop/1
+========================================================================================
 </code></pre><p>官方文档：<a href="http://erlang.org/doc/apps/observer/etop_ug.html" target="_blank" rel="external">http://erlang.org/doc/apps/observer/etop_ug.html</a></p>
-<h2 id="三-_erlang_API">三. erlang API</h2><h3 id="1-_内存">1. 内存</h3><p>通过<code>erlang:memory()</code>可以查看整个Erlang虚拟机的内存使用情况。</p>
-<h3 id="2-_CPU">2. CPU</h3><p>Erlang的CPU使用情况是比较难衡量的，由于Erlang虚拟机内部复杂的调度机制，通过<code>top/htop</code>得到的系统进程级的CPU占用率参考性是有限的，即使一个空闲的Erlang虚拟机，调度线程的忙等也会占用一定的CPU。</p>
+<h2 id="三-erlang-API"><a href="#三-erlang-API" class="headerlink" title="三. erlang API"></a>三. erlang API</h2><h3 id="1-内存"><a href="#1-内存" class="headerlink" title="1. 内存"></a>1. 内存</h3><p>通过<code>erlang:memory()</code>可以查看整个Erlang虚拟机的内存使用情况。</p>
+<h3 id="2-CPU"><a href="#2-CPU" class="headerlink" title="2. CPU"></a>2. CPU</h3><p>Erlang的CPU使用情况是比较难衡量的，由于Erlang虚拟机内部复杂的调度机制，通过<code>top/htop</code>得到的系统进程级的CPU占用率参考性是有限的，即使一个空闲的Erlang虚拟机，调度线程的忙等也会占用一定的CPU。</p>
 <p>因此Erlang内部提供了一些更有用的测量参考，通过<code>erlang:statistics(scheduler_wall_time)</code>可以获得调度器钟表时间：</p>
-<figure class="highlight erlang-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="prompt">1&gt; </span><span class="function_or_atom">erlang:system_flag</span>(<span class="function_or_atom">scheduler_wall_time</span>, <span class="function_or_atom">true</span>).</span><br><span class="line"><span class="function_or_atom">false</span></span><br><span class="line"><span class="prompt">2&gt; </span><span class="function_or_atom">erlang:statistics</span>(<span class="function_or_atom">scheduler_wall_time</span>).</span><br><span class="line">[&#123;&#123;<span class="number">1</span>,<span class="number">166040393363</span>,<span class="number">9269301338549</span>&#125;,</span><br><span class="line"> &#123;<span class="number">2</span>,<span class="number">40587963468</span>,<span class="number">9269301007667</span>&#125;,</span><br><span class="line"> &#123;<span class="number">3</span>,<span class="number">725727980</span>,<span class="number">9269301004304</span>&#125;,</span><br><span class="line"> <span class="number">4</span>,<span class="number">299688</span>,<span class="number">9269301361357</span>&#125;]</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">1&gt; erlang:system_flag(scheduler_wall_time, true).</div><div class="line">false</div><div class="line">2&gt; erlang:statistics(scheduler_wall_time).</div><div class="line">[&#123;&#123;1,166040393363,9269301338549&#125;,</div><div class="line"> &#123;2,40587963468,9269301007667&#125;,</div><div class="line"> &#123;3,725727980,9269301004304&#125;,</div><div class="line"> 4,299688,9269301361357&#125;]</div></pre></td></tr></table></figure>
 <p>该函数返回<code>[{调度器ID, BusyTime, TotalTime}]</code>，BusyTime是调度器执行进程代码，BIF，NIF，GC等的时间，TotalTime是<code>cheduler_wall_time</code>打开统计以来的总调度器钟表时间，通常，直观地看BusyTime和TotalTIme的数值没有什么参考意义，有意义的是BusyTime/TotalTIme，该值越高，说明调度器利用率越高：</p>
-<figure class="highlight erlang-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="prompt">1&gt; </span><span class="variable">Ts0</span> = <span class="function_or_atom">lists:sort</span>(<span class="function_or_atom">erlang:statistics</span>(<span class="function_or_atom">scheduler_wall_time</span>)), <span class="ok">ok</span>.</span><br><span class="line"><span class="ok">ok</span>	</span><br><span class="line"><span class="prompt">2&gt; </span><span class="variable">Ts1</span> = <span class="function_or_atom">lists:sort</span>(<span class="function_or_atom">erlang:statistics</span>(<span class="function_or_atom">scheduler_wall_time</span>)), <span class="ok">ok</span>.</span><br><span class="line"><span class="ok">ok</span>	</span><br><span class="line"><span class="prompt">3&gt; </span><span class="function_or_atom">lists:map</span>(<span class="function_or_atom">fun</span>(&#123;&#123;<span class="variable">I</span>, <span class="variable">A0</span>, <span class="variable">T0</span>&#125;, &#123;<span class="variable">I</span>, <span class="variable">A1</span>, <span class="variable">T1</span>&#125;&#125;) <span class="arrow">-&gt;</span> </span><br><span class="line">	&#123;<span class="variable">I</span>, (<span class="variable">A1</span> - <span class="variable">A0</span>)/(<span class="variable">T1</span> - <span class="variable">T0</span>)&#125; <span class="function_or_atom">end</span>, <span class="function_or_atom">lists:zip</span>(<span class="variable">Ts0</span>,<span class="variable">Ts1</span>)).</span><br><span class="line">[&#123;<span class="number">1</span>,<span class="number">0.01723977154806915</span>&#125;,	</span><br><span class="line"> &#123;<span class="number">2</span>,<span class="number">8.596423007719012e-5</span>&#125;,	</span><br><span class="line"> &#123;<span class="number">3</span>,<span class="number">2.8416950342830393e-6</span>&#125;,	</span><br><span class="line"> &#123;<span class="number">4</span>,<span class="number">1.3440177144802423e-6</span>&#125;</span><br><span class="line">&#125;]</span><br></pre></td></tr></table></figure>
-<h3 id="3-_进程">3. 进程</h3><p>通过<code>length(processes())</code>/<code>length(ports())</code>统计虚拟机当前进程和端口数量。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">1&gt; Ts0 = lists:sort(erlang:statistics(scheduler_wall_time)), ok.</div><div class="line">ok	</div><div class="line">2&gt; Ts1 = lists:sort(erlang:statistics(scheduler_wall_time)), ok.</div><div class="line">ok	</div><div class="line">3&gt; lists:map(fun(&#123;&#123;I, A0, T0&#125;, &#123;I, A1, T1&#125;&#125;) -&gt; </div><div class="line">	&#123;I, (A1 - A0)/(T1 - T0)&#125; end, lists:zip(Ts0,Ts1)).</div><div class="line">[&#123;1,0.01723977154806915&#125;,	</div><div class="line"> &#123;2,8.596423007719012e-5&#125;,	</div><div class="line"> &#123;3,2.8416950342830393e-6&#125;,	</div><div class="line"> &#123;4,1.3440177144802423e-6&#125;</div><div class="line">&#125;]</div></pre></td></tr></table></figure>
+<h3 id="3-进程"><a href="#3-进程" class="headerlink" title="3. 进程"></a>3. 进程</h3><p>通过<code>length(processes())</code>/<code>length(ports())</code>统计虚拟机当前进程和端口数量。</p>
 <p>关于指定进程的详细信息，都可以通过<code>erlang:process_info(Pid, Key)</code>获得，其中比较有用的Key有：</p>
 <ul>
 <li>dictionary:             进程字典中所有的数据项</li>
@@ -289,42 +286,51 @@ Pid            <span class="keyword">Name</span> <span class="keyword">or</span>
 <li>sys:suspend/resume:            挂起/恢复指定进程</li>
 <li>sys:terminate(Pid, Reason):        向指定进程发消息，终止该进程</li>
 </ul>
-<h2 id="四-_recon">四. recon</h2><p><a href="https://github.com/ferd/recon" target="_blank" rel="external">recon</a>是<a href="http://learnyousomeerlang.com/" target="_blank" rel="external">learn you some erlang</a>的作者写的一个非常强大好用的库，将erlang散布在各个模块的调试函数整合起来，以更易用和可读的方式提供给用户，包含了信息统计，健康状态分析，动态追踪调试等一整套解决方案。并且本身只是一系列的API，放入rebar deps即可attach上节点使用，强烈推荐。</p>
+<h2 id="四-recon"><a href="#四-recon" class="headerlink" title="四. recon"></a>四. recon</h2><p><a href="https://github.com/ferd/recon" target="_blank" rel="external">recon</a>是<a href="http://learnyousomeerlang.com/" target="_blank" rel="external">learn you some erlang</a>的作者写的一个非常强大好用的库，将erlang散布在各个模块的调试函数整合起来，以更易用和可读的方式提供给用户，包含了信息统计，健康状态分析，动态追踪调试等一整套解决方案。并且本身只是一系列的API，放入rebar deps即可attach上节点使用，强烈推荐。</p>
 <p>下面是我常用的几个函数:</p>
-<pre><code><span class="comment">% 找出当前节点Attr属性(如message_queue_len)最大的N个进程</span>
-recon:proc_count(<span class="variable">Attr</span>, <span class="variable">N</span>).
-<span class="comment">% 对节点进行GC，并返回进程GC前后持有的binary差异最大的N个进程</span>
-recon:bin_leak(<span class="variable">N</span>).
-<span class="comment">% process_info的安全增强版本</span>
-recon:info/<span class="number">1</span>-<span class="number">2</span>-<span class="number">3</span>-<span class="number">4</span>
-<span class="comment">% 返回M毫秒内的调度器占用</span>
-recon:scheduler_usage(<span class="variable">M</span>)
-<span class="comment">% 强大的动态追踪函数，可用于动态挂载钩子。</span>
-<span class="comment">% 1. 可挂载模块/函数调用(甚至可对参数匹配/过滤)</span>
-<span class="comment">% 2. 可对调用进程筛选(指定Pid，限制新建进程等)</span>
-<span class="comment">% 3. 可限制打印的追踪数量/速率</span>
-<span class="comment">% 4. 其它功能，如输出重定向，追踪调用结果等</span>
-recon_trace:calls/<span class="number">2</span>-<span class="number">3</span>
+<pre><code>% 找出当前节点Attr属性(如message_queue_len)最大的N个进程
+recon:proc_count(Attr, N).
+% 对节点进行GC，并返回进程GC前后持有的binary差异最大的N个进程
+recon:bin_leak(N).
+% process_info的安全增强版本
+recon:info/1-2-3-4
+% 返回M毫秒内的调度器占用
+recon:scheduler_usage(M)
+% 强大的动态追踪函数，可用于动态挂载钩子。
+% 1. 可挂载模块/函数调用(甚至可对参数匹配/过滤)
+% 2. 可对调用进程筛选(指定Pid，限制新建进程等)
+% 3. 可限制打印的追踪数量/速率
+% 4. 其它功能，如输出重定向，追踪调用结果等
+recon_trace:calls/2-3
 </code></pre><p>详细用法参见：<a href="http://ferd.github.io/recon/" target="_blank" rel="external">http://ferd.github.io/recon/</a></p>
-<h2 id="五-_更多资料">五. 更多资料</h2><ul>
+<h2 id="五-更多资料"><a href="#五-更多资料" class="headerlink" title="五. 更多资料"></a>五. 更多资料</h2><ul>
 <li>Erlang实践红宝书：<a href="http://pan.baidu.com/s/1gfCZBKf" target="_blank" rel="external">Erlang In Anger</a></li>
 </ul>
 
         </div>
-        
+
         <blockquote class="post-copyright">
-            <div class="content">
-               这里写留言或版权声明：<a href="/2016/05/erlang-debug-online/" target="_blank" rel="external">http://wudaijun.com/2016/05/erlang-debug-online/</a>
-            </div>
-            <footer>
-                <a href="http://wudaijun.com">
-                    <img src="/favicon.png" alt="wudaijun">
-                    wudaijun
-                </a>
-            </footer>
-        </blockquote>
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2017-01-12T11:50:38.000Z" itemprop="dateUpdated">2017-01-12 19:50:38</time>
+</span><br>
+
 
         
+        博客均为原创，转载请征得作者同意并注明出处，本文永久链接：<a href="/2016/05/erlang-debug-online/" target="_blank" rel="external">http://wudaijun.com/2016/05/erlang-debug-online/</a>
+        
+    </div>
+    <footer>
+        <a href="http://wudaijun.com">
+            <img src="/favicon.png" alt="wudaijun">
+            wudaijun
+        </a>
+    </footer>
+</blockquote>
+
+        
+
 
         <div class="post-footer">
             
@@ -332,51 +338,55 @@ recon_trace:calls/<span class="number">2</span>-<span class="number">3</span>
 
 
             
-            <div class="post-share-wrap">
-                <div class="post-share" id="post-share">
-    <div class="tit">分享到：</div>
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2016/05/erlang-debug-online/&title=《Erlang 状态监控》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2016/05/erlang-debug-online/&title=《Erlang 状态监控》 — wudaijun's blog&source=" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2016/05/erlang-debug-online/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Erlang 状态监控》 — wudaijun's blog&url=http://wudaijun.com/2016/05/erlang-debug-online/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2016/05/erlang-debug-online/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
-                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
-                    <i class="icon icon-share-alt icon-lg"></i>
-                </a>
-            </div>
-            
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
 
         </div>
-    </div>   
+    </div>
 
     
 <nav class="post-nav flex-row flex-justify-between">
@@ -400,83 +410,139 @@ recon_trace:calls/<span class="number">2</span>-<span class="number">3</span>
 </nav>
 
 
-            
+
     
 
 
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'wudaijun'; // required: replace example with your forum shortname
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://wudaijun.com/2016/05/erlang-debug-online/index.html',
+        sourceId: 'erlang-debug-online',
+        productKey: '02b378614d264e81bca14ffaadf03446',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
 
 
 </article>
 
 
+
 </div>
-  </main>
-  <div class="mask" id="mask"></div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>wudaijun &copy; 2015 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
-<script>
-var BLOG_SHARE = {
-    title: "Erlang 状态监控",
-    pic: "/favicon.png",
-    summary: document.getElementsByName('summary')[0].content,
-    url: "http://wudaijun.com/2016/05/erlang-debug-online/"
-};
-</script>
-<div class="global-share" id="global-share">
-    <div class="tit">分享到：</div>
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2016/05/erlang-debug-online/&title=《Erlang 状态监控》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2016/05/erlang-debug-online/&title=《Erlang 状态监控》 — wudaijun's blog&source=" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2016/05/erlang-debug-online/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Erlang 状态监控》 — wudaijun's blog&url=http://wudaijun.com/2016/05/erlang-debug-online/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2016/05/erlang-debug-online/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script src="/js/main.min.js?v=1.1.4"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://wudaijun.com/2016/05/erlang-debug-online/" alt="微信分享二维码">
+</div>
 
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
@@ -484,7 +550,7 @@ var BLOG_SHARE = {
 </div>
 <template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -496,13 +562,14 @@ var BLOG_SHARE = {
 </li>
 </template>
 
-<script src="/js/search.min.js?v=1.1.4"></script>
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 

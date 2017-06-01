@@ -1,74 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  
-  
-  <title>TCP复习笔记(三) TCP套接字 | wudaijun&#39;s blog | Coding is Funny</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="theme-color" content="#3F51B5">
-  
-  
-  <meta name="keywords" content="tcp/ip">
-  <meta name="description" content="主要流程服务器端套接字的主要流程：
+    
 
-socket()：创建一个主动套接字
-bind()：为套接字绑定一个本地协议地址和端口(这一步不是必须)
-listen()：将套接字改为被动套接字，如果套接字没有绑定端口，为套接字选择一个临时端口，此时TCP状态机等待SYN包的到达
-accept()：从listen backlog队列中取出一个已经建立(已完成三次握手)的连接
+    
 
-而对于客户端来说，只需要知道服">
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>TCP复习笔记(三) TCP套接字 | wudaijun&#39;s blog | Coding is Funny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="tcp/ip">
+    <meta name="description" content="主要流程服务器端套接字的主要流程：  socket()：创建一个主动套接字 bind()：为套接字绑定一个本地协议地址和端口(这一步不是必须) listen()：将套接字改为被动套接字，如果套接字没有绑定端口，为套接字选择一个临时端口，此时TCP状态机等待SYN包的到达 accept()：从listen backlog队列中取出一个已经建立(已完成三次握手)的连接  而对于客户端来说，只需要知道服">
+<meta name="keywords" content="tcp&#x2F;ip">
 <meta property="og:type" content="article">
 <meta property="og:title" content="TCP复习笔记(三) TCP套接字">
 <meta property="og:url" content="http://wudaijun.com/2015/10/tcp-notes-3/index.html">
-<meta property="og:site_name" content="wudaijun's blog">
-<meta property="og:description" content="主要流程服务器端套接字的主要流程：
-
-socket()：创建一个主动套接字
-bind()：为套接字绑定一个本地协议地址和端口(这一步不是必须)
-listen()：将套接字改为被动套接字，如果套接字没有绑定端口，为套接字选择一个临时端口，此时TCP状态机等待SYN包的到达
-accept()：从listen backlog队列中取出一个已经建立(已完成三次握手)的连接
-
-而对于客户端来说，只需要知道服">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
+<meta property="og:description" content="主要流程服务器端套接字的主要流程：  socket()：创建一个主动套接字 bind()：为套接字绑定一个本地协议地址和端口(这一步不是必须) listen()：将套接字改为被动套接字，如果套接字没有绑定端口，为套接字选择一个临时端口，此时TCP状态机等待SYN包的到达 accept()：从listen backlog队列中取出一个已经建立(已完成三次握手)的连接  而对于客户端来说，只需要知道服">
 <meta property="og:updated_time" content="2015-10-10T07:27:47.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="TCP复习笔记(三) TCP套接字">
-<meta name="twitter:description" content="主要流程服务器端套接字的主要流程：
-
-socket()：创建一个主动套接字
-bind()：为套接字绑定一个本地协议地址和端口(这一步不是必须)
-listen()：将套接字改为被动套接字，如果套接字没有绑定端口，为套接字选择一个临时端口，此时TCP状态机等待SYN包的到达
-accept()：从listen backlog队列中取出一个已经建立(已完成三次握手)的连接
-
-而对于客户端来说，只需要知道服">
-  
-    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
-  
-  <meta name="summary" content="&lt;h3 id=&quot;主要流程&quot;&gt;主要流程&lt;/h3&gt;&lt;p&gt;服务器端套接字的主要流程：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;code&gt;socket()&lt;/code&gt;：创建一个主动套接字&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;bind()&lt;/code&gt;：为套接字绑定一个本地协议地址和端口(这一步不是必须)&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;listen()&lt;/code&gt;：将套接字改为被动套接字，如果套接字没有绑定端口，为套接字选择一个临时端口，此时TCP状态机等待&lt;code&gt;SYN&lt;/code&gt;包的到达&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;accept()&lt;/code&gt;：从listen backlog队列中取出一个&lt;code&gt;已经建立&lt;/code&gt;(已完成三次握手)的连接&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;而对于客户端来说，只需要知道服务器IP,Port，直接&lt;code&gt;connect()&lt;/code&gt;即可，客户端一般无需主动调用&lt;code&gt;bind()&lt;/code&gt;绑定端口，因为客户端不关心它的本地端口，&lt;code&gt;connect()&lt;/code&gt;会为其选择一个临时端口。&lt;/p&gt;">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+<meta name="twitter:description" content="主要流程服务器端套接字的主要流程：  socket()：创建一个主动套接字 bind()：为套接字绑定一个本地协议地址和端口(这一步不是必须) listen()：将套接字改为被动套接字，如果套接字没有绑定端口，为套接字选择一个临时端口，此时TCP状态机等待SYN包的到达 accept()：从listen backlog队列中取出一个已经建立(已完成三次握手)的连接  而对于客户端来说，只需要知道服">
+    
+        <link rel="alternate" type="application/atom+xml" title="wudaijun&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <aside id="menu" class="hide" >
+    <aside id="menu" class="hide" >
   <div class="inner flex-row-vertical">
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap">
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
       <div class="brand">
-        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/favicon.png">
+        </a>
         <hgroup class="introduce">
           <h5 class="nickname">wudaijun</h5>
           <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
@@ -121,20 +104,12 @@ accept()：从listen backlog队列中取出一个已经建立(已完成三次握
             </li>
         
       </ul>
-
-      <footer class="footer">
-  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
-  <p>wudaijun&#39;s blog &copy; 2017</p>
-  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
-</footer>
-
     </div>
   </div>
 </aside>
-  <main id="main">
-    <header class="top-header" id="header">
+
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -152,7 +127,7 @@ accept()：从listen backlog队列中取出一个已经建立(已完成三次握
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
@@ -160,14 +135,23 @@ accept()：从listen backlog队列中取出一个已经建立(已完成三次握
 </header>
 <header class="content-header post-header">
 
-    <div class="container">
+    <div class="container fade-scale">
         <h1 class="title">TCP复习笔记(三) TCP套接字</h1>
-        
-        
+        <h5 class="subtitle">
+            
+                <time datetime="2015-10-10T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2015-10-11
+</time>
 
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/network/">network</a></li></ul>
+
+            
+        </h5>
     </div>
 
     
+
 
 </header>
 
@@ -177,28 +161,34 @@ accept()：从listen backlog队列中取出一个已经建立(已完成三次握
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#主要流程"><span class="post-toc-text">主要流程</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#套接字API"><span class="post-toc-text">套接字API</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#socket()"><span class="post-toc-text">socket()</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#bind()"><span class="post-toc-text">bind()</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#listen()"><span class="post-toc-text">listen()</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#accept()"><span class="post-toc-text">accept()</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#connect()"><span class="post-toc-text">connect()</span></a></li></ol></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#主要流程"><span class="post-toc-text">主要流程</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#套接字API"><span class="post-toc-text">套接字API</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#socket"><span class="post-toc-text">socket()</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#bind"><span class="post-toc-text">bind()</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#listen"><span class="post-toc-text">listen()</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#accept"><span class="post-toc-text">accept()</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#connect"><span class="post-toc-text">connect()</span></a></li></ol></li></ol>
         </nav>
     </aside>
     
-<article id="post-tcp-notes-3" 
-  class="post-article article-type-post" itemprop="blogPost">
+<article id="post-tcp-notes-3"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
         <h1 class="post-card-title">TCP复习笔记(三) TCP套接字</h1>
         <div class="post-meta">
-            <time datetime="2015-10-10T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2015-10-11
-</time>
+            <time class="post-time" title="2015-10-11 00:00:00" datetime="2015-10-10T16:00:00.000Z"  itemprop="datePublished">2015-10-11</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/network/">network</a></li></ul>
 
 
 
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
-            <h3 id="主要流程">主要流程</h3><p>服务器端套接字的主要流程：</p>
+            <h3 id="主要流程"><a href="#主要流程" class="headerlink" title="主要流程"></a>主要流程</h3><p>服务器端套接字的主要流程：</p>
 <ol>
 <li><code>socket()</code>：创建一个主动套接字</li>
 <li><code>bind()</code>：为套接字绑定一个本地协议地址和端口(这一步不是必须)</li>
@@ -207,11 +197,11 @@ accept()：从listen backlog队列中取出一个已经建立(已完成三次握
 </ol>
 <p>而对于客户端来说，只需要知道服务器IP,Port，直接<code>connect()</code>即可，客户端一般无需主动调用<code>bind()</code>绑定端口，因为客户端不关心它的本地端口，<code>connect()</code>会为其选择一个临时端口。</p>
 <a id="more"></a>
-<h3 id="套接字API">套接字API</h3><h4 id="socket()"><code>socket()</code></h4><p>创建一个指定协议簇和套接字类型套接字，对于IPv4 TCP套接字，通常创建方式为<code>socket(AF_INET, SOCKET_STREAM, 0)</code>，该函数创建的TCP套接字默认是主动套接字。</p>
-<h4 id="bind()"><code>bind()</code></h4><p>为指定套接字分配一个本地协议地址，该地址根据套接字类型而定。对于TCP套接字来说，调用bind()函数可以为套接字指定一个IP地址和本地端口，IP地址必须是本机的一个接口。</p>
+<h3 id="套接字API"><a href="#套接字API" class="headerlink" title="套接字API"></a>套接字API</h3><h4 id="socket"><a href="#socket" class="headerlink" title="socket()"></a><code>socket()</code></h4><p>创建一个指定协议簇和套接字类型套接字，对于IPv4 TCP套接字，通常创建方式为<code>socket(AF_INET, SOCKET_STREAM, 0)</code>，该函数创建的TCP套接字默认是主动套接字。</p>
+<h4 id="bind"><a href="#bind" class="headerlink" title="bind()"></a><code>bind()</code></h4><p>为指定套接字分配一个本地协议地址，该地址根据套接字类型而定。对于TCP套接字来说，调用bind()函数可以为套接字指定一个IP地址和本地端口，IP地址必须是本机的一个接口。</p>
 <p>对于服务器套接字来说，绑定一个固定端口一般是必要的，因为客户端需要指定这个端口才能找到对应服务器进程。而对于IP地址，通常服务器可能不止一个IP，而绑定了一个固定IP意味着套接字只能接收那些目的地为此IP的连接。因此一般我们指定绑定地址为INADDR_ANY，意味着让内核来选择IP地址，内核的做法是：将客户端SYN包的目的IP地址，作为服务器的源IP地址。</p>
 <p>如前面所说，客户端一般是不需要调用bind函数的，在调用connect()时，由内核选定一个本地IP地址和临时端口。</p>
-<h4 id="listen()"><code>listen()</code></h4><p>通过socket()函数创建的套接字为主动套接字，调用listen()将使该套接字变为被动套接字，这意味着内核应接收该套接字上的连接请求(SYN包)，listen()使套接字从CLOSED状态变为LISTEN状态。</p>
+<h4 id="listen"><a href="#listen" class="headerlink" title="listen()"></a><code>listen()</code></h4><p>通过socket()函数创建的套接字为主动套接字，调用listen()将使该套接字变为被动套接字，这意味着内核应接收该套接字上的连接请求(SYN包)，listen()使套接字从CLOSED状态变为LISTEN状态。</p>
 <p>由于TCP三次握手，客户端与服务器建立连接需要两步：</p>
 <ol>
 <li>在客户端SYN包到达时，服务端回复SYN-ACK包，此时套接字处于SYN_RECV状态</li>
@@ -233,9 +223,9 @@ accept()：从listen backlog队列中取出一个已经建立(已完成三次握
 <p>站在客户端的角度来说，当它收到SYN-ACK并回复ACK后，连接就已经建立了。此时如果它立即向服务器发送数据，而服务可能由于Accept队列满，忽略了ACK，也就仍然处于SYN_RECV状态，此时客户端发送的数据仍然将被忽略，并且由客户端重传。TCP的慢启动机制确保了连接刚建立时不会发送太多的数据。</p>
 <p>最后，在Linux下，backlog指定的大小受限于/proc/sys/net/core/somaxconn。另外，不要将backlog设为0，不能的实现可能对此有不同的解释。</p>
 <p>关于listen() backlog更详细的讨论参见：<a href="http://veithen.github.io/2014/01/01/how-tcp-backlog-works-in-linux.html" target="_blank" rel="external">http://veithen.github.io/2014/01/01/how-tcp-backlog-works-in-linux.html</a></p>
-<h4 id="accept()"><code>accept()</code></h4><p>从Accept队列中取出一个已完成连接，若Accept队列为空，则进程睡眠(假设为阻塞方式)。</p>
+<h4 id="accept"><a href="#accept" class="headerlink" title="accept()"></a><code>accept()</code></h4><p>从Accept队列中取出一个已完成连接，若Accept队列为空，则进程睡眠(假设为阻塞方式)。</p>
 <p>accept()返回一个新的连接套接字(内核已经为它已经完成三次握手)，之后与客户端套接字的通信均通过该连接套接字来完成。</p>
-<h4 id="connect()"><code>connect()</code></h4><p>向指定地址发送SYN报文，尝试建立连接。如果套接字之前没有调用bind()绑定地址端口，内核会选择源IP地址和一个临时端口。</p>
+<h4 id="connect"><a href="#connect" class="headerlink" title="connect()"></a><code>connect()</code></h4><p>向指定地址发送SYN报文，尝试建立连接。如果套接字之前没有调用bind()绑定地址端口，内核会选择源IP地址和一个临时端口。</p>
 <p>connect()仅在连接成功或出错时才返回，出错的可能有：</p>
 <ul>
 <li>没有收到SYN包的响应，尝试超时重发，最后仍无响应。返回ETIMEOUT</li>
@@ -244,20 +234,29 @@ accept()：从listen backlog队列中取出一个已经建立(已完成三次握
 </ul>
 
         </div>
-        
+
         <blockquote class="post-copyright">
-            <div class="content">
-               这里写留言或版权声明：<a href="/2015/10/tcp-notes-3/" target="_blank" rel="external">http://wudaijun.com/2015/10/tcp-notes-3/</a>
-            </div>
-            <footer>
-                <a href="http://wudaijun.com">
-                    <img src="/favicon.png" alt="wudaijun">
-                    wudaijun
-                </a>
-            </footer>
-        </blockquote>
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2015-10-10T07:27:47.000Z" itemprop="dateUpdated">2015-10-10 15:27:47</time>
+</span><br>
+
 
         
+        博客均为原创，转载请征得作者同意并注明出处，本文永久链接：<a href="/2015/10/tcp-notes-3/" target="_blank" rel="external">http://wudaijun.com/2015/10/tcp-notes-3/</a>
+        
+    </div>
+    <footer>
+        <a href="http://wudaijun.com">
+            <img src="/favicon.png" alt="wudaijun">
+            wudaijun
+        </a>
+    </footer>
+</blockquote>
+
+        
+
 
         <div class="post-footer">
             
@@ -265,51 +264,59 @@ accept()：从listen backlog队列中取出一个已经建立(已完成三次握
 
 
             
-            <div class="post-share-wrap">
-                <div class="post-share" id="post-share">
-    <div class="tit">分享到：</div>
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2015/10/tcp-notes-3/&title=《TCP复习笔记(三) TCP套接字》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2015/10/tcp-notes-3/&title=《TCP复习笔记(三) TCP套接字》 — wudaijun's blog&source=主要流程服务器端套接字的主要流程：
+
+socket()：创建一个主动套接字
+bind()：为套接字绑定一个本地协议地址和端口(这一步不是必须)
+liste..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2015/10/tcp-notes-3/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《TCP复习笔记(三) TCP套接字》 — wudaijun's blog&url=http://wudaijun.com/2015/10/tcp-notes-3/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2015/10/tcp-notes-3/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
-                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
-                    <i class="icon icon-share-alt icon-lg"></i>
-                </a>
-            </div>
-            
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
 
         </div>
-    </div>   
+    </div>
 
     
 <nav class="post-nav flex-row flex-justify-between">
@@ -333,83 +340,143 @@ accept()：从listen backlog队列中取出一个已经建立(已完成三次握
 </nav>
 
 
-            
+
     
 
 
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'wudaijun'; // required: replace example with your forum shortname
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://wudaijun.com/2015/10/tcp-notes-3/index.html',
+        sourceId: 'tcp-notes-3',
+        productKey: '02b378614d264e81bca14ffaadf03446',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
 
 
 </article>
 
 
+
 </div>
-  </main>
-  <div class="mask" id="mask"></div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>wudaijun &copy; 2015 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
-<script>
-var BLOG_SHARE = {
-    title: "TCP复习笔记(三) TCP套接字",
-    pic: "/favicon.png",
-    summary: document.getElementsByName('summary')[0].content,
-    url: "http://wudaijun.com/2015/10/tcp-notes-3/"
-};
-</script>
-<div class="global-share" id="global-share">
-    <div class="tit">分享到：</div>
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2015/10/tcp-notes-3/&title=《TCP复习笔记(三) TCP套接字》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2015/10/tcp-notes-3/&title=《TCP复习笔记(三) TCP套接字》 — wudaijun's blog&source=主要流程服务器端套接字的主要流程：
+
+socket()：创建一个主动套接字
+bind()：为套接字绑定一个本地协议地址和端口(这一步不是必须)
+liste..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2015/10/tcp-notes-3/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《TCP复习笔记(三) TCP套接字》 — wudaijun's blog&url=http://wudaijun.com/2015/10/tcp-notes-3/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2015/10/tcp-notes-3/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script src="/js/main.min.js?v=1.1.4"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://wudaijun.com/2015/10/tcp-notes-3/" alt="微信分享二维码">
+</div>
 
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
@@ -417,7 +484,7 @@ var BLOG_SHARE = {
 </div>
 <template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -429,13 +496,14 @@ var BLOG_SHARE = {
 </li>
 </template>
 
-<script src="/js/search.min.js?v=1.1.4"></script>
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 

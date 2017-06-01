@@ -1,46 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  
-  
-  
-  <title>Twisted | wudaijun&#39;s blog | Coding is Funny</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <meta name="theme-color" content="#3F51B5">
-  
-  
-  <meta name="keywords" content="python">
-  <meta name="description" content="前几天学习firefly游戏服务器框架，其底层用twisted实现，twisted是一个比较出名的python异步回调框架，将reactor回调模式运用到极致，并且也对传统回调所面临的一些问题提出了很好的解决方案。">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>Twisted | wudaijun&#39;s blog | Coding is Funny</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="python">
+    <meta name="description" content="前几天学习firefly游戏服务器框架，其底层用twisted实现，twisted是一个比较出名的python异步回调框架，将reactor回调模式运用到极致，并且也对传统回调所面临的一些问题提出了很好的解决方案。">
+<meta name="keywords" content="python">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Twisted">
 <meta property="og:url" content="http://wudaijun.com/2015/05/twisted/index.html">
-<meta property="og:site_name" content="wudaijun's blog">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
 <meta property="og:description" content="前几天学习firefly游戏服务器框架，其底层用twisted实现，twisted是一个比较出名的python异步回调框架，将reactor回调模式运用到极致，并且也对传统回调所面临的一些问题提出了很好的解决方案。">
 <meta property="og:updated_time" content="2015-09-22T02:25:54.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Twisted">
 <meta name="twitter:description" content="前几天学习firefly游戏服务器框架，其底层用twisted实现，twisted是一个比较出名的python异步回调框架，将reactor回调模式运用到极致，并且也对传统回调所面临的一些问题提出了很好的解决方案。">
-  
-    <link rel="alternative" href="/atom.xml" title="wudaijun&#39;s blog" type="application/atom+xml">
-  
-  <meta name="summary" content="&lt;p&gt;前几天学习firefly游戏服务器框架，其底层用twisted实现，twisted是一个比较出名的python异步回调框架，将reactor回调模式运用到极致，并且也对传统回调所面临的一些问题提出了很好的解决方案。&lt;/p&gt;">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/style.css?v=1.1.4">
+    
+        <link rel="alternate" type="application/atom+xml" title="wudaijun&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 </head>
 
 <body>
-  <div id="loading" class="active"></div>
+    <div id="loading" class="active"></div>
 
-  <aside id="menu" class="hide" >
+    <aside id="menu" class="hide" >
   <div class="inner flex-row-vertical">
     <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
         <i class="icon icon-lg icon-close"></i>
     </a>
-    <div class="brand-wrap">
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
       <div class="brand">
-        <a href="/" class="avatar"><img src="/favicon.png"></a>
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/favicon.png">
+        </a>
         <hgroup class="introduce">
           <h5 class="nickname">wudaijun</h5>
           <a href="mailto:wdjlost@gmail.com" title="wdjlost@gmail.com" class="mail">wdjlost@gmail.com</a>
@@ -93,20 +104,12 @@
             </li>
         
       </ul>
-
-      <footer class="footer">
-  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
-  <p>wudaijun&#39;s blog &copy; 2017</p>
-  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
-  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
-  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
-</footer>
-
     </div>
   </div>
 </aside>
-  <main id="main">
-    <header class="top-header" id="header">
+
+    <main id="main">
+        <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
@@ -124,7 +127,7 @@
         </div>
         
         
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
             <i class="icon icon-lg icon-share-alt"></i>
         </a>
         
@@ -132,14 +135,23 @@
 </header>
 <header class="content-header post-header">
 
-    <div class="container">
+    <div class="container fade-scale">
         <h1 class="title">Twisted</h1>
-        
-        
+        <h5 class="subtitle">
+            
+                <time datetime="2015-05-28T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2015-05-29
+</time>
 
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/python/">python</a></li></ul>
+
+            
+        </h5>
     </div>
 
     
+
 
 </header>
 
@@ -149,31 +161,37 @@
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#一-_reactor"><span class="post-toc-text">一. reactor</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#二-_twisted简单使用"><span class="post-toc-text">二. twisted简单使用</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#三-_twisted抽象"><span class="post-toc-text">三. twisted抽象</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#四-_twisted_Deferred"><span class="post-toc-text">四. twisted Deferred</span></a></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#一-reactor"><span class="post-toc-text">一. reactor</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#二-twisted简单使用"><span class="post-toc-text">二. twisted简单使用</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#三-twisted抽象"><span class="post-toc-text">三. twisted抽象</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#四-twisted-Deferred"><span class="post-toc-text">四. twisted Deferred</span></a></li></ol>
         </nav>
     </aside>
     
-<article id="post-twisted" 
-  class="post-article article-type-post" itemprop="blogPost">
+<article id="post-twisted"
+  class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
         <h1 class="post-card-title">Twisted</h1>
         <div class="post-meta">
-            <time datetime="2015-05-28T16:00:00.000Z" itemprop="datePublished" class="post-time">
-  2015-05-29
-</time>
+            <time class="post-time" title="2015-05-29 00:00:00" datetime="2015-05-28T16:00:00.000Z"  itemprop="datePublished">2015-05-29</time>
 
             
 	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/python/">python</a></li></ul>
 
 
 
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+            
+
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
             <p>前几天学习firefly游戏服务器框架，其底层用twisted实现，twisted是一个比较出名的python异步回调框架，将reactor回调模式运用到极致，并且也对传统回调所面临的一些问题提出了很好的解决方案。</p>
 <a id="more"></a>
 <p>我的twisted学习主要是基于<a href="dave">Dave的系列博客</a>的，英文原版在<a href="dave_en">这里</a>，看了前面比较基础的几章，根据这些文章做个阶段性总结。顺便附上<a href="official_doc">官方文档</a>。</p>
-<h3 id="一-_reactor">一. reactor</h3><p>twisted的核心是reactor，而提到reactor不可避免的是同步/异步，阻塞/非阻塞，在Dave的第一章概念性介绍中，对同步/异步的界限有点模糊，关于同步/异步，阻塞/非阻塞可参见<a href="sync_async">知乎讨论</a>。而关于proactor(主动器)和reactor(反应堆)，这里有一篇<a href="reactor">推荐博客</a>有比较详细的介绍。</p>
+<h3 id="一-reactor"><a href="#一-reactor" class="headerlink" title="一. reactor"></a>一. reactor</h3><p>twisted的核心是reactor，而提到reactor不可避免的是同步/异步，阻塞/非阻塞，在Dave的第一章概念性介绍中，对同步/异步的界限有点模糊，关于同步/异步，阻塞/非阻塞可参见<a href="sync_async">知乎讨论</a>。而关于proactor(主动器)和reactor(反应堆)，这里有一篇<a href="reactor">推荐博客</a>有比较详细的介绍。</p>
 <p>就reactor模式的网络IO而言，应该是同步IO而不是异步IO。而Dave第一章中提到的异步，核心在于：<strong>显式地放弃对任务的控制权而不是被操作系统随机地停止，程序员必须将任务组织成序列来交替的小步完成。因此，若其中一个任务用到另外一个任务的输出，则依赖的任务（即接收输出的任务）需要被设计成为要接收系列比特或分片而不是一下全部接收。</strong></p>
 <p>显式主动地放弃任务的控制权有点类似协程的思考方式，reactor可看作协程的调度器。reactor是一个事件循环，我们可以向reactor注册自己感兴趣的事件(如套接字可读/可写)和处理器(如执行读写操作)，reactor会在事件发生时回调我们的处理器，处理器执行完成之后，相当于协程挂起(yield)，回到reactor的事件循环中，等待下一个事件来临并回调。reactor本身有一个同步事件多路分解器(Synchronous Event Demultiplexer)，可用select/epoll等机制实现，当然twisted reactor的事件触发不一定是基于IO，也可以由定时器等其它机制触发。</p>
 <p>twisted的reactor无需我们主动注册事件和回调函数，而是通过多态(继承特定类，并实现所关心的事件接口，然后传给twisted reactor)来实现。关于twisted的reactor，有几个需要注意的地方：</p>
@@ -182,8 +200,8 @@
 <li>尽量在reactor回调函数尽快完成操作，不要执行阻塞任务，reactor本质是单线程，用户回调代码与twisted代码运行在同一个上下文，某个回调函数中阻塞，会导致reactor整个事件循环阻塞；</li>
 <li>reactor会一直运行，除非通过reactor.stop()显示停止它，但一般调用reactor.stop()，也就意味着应用程序结束；</li>
 </ul>
-<h3 id="二-_twisted简单使用">二. twisted简单使用</h3><p>twisted的本质是reactor，我们可以使用twisted的底层API(避开twisted便利的高层抽象)来使用reactor:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 示例一 twisted底层API的使用</span></span><br><span class="line"><span class="keyword">from</span> twisted.internet <span class="keyword">import</span> reacto</span><br><span class="line"><span class="keyword">from</span> twisted.internet <span class="keyword">import</span> main</span><br><span class="line"><span class="keyword">from</span> twisted.internet.interfaces <span class="keyword">import</span> IReadDescriptor</span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MySocket</span><span class="params">(IReadDescriptor)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, address)</span>:</span></span><br><span class="line">        <span class="comment"># 连接服务器</span></span><br><span class="line">        self.address = address</span><br><span class="line">        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">        self.sock.connect(address)</span><br><span class="line">        self.sock.setblocking(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># tell the Twisted reactor to monitor this socket for reading</span></span><br><span class="line">        reactor.addReader(self)</span><br><span class="line">	</span><br><span class="line">	<span class="comment"># 接口: 告诉reactor 监听的套接字描述符</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">fileno</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">return</span> self.sock.fileno()</span><br><span class="line">        <span class="keyword">except</span> socket.error:</span><br><span class="line">            <span class="keyword">return</span> -<span class="number">1</span></span><br><span class="line">            </span><br><span class="line">	<span class="comment"># 接口: 在连接断开时的回调</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">connectionLost</span><span class="params">(self, reason)</span>:</span></span><br><span class="line">        self.sock.close()</span><br><span class="line"></span><br><span class="line">        reactor.removeReader(self)</span><br><span class="line">		</span><br><span class="line">		<span class="comment"># 当应用程序需要终止时 调用:</span></span><br><span class="line">        <span class="comment"># reactor.stop()</span></span><br><span class="line"></span><br><span class="line">	<span class="comment"># 接口: 当套接字描述符有数据可读时</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">doRead</span><span class="params">(self)</span>:</span></span><br><span class="line">        bytes = <span class="string">''</span></span><br><span class="line"></span><br><span class="line">		<span class="comment"># 尽可能多的读取数据</span></span><br><span class="line">        <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                bytesread = self.sock.recv(<span class="number">1024</span>)</span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">not</span> bytesread:</span><br><span class="line">                    <span class="keyword">break</span></span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    bytes += bytesread</span><br><span class="line">            <span class="keyword">except</span> socket.error, e:</span><br><span class="line">                <span class="keyword">if</span> e.args[<span class="number">0</span>] == errno.EWOULDBLOCK:</span><br><span class="line">                    <span class="keyword">break</span></span><br><span class="line">                <span class="keyword">return</span> main.CONNECTION_LOST</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> bytes: </span><br><span class="line">            <span class="keyword">return</span> main.CONNECTION_DONE</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="comment"># 在这里解析协议并处理数据</span></span><br><span class="line">            <span class="keyword">print</span> bytes</span><br></pre></td></tr></table></figure>
+<h3 id="二-twisted简单使用"><a href="#二-twisted简单使用" class="headerlink" title="二. twisted简单使用"></a>二. twisted简单使用</h3><p>twisted的本质是reactor，我们可以使用twisted的底层API(避开twisted便利的高层抽象)来使用reactor:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div></pre></td><td class="code"><pre><div class="line"># 示例一 twisted底层API的使用</div><div class="line">from twisted.internet import reacto</div><div class="line">from twisted.internet import main</div><div class="line">from twisted.internet.interfaces import IReadDescriptor</div><div class="line">import socket</div><div class="line"></div><div class="line">class MySocket(IReadDescriptor):</div><div class="line">    def __init__(self, address):</div><div class="line">        # 连接服务器</div><div class="line">        self.address = address</div><div class="line">        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</div><div class="line">        self.sock.connect(address)</div><div class="line">        self.sock.setblocking(0)</div><div class="line"></div><div class="line">        # tell the Twisted reactor to monitor this socket for reading</div><div class="line">        reactor.addReader(self)</div><div class="line">	</div><div class="line">	# 接口: 告诉reactor 监听的套接字描述符</div><div class="line">    def fileno(self):</div><div class="line">        try:</div><div class="line">            return self.sock.fileno()</div><div class="line">        except socket.error:</div><div class="line">            return -1</div><div class="line">            </div><div class="line">	# 接口: 在连接断开时的回调</div><div class="line">    def connectionLost(self, reason):</div><div class="line">        self.sock.close()</div><div class="line"></div><div class="line">        reactor.removeReader(self)</div><div class="line">		</div><div class="line">		# 当应用程序需要终止时 调用:</div><div class="line">        # reactor.stop()</div><div class="line"></div><div class="line">	# 接口: 当套接字描述符有数据可读时</div><div class="line">    def doRead(self):</div><div class="line">        bytes = &apos;&apos;</div><div class="line"></div><div class="line">		# 尽可能多的读取数据</div><div class="line">        while True:</div><div class="line">            try:</div><div class="line">                bytesread = self.sock.recv(1024)</div><div class="line">                if not bytesread:</div><div class="line">                    break</div><div class="line">                else:</div><div class="line">                    bytes += bytesread</div><div class="line">            except socket.error, e:</div><div class="line">                if e.args[0] == errno.EWOULDBLOCK:</div><div class="line">                    break</div><div class="line">                return main.CONNECTION_LOST</div><div class="line"></div><div class="line">        if not bytes: </div><div class="line">            return main.CONNECTION_DONE</div><div class="line">        else:</div><div class="line">            # 在这里解析协议并处理数据</div><div class="line">            print bytes</div></pre></td></tr></table></figure>
 <p>示例一可以很清晰的看到twisted的reactor本质：添加监听描述符，监听可读/可写事件，当事件来临时回调函数，回调完成之后继续监听事件。</p>
 <p>需要注意：</p>
 <ul>
@@ -197,7 +215,7 @@
 <li>需要我们自己去读取数据，而不是框架帮我们读好，并处理异常</li>
 <li>网络IO和数据处理混为一块，没有剥离开来</li>
 </ul>
-<h3 id="三-_twisted抽象">三. twisted抽象</h3><p>twisted在reactor的基础上，建立了更高的抽象，对一个网络连接而言，twisted建立了如下三个概念:</p>
+<h3 id="三-twisted抽象"><a href="#三-twisted抽象" class="headerlink" title="三. twisted抽象"></a>三. twisted抽象</h3><p>twisted在reactor的基础上，建立了更高的抽象，对一个网络连接而言，twisted建立了如下三个概念:</p>
 <ul>
 <li>Transports：网络连接层，仅负责网络连接和读/写字节数据</li>
 <li>Protocols： 协议层，服务业务相关的网络协议，将字节流转换成应用所需数据</li>
@@ -205,33 +223,42 @@
 </ul>
 <p>twisted的这些概念和erlang中的<a href="ranch">ranch</a>网络框架很像，ranch框架也抽象了Transports和Protocols概念，在有新的网络连接时，ranch自动创建Transports和Protocols，其中Protocols由用户在启动ranch时传入，是一个实现了ranch_protocol behaviour的模块，Protocols初始化时，会收到该连接对应的Transports，如此我们可以在Protocols中处理字节流数据，按照我们的协议解析并处理数据。同时可通过Transports来发送数据(ranch已经帮你读取了字节流数据了)。</p>
 <p>和ranch类似，twisted也会在新连接到达时创建Protocols并且将Transport传入，twisted会帮我们读取字节流数据，我们只需在<code>dataReceived(self, data)</code>接口中处理字节流数据即可。此时的twisted在网络IO上可以算是真正的异步了，它帮我们处理了网络IO和可能遇到的异常，并且将网络IO和数据处理剥离开来，抽象为Transports和Protocols，提高了程序的清晰性和健壮性。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 示例二 twisted抽象的使用</span></span><br><span class="line"><span class="keyword">from</span> twisted.internet <span class="keyword">import</span> reactor</span><br><span class="line"><span class="keyword">from</span> twisted.internet.protocol <span class="keyword">import</span> Protocol, ClientFactory</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyProtocol</span><span class="params">(Protocol)</span>:</span></span><br><span class="line">	</span><br><span class="line">	<span class="comment"># 接口: Protocols初始化时调用，并传入Transports</span></span><br><span class="line">	<span class="comment"># 另外 twisted会自动将Protocols的factory对象成员设为ProtocolsFactory实例的引用</span></span><br><span class="line">	<span class="comment"># 	   如此就可以通过factory来与MyProtocolFactory交互</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">makeConnection</span><span class="params">(self,trans)</span>:</span></span><br><span class="line">        <span class="keyword">print</span> <span class="string">'make connection: get transport: '</span>, trans</span><br><span class="line">        <span class="keyword">print</span> <span class="string">'my factory is: '</span>, self.factory</span><br><span class="line">        </span><br><span class="line">	<span class="comment"># 接口: 有数据到达</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">dataReceived</span><span class="params">(self, data)</span>:</span></span><br><span class="line">        self.poem += data</span><br><span class="line">        msg = <span class="string">'Task %d: got %d bytes of poetry from %s'</span></span><br><span class="line">        <span class="keyword">print</span>  msg % (self.task_num, len(data), self.transport.getPeer())</span><br><span class="line"> </span><br><span class="line">	<span class="comment"># 接口: 连接断开</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">connectionLost</span><span class="params">(self, reason)</span>:</span></span><br><span class="line">        <span class="comment"># 连接断开的处理</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyProtocolFactory</span><span class="params">(ClientFactory)</span>:</span></span><br><span class="line"></span><br><span class="line">	<span class="comment"># 接口: 通过protocol类成员指出需要创建的Protocols</span></span><br><span class="line">    protocol = PoetryProtocol <span class="comment"># tell base class what proto to build</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, address)</span>:</span></span><br><span class="line">        self.poetry_count = poetry_count</span><br><span class="line">        self.poems = &#123;&#125; <span class="comment"># task num -&gt; poem</span></span><br><span class="line">        </span><br><span class="line">	<span class="comment"># 接口: 在创建Protocols的回调</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">buildProtocol</span><span class="params">(self, address)</span>:</span></span><br><span class="line">        proto = ClientFactory.buildProtocol(self, address)</span><br><span class="line">        <span class="comment"># 在这里对proto做一些初始化....</span></span><br><span class="line">        <span class="keyword">return</span> proto</span><br><span class="line">       </span><br><span class="line">	<span class="comment"># 接口: 连接Server失败时的回调</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">clientConnectionFailed</span><span class="params">(self, connector, reason)</span>:</span></span><br><span class="line">        <span class="keyword">print</span> <span class="string">'Failed to connect to:'</span>, connector.getDestination()</span><br><span class="line">        </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">(address)</span>:</span></span><br><span class="line">	factory = MyClientFactory(address)</span><br><span class="line">    host, port = address</span><br><span class="line">    <span class="comment"># 连接服务端时传入ProtocolsFactory</span></span><br><span class="line">    reactor.connectTCP(host, port, factory) </span><br><span class="line">    reactor.run()</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line"># 示例二 twisted抽象的使用</div><div class="line">from twisted.internet import reactor</div><div class="line">from twisted.internet.protocol import Protocol, ClientFactory</div><div class="line">class MyProtocol(Protocol):</div><div class="line">	</div><div class="line">	# 接口: Protocols初始化时调用，并传入Transports</div><div class="line">	# 另外 twisted会自动将Protocols的factory对象成员设为ProtocolsFactory实例的引用</div><div class="line">	# 	   如此就可以通过factory来与MyProtocolFactory交互</div><div class="line">	def makeConnection(self,trans):</div><div class="line">        print &apos;make connection: get transport: &apos;, trans</div><div class="line">        print &apos;my factory is: &apos;, self.factory</div><div class="line">        </div><div class="line">	# 接口: 有数据到达</div><div class="line">    def dataReceived(self, data):</div><div class="line">        self.poem += data</div><div class="line">        msg = &apos;Task %d: got %d bytes of poetry from %s&apos;</div><div class="line">        print  msg % (self.task_num, len(data), self.transport.getPeer())</div><div class="line"> </div><div class="line">	# 接口: 连接断开</div><div class="line">    def connectionLost(self, reason):</div><div class="line">        # 连接断开的处理</div><div class="line"></div><div class="line"></div><div class="line">class MyProtocolFactory(ClientFactory):</div><div class="line"></div><div class="line">	# 接口: 通过protocol类成员指出需要创建的Protocols</div><div class="line">    protocol = PoetryProtocol # tell base class what proto to build</div><div class="line"></div><div class="line">    def __init__(self, address):</div><div class="line">        self.poetry_count = poetry_count</div><div class="line">        self.poems = &#123;&#125; # task num -&gt; poem</div><div class="line">        </div><div class="line">	# 接口: 在创建Protocols的回调</div><div class="line">    def buildProtocol(self, address):</div><div class="line">        proto = ClientFactory.buildProtocol(self, address)</div><div class="line">        # 在这里对proto做一些初始化....</div><div class="line">        return proto</div><div class="line">       </div><div class="line">	# 接口: 连接Server失败时的回调</div><div class="line">    def clientConnectionFailed(self, connector, reason):</div><div class="line">        print &apos;Failed to connect to:&apos;, connector.getDestination()</div><div class="line">        </div><div class="line">def main(address):</div><div class="line">	factory = MyClientFactory(address)</div><div class="line">    host, port = address</div><div class="line">    # 连接服务端时传入ProtocolsFactory</div><div class="line">    reactor.connectTCP(host, port, factory) </div><div class="line">    reactor.run()</div></pre></td></tr></table></figure>
 <p>示例二要比示例一要简单清晰很多，因为它无需处理网络IO，并且逻辑上更为清晰，实际上ClientFactory和Protocol提供了更多的接口用于实现更灵活强大的逻辑控制，具体的接口可参见<a href="twisted">twisted源代码</a>。</p>
-<h3 id="四-_twisted_Deferred">四. twisted Deferred</h3><p>twisted Deferred对象用于解决这样的问题：有时候我们需要在ProtocolsFactory中嵌入自己的回调，以便Protocols中发生某个事件(如所有Protocols都处理完成)时，回调我们指定的函数(如TaskFinished)。如果我们自己来实现回调，需要处理几个问题:</p>
+<h3 id="四-twisted-Deferred"><a href="#四-twisted-Deferred" class="headerlink" title="四. twisted Deferred"></a>四. twisted Deferred</h3><p>twisted Deferred对象用于解决这样的问题：有时候我们需要在ProtocolsFactory中嵌入自己的回调，以便Protocols中发生某个事件(如所有Protocols都处理完成)时，回调我们指定的函数(如TaskFinished)。如果我们自己来实现回调，需要处理几个问题:</p>
 <ul>
 <li>如何区分回调的正确返回和错误返回?(我们在使用异步调用时，要尤其注意错误返回的重要性)</li>
 <li>如果我们的正确返回和错误返回都需要执行一个公共函数(如关闭连接)呢?</li>
 <li>如果保证该回调只被调用一次?</li>
 </ul>
 <p>Deferred对象便用于解决这种问题，它提供两个回调链，分别对应于正确返回和错误返回，在正确返回或错误返回时，它会依次调用对应链中的函数，并且保证回调的唯一性。</p>
-<figure class="highlight vala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">d = Deferred()</span><br><span class="line"><span class="preprocessor"># 添加正确回调和错误回调</span></span><br><span class="line">d.addCallbacks(your_ok_callback, your_err_callback)</span><br><span class="line"><span class="preprocessor"># 添加公共回调函数</span></span><br><span class="line">d.addBoth(your_common_callback)</span><br><span class="line"></span><br><span class="line"><span class="preprocessor"># 正确返回 将依次调用 your_ok_callback(Res) -&gt; common_callback(Res)</span></span><br><span class="line">d.callback(Res)</span><br><span class="line"><span class="preprocessor"># 错误返回 将依次调用 your_err_callback(Err) -&gt; common_callback(Err)</span></span><br><span class="line">d.errback(Err)</span><br><span class="line"></span><br><span class="line"><span class="preprocessor"># 注意，对同一个Defered对象，只能返回一次，尝试多次返回将会报错</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">d = Deferred()</div><div class="line"># 添加正确回调和错误回调</div><div class="line">d.addCallbacks(your_ok_callback, your_err_callback)</div><div class="line"># 添加公共回调函数</div><div class="line">d.addBoth(your_common_callback)</div><div class="line"></div><div class="line"># 正确返回 将依次调用 your_ok_callback(Res) -&gt; common_callback(Res)</div><div class="line">d.callback(Res)</div><div class="line"># 错误返回 将依次调用 your_err_callback(Err) -&gt; common_callback(Err)</div><div class="line">d.errback(Err)</div><div class="line"></div><div class="line"># 注意，对同一个Defered对象，只能返回一次，尝试多次返回将会报错</div></pre></td></tr></table></figure>
 <p>暂时就这么多了，又可以回去看Firefly了。</p>
 
         </div>
-        
+
         <blockquote class="post-copyright">
-            <div class="content">
-               这里写留言或版权声明：<a href="/2015/05/twisted/" target="_blank" rel="external">http://wudaijun.com/2015/05/twisted/</a>
-            </div>
-            <footer>
-                <a href="http://wudaijun.com">
-                    <img src="/favicon.png" alt="wudaijun">
-                    wudaijun
-                </a>
-            </footer>
-        </blockquote>
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2015-09-22T02:25:54.000Z" itemprop="dateUpdated">2015-09-22 10:25:54</time>
+</span><br>
+
 
         
+        博客均为原创，转载请征得作者同意并注明出处，本文永久链接：<a href="/2015/05/twisted/" target="_blank" rel="external">http://wudaijun.com/2015/05/twisted/</a>
+        
+    </div>
+    <footer>
+        <a href="http://wudaijun.com">
+            <img src="/favicon.png" alt="wudaijun">
+            wudaijun
+        </a>
+    </footer>
+</blockquote>
+
+        
+
 
         <div class="post-footer">
             
@@ -239,51 +266,55 @@
 
 
             
-            <div class="post-share-wrap">
-                <div class="post-share" id="post-share">
-    <div class="tit">分享到：</div>
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2015/05/twisted/&title=《Twisted》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2015/05/twisted/&title=《Twisted》 — wudaijun's blog&source=前几天学习firefly游戏服务器框架，其底层用twisted实现，twisted是一个比较出名的python异步回调框架，将reactor回调模式运用到..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2015/05/twisted/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Twisted》 — wudaijun's blog&url=http://wudaijun.com/2015/05/twisted/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2015/05/twisted/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
-                <a href="javascript:;" id="share-fab" class="post-share-fab waves-effect waves-circle">
-                    <i class="icon icon-share-alt icon-lg"></i>
-                </a>
-            </div>
-            
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
 
         </div>
-    </div>   
+    </div>
 
     
 <nav class="post-nav flex-row flex-justify-between">
@@ -307,83 +338,139 @@
 </nav>
 
 
-            
+
     
 
 
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'wudaijun'; // required: replace example with your forum shortname
 
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
+
+
+
+
+
+
+
+    <div id="cloud-tie-wrapper" class="comments cloud-tie-wrapper"></div>
+    <script>
+    var cloudTieConfig = {
+        url: 'http://wudaijun.com/2015/05/twisted/index.html',
+        sourceId: 'twisted',
+        productKey: '02b378614d264e81bca14ffaadf03446',
+        target: 'cloud-tie-wrapper',
+        pcFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/pc.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/pc.min.js',
+        ],
+        mobileFiles: [
+            '//unpkg.com/hexo-theme-material-indigo@latest/css/cloudTie/mobile.css',
+            '//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/mobile.min.js'
+        ]
+    };
+    </script>
+    <script src="//unpkg.com/hexo-theme-material-indigo@latest/js/cloudTie/loader.min.js"></script>
+
+
+
+
+
 
 
 </article>
 
 
+
 </div>
-  </main>
-  <div class="mask" id="mask"></div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p>
+            <span>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></span>
+            <span>wudaijun &copy; 2015 - 2017</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
-<script>
-var BLOG_SHARE = {
-    title: "Twisted",
-    pic: "/favicon.png",
-    summary: document.getElementsByName('summary')[0].content,
-    url: "http://wudaijun.com/2015/05/twisted/"
-};
-</script>
-<div class="global-share" id="global-share">
-    <div class="tit">分享到：</div>
+
+
+<div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://wudaijun.com/2015/05/twisted/&title=《Twisted》 — wudaijun's blog&pic=http://wudaijun.com/favicon.png" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
       <li>
-        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
           <i class="icon icon-weixin"></i>
         </a>
       </li>
       <li>
-        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://wudaijun.com/2015/05/twisted/&title=《Twisted》 — wudaijun's blog&source=前几天学习firefly游戏服务器框架，其底层用twisted实现，twisted是一个比较出名的python异步回调框架，将reactor回调模式运用到..." data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
       <li>
-        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://wudaijun.com/2015/05/twisted/" data-title=" Facebook">
           <i class="icon icon-facebook"></i>
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Twisted》 — wudaijun's blog&url=http://wudaijun.com/2015/05/twisted/&via=http://wudaijun.com" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
       <li>
-        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
-          豆
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://wudaijun.com/2015/05/twisted/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
         </a>
       </li>
     </ul>
  </div>
 
 
-  <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script src="/js/main.min.js?v=1.1.4"></script>
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://wudaijun.com/2015/05/twisted/" alt="微信分享二维码">
+</div>
 
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+
+lazyScripts.push('//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667')
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
 
 
 <div class="search-panel" id="search-panel">
@@ -391,7 +478,7 @@ var BLOG_SHARE = {
 </div>
 <template id="search-tpl">
 <li class="item">
-    <a href="/{path}" class="waves-block waves-effect">
+    <a href="{path}" class="waves-block waves-effect">
         <div class="title ellipsis" title="{title}">{title}</div>
         <div class="flex-row flex-middle">
             <div class="tags ellipsis">
@@ -403,13 +490,14 @@ var BLOG_SHARE = {
 </li>
 </template>
 
-<script src="/js/search.min.js?v=1.1.4"></script>
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
 
 
-<script src="//s95.cnzz.com/z_stat.php?id=1254033667&web_id=1254033667"></script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
 
