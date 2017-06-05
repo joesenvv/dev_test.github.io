@@ -149,6 +149,105 @@
     <ul class="post-list">
     
         <li class="post-list-item fade">
+            <article id="post-git-study"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2015-04-17 00:00:00" datetime="2015-04-16T16:00:00.000Z"  itemprop="datePublished">2015-04-17</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/tool/">tool</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2015/04/git-study/">Git 基础知识</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        之前工作中一直用svn，虽然也在git上写一些代码，但也仅限于 add commit push 这几个命令，一直没有对git比较系统的学习，花了半天多时间，学习整理了一些自己觉得比较实用的东西，大部分都是摘抄，仅供自己学习备忘之用，完整系统的介绍可参见附录。
+    
+
+        <a href="/2015/04/git-study/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/git/">git</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-erlang-mnesia"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2015-04-08 00:00:00" datetime="2015-04-07T16:00:00.000Z"  itemprop="datePublished">2015-04-08</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/erlang/">erlang</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2015/04/erlang-mnesia/">Erlang mnesia</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        mnesia是基于Erlang的分布式数据库管理系统，是Erlang OTP的重要组件。
+基础特性1. 分布式的etsmnesia数据库被组织为一个表的集合，每个表由记录(通常被定义为Erlang Record)构成，表本身也包含一些属性，如类型，位置和持久性。这种表集合和记录的概念，和ets表很类似。事实上，mnesia中的数据在节点内就是以ets表存储的。因此，mnesia实际上是一个分布式的ets。
+    
+
+        <a href="/2015/04/erlang-mnesia/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/erlang/">erlang</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
             <article id="post-cpp-compile-model"
   class="article-card article-type-post" itemprop="blogPost">
 
@@ -438,49 +537,6 @@
         </li>
     
         <li class="post-list-item fade">
-            <article id="post-false-sharing"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2015-01-11 00:00:00" datetime="2015-01-10T16:00:00.000Z"  itemprop="datePublished">2015-01-11</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/os/">os</a></li></ul>
-
-
-
-        
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2015/01/false-sharing/">false sharing</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        在多核的CPU架构中，每一个核心core都会有自己的缓存行(cache line)，因此如果一个变量如果同时存在不同的核心的cache line时，就会出现伪共享（false sharing)的问题。此时如果一个核心修改了该变量，该修改需要同步到其它核心的缓存。
-    
-
-        <a href="/2015/01/false-sharing/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
             <article id="post-skynet-luaservice"
   class="article-card article-type-post" itemprop="blogPost">
 
@@ -531,14 +587,14 @@ skynet服务可以由lua编写，因此skynet将C模块核心接口通过skynet/
         </li>
     
         <li class="post-list-item fade">
-            <article id="post-skynet-c-module"
+            <article id="post-false-sharing"
   class="article-card article-type-post" itemprop="blogPost">
 
     <div class="post-meta">
-        <time class="post-time" title="2015-01-10 00:00:00" datetime="2015-01-09T16:00:00.000Z"  itemprop="datePublished">2015-01-10</time>
+        <time class="post-time" title="2015-01-11 00:00:00" datetime="2015-01-10T16:00:00.000Z"  itemprop="datePublished">2015-01-11</time>
 
         
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/gameserver/">gameserver</a></li></ul>
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/os/">os</a></li></ul>
 
 
 
@@ -551,7 +607,7 @@ skynet服务可以由lua编写，因此skynet将C模块核心接口通过skynet/
 
   
     <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2015/01/skynet-c-module/">skynet C模块</a>
+      <a class="post-title-link" href="/2015/01/false-sharing/">false sharing</a>
     </h3>
   
 
@@ -561,67 +617,12 @@ skynet服务可以由lua编写，因此skynet将C模块核心接口通过skynet/
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        这些天一直在拜读云风的skynet，由于对lua不是很熟悉，也花了一些时间来学习lua。这里大概整理一下这些天学习skynet框架的一些东西。
+        在多核的CPU架构中，每一个核心core都会有自己的缓存行(cache line)，因此如果一个变量如果同时存在不同的核心的cache line时，就会出现伪共享（false sharing)的问题。此时如果一个核心修改了该变量，该修改需要同步到其它核心的缓存。
     
 
-        <a href="/2015/01/skynet-c-module/" class="post-more waves-effect waves-button">
+        <a href="/2015/01/false-sharing/" class="post-more waves-effect waves-button">
             阅读全文…
         </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/lua/">lua</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/skynet/">skynet</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-lua-C"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2014-12-31 00:00:00" datetime="2014-12-30T16:00:00.000Z"  itemprop="datePublished">2014-12-31</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/lua/">lua</a></li></ul>
-
-
-
-        
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2014/12/lua-C/">lua 与 C 交互</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        lua和C交互的核心就是lua栈，lua和C的所有数据交互都是通过lua栈来完成的。
-    
-
-        <a href="/2014/12/lua-C/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/lua/">lua</a></li></ul>
-
     </div>
     
 </article>
@@ -633,7 +634,7 @@ skynet服务可以由lua编写，因此skynet将C模块核心接口通过skynet/
     
 <nav id="page-nav">
     <div class="inner">
-    <a class="extend prev" rel="prev" href="/page/6/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/8/">下一页</a>
+    <a class="extend prev" rel="prev" href="/page/6/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/8/">下一页</a>
     </div>
 </nav>
 

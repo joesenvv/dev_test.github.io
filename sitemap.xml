@@ -2,9 +2,37 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://wudaijun.com/2016/09/go-notes-2-procedural-programming/</loc>
+    
+    <lastmod>2017-06-05T12:51:09.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2016/09/go-notes-1-datastructures/</loc>
+    
+    <lastmod>2017-06-05T12:50:05.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2016/09/go-notes-3-object-oriented/</loc>
+    
+    <lastmod>2017-06-05T12:48:15.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/12/erlang-datastructures/</loc>
+    
+    <lastmod>2017-06-04T14:14:04.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://wudaijun.com/2017/05/go-vs-erlang/</loc>
     
-    <lastmod>2017-06-01T16:18:44.000Z</lastmod>
+    <lastmod>2017-06-02T02:32:30.000Z</lastmod>
     
   </url>
   
@@ -12,13 +40,6 @@
     <loc>http://wudaijun.com/2015/08/erlang-port/</loc>
     
     <lastmod>2017-05-23T07:41:02.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://wudaijun.com/2016/09/go-basic/</loc>
-    
-    <lastmod>2017-05-23T07:37:14.000Z</lastmod>
     
   </url>
   
@@ -103,13 +124,6 @@
     <loc>http://wudaijun.com/2016/12/erlang-memory-debug/</loc>
     
     <lastmod>2016-12-27T09:05:15.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://wudaijun.com/2015/12/erlang-datastructures/</loc>
-    
-    <lastmod>2016-12-27T03:54:24.000Z</lastmod>
     
   </url>
   
@@ -268,6 +282,20 @@
   </url>
   
   <url>
+    <loc>http://wudaijun.com/2015/01/skynet-c-module/</loc>
+    
+    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/07/kbengine-study1/</loc>
+    
+    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://wudaijun.com/2015/01/skynet-luaservice/</loc>
     
     <lastmod>2016-09-20T14:51:49.000Z</lastmod>
@@ -282,6 +310,13 @@
   </url>
   
   <url>
+    <loc>http://wudaijun.com/2015/05/firefly-study1/</loc>
+    
+    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://wudaijun.com/2015/07/kbengine-study2/</loc>
     
     <lastmod>2016-09-20T14:51:49.000Z</lastmod>
@@ -289,28 +324,7 @@
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/07/kbengine-study1/</loc>
-    
-    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://wudaijun.com/2015/06/firefly-study2/</loc>
-    
-    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://wudaijun.com/2015/01/skynet-c-module/</loc>
-    
-    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://wudaijun.com/2015/05/firefly-study1/</loc>
     
     <lastmod>2016-09-20T14:51:49.000Z</lastmod>
     
@@ -513,35 +527,7 @@
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/04/erlang-thinking/</loc>
-    
-    <lastmod>2015-09-22T02:25:54.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://wudaijun.com/2015/07/erlang-superviosr/</loc>
-    
-    <lastmod>2015-09-22T02:25:54.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://wudaijun.com/2015/09/use-hexo-rebuild-blog/</loc>
-    
-    <lastmod>2015-09-22T02:25:54.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://wudaijun.com/2015/07/c-linker-model/</loc>
-    
-    <lastmod>2015-09-22T02:25:54.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://wudaijun.com/2015/05/twisted/</loc>
     
     <lastmod>2015-09-22T02:25:54.000Z</lastmod>
     
@@ -555,7 +541,21 @@
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/03/cpp-rvalue-referrence/</loc>
+    <loc>http://wudaijun.com/2015/09/use-hexo-rebuild-blog/</loc>
+    
+    <lastmod>2015-09-22T02:25:54.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/07/erlang-superviosr/</loc>
+    
+    <lastmod>2015-09-22T02:25:54.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/05/twisted/</loc>
     
     <lastmod>2015-09-22T02:25:54.000Z</lastmod>
     
@@ -570,6 +570,20 @@
   
   <url>
     <loc>http://wudaijun.com/2015/05/erlang-gameserver-persistence/</loc>
+    
+    <lastmod>2015-09-22T02:25:54.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/04/erlang-thinking/</loc>
+    
+    <lastmod>2015-09-22T02:25:54.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/03/cpp-rvalue-referrence/</loc>
     
     <lastmod>2015-09-22T02:25:54.000Z</lastmod>
     

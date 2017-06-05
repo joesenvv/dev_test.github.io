@@ -149,6 +149,121 @@
     <ul class="post-list">
     
         <li class="post-list-item fade">
+            <article id="post-virtual-memory"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2016-06-30 00:00:00" datetime="2016-06-29T16:00:00.000Z"  itemprop="datePublished">2016-06-30</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/os/">os</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2016/06/virtual-memory/">虚拟存储器</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        前几天又翻了翻《深入理解计算机系统》，相比几年前刚看这本书有了更多的理解，这也许就是一本好书的价值吧。因此尝试提炼和总结出对自己有用的东西，把书读薄。其中也加了一些自己的理解和查阅的相关资料。
+虚拟存储器的意义虚拟存储器提供了三个重要的能力：
+
+将主存看作是存储在磁盘上的高速缓存，并根据需要在磁盘和主存中传送数据，高效地运用主存
+为每个进程提供一致性的地址空间，简化了存储器管理
+保护每个进程的地址空间不被其它进程破坏
+
+下面分别从这三个方面来谈虚拟存储器
+    
+
+        <a href="/2016/06/virtual-memory/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/os/">os</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-mongodb-storage-engine"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2016-06-25 00:00:00" datetime="2016-06-24T16:00:00.000Z"  itemprop="datePublished">2016-06-25</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/database/">database</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2016/06/mongodb-storage-engine/">MongoDB 存储引擎</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        MongoDB目前支持三种存储引擎：MMAPv1 Storage Engine，In-Memory Storage Engine, WiredTiger Storage Engine。
+MMAPv1 Storage EngineMongoDB3.2之前版本的默认引擎。
+1. 存储原理文档在磁盘中连续存放，文档所占用的磁盘空间包括文档数据所占空间和文档填充(padding)。
+
+                
+                    
+                    
+                
+                
+            
+摘自：MongoDB MMAPv1内部实现：http://www.mongoing.com/archives/1484
+    
+
+        <a href="/2016/06/mongodb-storage-engine/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mongodb/">mongodb</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
             <article id="post-mongodb-read-write"
   class="article-card article-type-post" itemprop="blogPost">
 
@@ -569,111 +684,12 @@ Eshell V8.1  (abort with ^G)
 
         </li>
     
-        <li class="post-list-item fade">
-            <article id="post-3d-mapping"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2016-03-01 00:00:00" datetime="2016-02-29T16:00:00.000Z"  itemprop="datePublished">2016-03-01</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/unity/">unity</a></li></ul>
-
-
-
-        
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2016/03/3d-mapping/">3D贴图基础</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        漫反射贴图(Diffuse Mapping)漫反射贴图反映出物体表面在漫反射下的颜色和强度，表现出物体的固有色以及纹理。是物体最基础的贴图。通常也可以直接理解为纹理。
-高光贴图(Specular Mapping)高光贴图表现物体表面的光照属性，包括镜面反射强度，光泽度，以及菲涅耳衍射强度，决定物体在强光下，表面不同材质(布料，金属，皮肤等)的光照表现。一些高光贴图只包含镜面反射强度信息，每个像素只需要8位，即使用一个通道。
-    
-
-        <a href="/2016/03/3d-mapping/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/unity/">unity</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-3d-animation"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2016-02-20 00:00:00" datetime="2016-02-19T16:00:00.000Z"  itemprop="datePublished">2016-02-20</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/unity/">unity</a></li></ul>
-
-
-
-        
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2016/02/3d-animation/">3D动画基础</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        顶点动画3D动画本质上是模型的顶点轨迹，因此要记录一段动画，最原始的办法就是记录动画过程中所有的顶点信息。但由于肉眼的识别速度和GPU的处理能力都有限，因此有了桢(frame)的概念，帧是模型特定姿态的一个快照。为了进一步减少动画桢的内存占用，我们可以从动画的轨迹中提出中关键帧，保存每一个关键帧的模型网格信息，由引擎来得到平滑的动画效果(关键帧过渡)，在关键帧之间平滑过渡的帧叫过渡帧或插值桢。
-    
-
-        <a href="/2016/02/3d-animation/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/unity/">unity</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
     </ul>
 
     
 <nav id="page-nav">
     <div class="inner">
-    <a class="extend prev" rel="prev" href="/page/2/">上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/4/">下一页</a>
+    <a class="extend prev" rel="prev" href="/page/2/">上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/4/">下一页</a>
     </div>
 </nav>
 

@@ -320,7 +320,7 @@ goa利用生成代码和用户代码来实现一个服务，并提供一个完�
         </li>
     
         <li class="post-list-item fade">
-            <article id="post-go-basic"
+            <article id="post-go-notes-1-datastructures"
   class="article-card article-type-post" itemprop="blogPost">
 
     <div class="post-meta">
@@ -340,7 +340,7 @@ goa利用生成代码和用户代码来实现一个服务，并提供一个完�
 
   
     <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2016/09/go-basic/">Go 基础特性</a>
+      <a class="post-title-link" href="/2016/09/go-notes-1-datastructures/">Go 笔记(1) 常用数据结构及实现</a>
     </h3>
   
 
@@ -350,34 +350,119 @@ goa利用生成代码和用户代码来实现一个服务，并提供一个完�
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        一. 类型系统1. slice数组切片提供了动态数组的能力，功能和实现都类似于C++ Vector。
-// 初始化一个数组
-var Arr [3]int = [3]int{1,2,3}
+        学习一下go中常用的几种数据结构，结合源码了解其实现原理。
+一. 类型系统1. array123456789func f(x [2]int)&#123;	x[1] = 9&#125;func main()&#123;	a := [3]int&#123;1,2,3&#125;	b := [2]int&#123;4,5&#125;	f(a) // error: cannot use a (typ...
+    
 
-var Slice1 []int
-// 通过数组初始化切片 得到[1 2]
-Slice1 = Arr[:2]
-// 直接创建切片 其中size = 5 capacity = 10 尝试访问[size,capacity]之间的元素会得到运行时错误
-Slice2 := make([]int, 5, 10)
-Slice3 := []int{1,2,3}
-// 从切片创建切片 [:last] 只要last&lt;=capacity 均合法
-Slice4 := Slice2[:8]
-// 切片拷贝 如果两个切片不一样大 会按照较小的数组切片元素个数拷贝
-// 这里的拷贝 可以看作是：先置0 再拷贝
-copy(Slice4, Slice3)
+        <a href="/2016/09/go-notes-1-datastructures/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/go/">go</a></li></ul>
 
-// 遍历切片[0:size] 多返回值简化了迭代
-for i, v := range Slice1 {
-    ...
-}
+    </div>
+    
+</article>
 
-// 通过append在size后面添加元素 capacity会自动扩展
-// 同样, 多参数简化了迭代
-Slice3 = append(Slice3, 1,2,3,4,5,6,7,8,9)
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-go-notes-2-procedural-programming"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2016-09-09 00:00:00" datetime="2016-09-08T16:00:00.000Z"  itemprop="datePublished">2016-09-09</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/go/">go</a></li></ul>
+
+
+
+        
+
+    </div>
 
     
 
-        <a href="/2016/09/go-basic/" class="post-more waves-effect waves-button">
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2016/09/go-notes-2-procedural-programming/">Go 笔记(2) 顺序编程</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        不定参数&amp;多返回值不定参数只能是最后一个参数，它实际上是数组切片参数的语法糖：
+// 语法糖 相当于 func myfunc(args []int)
+func myfunc(args ...int){
+    for _, arg := range args {
+    fmt.Println(arg)
+}
+
+// 语法糖 等价于 myfunc([]int{1,3,5,7,9})
+m...
+    
+
+        <a href="/2016/09/go-notes-2-procedural-programming/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/go/">go</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-go-notes-3-object-oriented"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2016-09-09 00:00:00" datetime="2016-09-08T16:00:00.000Z"  itemprop="datePublished">2016-09-09</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/go/">go</a></li></ul>
+
+
+
+        
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2016/09/go-notes-3-object-oriented/">Go 笔记(3) 面向对象和接口</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        探索Go类型扩展，类和继承，以及接口的用法和实现。
+面向对象1. 类型扩展12345678910package main	import "fmt"	// 定义了一个新类型:Integer，与int不能直接比较/赋值type Integer int	func (a *Integer) Add(b Integer) Integer&#123;    return *a + b&#125;
+2. ...
+    
+
+        <a href="/2016/09/go-notes-3-object-oriented/" class="post-more waves-effect waves-button">
             阅读全文…
         </a>
     </div>
@@ -612,127 +697,12 @@ JavaScript: 通过可编程的文档对象模型(DOM)和事件响应，定义网
 
         </li>
     
-        <li class="post-list-item fade">
-            <article id="post-virtual-memory"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2016-06-30 00:00:00" datetime="2016-06-29T16:00:00.000Z"  itemprop="datePublished">2016-06-30</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/os/">os</a></li></ul>
-
-
-
-        
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2016/06/virtual-memory/">虚拟存储器</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        前几天又翻了翻《深入理解计算机系统》，相比几年前刚看这本书有了更多的理解，这也许就是一本好书的价值吧。因此尝试提炼和总结出对自己有用的东西，把书读薄。其中也加了一些自己的理解和查阅的相关资料。
-虚拟存储器的意义虚拟存储器提供了三个重要的能力：
-
-将主存看作是存储在磁盘上的高速缓存，并根据需要在磁盘和主存中传送数据，高效地运用主存
-为每个进程提供一致性的地址空间，简化了存储器管理
-保护每个进程的地址空间不被其它进程破坏
-
-下面分别从这三个方面来谈虚拟存储器
-    
-
-        <a href="/2016/06/virtual-memory/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/os/">os</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-mongodb-storage-engine"
-  class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2016-06-25 00:00:00" datetime="2016-06-24T16:00:00.000Z"  itemprop="datePublished">2016-06-25</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/database/">database</a></li></ul>
-
-
-
-        
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2016/06/mongodb-storage-engine/">MongoDB 存储引擎</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        MongoDB目前支持三种存储引擎：MMAPv1 Storage Engine，In-Memory Storage Engine, WiredTiger Storage Engine。
-MMAPv1 Storage EngineMongoDB3.2之前版本的默认引擎。
-1. 存储原理文档在磁盘中连续存放，文档所占用的磁盘空间包括文档数据所占空间和文档填充(padding)。
-
-                
-                    
-                    
-                
-                
-            
-摘自：MongoDB MMAPv1内部实现：http://www.mongoing.com/archives/1484
-    
-
-        <a href="/2016/06/mongodb-storage-engine/" class="post-more waves-effect waves-button">
-            阅读全文…
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mongodb/">mongodb</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
     </ul>
 
     
 <nav id="page-nav">
     <div class="inner">
-    <a class="extend prev" rel="prev" href="/">上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/3/">下一页</a>
+    <a class="extend prev" rel="prev" href="/">上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/3/">下一页</a>
     </div>
 </nav>
 
