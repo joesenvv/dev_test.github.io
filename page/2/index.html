@@ -320,7 +320,7 @@ goa利用生成代码和用户代码来实现一个服务，并提供一个完�
         </li>
     
         <li class="post-list-item fade">
-            <article id="post-go-notes-1-datastructures"
+            <article id="post-go-notes-3-object-oriented"
   class="article-card article-type-post" itemprop="blogPost">
 
     <div class="post-meta">
@@ -340,7 +340,7 @@ goa利用生成代码和用户代码来实现一个服务，并提供一个完�
 
   
     <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2016/09/go-notes-1-datastructures/">Go 笔记(1) 常用数据结构及实现</a>
+      <a class="post-title-link" href="/2016/09/go-notes-3-object-oriented/">Go 笔记(3) 面向对象和接口</a>
     </h3>
   
 
@@ -350,11 +350,12 @@ goa利用生成代码和用户代码来实现一个服务，并提供一个完�
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        学习一下go中常用的几种数据结构，结合源码了解其实现原理。
-一. 类型系统1. array123456789func f(x [2]int)&#123;	x[1] = 9&#125;func main()&#123;	a := [3]int&#123;1,2,3&#125;	b := [2]int&#123;4,5&#125;	f(a) // error: cannot use a (typ...
+        探索Go类型扩展，类和继承，以及接口的用法和实现。
+面向对象1. 类型扩展12345678910package main	import "fmt"	// 定义了一个新类型:Integer，与int不能直接比较/赋值type Integer int	func (a *Integer) Add(b Integer) Integer&#123;    return *a + b&#125;
+2. ...
     
 
-        <a href="/2016/09/go-notes-1-datastructures/" class="post-more waves-effect waves-button">
+        <a href="/2016/09/go-notes-3-object-oriented/" class="post-more waves-effect waves-button">
             阅读全文…
         </a>
     </div>
@@ -427,7 +428,7 @@ m...
         </li>
     
         <li class="post-list-item fade">
-            <article id="post-go-notes-3-object-oriented"
+            <article id="post-go-notes-1-datastructures"
   class="article-card article-type-post" itemprop="blogPost">
 
     <div class="post-meta">
@@ -447,7 +448,7 @@ m...
 
   
     <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2016/09/go-notes-3-object-oriented/">Go 笔记(3) 面向对象和接口</a>
+      <a class="post-title-link" href="/2016/09/go-notes-1-datastructures/">Go 笔记(1) 常用数据结构及实现</a>
     </h3>
   
 
@@ -457,12 +458,11 @@ m...
     <div class="post-content" id="post-content" itemprop="postContent">
 
     
-        探索Go类型扩展，类和继承，以及接口的用法和实现。
-面向对象1. 类型扩展12345678910package main	import "fmt"	// 定义了一个新类型:Integer，与int不能直接比较/赋值type Integer int	func (a *Integer) Add(b Integer) Integer&#123;    return *a + b&#125;
-2. ...
+        学习一下go中常用的几种数据结构，结合源码了解其实现原理。
+一. 类型系统1. array123456789func f(x [2]int)&#123;	x[1] = 9&#125;func main()&#123;	a := [3]int&#123;1,2,3&#125;	b := [2]int&#123;4,5&#125;	f(a) // error: cannot use a (typ...
     
 
-        <a href="/2016/09/go-notes-3-object-oriented/" class="post-more waves-effect waves-button">
+        <a href="/2016/09/go-notes-1-datastructures/" class="post-more waves-effect waves-button">
             阅读全文…
         </a>
     </div>
