@@ -1069,10 +1069,10 @@ body {
   text-align: left;
 }
 .author-page .author .fa {
-  margin-right: 0.4em;
+  margin-right: 0;
 }
 .author-page .author .fa:before {
-  margin-right: 0.2em;
+  margin-right: 0;
 }
 /* toc*/
 #toc li {
