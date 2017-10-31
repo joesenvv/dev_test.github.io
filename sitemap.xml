@@ -2,6 +2,62 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://wudaijun.com/about/index-1.html</loc>
+    
+    <lastmod>2017-10-31T07:01:30.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2017/02/lua-notes/</loc>
+    
+    <lastmod>2017-10-31T06:30:54.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2017/01/css-notes/</loc>
+    
+    <lastmod>2017-10-31T06:29:19.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2017/05/go-vs-erlang/</loc>
+    
+    <lastmod>2017-10-31T03:16:27.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2017/08/go-conetxt-usage/</loc>
+    
+    <lastmod>2017-10-31T03:16:27.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2017/10/2017-9-26-ngs-battle/</loc>
+    
+    <lastmod>2017-10-31T03:16:27.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2016/09/go-notes-2-procedural-programming/</loc>
+    
+    <lastmod>2017-10-31T03:16:27.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2016/11/docker-basic/</loc>
+    
+    <lastmod>2017-10-31T03:16:27.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://wudaijun.com/2016/09/go-notes-1-datastructures/</loc>
     
     <lastmod>2017-06-13T10:46:52.000Z</lastmod>
@@ -9,23 +65,9 @@
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2017/05/go-vs-erlang/</loc>
-    
-    <lastmod>2017-06-07T03:04:55.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://wudaijun.com/2016/09/go-notes-3-object-oriented/</loc>
     
     <lastmod>2017-06-05T13:12:25.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://wudaijun.com/2016/09/go-notes-2-procedural-programming/</loc>
-    
-    <lastmod>2017-06-05T12:51:09.000Z</lastmod>
     
   </url>
   
@@ -47,20 +89,6 @@
     <loc>http://wudaijun.com/2017/03/erlang-lua-reconstruction/</loc>
     
     <lastmod>2017-03-30T03:14:59.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://wudaijun.com/2017/01/css-notes/</loc>
-    
-    <lastmod>2017-03-01T07:38:00.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://wudaijun.com/2017/02/lua-notes/</loc>
-    
-    <lastmod>2017-02-28T04:20:22.000Z</lastmod>
     
   </url>
   
@@ -138,13 +166,6 @@
     <loc>http://wudaijun.com/2015/08/erlang-server-design1-cluster-server/</loc>
     
     <lastmod>2016-11-21T08:49:46.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://wudaijun.com/2016/11/docker-basic/</loc>
-    
-    <lastmod>2016-11-17T08:43:29.000Z</lastmod>
     
   </url>
   
@@ -275,21 +296,14 @@
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/02/skynet-socketserver/</loc>
+    <loc>http://wudaijun.com/2015/01/skynet-luaservice/</loc>
     
     <lastmod>2016-09-20T14:51:49.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/07/kbengine-study1/</loc>
-    
-    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://wudaijun.com/2015/02/skynet-gateserver/</loc>
+    <loc>http://wudaijun.com/2015/06/firefly-study2/</loc>
     
     <lastmod>2016-09-20T14:51:49.000Z</lastmod>
     
@@ -310,7 +324,14 @@
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/01/skynet-luaservice/</loc>
+    <loc>http://wudaijun.com/2015/02/skynet-gateserver/</loc>
+    
+    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/02/skynet-socketserver/</loc>
     
     <lastmod>2016-09-20T14:51:49.000Z</lastmod>
     
@@ -324,7 +345,7 @@
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/06/firefly-study2/</loc>
+    <loc>http://wudaijun.com/2015/07/kbengine-study1/</loc>
     
     <lastmod>2016-09-20T14:51:49.000Z</lastmod>
     
@@ -527,14 +548,14 @@
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/05/wordpress-setup/</loc>
+    <loc>http://wudaijun.com/2015/04/erlang-thinking/</loc>
     
     <lastmod>2015-09-22T02:25:54.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/05/twisted/</loc>
+    <loc>http://wudaijun.com/2015/07/c-linker-model/</loc>
     
     <lastmod>2015-09-22T02:25:54.000Z</lastmod>
     
@@ -548,7 +569,7 @@
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/07/erlang-superviosr/</loc>
+    <loc>http://wudaijun.com/2015/05/wordpress-setup/</loc>
     
     <lastmod>2015-09-22T02:25:54.000Z</lastmod>
     
@@ -562,14 +583,14 @@
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/04/erlang-thinking/</loc>
+    <loc>http://wudaijun.com/2015/05/twisted/</loc>
     
     <lastmod>2015-09-22T02:25:54.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/07/c-linker-model/</loc>
+    <loc>http://wudaijun.com/2015/07/erlang-superviosr/</loc>
     
     <lastmod>2015-09-22T02:25:54.000Z</lastmod>
     
