@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://wudaijun.com/2018/03/docker-management/</loc>
+    
+    <lastmod>2018-03-08T08:00:56.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://wudaijun.com/2018/02/go-sync-map-implement/</loc>
     
     <lastmod>2018-02-11T08:25:26.000Z</lastmod>
@@ -359,41 +366,6 @@
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/01/skynet-c-module/</loc>
-    
-    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://wudaijun.com/2015/06/firefly-study2/</loc>
-    
-    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://wudaijun.com/2015/07/kbengine-study2/</loc>
-    
-    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://wudaijun.com/2015/07/kbengine-study1/</loc>
-    
-    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://wudaijun.com/2015/05/firefly-study1/</loc>
-    
-    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://wudaijun.com/2015/02/skynet-gateserver/</loc>
     
     <lastmod>2016-09-20T14:51:49.000Z</lastmod>
@@ -408,7 +380,42 @@
   </url>
   
   <url>
+    <loc>http://wudaijun.com/2015/06/firefly-study2/</loc>
+    
+    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://wudaijun.com/2015/01/skynet-luaservice/</loc>
+    
+    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/01/skynet-c-module/</loc>
+    
+    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/05/firefly-study1/</loc>
+    
+    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/07/kbengine-study1/</loc>
+    
+    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/07/kbengine-study2/</loc>
     
     <lastmod>2016-09-20T14:51:49.000Z</lastmod>
     
@@ -597,14 +604,14 @@
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/07/erlang-superviosr/</loc>
+    <loc>http://wudaijun.com/2015/03/cpp-rvalue-referrence/</loc>
     
     <lastmod>2015-09-22T02:25:54.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/05/twisted/</loc>
+    <loc>http://wudaijun.com/2015/04/erlang-thinking/</loc>
     
     <lastmod>2015-09-22T02:25:54.000Z</lastmod>
     
@@ -625,7 +632,14 @@
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/04/erlang-thinking/</loc>
+    <loc>http://wudaijun.com/2015/07/erlang-superviosr/</loc>
+    
+    <lastmod>2015-09-22T02:25:54.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/05/twisted/</loc>
     
     <lastmod>2015-09-22T02:25:54.000Z</lastmod>
     
@@ -633,13 +647,6 @@
   
   <url>
     <loc>http://wudaijun.com/2015/07/c-linker-model/</loc>
-    
-    <lastmod>2015-09-22T02:25:54.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://wudaijun.com/2015/03/cpp-rvalue-referrence/</loc>
     
     <lastmod>2015-09-22T02:25:54.000Z</lastmod>
     
