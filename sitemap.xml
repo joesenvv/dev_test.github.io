@@ -4,7 +4,7 @@
   <url>
     <loc>http://wudaijun.com/2018/05/understand-functional-programing/</loc>
     
-    <lastmod>2018-05-13T09:22:20.000Z</lastmod>
+    <lastmod>2018-05-13T11:36:01.000Z</lastmod>
     
   </url>
   
@@ -387,7 +387,21 @@
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/02/skynet-gateserver/</loc>
+    <loc>http://wudaijun.com/2015/07/kbengine-study1/</loc>
+    
+    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/01/skynet-luaservice/</loc>
+    
+    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/06/firefly-study2/</loc>
     
     <lastmod>2016-09-20T14:51:49.000Z</lastmod>
     
@@ -415,7 +429,7 @@
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/01/skynet-luaservice/</loc>
+    <loc>http://wudaijun.com/2015/02/skynet-gateserver/</loc>
     
     <lastmod>2016-09-20T14:51:49.000Z</lastmod>
     
@@ -423,20 +437,6 @@
   
   <url>
     <loc>http://wudaijun.com/2015/05/firefly-study1/</loc>
-    
-    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://wudaijun.com/2015/06/firefly-study2/</loc>
-    
-    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://wudaijun.com/2015/07/kbengine-study1/</loc>
     
     <lastmod>2016-09-20T14:51:49.000Z</lastmod>
     
@@ -625,6 +625,13 @@
   </url>
   
   <url>
+    <loc>http://wudaijun.com/2015/04/erlang-thinking/</loc>
+    
+    <lastmod>2015-09-22T02:25:54.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://wudaijun.com/2015/05/erlang-gameserver-persistence/</loc>
     
     <lastmod>2015-09-22T02:25:54.000Z</lastmod>
@@ -632,7 +639,7 @@
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/05/wordpress-setup/</loc>
+    <loc>http://wudaijun.com/2015/05/twisted/</loc>
     
     <lastmod>2015-09-22T02:25:54.000Z</lastmod>
     
@@ -653,13 +660,6 @@
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/05/twisted/</loc>
-    
-    <lastmod>2015-09-22T02:25:54.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://wudaijun.com/2015/07/erlang-superviosr/</loc>
     
     <lastmod>2015-09-22T02:25:54.000Z</lastmod>
@@ -667,7 +667,7 @@
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/04/erlang-thinking/</loc>
+    <loc>http://wudaijun.com/2015/05/wordpress-setup/</loc>
     
     <lastmod>2015-09-22T02:25:54.000Z</lastmod>
     
