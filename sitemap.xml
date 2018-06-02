@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://wudaijun.com/2018/06/flux-study/</loc>
+    
+    <lastmod>2018-06-02T02:21:41.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2018/05/react-notes/</loc>
+    
+    <lastmod>2018-06-02T02:20:04.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://wudaijun.com/2018/05/understand-functional-programing/</loc>
     
     <lastmod>2018-05-13T11:36:01.000Z</lastmod>
@@ -156,14 +170,14 @@
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2017/08/go-conetxt-usage/</loc>
+    <loc>http://wudaijun.com/2017/05/go-vs-erlang/</loc>
     
     <lastmod>2017-10-31T03:16:27.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2017/05/go-vs-erlang/</loc>
+    <loc>http://wudaijun.com/2017/08/go-conetxt-usage/</loc>
     
     <lastmod>2017-10-31T03:16:27.000Z</lastmod>
     
@@ -387,13 +401,6 @@
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/07/kbengine-study1/</loc>
-    
-    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://wudaijun.com/2015/01/skynet-luaservice/</loc>
     
     <lastmod>2016-09-20T14:51:49.000Z</lastmod>
@@ -408,14 +415,14 @@
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/07/kbengine-study2/</loc>
+    <loc>http://wudaijun.com/2015/02/skynet-gateserver/</loc>
     
     <lastmod>2016-09-20T14:51:49.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/02/skynet-socketserver/</loc>
+    <loc>http://wudaijun.com/2015/07/kbengine-study1/</loc>
     
     <lastmod>2016-09-20T14:51:49.000Z</lastmod>
     
@@ -429,7 +436,14 @@
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/02/skynet-gateserver/</loc>
+    <loc>http://wudaijun.com/2015/07/kbengine-study2/</loc>
+    
+    <lastmod>2016-09-20T14:51:49.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/02/skynet-socketserver/</loc>
     
     <lastmod>2016-09-20T14:51:49.000Z</lastmod>
     
@@ -625,7 +639,7 @@
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/04/erlang-thinking/</loc>
+    <loc>http://wudaijun.com/2015/05/wordpress-setup/</loc>
     
     <lastmod>2015-09-22T02:25:54.000Z</lastmod>
     
@@ -639,14 +653,7 @@
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/05/twisted/</loc>
-    
-    <lastmod>2015-09-22T02:25:54.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://wudaijun.com/2015/03/cpp-rvalue-referrence/</loc>
+    <loc>http://wudaijun.com/2015/04/erlang-thinking/</loc>
     
     <lastmod>2015-09-22T02:25:54.000Z</lastmod>
     
@@ -660,6 +667,20 @@
   </url>
   
   <url>
+    <loc>http://wudaijun.com/2015/09/use-hexo-rebuild-blog/</loc>
+    
+    <lastmod>2015-09-22T02:25:54.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://wudaijun.com/2015/05/twisted/</loc>
+    
+    <lastmod>2015-09-22T02:25:54.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://wudaijun.com/2015/07/erlang-superviosr/</loc>
     
     <lastmod>2015-09-22T02:25:54.000Z</lastmod>
@@ -667,14 +688,7 @@
   </url>
   
   <url>
-    <loc>http://wudaijun.com/2015/05/wordpress-setup/</loc>
-    
-    <lastmod>2015-09-22T02:25:54.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://wudaijun.com/2015/09/use-hexo-rebuild-blog/</loc>
+    <loc>http://wudaijun.com/2015/03/cpp-rvalue-referrence/</loc>
     
     <lastmod>2015-09-22T02:25:54.000Z</lastmod>
     

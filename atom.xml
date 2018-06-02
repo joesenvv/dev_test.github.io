@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://wudaijun.com/"/>
-  <updated>2018-05-13T11:36:01.000Z</updated>
+  <updated>2018-06-02T02:21:41.000Z</updated>
   <id>http://wudaijun.com/</id>
   
   <author>
@@ -15,6 +15,56 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Flux - Web应用的数据流管理</title>
+    <link href="http://wudaijun.com/2018/06/flux-study/"/>
+    <id>http://wudaijun.com/2018/06/flux-study/</id>
+    <published>2018-06-01T16:00:00.000Z</published>
+    <updated>2018-06-02T02:21:41.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>React实际上只是View层的一套解决方案，它将View层组件化，并约定组件如何交互，数据如何在组件内流通等，但实际的Web App除了View层外，还包括Model层，界面响应，服务器请求等，Flux则是Facebook为此给出一套非常简洁的方案，用于管理Web应用程序数据流。与其说Flux是一套框架，不如说其是一套设计模式，因为其核心代码只有几百行，它主要表述的是一种Web应用设计理念和模式。</p><a id="more"></a><p>目前大部分的前端框架(Angular, Vue)都支持双向绑定(MVVM)技术，其中M(Model)指数据层，V(View)指视图层，所谓双向绑定是指Model层发生变化(比如服务器数据更新)，导致对应View层更新，View层产生用户交互，也会反映到Model层。这种机制看起来方便，但在实际应用中，一个Model更新可能导致多个View和Model连锁更新(Cascading Update)。Model可以更新Model，Model可以更新View，View可以更新Model，开发者很难完全掌控数据流，比如到了后期完全不知道View的变化是由那个局部变更导致的。整个关系图看起来像是这样:</p><p><img src="/assets/image/react/mvvm.png" alt=""></p><p> Flux为此给出了单向数据流的解决方案，React的单向数据流指的是View层内部的自顶向下的数据流，这里指的整个Web App 的单向数据流，在Flux中，主要有四个部分:</p><ul><li>View: 在Flux中，View层完全是Store层的展现。它订阅Store的变更(change event)，并反馈到界面上。Flux本身支持你使用任意的前端框架，但Flux的理念与React最为契合(毕竟都源自于Facebook)。</li><li>Store: 即应用数据，Store的数据只能由Action更新(对外只有get方法)，每个Store决定自己响应哪些Action，并更新自身，更新完成之后，抛出变更事件(change event)。</li><li>Action: 描述应用的内部接口，它代表任何能与应用交互的方式(比如界面交互，后台更新等)，在Flux中，Action被简单定义为Type+Data。</li><li>Dispatcher: 如其名，它负责接收所有的Action，并将其派发到注册到它的Store，每个Store都会收到所有的Action。所有的Action都会经由Dispatcher。</li></ul><p>Flux通过加入Dispatcher和Action避免了Model对View的依赖，形成单向数据流:</p><p><img src="/assets/image/react/react-one-way-dataflow.png" alt=""></p><p>假设我们有个Todo应用，在Flux中，一个典型的交互流程如下:</p><ol><li>View层(被挂载时)订阅TodoStore的内容变更</li><li>View层获取TodoStore中所有的TodoList并渲染</li><li>用户在界面上输入一条新Todo内容</li><li>View捕捉到该输入事件，通过Dispatcher派发一个Action，Type为”add-todo”，Data为用户输入的内容</li><li>TodoStore收到这个Action，判断并响应该Action(这个过程叫Reduce)，添加todo内容更新自身，然后抛出更新事件(change event)</li><li>View层收到该change event，从TodoStore中获取最新数据，并刷新显示</li></ol><p>整个流程看起来比双向绑定更麻烦，但实际数据流更清晰可控，这样做有如下好处:</p><ol><li>View层职责很简单，只负责渲染Store变更和触发Action</li><li>每个Store的变更可通过其响应的Action来判断和追踪</li><li>所有的Action都必须经由全局Dispatcher，即”消息汞”</li></ol><p>Flux官方的<a href="https://github.com/facebook/flux/tree/master/examples/flux-todomvc" target="_blank" rel="external">todomvc</a>是一个很好的入门例子</p><p>总结起来就是，Flux通过将职责细分，将模块变得更干净，然后通过必要的中间组件(如Dispatcher)，让所有的操作和状态都变得容易被追踪，调试。前面提过，Flux本身只是一种设计模式，并针对这种设计模式提供了一个简洁的实现，针对小型项目足以应付。但也有一些缺陷，，比如所有的Store都会收到所有Action，因此基于Flux单向数据流思想，衍生了一些其它第三方状态管理器(state container)，目前最火的是<a href="https://cn.redux.js.org/" target="_blank" rel="external">Redux</a>，它与Flux的主要区别是:</p><ol><li>整个应用只有一个Store</li><li>将Store的State更新操作分离到Reducer中</li><li>Reducer用来处理Action对State树的更改，它是纯函数(替换而不是修改State)，这样每个Reducer维护State树的一部分</li><li>由于只有一个Store，Flux中的Dispather变成了Store的一个函数</li></ol><p>当然，框架这种东西，在思想确定后，根据项目选合适的就行了。并不是越复杂越好。</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;React实际上只是View层的一套解决方案，它将View层组件化，并约定组件如何交互，数据如何在组件内流通等，但实际的Web App除了View层外，还包括Model层，界面响应，服务器请求等，Flux则是Facebook为此给出一套非常简洁的方案，用于管理Web应用程序数据流。与其说Flux是一套框架，不如说其是一套设计模式，因为其核心代码只有几百行，它主要表述的是一种Web应用设计理念和模式。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="web" scheme="http://wudaijun.com/categories/web/"/>
+    
+    
+      <category term="web" scheme="http://wudaijun.com/tags/web/"/>
+    
+      <category term="react" scheme="http://wudaijun.com/tags/react/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>React - Web中的函数式思维</title>
+    <link href="http://wudaijun.com/2018/05/react-notes/"/>
+    <id>http://wudaijun.com/2018/05/react-notes/</id>
+    <published>2018-05-26T16:00:00.000Z</published>
+    <updated>2018-06-02T02:20:04.000Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="预备知识"><a href="#预备知识" class="headerlink" title="预备知识"></a>预备知识</h3><p><a href="http://es6.ruanyifeng.com/" target="_blank" rel="external">ES6</a>: Javascript 的新标准，主要包括引入class，箭头函数，let, const 新关键字等。</p><p><a href="https://doc.react-china.org/docs/introducing-jsx.html" target="_blank" rel="external">JSX</a>: JSX 是JavaScript 语法扩展，让在 js 中写HTML像模板语言一样方便，最终会编译为js。</p><h3 id="React-特性"><a href="#React-特性" class="headerlink" title="React 特性"></a>React 特性</h3><h4 id="1-组件"><a href="#1-组件" class="headerlink" title="1. 组件"></a>1. 组件</h4><p>React的核心思想便是将UI切分成一些的独立的、可复用的组件，这样你就只需专注于构建每一个单独的部件，达到非常灵活的组件级别的解耦和复用。</p><a id="more"></a><p>组件本质上是函数(ES6的 class仍然基于之前的function prototype实现)，接收任意值，并返回一个 React 元素。组件可以像HTML标签一样被使用:</p><pre><code>// 组件本身，接收 props，返回界面显示元素function Welcome(props) {  return &lt;h1&gt;Hello, {props.name}&lt;/h1&gt;;}// 使用Welcome组件提供的 k-v 对将作为props参数(property的缩写)// 其实本质上就是HTML标签的attribute)传入 Welcome 组件const element = &lt;Welcome name=&quot;Sara&quot; /&gt;;ReactDOM.render(  element,  document.getElementById(&#39;root&#39;));</code></pre><p>上面的组件被称为无状态组件，有状态(state)的组件通常通过 class 实现，通过 render 方法返回界面元素:</p><pre><code>class Clock extends React.Component {  constructor(props) {    super(props);    this.state = {date: new Date()};  }  componentDidMount() {    this.timerID = setInterval(      () =&gt; this.tick(),      1000    );  }  componentWillUnmount() {    clearInterval(this.timerID);  }  tick() {    this.setState({      date: new Date()    });  }  render() {    return (      &lt;div&gt;        &lt;h1&gt;Hello, world!&lt;/h1&gt;        &lt;h2&gt;It is {this.state.date.toLocaleTimeString()}.&lt;/h2&gt;      &lt;/div&gt;    );  }}ReactDOM.render(  &lt;Clock /&gt;,  document.getElementById(&#39;root&#39;));</code></pre><p><a href="https://codepen.io/gaearon/pen/amqdNA?editors=0010" target="_blank" rel="external">CodePen预览</a></p><p>简单来说，组件就是将props和state映射为React 元素。比如 props 可能是一批库存列表，state 可能包含是否勾选了显示无货商品的复选框，然后组件结合这两部分信息，生成对应的 React 元素。</p><p>props对于组件来说是只读的，其字段映射到外部使用该组件时传入的属性(除了 props.children，它代表该组件下定义的所有的子节点)，属性值可以是基础数据类型，回调函数，甚至 React 元素，因此，组件还可以通过提供 propTypes 来验证外部使用组件传入的属性是否符合规范。</p><p>state仅由其所属组件维护，通常是一些和界面显示相关的内部状态(比如是否勾选复选项)，通过<code>this.setState</code>可变更这些状态。React 会追踪这些状态变更并反映到虚拟DOM上，开发者无需关心何时更新虚拟DOM并反馈到真实DOM上，React 可能会将几次setState操作merge为一个来提高性能，用官方的说法，setState是异步更新的。</p><p>元素是 React应用的最小单位，React 当中的元素事实上是普通的对象，比如<code>const element = &lt;h1&gt;Hello, world&lt;/h1&gt;;</code>。React DOM 可以确保 浏览器 DOM 的数据内容与 React 元素保持一致。</p><p>每个组件都有自己的生命周期，通过生命周期钩子实现，如componentDidMount，componentWillUnMount等。</p><h4 id="2-虚拟-DOM"><a href="#2-虚拟-DOM" class="headerlink" title="2. 虚拟 DOM"></a>2. 虚拟 DOM</h4><p>组件并不是真实的 DOM 节点，而是存在于内存之中的一种数据结构，叫做虚拟 DOM）。只有当它插入文档以后，才会变成真实的 DOM 。根据 React 的设计，所有的 DOM 变动，都先在虚拟 DOM 上发生，然后再将实际发生变动的部分，反映在真实 DOM上，这种算法叫做 <a href="http://www.infoq.com/cn/articles/react-dom-diff" target="_blank" rel="external">DOM Diff</a> ，它可以极大提高网页的性能表现。</p><p>React 中所有的组件被组织为一棵树（虚拟 DOM 树），React将界面视为一个个特定时刻的固定内容（就像一帧一帧的动画），而不是随时处于变化之中（而不是处于变化中的一整段动画）。每个组件只关心如何根据数据(props)和状态(state)得到React元素(element)。而不关心自己何时被渲染，是否需要渲染等细节。React 会在组件的 props 和 state 变更时知晓状态变更，并负责调用render进行渲染(像是”桢驱动”)。如此，组件只负责维护状态和映射，其它的事情(驱动，渲染，优化)React 都帮你做好了。由于 DOM Diff 算法的存在，React会先比较虚拟DOM的差异，在真实 DOM 中只会渲染改变了的部分。</p><h4 id="3-DOM-Diff"><a href="#3-DOM-Diff" class="headerlink" title="3. DOM Diff"></a>3. DOM Diff</h4><p>DOM Diff的用于比较新旧虚拟DOM树，找到最少的转换步骤。这本是O(n^3)的复杂度，React使用启发式算法，复杂度仅为O(n)。这归功于React对Web界面作出的两个假设:</p><ol><li>两个不同类型的元素将产生不同的树。</li><li>通过渲染器附带key属性，开发者可以示意哪些子元素可能是稳定的。</li></ol><p>在实际 Diff 过程中，React只会对同一层次的节点进行比较，如果节点类型不同或者被移动到不同层级，则整个节点(及其子节点)重新插入到真实DOM中。如果节点类型相同，则依靠开发者提供的key属性来优化列表比较。</p><p>因此在实际应用中，保持稳定的 DOM 结构，合理使用key属性可以帮助 React 更好的完成 diff 操作。</p><p>另外，组件的生命周期(生命周期钩子)其实也跟 DOM Diff 有关。</p><h4 id="4-单向数据流"><a href="#4-单向数据流" class="headerlink" title="4. 单向数据流"></a>4. 单向数据流</h4><p>理想情况下，React组件是单向数据流的，任何状态始终由对应组件所有，并且从该状态导出的任何数据或 UI 只能影响树中下方的组件。即整个数据流是从父组件到子组件的。在实际应用中，组件交互往往会更复杂，React 也提供了一些最佳实践:</p><ul><li>组合而不是继承: 父子组件通过组合而不是继承的方式来实现</li><li>子组件更新父组件: 父组件将自己的回调函数通过 props 传给子组件</li><li>兄弟组件需要共享状态: 将状态提升到其共有的父组件中，或者通过<a href="https://doc.react-china.org/docs/context.html" target="_blank" rel="external">Context</a></li><li>高阶组件: 参数(props)和返回值都是组件的无状态函数，可以完成对组件更高层次的行为模式抽象，<a href="https://doc.react-china.org/docs/higher-order-components.html" target="_blank" rel="external">参考</a></li></ul><h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>俗话说，没有什么是加一层抽象不能解决的，React虚拟DOM，就像操作系统的虚拟内存等概念一样，极大程度简化了开发者负担。虚拟内存屏蔽了内存换入换出等细节，而虚拟DOM屏蔽了何时渲染，渲染优化等问题，开发只关心架设好虚拟DOM，然后随着状态变更，真实DOM会随时更新。</p><p>React另一个很棒的想法是将界面看作一帧桢的动画，当前状态决定当前界面，React组件本质上就是将局部状态映射为局部界面(动画某一帧的某一部分)，然后组装为整个UI界面(某一帧的定格)。这其中外部输入(props)是只读的，内部状态(state)是可变的，而输出的界面元素(element)是不可变的。</p><p>React 在很多地方都有函数式的影子，比如数据流思想(处理过程输入输出都不可变)，高阶组件(其实就是高阶函数)等，这种思想让开发者理解和调试变得简单，开发者只关心props+state=&gt;element 的映射，React来处理其它的实现细节，如虚拟DOM，DOM Diff(有点像函数式语言实现不可变语义的Copy-On-Write)，以及虚拟DOM到真实DOM的映射等。</p><p>React的单向数据流，是一种非常简单和理想化的模型，虽然有回调函数，高阶组件等方法，但不可避免地，React 也提供了类似 Context 这种全局上下文的概念。这和函数式一样，理念在实践中只是原则而不是规则。</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;预备知识&quot;&gt;&lt;a href=&quot;#预备知识&quot; class=&quot;headerlink&quot; title=&quot;预备知识&quot;&gt;&lt;/a&gt;预备知识&lt;/h3&gt;&lt;p&gt;&lt;a href=&quot;http://es6.ruanyifeng.com/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;ES6&lt;/a&gt;: Javascript 的新标准，主要包括引入class，箭头函数，let, const 新关键字等。&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://doc.react-china.org/docs/introducing-jsx.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;JSX&lt;/a&gt;: JSX 是JavaScript 语法扩展，让在 js 中写HTML像模板语言一样方便，最终会编译为js。&lt;/p&gt;
+&lt;h3 id=&quot;React-特性&quot;&gt;&lt;a href=&quot;#React-特性&quot; class=&quot;headerlink&quot; title=&quot;React 特性&quot;&gt;&lt;/a&gt;React 特性&lt;/h3&gt;&lt;h4 id=&quot;1-组件&quot;&gt;&lt;a href=&quot;#1-组件&quot; class=&quot;headerlink&quot; title=&quot;1. 组件&quot;&gt;&lt;/a&gt;1. 组件&lt;/h4&gt;&lt;p&gt;React的核心思想便是将UI切分成一些的独立的、可复用的组件，这样你就只需专注于构建每一个单独的部件，达到非常灵活的组件级别的解耦和复用。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="web" scheme="http://wudaijun.com/categories/web/"/>
+    
+    
+      <category term="web" scheme="http://wudaijun.com/tags/web/"/>
+    
+      <category term="react" scheme="http://wudaijun.com/tags/react/"/>
+    
+  </entry>
   
   <entry>
     <title>理解函数式编程</title>
@@ -505,64 +555,6 @@
     
     
       <category term="web" scheme="http://wudaijun.com/tags/web/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Erlang 内存问题诊断</title>
-    <link href="http://wudaijun.com/2016/12/erlang-memory-debug/"/>
-    <id>http://wudaijun.com/2016/12/erlang-memory-debug/</id>
-    <published>2016-12-25T16:00:00.000Z</published>
-    <updated>2016-12-27T09:05:15.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>通过<code>erlang:memory()</code>查看节点内存占用总览，需要通过静态和动态两个维度对内存进行考核：</p><ul><li>静态: 各类内存占用比例，是否有某种类的内存占用了节点总内存的绝大部分</li><li>动态: 各类内存增长特性，如增长速度，或是否长期增长而不回收(atom除外)</li></ul><p>找出有疑似内存泄露的种类后，再进行下一步分析</p><h3 id="atom"><a href="#atom" class="headerlink" title="atom"></a>atom</h3><p>atom不会被GC，这意味着我们应该对atom内存增长更加重视而不是忽略。在编写代码时，尽量避免动态生成atom，因为一旦你的输入源不可靠或受到攻击(特别针对网络消息)，atom内存增长可能导致节点crash。可以考虑将atom生成函数替换为更安全的版本：</p><pre><code>list_to_atom/1 -&gt; list_to_existing_atom/1binary_to_atom/2 -&gt; binary_to_existing_atom/2binary_to_term(Bin) -&gt; binary_to_term(Bin,[safe])</code></pre><h3 id="ets"><a href="#ets" class="headerlink" title="ets"></a>ets</h3><p>ets内存占用通常是由于表过大，通过<code>ets:i().</code>查看ets表条目数，大小，占用内存等。</p><h3 id="process"><a href="#process" class="headerlink" title="process"></a>process</h3><p>进程内存占用过高可能有两方面原因，进程数量过大和进程占用内存过高。针对于前者，首先找出那些没有被链接或监控的”孤儿进程”：</p><pre><code>[P || P&lt;-processes(),    [{_,Ls},{_,Ms}] &lt;- [process_info(P,[links,monitors])],    []==Ls,[]==Ms].</code></pre><p>或通过<code>supervisor:count_children/1</code>查看sup下进程数量和状态。</p><p>而如果是进程所占内存过高，则可将内存占用最高的几个进程找出来进行检查:</p><pre><code>recon:proc_count(memory, 10). % 打印占用内存最高的10个进程recon:proc_count(message_queue_len, 10). % 打印消息队列最长的10个进程</code></pre><h3 id="binary"><a href="#binary" class="headerlink" title="binary"></a>binary</h3><p>erlang binary大致上分为两种，heap binary(&lt;=64字节)和refc binary(&gt;64字节)，分别位于进程堆和全局堆上，进程通过ProBin持有refc binary的引用，当refc binary引用计数为0时，被GC。关于binary的详细实现，参考<a href="http://wudaijun.com/2015/12/erlang-datastructures/">Erlang常用数据结构实现</a>。</p><p>recon提供的关于binary问题检测的函数有：</p><pre><code>% 打印出引用的refc binary内存最高的N个进程recon:proc_count(binary_memory, N)% 对所有进程执行GC 打印出GC前后ProcBin个数减少数量最多的N个进程recon:bin_leak(N)</code></pre><p>以上两个函数，通常可以找出有问题的进程，然后针对进程的业务逻辑和上下文进行优化。通常来说，针对于refc binary，有如下思路：</p><ul><li>每过一段时间手动GC(高效，不优雅)</li><li>如果只持有大binary中的一小段，用<code>binary:copy/1-2</code>(减少refc binary引用)</li><li>将涉及大binary的工作移到临时一次性进程中，做完工作就死亡(变相的手动GC)</li><li>对非活动进程使用hibernate调用(该调用将进程挂起，执行GC并清空调用栈，在收到消息时再唤醒)</li></ul><p>一种典型地binary泄露情形发生在当一个生命周期很长的中间件当作控制和传递大型refc binary消息的请求控制器或消息路由器时，因为ProcBin仅仅只是个引用，因此它们成本很低而且在中间件进程中需要花很长的时间去触发GC，所以即使除了中间件其他所有进程都已经GC了某个refc binary对应的ProcBin，该refc binary也需要保留在共享堆里。因此中间件进程成为了主要的泄漏源。</p><p>针对这种情况，有如下解决方案：</p><ul><li>避免中间件接触到refc binary，由中间件进程返回目标进程的Pid，由原始调用者来进行binary转发</li><li>调整中间件进程的GC频率(fullsweep_after)</li></ul><h3 id="driver-nif"><a href="#driver-nif" class="headerlink" title="driver/nif"></a>driver/nif</h3><p>另一部分非Erlang虚拟机管制的内存通常来自于第三方Driver或NIF，要确认是否是这部分内存出了问题，可通过<code>recon_alloc:memory(allocated).</code>和OS所报告的内存占用进行对比，可以大概得到C Driver或NIF分配的内存，再根据该部分内存的增长情况和占用比例来判断是否出现问题。</p><p>如果是纯C，那么内存使用应该是相对稳定并且可预估的，如果还挂接了Lua这类动态语言，调试起来要麻烦一些，在我们的服务器中，Lua部分是无状态的，可以直接重新加载Lua虚拟机。其它的调试手段，则要透过Lua层面的GC机制去解决问题了。</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;通过&lt;code&gt;erlang:memory()&lt;/code&gt;查看节点内存占用总览，需要通过静态和动态两个维度对内存进行考核：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;静态: 各类内存占用比例，是否有某种类的内存占用了节点总内存的绝大部分&lt;/li&gt;
-&lt;li&gt;动态: 各类内存增长特性，如增长
-      
-    
-    </summary>
-    
-      <category term="erlang" scheme="http://wudaijun.com/categories/erlang/"/>
-    
-    
-      <category term="erlang" scheme="http://wudaijun.com/tags/erlang/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Erlang Unicode编码</title>
-    <link href="http://wudaijun.com/2016/12/unicode-in-erlang/"/>
-    <id>http://wudaijun.com/2016/12/unicode-in-erlang/</id>
-    <published>2016-12-16T16:00:00.000Z</published>
-    <updated>2017-02-22T02:45:49.000Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="Unicode基础"><a href="#Unicode基础" class="headerlink" title="Unicode基础"></a>Unicode基础</h2><h3 id="编码方式"><a href="#编码方式" class="headerlink" title="编码方式"></a>编码方式</h3><p>定义字符集中每个字符的<strong>codepoint(数字编码)</strong></p><ul><li>ASCII: 不用多说，编码空间为7位(0-127)</li><li><a href="https://zh.wikipedia.org/wiki/ISO/IEC_8859-1" target="_blank" rel="external">ISO 8859-1</a>: 又称Latin-1，以ASCII为基础，在空置的0xA0-0xFF的范围内，加入96个字母及符号。编码空间为8位(0-255)</li><li>UCS-2: 16位编码空间 又称基本多文种平面或零平面</li><li>UCS-4: 32位编码空间 在UCS-2基本上，加入辅助平面(目前有16个辅助平面，至少需要21位)</li><li>注1: UCS(Universal Character Set, <a href="https://zh.wikipedia.org/wiki/%E9%80%9A%E7%94%A8%E5%AD%97%E7%AC%A6%E9%9B%86" target="_blank" rel="external">通用字符集</a>)</li><li>注2: 以上四种编码都是向前兼容的，通常我们所说的Unicode编码指UCS-2和UCS-4，目前广泛运用的是UCS-2</li></ul><a id="more"></a><h3 id="实现方式"><a href="#实现方式" class="headerlink" title="实现方式"></a>实现方式</h3><p>实现方式将字符的数字编码存储在计算机字节中，由于节省空间和平台差异性等，衍生不同的实现方式</p><ul><li><a href="https://zh.wikipedia.org/wiki/UTF-8" target="_blank" rel="external">UTF-8</a>: 一种变长编码，使用1-3个字节编码UCS-2字符集，1-6个字节可编码UCS-4字符集(目前只用最多四个字节即可表示UCS-4所定义的17个平面)。优点是兼容ASCII，节省空间，并且不存在字节序的问题</li><li><a href="https://zh.wikipedia.org/wiki/UTF-16" target="_blank" rel="external">UTF-16</a>: 和UTF-8类似，使用2个字节来编码UCS-2字符集(UCS-2中有预留的位用于实现UTF-16扩展多字节)，使用4个字节来编码UCS-4字符集。由于使用两个字节作为基本编码单位，UTF-16存在字节序的问题，通常使用BOM来解决</li><li><a href="https://zh.wikipedia.org/wiki/UTF-32" target="_blank" rel="external">UTF-32</a>: 32位定长编码，能够表示UCS-4字符集所有字符，但空间占用大，因此很少见</li><li>注1: UTF(Unicode Transformation Format, Unicode转换格式)</li><li>注2: BOM(byte-order mark, <a href="https://zh.wikipedia.org/wiki/%E4%BD%8D%E5%85%83%E7%B5%84%E9%A0%86%E5%BA%8F%E8%A8%98%E8%99%9F" target="_blank" rel="external">字节顺序标记</a>)</li></ul><h2 id="Erlang中的Unicode"><a href="#Erlang中的Unicode" class="headerlink" title="Erlang中的Unicode"></a>Erlang中的Unicode</h2><h3 id="Unicode表示"><a href="#Unicode表示" class="headerlink" title="Unicode表示"></a>Unicode表示</h3><pre><code>%% 环境 Mac OSX Yosemite &amp; Erlang OTP/19Eshell V8.1  (abort with ^G)1&gt; L = &quot;中文&quot;.[20013,25991] % Erlang lists存放的是字符的Unicode编码2&gt; B = &lt;&lt;&quot;中文&quot;&gt;&gt;.&lt;&lt;45,135&gt;&gt; % Erlang只知&quot;中文&quot;的Unicode编码[20013,25991]，并不知应该用何种实现方式(UTF8或其他)，默认它会将Unicode编码 rem 256，产生0-255间的编码(并按照Lantin-1解码)% 下面我们将考虑将&quot;中文&quot;转换为binary% 方案一. erlang:list_to_binary -&gt; error3&gt; list_to_binary(L). % 该函数支持的list只能是iolist(见后面术语参考)，否则Erlang并不知道你想将字符串转换为何种编码格式的binary** exception error: bad argument     in function  list_to_binary/1        called as list_to_binary([20013,25991])% 方案二. unicode:characters_to_binary -&gt; ok4&gt; UTF8 = unicode:characters_to_binary(L).% 将L中的unicode编码转换为UTF8 binary&lt;228,184,173,230,150,135&gt;&gt;5&gt; UTF16Big = unicode:characters_to_binary(UTF8,utf8,utf16).&lt;&lt;78,45,101,135&gt;&gt; % 默认为Big Endian6&gt; UTF16Little = unicode:characters_to_binary(UTF8,utf8,{utf16,little}).&lt;&lt;45,78,135,101&gt;&gt;% 方案三. 利用binary构造语法构建7&gt; UTF8 = &lt;&lt;&quot;中文&quot;/utf8&gt;&gt;.&lt;&lt;228,184,173,230,150,135&gt;&gt;8&gt; UTF8 = &lt;&lt;L/utf8&gt;&gt;. % Why ?** exception error: bad argument</code></pre><p>在Erlang中，字符串就是整数列表，并且这个整数可以无限大，lists将保存其中每个字符的Unicode编码，只要lists中的整数是有效的Unicode codepoint，就可以找到对应的字符。因此也就不存在UTF8/UTF16格式的lists字符串一说。而binary的处理则要麻烦一些，Erlang用UTF8作为Unicode在binary上的实现方式，unicode模块提供了这方面丰富的unicode编码处理接口。</p><h3 id="Unicode使用"><a href="#Unicode使用" class="headerlink" title="Unicode使用"></a>Unicode使用</h3><pre><code>8&gt; io:format(&quot;~s&quot;, [L]).** exception error: bad argument in function  io:format/3    called as io:format(&lt;0.50.0&gt;,&quot;~s&quot;,[[20013,25991]])9&gt; io:format(&quot;~p&quot;, [L]).[20013,25991]ok10&gt; io:format(&quot;~ts&quot;, [L]).中文ok11&gt; io:format(&quot;~s&quot;, [UTF8]).ä¸­æok12&gt; io:format(&quot;~p&quot;, [UTF8]).&lt;&lt;228,184,173,230,150,135&gt;&gt;ok13&gt; io:format(&quot;~ts&quot;, [UTF8]).中文ok</code></pre><p>先解释几个Erlang术语：</p><ul><li><a href="http://www.cnblogs.com/me-sa/archive/2012/01/31/erlang0034.html" target="_blank" rel="external">iolist</a>: 0-255编码(Latin-1)的lists，binary，或它们的嵌套，如<code>[[&quot;123&quot;,&lt;&lt;&quot;456&quot;&gt;&gt;],&lt;&lt;&quot;789&quot;&gt;&gt;]</code></li><li>unicode binary: UTF8编码的binary(Erlang默认使用UTF8 binary编码unicode)</li><li>charlist: UTF8编码的binary，或包含有效unicode codepoint的lists，或它们的嵌套，如<code>[&lt;&lt;&quot;hello&quot;&gt;&gt;, &quot;中国&quot;]</code></li></ul><p><code>~s</code>只能打印iolist，binary，或atom，因此不能直接打印中文lists(无法解码超过255的codepoint)或UTF8 binary(会按字节解释，出现乱码)。</p><p><code>~ts</code>则可打印charlist和unicode binary。</p><p><code>~p</code>如果不能打印出ASCII(0-127)字符，则直接打印出原生Term，不会对Unicode编码进行处理。</p><p>参考：</p><ol><li><a href="http://erlang.org/doc/man/unicode.html" target="_blank" rel="external">http://erlang.org/doc/man/unicode.html</a></li><li><a href="http://erlang.org/doc/apps/stdlib/unicode_usage.html" target="_blank" rel="external">http://erlang.org/doc/apps/stdlib/unicode_usage.html</a></li></ol>]]></content>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;Unicode基础&quot;&gt;&lt;a href=&quot;#Unicode基础&quot; class=&quot;headerlink&quot; title=&quot;Unicode基础&quot;&gt;&lt;/a&gt;Unicode基础&lt;/h2&gt;&lt;h3 id=&quot;编码方式&quot;&gt;&lt;a href=&quot;#编码方式&quot; class=&quot;headerlink&quot; title=&quot;编码方式&quot;&gt;&lt;/a&gt;编码方式&lt;/h3&gt;&lt;p&gt;定义字符集中每个字符的&lt;strong&gt;codepoint(数字编码)&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;ASCII: 不用多说，编码空间为7位(0-127)&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;https://zh.wikipedia.org/wiki/ISO/IEC_8859-1&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;ISO 8859-1&lt;/a&gt;: 又称Latin-1，以ASCII为基础，在空置的0xA0-0xFF的范围内，加入96个字母及符号。编码空间为8位(0-255)&lt;/li&gt;
-&lt;li&gt;UCS-2: 16位编码空间 又称基本多文种平面或零平面&lt;/li&gt;
-&lt;li&gt;UCS-4: 32位编码空间 在UCS-2基本上，加入辅助平面(目前有16个辅助平面，至少需要21位)&lt;/li&gt;
-&lt;li&gt;注1: UCS(Universal Character Set, &lt;a href=&quot;https://zh.wikipedia.org/wiki/%E9%80%9A%E7%94%A8%E5%AD%97%E7%AC%A6%E9%9B%86&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;通用字符集&lt;/a&gt;)&lt;/li&gt;
-&lt;li&gt;注2: 以上四种编码都是向前兼容的，通常我们所说的Unicode编码指UCS-2和UCS-4，目前广泛运用的是UCS-2&lt;/li&gt;
-&lt;/ul&gt;
-    
-    </summary>
-    
-      <category term="erlang" scheme="http://wudaijun.com/categories/erlang/"/>
-    
-    
-      <category term="erlang" scheme="http://wudaijun.com/tags/erlang/"/>
     
   </entry>
   
