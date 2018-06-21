@@ -1,4 +1,453 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>go pprof 性能分析 | wudaijun's blog</title><link rel="stylesheet" type="text/css" href="//fonts.neworld.org/css?family=Source+Code+Pro"><link rel="stylesheet" type="text/css" href="/css/style.css?v=2.0.1"><link rel="stylesheet" type="text/css" href="/css/highlight.css?v=2.0.1"><link rel="Shortcut Icon" href="/favicon.ico"><link rel="bookmark" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">go pprof 性能分析</h1><a id="logo" href="/.">wudaijun's blog</a><p class="description">Coding is Funny</p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div><div id="search-form"><div id="result-mask" class="hide"></div><label><input id="search-key" type="text" autocomplete="off" placeholder="请输入关键字..."></label><div id="result-wrap" class="hide"><div id="search-result"></div></div><div class="hide"><template id="search-tpl"><div class="item"><a href="/{path}" title="{title}"><div class="title">{title}</div><div class="time">{date}</div><div class="tags">{tags}</div></a></div></template></div></div></div><div id="layout" class="layout-g"><div class="layout-l"><div class="content_container"><div class="post"><h1 class="post-title">go pprof 性能分析</h1><div class="post-meta"><a href="/2018/04/go-pprof/#comments" class="comment-count"></a><p><span class="date">Apr 04, 2018</span><span><a href="/categories/go/" class="category">go</a></span><span><i id="busuanzi_container_page_pv"><i id="busuanzi_value_page_pv"></i><i>点击</i></i></span></p></div><div class="post-content"><h3 id="一-pprof-数据采样"><a href="#一-pprof-数据采样" class="headerlink" title="一. pprof 数据采样"></a>一. pprof 数据采样</h3><p>pprof 采样数据主要有三种获取方式:</p>
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.3.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/theme/favicon-100x100.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/theme/favicon-32x32.ico?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/theme/favicon-16x16.ico?v=6.3.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.3.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="一. pprof 数据采样pprof 采样数据主要有三种获取方式:  runtime/pprof: 手动调用runtime.StartCPUProfile或者runtime.StopCPUProfile等 API来生成和写入采样文件，灵活性高 net/http/pprof: 通过 http 服务获取Profile采样文件，简单易用，适用于对应用程序的整体监控。通过 runtime/pprof 实现">
+<meta name="keywords" content="go">
+<meta property="og:type" content="article">
+<meta property="og:title" content="go pprof 性能分析">
+<meta property="og:url" content="http://wudaijun.com/2018/04/go-pprof/index.html">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
+<meta property="og:description" content="一. pprof 数据采样pprof 采样数据主要有三种获取方式:  runtime/pprof: 手动调用runtime.StartCPUProfile或者runtime.StopCPUProfile等 API来生成和写入采样文件，灵活性高 net/http/pprof: 通过 http 服务获取Profile采样文件，简单易用，适用于对应用程序的整体监控。通过 runtime/pprof 实现">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://wudaijun.com/assets/image/201804/go-block-prof.png">
+<meta property="og:image" content="http://wudaijun.com/assets/image/201804/go-mutex-prof.png">
+<meta property="og:updated_time" content="2018-06-12T08:26:06.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="go pprof 性能分析">
+<meta name="twitter:description" content="一. pprof 数据采样pprof 采样数据主要有三种获取方式:  runtime/pprof: 手动调用runtime.StartCPUProfile或者runtime.StopCPUProfile等 API来生成和写入采样文件，灵活性高 net/http/pprof: 通过 http 服务获取Profile采样文件，简单易用，适用于对应用程序的整体监控。通过 runtime/pprof 实现">
+<meta name="twitter:image" content="http://wudaijun.com/assets/image/201804/go-block-prof.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://wudaijun.com/2018/04/go-pprof/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>go pprof 性能分析 | wudaijun's blog</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">wudaijun's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Coding is Funny</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://wudaijun.com/2018/04/go-pprof/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="wudaijun">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/assets/theme/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wudaijun's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">go pprof 性能分析
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-04-04 00:00:00" itemprop="dateCreated datePublished" datetime="2018-04-04T00:00:00+08:00">2018-04-04</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/04/go-pprof/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2018/04/go-pprof/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="一-pprof-数据采样"><a href="#一-pprof-数据采样" class="headerlink" title="一. pprof 数据采样"></a>一. pprof 数据采样</h3><p>pprof 采样数据主要有三种获取方式:</p>
 <ul>
 <li><strong>runtime/pprof</strong>: 手动调用<code>runtime.StartCPUProfile</code>或者<code>runtime.StopCPUProfile</code>等 API来生成和写入采样文件，灵活性高</li>
 <li><strong>net/http/pprof</strong>: 通过 http 服务获取Profile采样文件，简单易用，适用于对应用程序的整体监控。通过 runtime/pprof 实现</li>
@@ -10,7 +459,7 @@
 go func() {
     log.Println(http.ListenAndServe(&quot;localhost:6060&quot;, nil))
 }()
-</code></pre><p>之后可通过 <a href="http://localhost:6060/debug/pprof/CMD" target="_blank" rel="external">http://localhost:6060/debug/pprof/CMD</a> 获取对应的采样数据。支持的 CMD 有:</p>
+</code></pre><p>之后可通过 <a href="http://localhost:6060/debug/pprof/CMD" target="_blank" rel="noopener">http://localhost:6060/debug/pprof/CMD</a> 获取对应的采样数据。支持的 CMD 有:</p>
 <ul>
 <li>goroutine: 获取程序当前所有 goroutine 的堆栈信息。</li>
 <li>heap: 包含每个 goroutine 分配大小，分配堆栈等。每分配 runtime.MemProfileRate(默认为512K) 个字节进行一次数据采样。</li>
@@ -18,7 +467,7 @@ go func() {
 <li>block: 获取导致阻塞的 goroutine 堆栈(如 channel, mutex 等)，使用前需要先调用 <code>runtime.SetBlockProfileRate</code></li>
 <li>mutex: 获取导致 mutex 争用的 goroutine 堆栈，使用前需要先调用 <code>runtime.SetMutexProfileFraction</code></li>
 </ul>
-<p>以上五个 CMD 都通过<a href="https://github.com/golang/go/blob/release-branch.go1.9/src/runtime/pprof/pprof.go#L135" target="_blank" rel="external">runtime/pprof Profile</a> 结构体统一管理，以 Lookup 提供统一查询接口，有相似的返回值(goroutine 堆栈)，它们都支持一个 debug  URL参数，默认为0，此时返回的采样数据是不可人为解读的函数地址列表，需要结合 pprof 工具才能还原函数名字。 debug=1时，会将函数地址转换为函数名，即脱离 pprof 在浏览器中直接查看。对 goroutine CMD来说，还支持 debug=2，此时将以 unrecovered panic 的格式打印堆栈，可读性更高。如启用<code>net/http/pprof</code>后，<a href="http://localhost:6060/debug/pprof/goroutine?debug=2" target="_blank" rel="external">http://localhost:6060/debug/pprof/goroutine?debug=2</a> 的响应格式为:</p>
+<p>以上五个 CMD 都通过<a href="https://github.com/golang/go/blob/release-branch.go1.9/src/runtime/pprof/pprof.go#L135" target="_blank" rel="noopener">runtime/pprof Profile</a> 结构体统一管理，以 Lookup 提供统一查询接口，有相似的返回值(goroutine 堆栈)，它们都支持一个 debug  URL参数，默认为0，此时返回的采样数据是不可人为解读的函数地址列表，需要结合 pprof 工具才能还原函数名字。 debug=1时，会将函数地址转换为函数名，即脱离 pprof 在浏览器中直接查看。对 goroutine CMD来说，还支持 debug=2，此时将以 unrecovered panic 的格式打印堆栈，可读性更高。如启用<code>net/http/pprof</code>后，<a href="http://localhost:6060/debug/pprof/goroutine?debug=2" target="_blank" rel="noopener">http://localhost:6060/debug/pprof/goroutine?debug=2</a> 的响应格式为:</p>
 <pre><code>goroutine 18 [chan receive, 8 minutes]:
 ngs/core/glog.logWorker(0x18b548a, 0x4, 0x7fff5fbffb0e, 0x0, 0x3, 0xc4200e31a0, 0xc4203627c4)
     /Users/wudaijun/go/src/ngs/core/glog/worker.go:43 +0x19c
@@ -40,7 +489,7 @@ created by context.propagateCancel
     /usr/local/Cellar/go/1.9.1/libexec/src/context/context.go:259 +0x1da
 
 ...
-</code></pre><p>以上几种 Profile 可在 <a href="http://localhost:6060/debug/pprof/" target="_blank" rel="external">http://localhost:6060/debug/pprof/</a> 中看到，除此之外，go pprof 的 CMD 还包括:</p>
+</code></pre><p>以上几种 Profile 可在 <a href="http://localhost:6060/debug/pprof/" target="_blank" rel="noopener">http://localhost:6060/debug/pprof/</a> 中看到，除此之外，go pprof 的 CMD 还包括:</p>
 <ul>
 <li>cmdline: 获取程序的命令行启动参数</li>
 <li>profile: 获取指定时间内(从请求时开始)的cpuprof，倒计时结束后自动返回。参数: seconds, 默认值为30。cpuprofile 每秒钟采样100次，收集当前运行的 goroutine 堆栈信息。  </li>
@@ -48,7 +497,7 @@ created by context.propagateCancel
 <li>trace: 对应用程序进行执行追踪，参数: seconds, 默认值1s</li>
 </ul>
 <p>这几个 CMD 因为各种原因没有整合到 Profile 结构中去，但就使用上而言，是没有区别的，URL格式是一致的，因此可以看做一个整体，从各个角度对系统进行数据采样和分析。</p>
-<h4 id="1-2-runtime-pprof"><a href="#1-2-runtime-pprof" class="headerlink" title="1.2 runtime/pprof"></a>1.2 runtime/pprof</h4><p><code>runtime/pprof</code>提供各种相对底层的 API 用于生成采样数据，一般应用程序更推荐使用<code>net/http/pprof</code>，<code>runtime/pprof</code> 的 API 参考<a href="https://golang.org/pkg/runtime/pprof/" target="_blank" rel="external">runtime/pprof</a>或 <a href="https://github.com/golang/go/blob/release-branch.go1.9/src/net/http/pprof/pprof.go" target="_blank" rel="external">http pprof 实现</a>。</p>
+<h4 id="1-2-runtime-pprof"><a href="#1-2-runtime-pprof" class="headerlink" title="1.2 runtime/pprof"></a>1.2 runtime/pprof</h4><p><code>runtime/pprof</code>提供各种相对底层的 API 用于生成采样数据，一般应用程序更推荐使用<code>net/http/pprof</code>，<code>runtime/pprof</code> 的 API 参考<a href="https://golang.org/pkg/runtime/pprof/" target="_blank" rel="noopener">runtime/pprof</a>或 <a href="https://github.com/golang/go/blob/release-branch.go1.9/src/net/http/pprof/pprof.go" target="_blank" rel="noopener">http pprof 实现</a>。</p>
 <h4 id="1-3-go-test"><a href="#1-3-go-test" class="headerlink" title="1.3 go test"></a>1.3 go test</h4><p>通常用<code>net/http/pprof</code>或<code>runtime/pprof</code>对应用进行整体分析，找出热点后，再用<code>go test</code>进行基准测试，进一步确定热点加以优化并对比测试。</p>
 <pre><code># 生成 test 二进制文件， pprof 工具需要用到
 ▶ go test -c -o tmp.test 
@@ -62,7 +511,7 @@ created by context.propagateCancel
 # 如果使用的 net/http/pprof 可以直接接 URL
 go tool pprof http://localhost:6060/debug/pprof/profile
 </code></pre><p>go pprof 采样数据是非常丰富的，大部分情况下我们只会用到 CPU 和 内存分析，因此这里介绍下 cpu, heap, block 和 mutex 四种 pprof 数据分析。</p>
-<h4 id="2-1-cpuprofile"><a href="#2-1-cpuprofile" class="headerlink" title="2.1 cpuprofile"></a>2.1 cpuprofile</h4><p>以<a href="https://blog.golang.org/profiling-go-programs" target="_blank" rel="external">Profiling Go Programs</a>中的<a href="https://github.com/rsc/benchgraffiti" target="_blank" rel="external">示例代码</a>为例:</p>
+<h4 id="2-1-cpuprofile"><a href="#2-1-cpuprofile" class="headerlink" title="2.1 cpuprofile"></a>2.1 cpuprofile</h4><p>以<a href="https://blog.golang.org/profiling-go-programs" target="_blank" rel="noopener">Profiling Go Programs</a>中的<a href="https://github.com/rsc/benchgraffiti" target="_blank" rel="noopener">示例代码</a>为例:</p>
 <pre><code>▶ go build -o havlak1 havlak1.go 
 ▶ ./havlak1 --cpuprofile=havlak1.prof
 # of loops: 76000 (including 1 artificial root node)
@@ -97,7 +546,7 @@ Showing top 5 nodes out of 90
 <li>list Func: 显示函数名以及每行代码的采样分析</li>
 <li>web: 生成 svg 热点图片，可在浏览器中打开，可使用 web Func 来过滤指定函数相关调用树</li>
 </ul>
-<p>通过<code>top5</code>命令可以看到，<code>mapaccess1_fast64</code>函数占用的CPU 采样时间最多，通过 <code>web mapaccess1_fast64</code> 命令打开调用图谱，查看该函数调用关系，可以看到主要在DFS 和 FindLoops 中调用的，然后再通过 <code>list DFS</code>查看函数代码和关键调用，得到 map 结构是瓶颈点，尝试转换为 slice 优化，整个过程参考<a href="https://blog.golang.org/profiling-go-programs" target="_blank" rel="external">Profiling Go Programs</a>。总的思路就是通过<code>top</code> 和<code>web</code> 找出关键函数，再通过<code>list Func</code> 查看函数代码，找到关键代码行并确认优化方案(辅以 go test Benchmark)。</p>
+<p>通过<code>top5</code>命令可以看到，<code>mapaccess1_fast64</code>函数占用的CPU 采样时间最多，通过 <code>web mapaccess1_fast64</code> 命令打开调用图谱，查看该函数调用关系，可以看到主要在DFS 和 FindLoops 中调用的，然后再通过 <code>list DFS</code>查看函数代码和关键调用，得到 map 结构是瓶颈点，尝试转换为 slice 优化，整个过程参考<a href="https://blog.golang.org/profiling-go-programs" target="_blank" rel="noopener">Profiling Go Programs</a>。总的思路就是通过<code>top</code> 和<code>web</code> 找出关键函数，再通过<code>list Func</code> 查看函数代码，找到关键代码行并确认优化方案(辅以 go test Benchmark)。</p>
 <h4 id="2-2-memprofile"><a href="#2-2-memprofile" class="headerlink" title="2.2 memprofile"></a>2.2 memprofile</h4><pre><code>▶ go build -o havlak3 havlak3.go 
 ▶ ./havlak3 --memprofile=havlak3.mprof
 ▶ go tool pprof havlak3 havlak3.mprof
@@ -114,7 +563,7 @@ Showing nodes accounting for 57.39MB, 100% of 57.39MB total
          0     0%   100%    39.60MB 69.00%  main.FindHavlakLoops /Users/wudaijun/Code/goprof/havlak/havlak3.go
          0     0%   100%    17.79MB 31.00%  main.buildBaseLoop /Users/wudaijun/Code/goprof/havlak/havlak3.go
 </code></pre><p>memprofile 也就是 heap 采样数据，go tool pprof 默认显示的是使用的内存的大小，如果想要显示使用的堆对象的个数，则通过<code>go tool pprof --inuse_objects havlak3 havlak3.mprof</code>，其它参数还有<code>--alloc_objects</code>和<code>--alloc_space</code>，分别是分配的堆内存大小和对象个数。在本例中，FindLoops 函数分配了39.60M 堆内存，占到69%，同样，接下来是通过<code>list FindLoops</code>对函数代码进行 review，找出关键数据结构，进行优化。</p>
-<h4 id="2-3-blockprofile"><a href="#2-3-blockprofile" class="headerlink" title="2.3 blockprofile"></a>2.3 blockprofile</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> mutex sync.Mutex</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">    <span class="comment">// rate = 1 时, 统计所有的 block event, </span></div><div class="line">    <span class="comment">// rate &lt;=0 时，则关闭block profiling</span></div><div class="line">    <span class="comment">// rate &gt; 1 时，为 ns 数，阻塞时间t&gt;rate的event 一定会被统计，小于rate则有t/rate 的几率被统计</span></div><div class="line">    <span class="comment">// 参考 https://github.com/golang/go/blob/release-branch.go1.9/src/runtime/mprof.go#L397</span></div><div class="line">	runtime.SetBlockProfileRate(<span class="number">1</span> * <span class="number">1000</span> * <span class="number">1000</span>)</div><div class="line">	<span class="keyword">var</span> wg sync.WaitGroup</div><div class="line">	wg.Add(<span class="number">1</span>)</div><div class="line">	mutex.Lock()</div><div class="line">	<span class="keyword">go</span> worker(&amp;wg)</div><div class="line">	time.Sleep(<span class="number">2</span>*time.Millisecond)</div><div class="line">	mutex.Unlock()</div><div class="line">	wg.Wait()</div><div class="line"></div><div class="line">	writeProfTo(<span class="string">"block"</span>, <span class="string">"block.bprof"</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">worker</span><span class="params">(wg *sync.WaitGroup)</span></span> &#123;</div><div class="line">	<span class="keyword">defer</span> wg.Done()</div><div class="line">	mutex.Lock()</div><div class="line">	time.Sleep(<span class="number">1</span>*time.Millisecond)</div><div class="line">	mutex.Unlock()</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">writeProfTo</span><span class="params">(name, fn <span class="keyword">string</span>)</span></span> &#123;</div><div class="line">	p := pprof.Lookup(name)</div><div class="line">	<span class="keyword">if</span> p == <span class="literal">nil</span> &#123;</div><div class="line">		fmt.Errorf(<span class="string">"%s prof not found"</span>, name)</div><div class="line">		<span class="keyword">return</span></div><div class="line">	&#125;</div><div class="line">	f, err := os.Create(fn)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		fmt.Errorf(<span class="string">"%v"</span>, err.Error())</div><div class="line">		<span class="keyword">return</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">defer</span> f.Close()</div><div class="line">	err = p.WriteTo(f, <span class="number">0</span>)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		fmt.Errorf(<span class="string">"%v"</span>, err.Error())</div><div class="line">		<span class="keyword">return</span></div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="2-3-blockprofile"><a href="#2-3-blockprofile" class="headerlink" title="2.3 blockprofile"></a>2.3 blockprofile</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> mutex sync.Mutex</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// rate = 1 时, 统计所有的 block event, </span></span><br><span class="line">    <span class="comment">// rate &lt;=0 时，则关闭block profiling</span></span><br><span class="line">    <span class="comment">// rate &gt; 1 时，为 ns 数，阻塞时间t&gt;rate的event 一定会被统计，小于rate则有t/rate 的几率被统计</span></span><br><span class="line">    <span class="comment">// 参考 https://github.com/golang/go/blob/release-branch.go1.9/src/runtime/mprof.go#L397</span></span><br><span class="line">	runtime.SetBlockProfileRate(<span class="number">1</span> * <span class="number">1000</span> * <span class="number">1000</span>)</span><br><span class="line">	<span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line">	wg.Add(<span class="number">1</span>)</span><br><span class="line">	mutex.Lock()</span><br><span class="line">	<span class="keyword">go</span> worker(&amp;wg)</span><br><span class="line">	time.Sleep(<span class="number">2</span>*time.Millisecond)</span><br><span class="line">	mutex.Unlock()</span><br><span class="line">	wg.Wait()</span><br><span class="line"></span><br><span class="line">	writeProfTo(<span class="string">"block"</span>, <span class="string">"block.bprof"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">worker</span><span class="params">(wg *sync.WaitGroup)</span></span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> wg.Done()</span><br><span class="line">	mutex.Lock()</span><br><span class="line">	time.Sleep(<span class="number">1</span>*time.Millisecond)</span><br><span class="line">	mutex.Unlock()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">writeProfTo</span><span class="params">(name, fn <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">	p := pprof.Lookup(name)</span><br><span class="line">	<span class="keyword">if</span> p == <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Errorf(<span class="string">"%s prof not found"</span>, name)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	f, err := os.Create(fn)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Errorf(<span class="string">"%v"</span>, err.Error())</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> f.Close()</span><br><span class="line">	err = p.WriteTo(f, <span class="number">0</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Errorf(<span class="string">"%v"</span>, err.Error())</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>运行程序并 pprof:</p>
 <pre><code>▶ go build -o Temp tmp.go
 ▶ go tool pprof Temp block.bprof
@@ -148,25 +597,853 @@ Showing nodes accounting for 2.55ms, 100% of 2.55ms total
 <p><img src="/assets/image/201804/go-mutex-prof.png" alt=""></p>
 <h3 id="三-实践-Tips"><a href="#三-实践-Tips" class="headerlink" title="三. 实践 Tips"></a>三. 实践 Tips</h3><p>以下是一些从其它项目借鉴或者自己总结的实践经验，它们只是建议，而不是准则，实际项目中应该以性能分析数据来作为优化的参考，避免过早优化。</p>
 <ol>
-<li>对频繁分配的小对象，使用 <a href="https://golang.org/pkg/sync/#Pool" target="_blank" rel="external">sync.Pool</a> 对象池避免分配</li>
+<li>对频繁分配的小对象，使用 <a href="https://golang.org/pkg/sync/#Pool" target="_blank" rel="noopener">sync.Pool</a> 对象池避免分配</li>
 <li>自动化的 DeepCopy 是非常耗时的，其中涉及到反射，内存分配，容器(如 map)扩展等，大概比手动拷贝慢一个数量级</li>
 <li>用 atomic.Load/StoreXXX，atomic.Value, sync.Map 等代替 Mutex。(优先级递减)</li>
-<li>使用高效的第三方库，如用<a href="https://github.com/valyala/fasthttp" target="_blank" rel="external">fasthttp</a>替代 net/http</li>
+<li>使用高效的第三方库，如用<a href="https://github.com/valyala/fasthttp" target="_blank" rel="noopener">fasthttp</a>替代 net/http</li>
 <li>在开发环境加上<code>-race</code>编译选项进行竞态检查</li>
 <li>在开发环境开启 net/http/pprof，方便实时 pprof</li>
 <li>将所有外部IO(网络IO，磁盘IO)做成异步</li>
 </ol>
 <p>参考: </p>
 <ol>
-<li><a href="https://blog.golang.org/profiling-go-programs" target="_blank" rel="external">Profiling Go Programs</a></li>
-<li><a href="http://artem.krylysov.com/blog/2017/03/13/profiling-and-optimizing-go-web-applications/" target="_blank" rel="external">profiling-and-optimizing-go-web-applications</a></li>
+<li><a href="https://blog.golang.org/profiling-go-programs" target="_blank" rel="noopener">Profiling Go Programs</a></li>
+<li><a href="http://artem.krylysov.com/blog/2017/03/13/profiling-and-optimizing-go-web-applications/" target="_blank" rel="noopener">profiling-and-optimizing-go-web-applications</a></li>
 </ol>
-</div><div class="tags"><a href="/tags/go/">go</a></div><div class="post-share"></div><div class="post-nav"><a href="/2018/05/understand-functional-programing/" class="pre">理解函数式编程</a><a href="/2018/03/docker-container-ops/" class="next">Docker 容器管理</a></div><div id="comments"><div id="lv-container" data-id="city" data-uid="MTAyMC8zMzg3Ni8xMDQyOQ=="></div></div></div></div></div><div class="layout-r"><div id="sidebar"><div class="search-pla"></div><div id="toc" class="widget"><div class="widget-title"><i class="fa fa-fei">文章目录</i></div><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#一-pprof-数据采样"><span class="toc-text">一. pprof 数据采样</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1-net-http-pprof"><span class="toc-text">1.1 net/http/pprof</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-runtime-pprof"><span class="toc-text">1.2 runtime/pprof</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-go-test"><span class="toc-text">1.3 go test</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二-pprof-数据分析"><span class="toc-text">二. pprof 数据分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-cpuprofile"><span class="toc-text">2.1 cpuprofile</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-memprofile"><span class="toc-text">2.2 memprofile</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-blockprofile"><span class="toc-text">2.3 blockprofile</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-mutexprofile"><span class="toc-text">2.4 mutexprofile</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三-实践-Tips"><span class="toc-text">三. 实践 Tips</span></a></li></ol></div><div class="widget"><div class="widget-title"><i class="fa fa-xie"> 最新文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/gs-model-save/">谈谈GS对象的落地</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/consistent-hashing/">一致Hash算法</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/flux-study/">Flux - Web应用的数据流管理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/react-notes/">React - Web中的函数式思维</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/understand-functional-programing/">理解函数式编程</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/04/go-pprof/">go pprof 性能分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/docker-container-ops/">Docker 容器管理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/docker-management/">Docker容器编排工具</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/go-sync-map-implement/">Go sync.Map 实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/go-interface-implement/">Go Interface 实现</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-gui"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/algorithm/">algorithm</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/database/">database</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">26</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/go/">go</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/os/">os</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/programing/">programing</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/system/">system</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/unity/">unity</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web/">web</a><span class="category-list-count">4</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-biao"> 标签</i></div><div class="tagcloud"><a href="/tags/mongodb/" style="font-size: 15px;">mongodb</a> <a href="/tags/ngserver/" style="font-size: 15px;">ngserver</a> <a href="/tags/lua/" style="font-size: 15px;">lua</a> <a href="/tags/skynet/" style="font-size: 15px;">skynet</a> <a href="/tags/erlang/" style="font-size: 15px;">erlang</a> <a href="/tags/git/" style="font-size: 15px;">git</a> <a href="/tags/firefly/" style="font-size: 15px;">firefly</a> <a href="/tags/python/" style="font-size: 15px;">python</a> <a href="/tags/tool/" style="font-size: 15px;">tool</a> <a href="/tags/kbengine/" style="font-size: 15px;">kbengine</a> <a href="/tags/distribution/" style="font-size: 15px;">distribution</a> <a href="/tags/unity/" style="font-size: 15px;">unity</a> <a href="/tags/tcp-ip/" style="font-size: 15px;">tcp/ip</a> <a href="/tags/other/" style="font-size: 15px;">other</a> <a href="/tags/c-c/" style="font-size: 15px;">c/c++</a> <a href="/tags/os/" style="font-size: 15px;">os</a> <a href="/tags/web/" style="font-size: 15px;">web</a> <a href="/tags/gameserver/" style="font-size: 15px;">gameserver</a> <a href="/tags/go/" style="font-size: 15px;">go</a> <a href="/tags/linux/" style="font-size: 15px;">linux</a> <a href="/tags/goa/" style="font-size: 15px;">goa</a> <a href="/tags/docker/" style="font-size: 15px;">docker</a> <a href="/tags/system/" style="font-size: 15px;">system</a> <a href="/tags/macosx/" style="font-size: 15px;">macosx</a> <a href="/tags/hexo/" style="font-size: 15px;">hexo</a> <a href="/tags/gc/" style="font-size: 15px;">gc</a> <a href="/tags/react/" style="font-size: 15px;">react</a> <a href="/tags/programing/" style="font-size: 15px;">programing</a> <a href="/tags/hash/" style="font-size: 15px;">hash</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-archive"> 归档</i></div><ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">五月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">四月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">三月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">二月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">一月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">十一月 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">十月 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a></li></ul></div></div></div></div><a id="totop" href="#top"></a><div id="footer"><div class="footer-info"><p><a href="/atom.xml">订阅</a> |  <a href="/about/">关于</a></p><p>本站总访问量：<i id="busuanzi_container_site_pv"><i id="busuanzi_value_site_pv"></i></i>次</p><p><span> Copyright &copy;<a href="/." rel="nofollow">wudaijun.</a></span><span> Theme by<a rel="nofollow" target="_blank" href="https://github.com/chaooo/hexo-theme-BlueLake"> BlueLake.</a></span><span> Count by<a href="http://busuanzi.ibruce.info/"> busuanzi.</a></span><span> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a></span></p></div></div></div><script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js" async></script><script type="text/javascript" src="/js/search.json.js?v=2.0.1"></script><script type="text/javascript" src="/js/toctotop.js?v=2.0.1" async></script><script>(function(d, s) {
-  var j, e = d.getElementsByTagName('body')[0];
-  if (typeof LivereTower === 'function') { return; }
-  j = d.createElement(s);
-  j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
-  j.async = true;
-  e.appendChild(j);
-})(document, 'script');
-</script></body></html>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/go/" rel="tag"># go</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/docker-container-ops/" rel="next" title="Docker 容器管理">
+                <i class="fa fa-chevron-left"></i> Docker 容器管理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/05/understand-functional-programing/" rel="prev" title="理解函数式编程">
+                理解函数式编程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/assets/theme/avatar.png"
+                alt="wudaijun" />
+            
+              <p class="site-author-name" itemprop="name">wudaijun</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">97</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">16</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">29</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#一-pprof-数据采样"><span class="nav-text">一. pprof 数据采样</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-net-http-pprof"><span class="nav-text">1.1 net/http/pprof</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-runtime-pprof"><span class="nav-text">1.2 runtime/pprof</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-go-test"><span class="nav-text">1.3 go test</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二-pprof-数据分析"><span class="nav-text">二. pprof 数据分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-cpuprofile"><span class="nav-text">2.1 cpuprofile</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-memprofile"><span class="nav-text">2.2 memprofile</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-blockprofile"><span class="nav-text">2.3 blockprofile</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4-mutexprofile"><span class="nav-text">2.4 mutexprofile</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三-实践-Tips"><span class="nav-text">三. 实践 Tips</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wudaijun</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动 v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://theme-next.org">NexT.Gemini</a> v6.3.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.3.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.3.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.3.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+  
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(function (item) {
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'kL7con6xeU88chDAVyUSDSHI-gzGzoHsz',
+        appKey: '9XLxirxDW8NUhHJdu460Uiba',
+        placeholder: 'Just go go',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

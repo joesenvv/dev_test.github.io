@@ -1,20 +1,468 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>Go sync.Map 实现 | wudaijun's blog</title><link rel="stylesheet" type="text/css" href="//fonts.neworld.org/css?family=Source+Code+Pro"><link rel="stylesheet" type="text/css" href="/css/style.css?v=2.0.1"><link rel="stylesheet" type="text/css" href="/css/highlight.css?v=2.0.1"><link rel="Shortcut Icon" href="/favicon.ico"><link rel="bookmark" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Go sync.Map 实现</h1><a id="logo" href="/.">wudaijun's blog</a><p class="description">Coding is Funny</p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div><div id="search-form"><div id="result-mask" class="hide"></div><label><input id="search-key" type="text" autocomplete="off" placeholder="请输入关键字..."></label><div id="result-wrap" class="hide"><div id="search-result"></div></div><div class="hide"><template id="search-tpl"><div class="item"><a href="/{path}" title="{title}"><div class="title">{title}</div><div class="time">{date}</div><div class="tags">{tags}</div></a></div></template></div></div></div><div id="layout" class="layout-g"><div class="layout-l"><div class="content_container"><div class="post"><h1 class="post-title">Go sync.Map 实现</h1><div class="post-meta"><a href="/2018/02/go-sync-map-implement/#comments" class="comment-count"></a><p><span class="date">Feb 09, 2018</span><span><a href="/categories/go/" class="category">go</a></span><span><i id="busuanzi_container_page_pv"><i id="busuanzi_value_page_pv"></i><i>点击</i></i></span></p></div><div class="post-content"><p>Go基于CSP模型，提倡”Share memory by communicating; don’t communicate by sharing memory.”，亦即通过channel来实现goroutine之间的数据共享，但很多时候用锁仍然是不可避免的，它可以让流程更直观明了，并且减少内存占用等。通常我们的实践是用channel传递数据的所有权，分配工作和同步异步结果等，而用锁来共享状态和配置等信息。</p>
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.3.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/theme/favicon-100x100.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/theme/favicon-32x32.ico?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/theme/favicon-16x16.ico?v=6.3.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.3.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Go基于CSP模型，提倡”Share memory by communicating; don’t communicate by sharing memory.”，亦即通过channel来实现goroutine之间的数据共享，但很多时候用锁仍然是不可避免的，它可以让流程更直观明了，并且减少内存占用等。通常我们的实践是用channel传递数据的所有权，分配工作和同步异步结果等，而用锁来共享状态和配置">
+<meta name="keywords" content="go">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go sync.Map 实现">
+<meta property="og:url" content="http://wudaijun.com/2018/02/go-sync-map-implement/index.html">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
+<meta property="og:description" content="Go基于CSP模型，提倡”Share memory by communicating; don’t communicate by sharing memory.”，亦即通过channel来实现goroutine之间的数据共享，但很多时候用锁仍然是不可避免的，它可以让流程更直观明了，并且减少内存占用等。通常我们的实践是用channel传递数据的所有权，分配工作和同步异步结果等，而用锁来共享状态和配置">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://wudaijun.com/assets/image/201802/go-sync-map-diagram.png">
+<meta property="og:updated_time" content="2018-06-12T08:37:25.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Go sync.Map 实现">
+<meta name="twitter:description" content="Go基于CSP模型，提倡”Share memory by communicating; don’t communicate by sharing memory.”，亦即通过channel来实现goroutine之间的数据共享，但很多时候用锁仍然是不可避免的，它可以让流程更直观明了，并且减少内存占用等。通常我们的实践是用channel传递数据的所有权，分配工作和同步异步结果等，而用锁来共享状态和配置">
+<meta name="twitter:image" content="http://wudaijun.com/assets/image/201802/go-sync-map-diagram.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://wudaijun.com/2018/02/go-sync-map-implement/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Go sync.Map 实现 | wudaijun's blog</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">wudaijun's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Coding is Funny</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://wudaijun.com/2018/02/go-sync-map-implement/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="wudaijun">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/assets/theme/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wudaijun's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Go sync.Map 实现
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-02-09 00:00:00" itemprop="dateCreated datePublished" datetime="2018-02-09T00:00:00+08:00">2018-02-09</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/02/go-sync-map-implement/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2018/02/go-sync-map-implement/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Go基于CSP模型，提倡”Share memory by communicating; don’t communicate by sharing memory.”，亦即通过channel来实现goroutine之间的数据共享，但很多时候用锁仍然是不可避免的，它可以让流程更直观明了，并且减少内存占用等。通常我们的实践是用channel传递数据的所有权，分配工作和同步异步结果等，而用锁来共享状态和配置等信息。</p>
 <p>本文从偏实现的角度学习下Go的atomic.Load/Store，atomic.Value，以及sync.Map。</p>
 <a id="more"></a>
 <h3 id="1-atomic-Load-Store"><a href="#1-atomic-Load-Store" class="headerlink" title="1. atomic.Load/Store"></a>1. atomic.Load/Store</h3><p>在Go中，对于一个字以内的简单类型(如整数，指针)，可以直接通过<code>atomic.Load/Store/Add/Swap/CompareAndSwap</code>系列API来进行原子读写，以Int32为例: </p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"> </div><div class="line"><span class="comment">// AddInt32 atomically adds delta to *addr and returns the new value.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">AddInt32</span><span class="params">(addr *<span class="keyword">int32</span>, delta <span class="keyword">int32</span>)</span> <span class="params">(<span class="built_in">new</span> <span class="keyword">int32</span>)</span></span></div><div class="line">// <span class="title">LoadInt32</span> <span class="title">atomically</span> <span class="title">loads</span> *<span class="title">addr</span>.</div><div class="line"><span class="title">func</span> <span class="title">LoadInt32</span><span class="params">(addr *<span class="keyword">int32</span>)</span> <span class="params">(val <span class="keyword">int32</span>)</span></div><div class="line">// <span class="title">StoreInt32</span> <span class="title">atomically</span> <span class="title">stores</span> <span class="title">val</span> <span class="title">into</span> *<span class="title">addr</span>.</div><div class="line"><span class="title">func</span> <span class="title">StoreInt32</span><span class="params">(addr *<span class="keyword">int32</span>, val <span class="keyword">int32</span>)</span></div><div class="line">// <span class="title">SwapInt32</span> <span class="title">atomically</span> <span class="title">stores</span> <span class="title">new</span> <span class="title">into</span> *<span class="title">addr</span> <span class="title">and</span> <span class="title">returns</span> <span class="title">the</span> <span class="title">previous</span> *<span class="title">addr</span> <span class="title">value</span>.</div><div class="line"><span class="title">func</span> <span class="title">SwapInt32</span><span class="params">(addr *<span class="keyword">int32</span>, <span class="built_in">new</span> <span class="keyword">int32</span>)</span> <span class="params">(old <span class="keyword">int32</span>)</span></div><div class="line">// <span class="title">CompareAndSwapInt32</span> <span class="title">executes</span> <span class="title">the</span> <span class="title">compare</span>-<span class="title">and</span>-<span class="title">swap</span> <span class="title">operation</span> <span class="title">for</span> <span class="title">an</span> <span class="title">int32</span> <span class="title">value</span>.</div><div class="line"><span class="title">func</span> <span class="title">CompareAndSwapInt32</span><span class="params">(addr *<span class="keyword">int32</span>, old, <span class="built_in">new</span> <span class="keyword">int32</span>)</span> <span class="params">(swapped <span class="keyword">bool</span>)</span></div></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"> </span><br><span class="line"><span class="comment">// AddInt32 atomically adds delta to *addr and returns the new value.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">AddInt32</span><span class="params">(addr *<span class="keyword">int32</span>, delta <span class="keyword">int32</span>)</span> <span class="params">(<span class="built_in">new</span> <span class="keyword">int32</span>)</span></span></span><br><span class="line"><span class="function">// <span class="title">LoadInt32</span> <span class="title">atomically</span> <span class="title">loads</span> *<span class="title">addr</span>.</span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">LoadInt32</span><span class="params">(addr *<span class="keyword">int32</span>)</span> <span class="params">(val <span class="keyword">int32</span>)</span></span></span><br><span class="line"><span class="function">// <span class="title">StoreInt32</span> <span class="title">atomically</span> <span class="title">stores</span> <span class="title">val</span> <span class="title">into</span> *<span class="title">addr</span>.</span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">StoreInt32</span><span class="params">(addr *<span class="keyword">int32</span>, val <span class="keyword">int32</span>)</span></span></span><br><span class="line"><span class="function">// <span class="title">SwapInt32</span> <span class="title">atomically</span> <span class="title">stores</span> <span class="title">new</span> <span class="title">into</span> *<span class="title">addr</span> <span class="title">and</span> <span class="title">returns</span> <span class="title">the</span> <span class="title">previous</span> *<span class="title">addr</span> <span class="title">value</span>.</span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">SwapInt32</span><span class="params">(addr *<span class="keyword">int32</span>, <span class="built_in">new</span> <span class="keyword">int32</span>)</span> <span class="params">(old <span class="keyword">int32</span>)</span></span></span><br><span class="line"><span class="function">// <span class="title">CompareAndSwapInt32</span> <span class="title">executes</span> <span class="title">the</span> <span class="title">compare</span>-<span class="title">and</span>-<span class="title">swap</span> <span class="title">operation</span> <span class="title">for</span> <span class="title">an</span> <span class="title">int32</span> <span class="title">value</span>.</span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">CompareAndSwapInt32</span><span class="params">(addr *<span class="keyword">int32</span>, old, <span class="built_in">new</span> <span class="keyword">int32</span>)</span> <span class="params">(swapped <span class="keyword">bool</span>)</span></span></span><br></pre></td></tr></table></figure>
 <p>一个有意思的问题，在64位平台下，对Int32，Int64的直接读写是原子的吗？以下是一些有意思的讨论:</p>
 <ul>
-<li><a href="http://preshing.com/20130618/atomic-vs-non-atomic-operations/" target="_blank" rel="external">http://preshing.com/20130618/atomic-vs-non-atomic-operations/</a></li>
-<li><a href="https://stackoverflow.com/questions/46556857/is-golang-atomic-loaduint32-necessary" target="_blank" rel="external">https://stackoverflow.com/questions/46556857/is-golang-atomic-loaduint32-necessary</a></li>
-<li><a href="https://stackoverflow.com/questions/5258627/atomic-64-bit-writes-with-gcc" target="_blank" rel="external">https://stackoverflow.com/questions/5258627/atomic-64-bit-writes-with-gcc</a></li>
+<li><a href="http://preshing.com/20130618/atomic-vs-non-atomic-operations/" target="_blank" rel="noopener">http://preshing.com/20130618/atomic-vs-non-atomic-operations/</a></li>
+<li><a href="https://stackoverflow.com/questions/46556857/is-golang-atomic-loaduint32-necessary" target="_blank" rel="noopener">https://stackoverflow.com/questions/46556857/is-golang-atomic-loaduint32-necessary</a></li>
+<li><a href="https://stackoverflow.com/questions/5258627/atomic-64-bit-writes-with-gcc" target="_blank" rel="noopener">https://stackoverflow.com/questions/5258627/atomic-64-bit-writes-with-gcc</a></li>
 </ul>
 <p>总结就是，现代硬件架构基本都保证了内存对齐的word-sized load和store是原子的，这隐含两个条件: 单条MOV, MOVQ等指令是原子的，字段内存对齐(CPU对内存的读取是基于word-size的)。但安全起见，最好还是使用atomic提供的接口，具备更好的跨平台性，并且atomic还提供了一些复合操作(Add/Swap/CAS)。golang也在实现上会对具体平台进行优化：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">var i int64</div><div class="line">atomic.StoreInt64(&amp;i, 123)</div><div class="line">x := atomic.LoadInt64(&amp;i)</div><div class="line">y := atomic.AddInt64(&amp;i, 1)</div></pre></td></tr></table></figure>
-<p>在MacOS10.12(X86_64)下，对应汇编代码:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">// var i int64</div><div class="line">tmp.go:9        0x1093bff       488d051af50000                  LEAQ 0xf51a(IP), AX  // 加载int64 type</div><div class="line">tmp.go:9        0x1093c06       48890424                        MOVQ AX, 0(SP)</div><div class="line">tmp.go:9        0x1093c0a       e8c1a1f7ff                      CALL runtime.newobject(SB) // i分配在堆上(逃逸分析,escape analytic))</div><div class="line">tmp.go:9        0x1093c0f       488b442408                      MOVQ 0x8(SP), AX</div><div class="line">tmp.go:9        0x1093c14       4889442450                      MOVQ AX, 0x50(SP) // 0x50(SP) = &amp;i</div><div class="line">tmp.go:9        0x1093c19       48c70000000000                  MOVQ $0x0, 0(AX)  // 初始化 i = 0</div><div class="line">// atomic.StoreInt64(&amp;i, 123)</div><div class="line">tmp.go:10       0x1093c20       488b442450                      MOVQ 0x50(SP), AX  // 加载&amp;i</div><div class="line">tmp.go:10       0x1093c25       48c7c17b000000                  MOVQ $0x7b, CX  // 加载立即数 123</div><div class="line">tmp.go:10       0x1093c2c       488708                          XCHGQ CX, 0(AX)  // *(&amp;i) = 123  Key Step XCHGQ通过LOCK信号锁住内存总线来确保原子性</div><div class="line">// x := atomic.LoadInt64(&amp;i)</div><div class="line">tmp.go:11       0x1093c2f       488b442450                      MOVQ 0x50(SP), AX</div><div class="line">tmp.go:11       0x1093c34       488b00                          MOVQ 0(AX), AX // AX = *(&amp;i)  Key Step 原子操作</div><div class="line">tmp.go:11       0x1093c37       4889442430                      MOVQ AX, 0x30(SP)</div><div class="line">// y := atomic.AddInt64(&amp;i, 1)</div><div class="line">tmp.go:12       0x1093c3c       488b442450                      MOVQ 0x50(SP), AX</div><div class="line">tmp.go:12       0x1093c41       48c7c101000000                  MOVQ $0x1, CX</div><div class="line">tmp.go:12       0x1093c48       f0480fc108                      LOCK XADDQ CX, 0(AX) // LOCK会锁住内存总线，直到XADDQ指令完成，完成后CX为i的旧值 0(AX)=*(&amp;i)=i+1</div><div class="line">tmp.go:12       0x1093c4d       488d4101                        LEAQ 0x1(CX), AX // AX = CX+1 再执行一次加法 用于返回值</div><div class="line">tmp.go:12       0x1093c51       4889442428                      MOVQ AX, 0x28(SP)</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var i int64</span><br><span class="line">atomic.StoreInt64(&amp;i, 123)</span><br><span class="line">x := atomic.LoadInt64(&amp;i)</span><br><span class="line">y := atomic.AddInt64(&amp;i, 1)</span><br></pre></td></tr></table></figure>
+<p>在MacOS10.12(X86_64)下，对应汇编代码:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">// var i int64</span><br><span class="line">tmp.go:9        0x1093bff       488d051af50000                  LEAQ 0xf51a(IP), AX  // 加载int64 type</span><br><span class="line">tmp.go:9        0x1093c06       48890424                        MOVQ AX, 0(SP)</span><br><span class="line">tmp.go:9        0x1093c0a       e8c1a1f7ff                      CALL runtime.newobject(SB) // i分配在堆上(逃逸分析,escape analytic))</span><br><span class="line">tmp.go:9        0x1093c0f       488b442408                      MOVQ 0x8(SP), AX</span><br><span class="line">tmp.go:9        0x1093c14       4889442450                      MOVQ AX, 0x50(SP) // 0x50(SP) = &amp;i</span><br><span class="line">tmp.go:9        0x1093c19       48c70000000000                  MOVQ $0x0, 0(AX)  // 初始化 i = 0</span><br><span class="line">// atomic.StoreInt64(&amp;i, 123)</span><br><span class="line">tmp.go:10       0x1093c20       488b442450                      MOVQ 0x50(SP), AX  // 加载&amp;i</span><br><span class="line">tmp.go:10       0x1093c25       48c7c17b000000                  MOVQ $0x7b, CX  // 加载立即数 123</span><br><span class="line">tmp.go:10       0x1093c2c       488708                          XCHGQ CX, 0(AX)  // *(&amp;i) = 123  Key Step XCHGQ通过LOCK信号锁住内存总线来确保原子性</span><br><span class="line">// x := atomic.LoadInt64(&amp;i)</span><br><span class="line">tmp.go:11       0x1093c2f       488b442450                      MOVQ 0x50(SP), AX</span><br><span class="line">tmp.go:11       0x1093c34       488b00                          MOVQ 0(AX), AX // AX = *(&amp;i)  Key Step 原子操作</span><br><span class="line">tmp.go:11       0x1093c37       4889442430                      MOVQ AX, 0x30(SP)</span><br><span class="line">// y := atomic.AddInt64(&amp;i, 1)</span><br><span class="line">tmp.go:12       0x1093c3c       488b442450                      MOVQ 0x50(SP), AX</span><br><span class="line">tmp.go:12       0x1093c41       48c7c101000000                  MOVQ $0x1, CX</span><br><span class="line">tmp.go:12       0x1093c48       f0480fc108                      LOCK XADDQ CX, 0(AX) // LOCK会锁住内存总线，直到XADDQ指令完成，完成后CX为i的旧值 0(AX)=*(&amp;i)=i+1</span><br><span class="line">tmp.go:12       0x1093c4d       488d4101                        LEAQ 0x1(CX), AX // AX = CX+1 再执行一次加法 用于返回值</span><br><span class="line">tmp.go:12       0x1093c51       4889442428                      MOVQ AX, 0x28(SP)</span><br></pre></td></tr></table></figure></p>
 <p>对XCHG和XADD这类X开头的指令，都会通过LOCK信号锁住内存总线，因此加不加LOCK前缀都是一样的。可以看到，由于硬件架构的支持，atomic.Load/Store和普通读写基本没有什么区别，这种CPU指令级别的锁非常快。因此通常我们将这类CPU指令级别的支持的Lock操作称为原子操作或无锁操作。</p>
 <h3 id="2-atomic-Value"><a href="#2-atomic-Value" class="headerlink" title="2. atomic.Value"></a>2. atomic.Value</h3><p>atomic.Value于go1.4引入，用于无锁存取任意值(interface{})，它的数据结构很简单:</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// sync/atomic/value.go</span></div><div class="line"><span class="keyword">type</span> Value <span class="keyword">struct</span> &#123;</div><div class="line">  <span class="comment">// 没有实际意义 用于保证结构体在第一次被使用之后，不能被拷贝</span></div><div class="line">  <span class="comment">// 参考: https://github.com/golang/go/issues/8005#issuecomment-190753527</span></div><div class="line">   noCopy noCopy</div><div class="line">  <span class="comment">// 实际保存的值</span></div><div class="line">   v <span class="keyword">interface</span>&#123;&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Load returns the value set by the most recent Store.</span></div><div class="line"><span class="comment">// It returns nil if there has been no call to Store for this Value.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v *Value)</span> <span class="title">Load</span><span class="params">()</span> <span class="params">(x <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	<span class="comment">// ...</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Store sets the value of the Value to x.</span></div><div class="line"><span class="comment">// All calls to Store for a given Value must use values of the same concrete type.</span></div><div class="line"><span class="comment">// Store of an inconsistent type panics, as does Store(nil).</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v *Value)</span> <span class="title">Store</span><span class="params">(x <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">	<span class="comment">// ...</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// sync/atomic/value.go</span></span><br><span class="line"><span class="keyword">type</span> Value <span class="keyword">struct</span> &#123;</span><br><span class="line">  <span class="comment">// 没有实际意义 用于保证结构体在第一次被使用之后，不能被拷贝</span></span><br><span class="line">  <span class="comment">// 参考: https://github.com/golang/go/issues/8005#issuecomment-190753527</span></span><br><span class="line">   noCopy noCopy</span><br><span class="line">  <span class="comment">// 实际保存的值</span></span><br><span class="line">   v <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Load returns the value set by the most recent Store.</span></span><br><span class="line"><span class="comment">// It returns nil if there has been no call to Store for this Value.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v *Value)</span> <span class="title">Load</span><span class="params">()</span> <span class="params">(x <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">	<span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Store sets the value of the Value to x.</span></span><br><span class="line"><span class="comment">// All calls to Store for a given Value must use values of the same concrete type.</span></span><br><span class="line"><span class="comment">// Store of an inconsistent type panics, as does Store(nil).</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(v *Value)</span> <span class="title">Store</span><span class="params">(x <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">	<span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>atomic负责v的原子存取操作，我们知道interface{}对应的数据结构为eface，有两个字段: type和data，因此它不能直接通过atomic.Load/Store来存取，atomic.Value实现无锁存取的原理很简单: type字段不变，只允许更改data字段，这样就能通过<code>atomic.LoadPointer</code>来实现对data的存取。从实现来讲，atomic.Value要处理好两点:</p>
 <ol>
 <li>atomic.Value的初始化，因为在初始化时，需要同时初始化type和data字段，atomic.Value通过CAS自旋锁来实现初始化的原子性。</li>
@@ -29,18 +477,18 @@
 <li>延迟删除，删除只是为value打一个标记，在dirty map提升时才执行真正的删除</li>
 </ol>
 <p>sync.Map的使用很简单:</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> m sync.Map</div><div class="line">m.Store(<span class="string">"key"</span>, <span class="number">123</span>)</div><div class="line">v, ok := m.Load(<span class="string">"key"</span>)</div></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> m sync.Map</span><br><span class="line">m.Store(<span class="string">"key"</span>, <span class="number">123</span>)</span><br><span class="line">v, ok := m.Load(<span class="string">"key"</span>)</span><br></pre></td></tr></table></figure>
 <p>下面看一下sync.Map的定义以及Load, Store, Delete三个方法的实现。</p>
-<h4 id="3-1-定义"><a href="#3-1-定义" class="headerlink" title="3.1 定义"></a>3.1 定义</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// sync/map.go</span></div><div class="line"><span class="keyword">type</span> Map <span class="keyword">struct</span> &#123;</div><div class="line">   <span class="comment">// 当写read map 或读写dirty map时 需要上锁</span></div><div class="line">   mu Mutex</div><div class="line"></div><div class="line">   <span class="comment">// read map的 k v(entry) 是不变的，删除只是打标记，插入新key会加锁写到dirty中</span></div><div class="line">   <span class="comment">// 因此对read map的读取无需加锁</span></div><div class="line">   read atomic.Value <span class="comment">// 保存readOnly结构体</span></div><div class="line"></div><div class="line">   <span class="comment">// dirty map 对dirty map的操作需要持有mu锁</span></div><div class="line">   dirty <span class="keyword">map</span>[<span class="keyword">interface</span>&#123;&#125;]*entry</div><div class="line"></div><div class="line">   <span class="comment">// 当Load操作在read map中未找到，尝试从dirty中进行加载时(不管是否存在)，misses+1</span></div><div class="line">   <span class="comment">// 当misses达到diry map len时，dirty被提升为read 并且重新分配dirty</span></div><div class="line">   misses <span class="keyword">int</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// read map数据结构</span></div><div class="line"><span class="keyword">type</span> readOnly <span class="keyword">struct</span> &#123;</div><div class="line">   m       <span class="keyword">map</span>[<span class="keyword">interface</span>&#123;&#125;]*entry</div><div class="line">   <span class="comment">// 为true时代表dirty map中含有m中没有的元素</span></div><div class="line">   amended <span class="keyword">bool</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">type</span> entry <span class="keyword">struct</span> &#123;</div><div class="line">   <span class="comment">// 指向实际的interface&#123;&#125;</span></div><div class="line">   <span class="comment">// p有三种状态:</span></div><div class="line">   <span class="comment">// p == nil: 键值已经被删除，此时，m.dirty==nil 或 m.dirty[k]指向该entry</span></div><div class="line">   <span class="comment">// p == expunged: 键值已经被删除， 此时, m.dirty!=nil 且 m.dirty不存在该键值</span></div><div class="line">   <span class="comment">// 其它情况代表实际interface&#123;&#125;地址 如果m.dirty!=nil 则 m.read[key] 和 m.dirty[key] 指向同一个entry</span></div><div class="line">   <span class="comment">// 当删除key时，并不实际删除，先CAS entry.p为nil 等到每次dirty map创建时(dirty提升后的第一次新建Key)，会将entry.p由nil CAS为expunged</span></div><div class="line">   p unsafe.Pointer <span class="comment">// *interface&#123;&#125;</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="3-1-定义"><a href="#3-1-定义" class="headerlink" title="3.1 定义"></a>3.1 定义</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// sync/map.go</span></span><br><span class="line"><span class="keyword">type</span> Map <span class="keyword">struct</span> &#123;</span><br><span class="line">   <span class="comment">// 当写read map 或读写dirty map时 需要上锁</span></span><br><span class="line">   mu Mutex</span><br><span class="line"></span><br><span class="line">   <span class="comment">// read map的 k v(entry) 是不变的，删除只是打标记，插入新key会加锁写到dirty中</span></span><br><span class="line">   <span class="comment">// 因此对read map的读取无需加锁</span></span><br><span class="line">   read atomic.Value <span class="comment">// 保存readOnly结构体</span></span><br><span class="line"></span><br><span class="line">   <span class="comment">// dirty map 对dirty map的操作需要持有mu锁</span></span><br><span class="line">   dirty <span class="keyword">map</span>[<span class="keyword">interface</span>&#123;&#125;]*entry</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 当Load操作在read map中未找到，尝试从dirty中进行加载时(不管是否存在)，misses+1</span></span><br><span class="line">   <span class="comment">// 当misses达到diry map len时，dirty被提升为read 并且重新分配dirty</span></span><br><span class="line">   misses <span class="keyword">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// read map数据结构</span></span><br><span class="line"><span class="keyword">type</span> readOnly <span class="keyword">struct</span> &#123;</span><br><span class="line">   m       <span class="keyword">map</span>[<span class="keyword">interface</span>&#123;&#125;]*entry</span><br><span class="line">   <span class="comment">// 为true时代表dirty map中含有m中没有的元素</span></span><br><span class="line">   amended <span class="keyword">bool</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> entry <span class="keyword">struct</span> &#123;</span><br><span class="line">   <span class="comment">// 指向实际的interface&#123;&#125;</span></span><br><span class="line">   <span class="comment">// p有三种状态:</span></span><br><span class="line">   <span class="comment">// p == nil: 键值已经被删除，此时，m.dirty==nil 或 m.dirty[k]指向该entry</span></span><br><span class="line">   <span class="comment">// p == expunged: 键值已经被删除， 此时, m.dirty!=nil 且 m.dirty不存在该键值</span></span><br><span class="line">   <span class="comment">// 其它情况代表实际interface&#123;&#125;地址 如果m.dirty!=nil 则 m.read[key] 和 m.dirty[key] 指向同一个entry</span></span><br><span class="line">   <span class="comment">// 当删除key时，并不实际删除，先CAS entry.p为nil 等到每次dirty map创建时(dirty提升后的第一次新建Key)，会将entry.p由nil CAS为expunged</span></span><br><span class="line">   p unsafe.Pointer <span class="comment">// *interface&#123;&#125;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>定义很简单，补充以下几点:</p>
 <ol>
 <li>read和dirty通过entry包装value，这样使得value的变化和map的变化隔离，前者可以用atomic无锁完成</li>
 <li>Map的read字段结构体定义为readOnly，这只是针对map[interface{}]*entry而言的，entry内的内容以及amended字段都是可以变的</li>
 <li>大部分情况下，对已有key的删除(entry.p置为nil)和更新可以直接通过修改entry.p来完成</li>
 </ol>
-<h4 id="3-2-Load"><a href="#3-2-Load" class="headerlink" title="3.2 Load"></a>3.2 Load</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 查找对应的Key值 如果不存在 返回nil，false</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *Map)</span> <span class="title">Load</span><span class="params">(key <span class="keyword">interface</span>&#123;&#125;)</span> <span class="params">(value <span class="keyword">interface</span>&#123;&#125;, ok <span class="keyword">bool</span>)</span></span> &#123;</div><div class="line">  <span class="comment">// 1. 优先从read map中读取(无锁)</span></div><div class="line">  read, _ := m.read.Load().(readOnly)</div><div class="line">  e, ok := read.m[key]</div><div class="line">  <span class="comment">// 2. 如果不存在，并且ammended字段指明dirty map中有read map中不存在的字段，则加锁尝试从dirty map中加载</span></div><div class="line">  <span class="keyword">if</span> !ok &amp;&amp; read.amended &#123;</div><div class="line">    m.mu.Lock()</div><div class="line">    <span class="comment">// double check，避免在加锁的时候dirty map提升为read map</span></div><div class="line">    read, _ = m.read.Load().(readOnly)</div><div class="line">    e, ok = read.m[key]</div><div class="line">    <span class="keyword">if</span> !ok &amp;&amp; read.amended &#123;</div><div class="line">      e, ok = m.dirty[key]</div><div class="line">      <span class="comment">// 3. 不管dirty中有没有找到 都增加misses计数 该函数可能将dirty map提升为readmap</span></div><div class="line">      m.missLocked()</div><div class="line">    &#125;</div><div class="line">    m.mu.Unlock()</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">if</span> !ok &#123;</div><div class="line">    <span class="keyword">return</span> <span class="literal">nil</span>, <span class="literal">false</span></div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="keyword">return</span> e.load()</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 从entry中atomic load实际interface&#123;&#125;</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(e *entry)</span> <span class="title">load</span><span class="params">()</span> <span class="params">(value <span class="keyword">interface</span>&#123;&#125;, ok <span class="keyword">bool</span>)</span></span> &#123;</div><div class="line">  p := atomic.LoadPointer(&amp;e.p)</div><div class="line">  <span class="keyword">if</span> p == <span class="literal">nil</span> || p == expunged &#123;</div><div class="line">    <span class="keyword">return</span> <span class="literal">nil</span>, <span class="literal">false</span></div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> *(*<span class="keyword">interface</span>&#123;&#125;)(p), <span class="literal">true</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 增加misses计数，并在必要的时候提升dirty map</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *Map)</span> <span class="title">missLocked</span><span class="params">()</span></span> &#123;</div><div class="line">  m.misses++</div><div class="line">  <span class="keyword">if</span> m.misses &lt; <span class="built_in">len</span>(m.dirty) &#123;</div><div class="line">    <span class="keyword">return</span></div><div class="line">  &#125;</div><div class="line">  <span class="comment">// 提升过程很简单，直接将m.dirty赋给m.read.m</span></div><div class="line">  <span class="comment">// 提升完成之后 amended == false m.dirty == nil</span></div><div class="line">  <span class="comment">// m.dirty并不立即创建被拷贝元素，而是延迟创建</span></div><div class="line">  m.read.Store(readOnly&#123;m: m.dirty&#125;)</div><div class="line">  m.dirty = <span class="literal">nil</span></div><div class="line">  m.misses = <span class="number">0</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h4 id="3-3-Store"><a href="#3-3-Store" class="headerlink" title="3.3 Store"></a>3.3 Store</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Store sets the value for a key.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *Map)</span> <span class="title">Store</span><span class="params">(key, value <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">  <span class="comment">// 1. 如果read map中存在该key  则尝试直接更改(由于修改的是entry内部的pointer，因此dirty map也可见)</span></div><div class="line">  read, _ := m.read.Load().(readOnly)</div><div class="line">  <span class="keyword">if</span> e, ok := read.m[key]; ok &amp;&amp; e.tryStore(&amp;value) &#123;</div><div class="line">    <span class="keyword">return</span></div><div class="line">  &#125;</div><div class="line"></div><div class="line">  m.mu.Lock()</div><div class="line">  read, _ = m.read.Load().(readOnly)</div><div class="line">  <span class="keyword">if</span> e, ok := read.m[key]; ok &#123;</div><div class="line">    <span class="keyword">if</span> e.unexpungeLocked() &#123;</div><div class="line">      <span class="comment">// 2. 如果read map中存在该key，但p == expunged，则说明m.dirty!=nil并且m.dirty中不存在该key值 此时:</span></div><div class="line">      <span class="comment">//    a. 将 p的状态由expunged先更改为nil </span></div><div class="line">      <span class="comment">//    b. dirty map新建key</span></div><div class="line">      <span class="comment">//    c. 更新entry.p = value (read map和dirty map指向同一个entry)</span></div><div class="line">      m.dirty[key] = e</div><div class="line">    &#125;</div><div class="line">    <span class="comment">// 3. 如果read map中存在该key，且 p != expunged，直接更新该entry (此时m.dirty==nil或m.dirty[key]==e)</span></div><div class="line">    e.storeLocked(&amp;value)</div><div class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> e, ok := m.dirty[key]; ok &#123;</div><div class="line">    <span class="comment">// 4. 如果read map中不存在该Key，但dirty map中存在该key，直接写入更新entry(read map中仍然没有)</span></div><div class="line">    e.storeLocked(&amp;value)</div><div class="line">  &#125; <span class="keyword">else</span> &#123;</div><div class="line">    <span class="comment">// 5. 如果read map和dirty map中都不存在该key，则:</span></div><div class="line">    <span class="comment">//    a. 如果dirty map为空，则需要创建dirty map，并从read map中拷贝未删除的元素</span></div><div class="line">    <span class="comment">//    b. 更新amended字段，标识dirty map中存在read map中没有的key</span></div><div class="line">    <span class="comment">//    c. 将k v写入dirty map中，read.m不变</span></div><div class="line">    <span class="keyword">if</span> !read.amended &#123;</div><div class="line">      m.dirtyLocked()</div><div class="line">      m.read.Store(readOnly&#123;m: read.m, amended: <span class="literal">true</span>&#125;)</div><div class="line">    &#125;</div><div class="line">    m.dirty[key] = newEntry(value)</div><div class="line">  &#125;</div><div class="line">  m.mu.Unlock()</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 尝试直接更新entry 如果p == expunged 返回false</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(e *entry)</span> <span class="title">tryStore</span><span class="params">(i *<span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">bool</span></span> &#123;</div><div class="line">  p := atomic.LoadPointer(&amp;e.p)</div><div class="line">  <span class="keyword">if</span> p == expunged &#123;</div><div class="line">    <span class="keyword">return</span> <span class="literal">false</span></div><div class="line">  &#125;</div><div class="line">  <span class="keyword">for</span> &#123;</div><div class="line">    <span class="keyword">if</span> atomic.CompareAndSwapPointer(&amp;e.p, p, unsafe.Pointer(i)) &#123;</div><div class="line">      <span class="keyword">return</span> <span class="literal">true</span></div><div class="line">    &#125;</div><div class="line">    p = atomic.LoadPointer(&amp;e.p)</div><div class="line">    <span class="keyword">if</span> p == expunged &#123;</div><div class="line">      <span class="keyword">return</span> <span class="literal">false</span></div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(e *entry)</span> <span class="title">unexpungeLocked</span><span class="params">()</span> <span class="params">(wasExpunged <span class="keyword">bool</span>)</span></span> &#123;</div><div class="line">  <span class="keyword">return</span> atomic.CompareAndSwapPointer(&amp;e.p, expunged, <span class="literal">nil</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 如果 dirty map为nil，则从read map中拷贝元素到dirty map</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *Map)</span> <span class="title">dirtyLocked</span><span class="params">()</span></span> &#123;</div><div class="line">  <span class="keyword">if</span> m.dirty != <span class="literal">nil</span> &#123;</div><div class="line">    <span class="keyword">return</span></div><div class="line">  &#125;</div><div class="line"></div><div class="line">  read, _ := m.read.Load().(readOnly)</div><div class="line">  m.dirty = <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">interface</span>&#123;&#125;]*entry, <span class="built_in">len</span>(read.m))</div><div class="line">  <span class="keyword">for</span> k, e := <span class="keyword">range</span> read.m &#123;</div><div class="line">    <span class="comment">// a. 将所有为 nil的 p 置为 expunged</span></div><div class="line">    <span class="comment">// b. 只拷贝不为expunged 的 p</span></div><div class="line">    <span class="keyword">if</span> !e.tryExpungeLocked() &#123;</div><div class="line">      m.dirty[k] = e</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(e *entry)</span> <span class="title">tryExpungeLocked</span><span class="params">()</span> <span class="params">(isExpunged <span class="keyword">bool</span>)</span></span> &#123;</div><div class="line">  p := atomic.LoadPointer(&amp;e.p)</div><div class="line">  <span class="keyword">for</span> p == <span class="literal">nil</span> &#123;</div><div class="line">    <span class="keyword">if</span> atomic.CompareAndSwapPointer(&amp;e.p, <span class="literal">nil</span>, expunged) &#123;</div><div class="line">      <span class="keyword">return</span> <span class="literal">true</span></div><div class="line">    &#125;</div><div class="line">    p = atomic.LoadPointer(&amp;e.p)</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> p == expunged</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h4 id="3-4-Delete"><a href="#3-4-Delete" class="headerlink" title="3.4 Delete"></a>3.4 Delete</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Delete deletes the value for a key.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *Map)</span> <span class="title">Delete</span><span class="params">(key <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">  <span class="comment">// 1. 从read map中查找，如果存在，则置为nil</span></div><div class="line">  read, _ := m.read.Load().(readOnly)</div><div class="line">  e, ok := read.m[key]</div><div class="line">  <span class="keyword">if</span> !ok &amp;&amp; read.amended &#123;</div><div class="line">    <span class="comment">// double check</span></div><div class="line">    m.mu.Lock()</div><div class="line">    read, _ = m.read.Load().(readOnly)</div><div class="line">    e, ok = read.m[key]</div><div class="line">    <span class="comment">// 2. 如果read map中不存在，但dirty map中存在，则直接从dirty map删除</span></div><div class="line">    <span class="keyword">if</span> !ok &amp;&amp; read.amended &#123;</div><div class="line">      <span class="built_in">delete</span>(m.dirty, key)</div><div class="line">    &#125;</div><div class="line">    m.mu.Unlock()</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">if</span> ok &#123;</div><div class="line">    <span class="comment">// 将entry.p 置为 nil</span></div><div class="line">    e.<span class="built_in">delete</span>()</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(e *entry)</span> <span class="title">delete</span><span class="params">()</span> <span class="params">(hadValue <span class="keyword">bool</span>)</span></span> &#123;</div><div class="line">  <span class="keyword">for</span> &#123;</div><div class="line">    p := atomic.LoadPointer(&amp;e.p)</div><div class="line">    <span class="keyword">if</span> p == <span class="literal">nil</span> || p == expunged &#123;</div><div class="line">      <span class="keyword">return</span> <span class="literal">false</span></div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span> atomic.CompareAndSwapPointer(&amp;e.p, p, <span class="literal">nil</span>) &#123;</div><div class="line">      <span class="keyword">return</span> <span class="literal">true</span></div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="3-2-Load"><a href="#3-2-Load" class="headerlink" title="3.2 Load"></a>3.2 Load</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 查找对应的Key值 如果不存在 返回nil，false</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *Map)</span> <span class="title">Load</span><span class="params">(key <span class="keyword">interface</span>&#123;&#125;)</span> <span class="params">(value <span class="keyword">interface</span>&#123;&#125;, ok <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">  <span class="comment">// 1. 优先从read map中读取(无锁)</span></span><br><span class="line">  read, _ := m.read.Load().(readOnly)</span><br><span class="line">  e, ok := read.m[key]</span><br><span class="line">  <span class="comment">// 2. 如果不存在，并且ammended字段指明dirty map中有read map中不存在的字段，则加锁尝试从dirty map中加载</span></span><br><span class="line">  <span class="keyword">if</span> !ok &amp;&amp; read.amended &#123;</span><br><span class="line">    m.mu.Lock()</span><br><span class="line">    <span class="comment">// double check，避免在加锁的时候dirty map提升为read map</span></span><br><span class="line">    read, _ = m.read.Load().(readOnly)</span><br><span class="line">    e, ok = read.m[key]</span><br><span class="line">    <span class="keyword">if</span> !ok &amp;&amp; read.amended &#123;</span><br><span class="line">      e, ok = m.dirty[key]</span><br><span class="line">      <span class="comment">// 3. 不管dirty中有没有找到 都增加misses计数 该函数可能将dirty map提升为readmap</span></span><br><span class="line">      m.missLocked()</span><br><span class="line">    &#125;</span><br><span class="line">    m.mu.Unlock()</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> !ok &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span>, <span class="literal">false</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> e.load()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 从entry中atomic load实际interface&#123;&#125;</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(e *entry)</span> <span class="title">load</span><span class="params">()</span> <span class="params">(value <span class="keyword">interface</span>&#123;&#125;, ok <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">  p := atomic.LoadPointer(&amp;e.p)</span><br><span class="line">  <span class="keyword">if</span> p == <span class="literal">nil</span> || p == expunged &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span>, <span class="literal">false</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> *(*<span class="keyword">interface</span>&#123;&#125;)(p), <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 增加misses计数，并在必要的时候提升dirty map</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *Map)</span> <span class="title">missLocked</span><span class="params">()</span></span> &#123;</span><br><span class="line">  m.misses++</span><br><span class="line">  <span class="keyword">if</span> m.misses &lt; <span class="built_in">len</span>(m.dirty) &#123;</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 提升过程很简单，直接将m.dirty赋给m.read.m</span></span><br><span class="line">  <span class="comment">// 提升完成之后 amended == false m.dirty == nil</span></span><br><span class="line">  <span class="comment">// m.dirty并不立即创建被拷贝元素，而是延迟创建</span></span><br><span class="line">  m.read.Store(readOnly&#123;m: m.dirty&#125;)</span><br><span class="line">  m.dirty = <span class="literal">nil</span></span><br><span class="line">  m.misses = <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="3-3-Store"><a href="#3-3-Store" class="headerlink" title="3.3 Store"></a>3.3 Store</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Store sets the value for a key.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *Map)</span> <span class="title">Store</span><span class="params">(key, value <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">  <span class="comment">// 1. 如果read map中存在该key  则尝试直接更改(由于修改的是entry内部的pointer，因此dirty map也可见)</span></span><br><span class="line">  read, _ := m.read.Load().(readOnly)</span><br><span class="line">  <span class="keyword">if</span> e, ok := read.m[key]; ok &amp;&amp; e.tryStore(&amp;value) &#123;</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  m.mu.Lock()</span><br><span class="line">  read, _ = m.read.Load().(readOnly)</span><br><span class="line">  <span class="keyword">if</span> e, ok := read.m[key]; ok &#123;</span><br><span class="line">    <span class="keyword">if</span> e.unexpungeLocked() &#123;</span><br><span class="line">      <span class="comment">// 2. 如果read map中存在该key，但p == expunged，则说明m.dirty!=nil并且m.dirty中不存在该key值 此时:</span></span><br><span class="line">      <span class="comment">//    a. 将 p的状态由expunged先更改为nil </span></span><br><span class="line">      <span class="comment">//    b. dirty map新建key</span></span><br><span class="line">      <span class="comment">//    c. 更新entry.p = value (read map和dirty map指向同一个entry)</span></span><br><span class="line">      m.dirty[key] = e</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 3. 如果read map中存在该key，且 p != expunged，直接更新该entry (此时m.dirty==nil或m.dirty[key]==e)</span></span><br><span class="line">    e.storeLocked(&amp;value)</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> e, ok := m.dirty[key]; ok &#123;</span><br><span class="line">    <span class="comment">// 4. 如果read map中不存在该Key，但dirty map中存在该key，直接写入更新entry(read map中仍然没有)</span></span><br><span class="line">    e.storeLocked(&amp;value)</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 5. 如果read map和dirty map中都不存在该key，则:</span></span><br><span class="line">    <span class="comment">//    a. 如果dirty map为空，则需要创建dirty map，并从read map中拷贝未删除的元素</span></span><br><span class="line">    <span class="comment">//    b. 更新amended字段，标识dirty map中存在read map中没有的key</span></span><br><span class="line">    <span class="comment">//    c. 将k v写入dirty map中，read.m不变</span></span><br><span class="line">    <span class="keyword">if</span> !read.amended &#123;</span><br><span class="line">      m.dirtyLocked()</span><br><span class="line">      m.read.Store(readOnly&#123;m: read.m, amended: <span class="literal">true</span>&#125;)</span><br><span class="line">    &#125;</span><br><span class="line">    m.dirty[key] = newEntry(value)</span><br><span class="line">  &#125;</span><br><span class="line">  m.mu.Unlock()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 尝试直接更新entry 如果p == expunged 返回false</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(e *entry)</span> <span class="title">tryStore</span><span class="params">(i *<span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">  p := atomic.LoadPointer(&amp;e.p)</span><br><span class="line">  <span class="keyword">if</span> p == expunged &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">for</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> atomic.CompareAndSwapPointer(&amp;e.p, p, unsafe.Pointer(i)) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">    p = atomic.LoadPointer(&amp;e.p)</span><br><span class="line">    <span class="keyword">if</span> p == expunged &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(e *entry)</span> <span class="title">unexpungeLocked</span><span class="params">()</span> <span class="params">(wasExpunged <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">  <span class="keyword">return</span> atomic.CompareAndSwapPointer(&amp;e.p, expunged, <span class="literal">nil</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果 dirty map为nil，则从read map中拷贝元素到dirty map</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *Map)</span> <span class="title">dirtyLocked</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="keyword">if</span> m.dirty != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  read, _ := m.read.Load().(readOnly)</span><br><span class="line">  m.dirty = <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">interface</span>&#123;&#125;]*entry, <span class="built_in">len</span>(read.m))</span><br><span class="line">  <span class="keyword">for</span> k, e := <span class="keyword">range</span> read.m &#123;</span><br><span class="line">    <span class="comment">// a. 将所有为 nil的 p 置为 expunged</span></span><br><span class="line">    <span class="comment">// b. 只拷贝不为expunged 的 p</span></span><br><span class="line">    <span class="keyword">if</span> !e.tryExpungeLocked() &#123;</span><br><span class="line">      m.dirty[k] = e</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(e *entry)</span> <span class="title">tryExpungeLocked</span><span class="params">()</span> <span class="params">(isExpunged <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">  p := atomic.LoadPointer(&amp;e.p)</span><br><span class="line">  <span class="keyword">for</span> p == <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> atomic.CompareAndSwapPointer(&amp;e.p, <span class="literal">nil</span>, expunged) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">    p = atomic.LoadPointer(&amp;e.p)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> p == expunged</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="3-4-Delete"><a href="#3-4-Delete" class="headerlink" title="3.4 Delete"></a>3.4 Delete</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Delete deletes the value for a key.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *Map)</span> <span class="title">Delete</span><span class="params">(key <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">  <span class="comment">// 1. 从read map中查找，如果存在，则置为nil</span></span><br><span class="line">  read, _ := m.read.Load().(readOnly)</span><br><span class="line">  e, ok := read.m[key]</span><br><span class="line">  <span class="keyword">if</span> !ok &amp;&amp; read.amended &#123;</span><br><span class="line">    <span class="comment">// double check</span></span><br><span class="line">    m.mu.Lock()</span><br><span class="line">    read, _ = m.read.Load().(readOnly)</span><br><span class="line">    e, ok = read.m[key]</span><br><span class="line">    <span class="comment">// 2. 如果read map中不存在，但dirty map中存在，则直接从dirty map删除</span></span><br><span class="line">    <span class="keyword">if</span> !ok &amp;&amp; read.amended &#123;</span><br><span class="line">      <span class="built_in">delete</span>(m.dirty, key)</span><br><span class="line">    &#125;</span><br><span class="line">    m.mu.Unlock()</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> ok &#123;</span><br><span class="line">    <span class="comment">// 将entry.p 置为 nil</span></span><br><span class="line">    e.<span class="built_in">delete</span>()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(e *entry)</span> <span class="title">delete</span><span class="params">()</span> <span class="params">(hadValue <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">  <span class="keyword">for</span> &#123;</span><br><span class="line">    p := atomic.LoadPointer(&amp;e.p)</span><br><span class="line">    <span class="keyword">if</span> p == <span class="literal">nil</span> || p == expunged &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> atomic.CompareAndSwapPointer(&amp;e.p, p, <span class="literal">nil</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h4 id="3-5-总结"><a href="#3-5-总结" class="headerlink" title="3.5 总结"></a>3.5 总结</h4><p>除了Load/Store/Delete之外，sync.Map还提供了LoadOrStore/Range操作，但没有提供Len()方法，这是因为要统计有效的键值对只能先提升dirty map(dirty map中可能有read map中没有的键值对)，再遍历m.read(由于延迟删除，不是所有的键值对都有效)，这其实就是Range做的事情，因此在不添加新数据结构支持的情况下，sync.Map的长度获取和Range操作是同一复杂度的。这部分只能看官方后续支持。</p>
 <p>sync.Map实现上并不是特别复杂，但仍有很多值得借鉴的地方:</p>
 <ol>
@@ -49,17 +497,845 @@
 <li>延迟删除key，通过标记避免修改read map，同时极大提升了删除key的效率(删除read map中存在的key是无锁操作)</li>
 <li>延迟创建dirty map，并且通过p的nil和expunged，amended字段来加强对dirty map状态的把控，减少对dirty map不必要的使用</li>
 </ol>
-<p>sync.Map适用于key值相对固定，读多写少(更新m.read已有key仍然是无锁的)的情况，下面是一份使用RWLock的内建map和sync.Map的并发读写性能对比，代码在<a href="https://github.com/wudaijun/Code/tree/master/go/go19_syncmap_test" target="_blank" rel="external">这里</a>，代码对随机生成的整数key/value值进行并发的Load/Store/Delete操作，benchmark结果如下:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">go test -bench=.</div><div class="line">goos: darwin</div><div class="line">goarch: amd64</div><div class="line">BenchmarkMutexMapStoreParalell-4         5000000               260 ns/op</div><div class="line">BenchmarkSyncMapStoreParalell-4          3000000               498 ns/op</div><div class="line">BenchmarkMutexMapLoadParalell-4         20000000                78.0 ns/op</div><div class="line">BenchmarkSyncMapLoadParalell-4          30000000                41.1 ns/op</div><div class="line">BenchmarkMutexMapDeleteParalell-4       10000000               235 ns/op</div><div class="line">BenchmarkSyncMapDeleteParalell-4        30000000                49.2 ns/op</div><div class="line">PASS</div></pre></td></tr></table></figure>
+<p>sync.Map适用于key值相对固定，读多写少(更新m.read已有key仍然是无锁的)的情况，下面是一份使用RWLock的内建map和sync.Map的并发读写性能对比，代码在<a href="https://github.com/wudaijun/Code/tree/master/go/go19_syncmap_test" target="_blank" rel="noopener">这里</a>，代码对随机生成的整数key/value值进行并发的Load/Store/Delete操作，benchmark结果如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">go test -bench=.</span><br><span class="line">goos: darwin</span><br><span class="line">goarch: amd64</span><br><span class="line">BenchmarkMutexMapStoreParalell-4         5000000               260 ns/op</span><br><span class="line">BenchmarkSyncMapStoreParalell-4          3000000               498 ns/op</span><br><span class="line">BenchmarkMutexMapLoadParalell-4         20000000                78.0 ns/op</span><br><span class="line">BenchmarkSyncMapLoadParalell-4          30000000                41.1 ns/op</span><br><span class="line">BenchmarkMutexMapDeleteParalell-4       10000000               235 ns/op</span><br><span class="line">BenchmarkSyncMapDeleteParalell-4        30000000                49.2 ns/op</span><br><span class="line">PASS</span><br></pre></td></tr></table></figure>
 <p>可以看到，除了并发写稍慢之外(并发写随机1亿以内的整数key/value，因此新建key操作远大于更新key，会导致sync.Map频繁的dirty map提升操作)，Load和Delete操作均快于mutexMap，特别是删除，得益于延迟删除，sync.Map的Delete几乎和Load一样快。</p>
-<p>最后附上一份转载的sync.Map操作图解(<a href="http://russellluo.com/2017/06/go-sync-map-diagram.html" target="_blank" rel="external">图片出处</a>):</p>
+<p>最后附上一份转载的sync.Map操作图解(<a href="http://russellluo.com/2017/06/go-sync-map-diagram.html" target="_blank" rel="noopener">图片出处</a>):</p>
 <p><img src="/assets/image/201802/go-sync-map-diagram.png" alt=""></p>
-</div><div class="tags"><a href="/tags/go/">go</a></div><div class="post-share"></div><div class="post-nav"><a href="/2018/03/docker-management/" class="pre">Docker容器编排工具</a><a href="/2018/01/go-interface-implement/" class="next">Go Interface 实现</a></div><div id="comments"><div id="lv-container" data-id="city" data-uid="MTAyMC8zMzg3Ni8xMDQyOQ=="></div></div></div></div></div><div class="layout-r"><div id="sidebar"><div class="search-pla"></div><div id="toc" class="widget"><div class="widget-title"><i class="fa fa-fei">文章目录</i></div><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-atomic-Load-Store"><span class="toc-text">1. atomic.Load/Store</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-atomic-Value"><span class="toc-text">2. atomic.Value</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-sync-Map"><span class="toc-text">3. sync.Map</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1-定义"><span class="toc-text">3.1 定义</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-Load"><span class="toc-text">3.2 Load</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-Store"><span class="toc-text">3.3 Store</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4-Delete"><span class="toc-text">3.4 Delete</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-5-总结"><span class="toc-text">3.5 总结</span></a></li></ol></li></ol></div><div class="widget"><div class="widget-title"><i class="fa fa-xie"> 最新文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/gs-model-save/">谈谈GS对象的落地</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/consistent-hashing/">一致Hash算法</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/flux-study/">Flux - Web应用的数据流管理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/react-notes/">React - Web中的函数式思维</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/understand-functional-programing/">理解函数式编程</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/04/go-pprof/">go pprof 性能分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/docker-container-ops/">Docker 容器管理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/docker-management/">Docker容器编排工具</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/go-sync-map-implement/">Go sync.Map 实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/go-interface-implement/">Go Interface 实现</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-gui"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/algorithm/">algorithm</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/database/">database</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">26</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/go/">go</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/os/">os</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/programing/">programing</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/system/">system</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/unity/">unity</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web/">web</a><span class="category-list-count">4</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-biao"> 标签</i></div><div class="tagcloud"><a href="/tags/mongodb/" style="font-size: 15px;">mongodb</a> <a href="/tags/ngserver/" style="font-size: 15px;">ngserver</a> <a href="/tags/lua/" style="font-size: 15px;">lua</a> <a href="/tags/skynet/" style="font-size: 15px;">skynet</a> <a href="/tags/erlang/" style="font-size: 15px;">erlang</a> <a href="/tags/git/" style="font-size: 15px;">git</a> <a href="/tags/firefly/" style="font-size: 15px;">firefly</a> <a href="/tags/python/" style="font-size: 15px;">python</a> <a href="/tags/tool/" style="font-size: 15px;">tool</a> <a href="/tags/kbengine/" style="font-size: 15px;">kbengine</a> <a href="/tags/distribution/" style="font-size: 15px;">distribution</a> <a href="/tags/unity/" style="font-size: 15px;">unity</a> <a href="/tags/tcp-ip/" style="font-size: 15px;">tcp/ip</a> <a href="/tags/other/" style="font-size: 15px;">other</a> <a href="/tags/c-c/" style="font-size: 15px;">c/c++</a> <a href="/tags/os/" style="font-size: 15px;">os</a> <a href="/tags/web/" style="font-size: 15px;">web</a> <a href="/tags/gameserver/" style="font-size: 15px;">gameserver</a> <a href="/tags/go/" style="font-size: 15px;">go</a> <a href="/tags/linux/" style="font-size: 15px;">linux</a> <a href="/tags/goa/" style="font-size: 15px;">goa</a> <a href="/tags/docker/" style="font-size: 15px;">docker</a> <a href="/tags/system/" style="font-size: 15px;">system</a> <a href="/tags/macosx/" style="font-size: 15px;">macosx</a> <a href="/tags/hexo/" style="font-size: 15px;">hexo</a> <a href="/tags/gc/" style="font-size: 15px;">gc</a> <a href="/tags/react/" style="font-size: 15px;">react</a> <a href="/tags/programing/" style="font-size: 15px;">programing</a> <a href="/tags/hash/" style="font-size: 15px;">hash</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-archive"> 归档</i></div><ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">五月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">四月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">三月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">二月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">一月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">十一月 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">十月 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a></li></ul></div></div></div></div><a id="totop" href="#top"></a><div id="footer"><div class="footer-info"><p><a href="/atom.xml">订阅</a> |  <a href="/about/">关于</a></p><p>本站总访问量：<i id="busuanzi_container_site_pv"><i id="busuanzi_value_site_pv"></i></i>次</p><p><span> Copyright &copy;<a href="/." rel="nofollow">wudaijun.</a></span><span> Theme by<a rel="nofollow" target="_blank" href="https://github.com/chaooo/hexo-theme-BlueLake"> BlueLake.</a></span><span> Count by<a href="http://busuanzi.ibruce.info/"> busuanzi.</a></span><span> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a></span></p></div></div></div><script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js" async></script><script type="text/javascript" src="/js/search.json.js?v=2.0.1"></script><script type="text/javascript" src="/js/toctotop.js?v=2.0.1" async></script><script>(function(d, s) {
-  var j, e = d.getElementsByTagName('body')[0];
-  if (typeof LivereTower === 'function') { return; }
-  j = d.createElement(s);
-  j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
-  j.async = true;
-  e.appendChild(j);
-})(document, 'script');
-</script></body></html>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/go/" rel="tag"># go</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/go-interface-implement/" rel="next" title="Go Interface 实现">
+                <i class="fa fa-chevron-left"></i> Go Interface 实现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/docker-management/" rel="prev" title="Docker容器编排工具">
+                Docker容器编排工具 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/assets/theme/avatar.png"
+                alt="wudaijun" />
+            
+              <p class="site-author-name" itemprop="name">wudaijun</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">97</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">16</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">29</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-atomic-Load-Store"><span class="nav-text">1. atomic.Load/Store</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-atomic-Value"><span class="nav-text">2. atomic.Value</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-sync-Map"><span class="nav-text">3. sync.Map</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-定义"><span class="nav-text">3.1 定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-Load"><span class="nav-text">3.2 Load</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-Store"><span class="nav-text">3.3 Store</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-Delete"><span class="nav-text">3.4 Delete</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-5-总结"><span class="nav-text">3.5 总结</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wudaijun</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动 v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://theme-next.org">NexT.Gemini</a> v6.3.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.3.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.3.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.3.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+  
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(function (item) {
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'kL7con6xeU88chDAVyUSDSHI-gzGzoHsz',
+        appKey: '9XLxirxDW8NUhHJdu460Uiba',
+        placeholder: 'Just go go',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

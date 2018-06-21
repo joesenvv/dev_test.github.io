@@ -1,63 +1,1337 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>Go Interface 实现 | wudaijun's blog</title><link rel="stylesheet" type="text/css" href="//fonts.neworld.org/css?family=Source+Code+Pro"><link rel="stylesheet" type="text/css" href="/css/style.css?v=2.0.1"><link rel="stylesheet" type="text/css" href="/css/highlight.css?v=2.0.1"><link rel="Shortcut Icon" href="/favicon.ico"><link rel="bookmark" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Go Interface 实现</h1><a id="logo" href="/.">wudaijun's blog</a><p class="description">Coding is Funny</p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div><div id="search-form"><div id="result-mask" class="hide"></div><label><input id="search-key" type="text" autocomplete="off" placeholder="请输入关键字..."></label><div id="result-wrap" class="hide"><div id="search-result"></div></div><div class="hide"><template id="search-tpl"><div class="item"><a href="/{path}" title="{title}"><div class="title">{title}</div><div class="time">{date}</div><div class="tags">{tags}</div></a></div></template></div></div></div><div id="layout" class="layout-g"><div class="layout-l"><div class="content_container"><div class="post"><h1 class="post-title">Go Interface 实现</h1><div class="post-meta"><a href="/2018/01/go-interface-implement/#comments" class="comment-count"></a><p><span class="date">Jan 28, 2018</span><span><a href="/categories/go/" class="category">go</a></span><span><i id="busuanzi_container_page_pv"><i id="busuanzi_value_page_pv"></i><i>点击</i></i></span></p></div><div class="post-content"><p>本文从源码的角度学习下Go接口的底层实现，以及接口赋值，反射，断言的实现原理。作为对比，用到了go1.8.6和go1.9.1两个版本。</p>
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.3.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/theme/favicon-100x100.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/theme/favicon-32x32.ico?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/theme/favicon-16x16.ico?v=6.3.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.3.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="本文从源码的角度学习下Go接口的底层实现，以及接口赋值，反射，断言的实现原理。作为对比，用到了go1.8.6和go1.9.1两个版本。 1. eface空接口通过eface结构体实现，位于runtime/runtime2.go:">
+<meta name="keywords" content="go">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go Interface 实现">
+<meta property="og:url" content="http://wudaijun.com/2018/01/go-interface-implement/index.html">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
+<meta property="og:description" content="本文从源码的角度学习下Go接口的底层实现，以及接口赋值，反射，断言的实现原理。作为对比，用到了go1.8.6和go1.9.1两个版本。 1. eface空接口通过eface结构体实现，位于runtime/runtime2.go:">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-02-11T07:57:39.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Go Interface 实现">
+<meta name="twitter:description" content="本文从源码的角度学习下Go接口的底层实现，以及接口赋值，反射，断言的实现原理。作为对比，用到了go1.8.6和go1.9.1两个版本。 1. eface空接口通过eface结构体实现，位于runtime/runtime2.go:">
+
+
+
+
+
+
+  <link rel="canonical" href="http://wudaijun.com/2018/01/go-interface-implement/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Go Interface 实现 | wudaijun's blog</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">wudaijun's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Coding is Funny</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://wudaijun.com/2018/01/go-interface-implement/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="wudaijun">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/assets/theme/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wudaijun's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Go Interface 实现
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-01-28 00:00:00" itemprop="dateCreated datePublished" datetime="2018-01-28T00:00:00+08:00">2018-01-28</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/01/go-interface-implement/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2018/01/go-interface-implement/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文从源码的角度学习下Go接口的底层实现，以及接口赋值，反射，断言的实现原理。作为对比，用到了go1.8.6和go1.9.1两个版本。</p>
 <h3 id="1-eface"><a href="#1-eface" class="headerlink" title="1. eface"></a>1. eface</h3><p>空接口通过eface结构体实现，位于runtime/runtime2.go: </p>
 <a id="more"></a>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// src/runtime/runtime2.go</span></div><div class="line"><span class="comment">// 空接口</span></div><div class="line"><span class="keyword">type</span> eface <span class="keyword">struct</span> &#123;</div><div class="line">    _type *_type</div><div class="line">    data  unsafe.Pointer</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// src/runtime/runtime2.go</span></span><br><span class="line"><span class="comment">// 空接口</span></span><br><span class="line"><span class="keyword">type</span> eface <span class="keyword">struct</span> &#123;</span><br><span class="line">    _type *_type</span><br><span class="line">    data  unsafe.Pointer</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>空接口(eface)有两个域，所指向对象的类型信息(_type)和数据指针(data)。先看看<code>_type</code>字段：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">// 所有类型信息结构体的公共部分</div><div class="line">// src/rumtime/runtime2.go</div><div class="line">type _type struct &#123;</div><div class="line">    size       uintptr         // 类型的大小</div><div class="line">    ptrdata    uintptr      // size of memory prefix holding all pointers</div><div class="line">    hash       uint32          // 类型的Hash值</div><div class="line">    tflag      tflag              // 类型的Tags </div><div class="line">    align      uint8       // 结构体内对齐</div><div class="line">    fieldalign uint8       // 结构体作为field时的对齐</div><div class="line">    kind       uint8       // 类型编号 定义于runtime/typekind.go</div><div class="line">    alg        *typeAlg    // 类型元方法 存储hash和equal两个操作。map key便使用key的_type.alg.hash(k)获取hash值</div><div class="line">    gcdata    *byte            // GC相关信息</div><div class="line">    str       nameOff   // 类型名字的偏移    </div><div class="line">    ptrToThis typeOff    </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">// 所有类型信息结构体的公共部分</span><br><span class="line">// src/rumtime/runtime2.go</span><br><span class="line">type _type struct &#123;</span><br><span class="line">    size       uintptr         // 类型的大小</span><br><span class="line">    ptrdata    uintptr      // size of memory prefix holding all pointers</span><br><span class="line">    hash       uint32          // 类型的Hash值</span><br><span class="line">    tflag      tflag              // 类型的Tags </span><br><span class="line">    align      uint8       // 结构体内对齐</span><br><span class="line">    fieldalign uint8       // 结构体作为field时的对齐</span><br><span class="line">    kind       uint8       // 类型编号 定义于runtime/typekind.go</span><br><span class="line">    alg        *typeAlg    // 类型元方法 存储hash和equal两个操作。map key便使用key的_type.alg.hash(k)获取hash值</span><br><span class="line">    gcdata    *byte            // GC相关信息</span><br><span class="line">    str       nameOff   // 类型名字的偏移    </span><br><span class="line">    ptrToThis typeOff    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>_type是go所有类型的公共描述，里面包含GC，反射等需要的细节，它决定data应该如何解释和操作，这也是它和C void*不同之处。<br>各个类型所需要的类型描述是不一样的，比如chan，除了chan本身外，还需要描述其元素类型，而map则需要key类型信息和value类型信息等:</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// src/runtime/type.go</span></div><div class="line"><span class="comment">// ptrType represents a pointer type.</span></div><div class="line"><span class="keyword">type</span> ptrType <span class="keyword">struct</span> &#123;</div><div class="line">   typ     _type   <span class="comment">// 指针类型 </span></div><div class="line">   elem  *_type <span class="comment">// 指针所指向的元素类型</span></div><div class="line">&#125;</div><div class="line"><span class="keyword">type</span> chantype <span class="keyword">struct</span> &#123;</div><div class="line">    typ  _type        <span class="comment">// channel类型</span></div><div class="line">    elem *_type     <span class="comment">// channel元素类型</span></div><div class="line">    dir  <span class="keyword">uintptr</span></div><div class="line">&#125;</div><div class="line"><span class="keyword">type</span> maptype <span class="keyword">struct</span> &#123;</div><div class="line">    typ           _type</div><div class="line">    key           *_type</div><div class="line">    elem          *_type</div><div class="line">    bucket        *_type <span class="comment">// internal type representing a hash bucket</span></div><div class="line">    hmap          *_type <span class="comment">// internal type representing a hmap</span></div><div class="line">    keysize       <span class="keyword">uint8</span>  <span class="comment">// size of key slot</span></div><div class="line">    indirectkey   <span class="keyword">bool</span>   <span class="comment">// store ptr to key instead of key itself</span></div><div class="line">    valuesize     <span class="keyword">uint8</span>  <span class="comment">// size of value slot</span></div><div class="line">    indirectvalue <span class="keyword">bool</span>   <span class="comment">// store ptr to value instead of value itself</span></div><div class="line">    bucketsize    <span class="keyword">uint16</span> <span class="comment">// size of bucket</span></div><div class="line">    reflexivekey  <span class="keyword">bool</span>   <span class="comment">// true if k==k for all keys</span></div><div class="line">    needkeyupdate <span class="keyword">bool</span>   <span class="comment">// true if we need to update key on an overwrite</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// src/runtime/type.go</span></span><br><span class="line"><span class="comment">// ptrType represents a pointer type.</span></span><br><span class="line"><span class="keyword">type</span> ptrType <span class="keyword">struct</span> &#123;</span><br><span class="line">   typ     _type   <span class="comment">// 指针类型 </span></span><br><span class="line">   elem  *_type <span class="comment">// 指针所指向的元素类型</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> chantype <span class="keyword">struct</span> &#123;</span><br><span class="line">    typ  _type        <span class="comment">// channel类型</span></span><br><span class="line">    elem *_type     <span class="comment">// channel元素类型</span></span><br><span class="line">    dir  <span class="keyword">uintptr</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> maptype <span class="keyword">struct</span> &#123;</span><br><span class="line">    typ           _type</span><br><span class="line">    key           *_type</span><br><span class="line">    elem          *_type</span><br><span class="line">    bucket        *_type <span class="comment">// internal type representing a hash bucket</span></span><br><span class="line">    hmap          *_type <span class="comment">// internal type representing a hmap</span></span><br><span class="line">    keysize       <span class="keyword">uint8</span>  <span class="comment">// size of key slot</span></span><br><span class="line">    indirectkey   <span class="keyword">bool</span>   <span class="comment">// store ptr to key instead of key itself</span></span><br><span class="line">    valuesize     <span class="keyword">uint8</span>  <span class="comment">// size of value slot</span></span><br><span class="line">    indirectvalue <span class="keyword">bool</span>   <span class="comment">// store ptr to value instead of value itself</span></span><br><span class="line">    bucketsize    <span class="keyword">uint16</span> <span class="comment">// size of bucket</span></span><br><span class="line">    reflexivekey  <span class="keyword">bool</span>   <span class="comment">// true if k==k for all keys</span></span><br><span class="line">    needkeyupdate <span class="keyword">bool</span>   <span class="comment">// true if we need to update key on an overwrite</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这些类型信息的第一个字段都是<code>_type</code>(类型本身的信息)，接下来是一堆类型需要的其它详细信息(如子类型信息)，这样在进行类型相关操作时，可通过一个字(<code>typ *_type</code>)即可表述所有类型，然后再通过<code>_type.kind</code>可解析出其具体类型，最后通过地址转换即可得到类型完整的”_type树”，参考<code>reflect.Type.Elem()</code>函数:</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// reflect/type.go</span></div><div class="line"><span class="comment">// reflect.rtype结构体定义和runtime._type一致  type.kind定义也一致(为了分包而重复定义)</span></div><div class="line"><span class="comment">// Elem()获取rtype中的元素类型，只针对复合类型(Array, Chan, Map, Ptr, Slice)有效</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t *rtype)</span> <span class="title">Elem</span><span class="params">()</span> <span class="title">Type</span></span> &#123;</div><div class="line">   <span class="keyword">switch</span> t.Kind() &#123;</div><div class="line">   <span class="keyword">case</span> Array:</div><div class="line">      tt := (*arrayType)(unsafe.Pointer(t))</div><div class="line">      <span class="keyword">return</span> toType(tt.elem)</div><div class="line">   <span class="keyword">case</span> Chan:</div><div class="line">      tt := (*chanType)(unsafe.Pointer(t))</div><div class="line">      <span class="keyword">return</span> toType(tt.elem)</div><div class="line">   <span class="keyword">case</span> Map:</div><div class="line">      <span class="comment">// 对Map来讲，Elem()得到的是其Value类型</span></div><div class="line">      <span class="comment">// 可通过rtype.Key()得到Key类型</span></div><div class="line">      tt := (*mapType)(unsafe.Pointer(t))</div><div class="line">      <span class="keyword">return</span> toType(tt.elem)</div><div class="line">   <span class="keyword">case</span> Ptr:</div><div class="line">      tt := (*ptrType)(unsafe.Pointer(t))</div><div class="line">      <span class="keyword">return</span> toType(tt.elem)</div><div class="line">   <span class="keyword">case</span> Slice:</div><div class="line">      tt := (*sliceType)(unsafe.Pointer(t))</div><div class="line">      <span class="keyword">return</span> toType(tt.elem)</div><div class="line">   &#125;</div><div class="line">   <span class="built_in">panic</span>(<span class="string">"reflect: Elem of invalid type"</span>)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// reflect/type.go</span></span><br><span class="line"><span class="comment">// reflect.rtype结构体定义和runtime._type一致  type.kind定义也一致(为了分包而重复定义)</span></span><br><span class="line"><span class="comment">// Elem()获取rtype中的元素类型，只针对复合类型(Array, Chan, Map, Ptr, Slice)有效</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t *rtype)</span> <span class="title">Elem</span><span class="params">()</span> <span class="title">Type</span></span> &#123;</span><br><span class="line">   <span class="keyword">switch</span> t.Kind() &#123;</span><br><span class="line">   <span class="keyword">case</span> Array:</span><br><span class="line">      tt := (*arrayType)(unsafe.Pointer(t))</span><br><span class="line">      <span class="keyword">return</span> toType(tt.elem)</span><br><span class="line">   <span class="keyword">case</span> Chan:</span><br><span class="line">      tt := (*chanType)(unsafe.Pointer(t))</span><br><span class="line">      <span class="keyword">return</span> toType(tt.elem)</span><br><span class="line">   <span class="keyword">case</span> Map:</span><br><span class="line">      <span class="comment">// 对Map来讲，Elem()得到的是其Value类型</span></span><br><span class="line">      <span class="comment">// 可通过rtype.Key()得到Key类型</span></span><br><span class="line">      tt := (*mapType)(unsafe.Pointer(t))</span><br><span class="line">      <span class="keyword">return</span> toType(tt.elem)</span><br><span class="line">   <span class="keyword">case</span> Ptr:</span><br><span class="line">      tt := (*ptrType)(unsafe.Pointer(t))</span><br><span class="line">      <span class="keyword">return</span> toType(tt.elem)</span><br><span class="line">   <span class="keyword">case</span> Slice:</span><br><span class="line">      tt := (*sliceType)(unsafe.Pointer(t))</span><br><span class="line">      <span class="keyword">return</span> toType(tt.elem)</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="built_in">panic</span>(<span class="string">"reflect: Elem of invalid type"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h3 id="2-iface"><a href="#2-iface" class="headerlink" title="2. iface"></a>2. iface</h3><p>iface结构体表示非空接口:</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// runtime/runtime2.go</span></div><div class="line"><span class="comment">// 非空接口</span></div><div class="line"><span class="keyword">type</span> iface <span class="keyword">struct</span> &#123;</div><div class="line">    tab  *itab</div><div class="line">    data unsafe.Pointer</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 非空接口的类型信息</span></div><div class="line"><span class="keyword">type</span> itab <span class="keyword">struct</span> &#123;</div><div class="line">    inter  *interfacetype    <span class="comment">// 接口定义的类型信息</span></div><div class="line">    _type  *_type                <span class="comment">// 接口实际指向值的类型信息</span></div><div class="line">    link   *itab  </div><div class="line">    bad    <span class="keyword">int32</span></div><div class="line">    inhash <span class="keyword">int32</span></div><div class="line">    fun    [<span class="number">1</span>]<span class="keyword">uintptr</span>             <span class="comment">// 接口方法实现列表，即函数地址列表，按字典序排序</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// runtime/type.go</span></div><div class="line"><span class="comment">// 非空接口类型，接口定义，包路径等。</span></div><div class="line"><span class="keyword">type</span> interfacetype <span class="keyword">struct</span> &#123;</div><div class="line">   typ     _type</div><div class="line">   pkgpath name</div><div class="line">   mhdr    []imethod      <span class="comment">// 接口方法声明列表，按字典序排序</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 接口的方法声明 </span></div><div class="line"><span class="keyword">type</span> imethod <span class="keyword">struct</span> &#123;</div><div class="line">   name nameOff          <span class="comment">// 方法名</span></div><div class="line">   ityp typeOff                <span class="comment">// 描述方法参数返回值等细节</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// runtime/runtime2.go</span></span><br><span class="line"><span class="comment">// 非空接口</span></span><br><span class="line"><span class="keyword">type</span> iface <span class="keyword">struct</span> &#123;</span><br><span class="line">    tab  *itab</span><br><span class="line">    data unsafe.Pointer</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 非空接口的类型信息</span></span><br><span class="line"><span class="keyword">type</span> itab <span class="keyword">struct</span> &#123;</span><br><span class="line">    inter  *interfacetype    <span class="comment">// 接口定义的类型信息</span></span><br><span class="line">    _type  *_type                <span class="comment">// 接口实际指向值的类型信息</span></span><br><span class="line">    link   *itab  </span><br><span class="line">    bad    <span class="keyword">int32</span></span><br><span class="line">    inhash <span class="keyword">int32</span></span><br><span class="line">    fun    [<span class="number">1</span>]<span class="keyword">uintptr</span>             <span class="comment">// 接口方法实现列表，即函数地址列表，按字典序排序</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// runtime/type.go</span></span><br><span class="line"><span class="comment">// 非空接口类型，接口定义，包路径等。</span></span><br><span class="line"><span class="keyword">type</span> interfacetype <span class="keyword">struct</span> &#123;</span><br><span class="line">   typ     _type</span><br><span class="line">   pkgpath name</span><br><span class="line">   mhdr    []imethod      <span class="comment">// 接口方法声明列表，按字典序排序</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 接口的方法声明 </span></span><br><span class="line"><span class="keyword">type</span> imethod <span class="keyword">struct</span> &#123;</span><br><span class="line">   name nameOff          <span class="comment">// 方法名</span></span><br><span class="line">   ityp typeOff                <span class="comment">// 描述方法参数返回值等细节</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>非空接口(iface)本身除了可以容纳满足其接口的对象之外，还需要保存其接口的方法，因此除了data字段，iface通过tab字段描述非空接口的细节，包括接口方法定义，接口方法实现地址，接口所指类型等。iface是非空接口的实现，而不是类型定义，iface的真正类型为interfacetype，其第一个字段仍然为描述其自身类型的_type字段。</p>
 <p>为了提高查找效率，runtime中实现(interface_type, concrete_type) -&gt; itab(包含具体方法实现地址等信息)的hash表:</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// runtime/iface.go</span></div><div class="line"><span class="keyword">const</span> (</div><div class="line">   hashSize = <span class="number">1009</span></div><div class="line">)</div><div class="line"></div><div class="line"><span class="keyword">var</span> (</div><div class="line">   ifaceLock mutex <span class="comment">// lock for accessing hash</span></div><div class="line">   hash      [hashSize]*itab</div><div class="line">)</div><div class="line"><span class="comment">// 简单的Hash算法</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">itabhash</span><span class="params">(inter *interfacetype, typ *_type)</span> <span class="title">uint32</span></span> &#123;</div><div class="line">   h := inter.typ.hash</div><div class="line">   h += <span class="number">17</span> * typ.hash</div><div class="line">   <span class="keyword">return</span> h % hashSize</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 根据interface_type和concrete_type获取或生成itab信息</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">getitab</span><span class="params">(inter *interfacetype, typ *_type, canfail <span class="keyword">bool</span>)</span> *<span class="title">itab</span></span> &#123;</div><div class="line">   ...</div><div class="line">    <span class="comment">// 算出hash key</span></div><div class="line">   h := itabhash(inter, typ)</div><div class="line"></div><div class="line"></div><div class="line">   <span class="keyword">var</span> m *itab</div><div class="line">   ...</div><div class="line">           <span class="comment">// 遍历hash slot链表</span></div><div class="line">      <span class="keyword">for</span> m = (*itab)(atomic.Loadp(unsafe.Pointer(&amp;hash[h]))); m != <span class="literal">nil</span>; m = m.link &#123;</div><div class="line">         <span class="comment">// 如果在hash表中找到则返回</span></div><div class="line">         <span class="keyword">if</span> m.inter == inter &amp;&amp; m._type == typ &#123;</div><div class="line">            <span class="keyword">if</span> m.bad &#123;</div><div class="line">               <span class="keyword">if</span> !canfail &#123;</div><div class="line">                  additab(m, locked != <span class="number">0</span>, <span class="literal">false</span>)</div><div class="line">               &#125;</div><div class="line">               m = <span class="literal">nil</span></div><div class="line">            &#125;</div><div class="line">            ...</div><div class="line">            <span class="keyword">return</span> m</div><div class="line">         &#125;</div><div class="line">      &#125;</div><div class="line">   &#125;</div><div class="line">    <span class="comment">// 如果没有找到，则尝试生成itab(会检查是否满足接口)</span></div><div class="line">   m = (*itab)(persistentalloc(unsafe.Sizeof(itab&#123;&#125;)+<span class="keyword">uintptr</span>(<span class="built_in">len</span>(inter.mhdr)<span class="number">-1</span>)*sys.PtrSize, <span class="number">0</span>, &amp;memstats.other_sys))</div><div class="line">   m.inter = inter</div><div class="line">   m._type = typ</div><div class="line">   additab(m, <span class="literal">true</span>, canfail)</div><div class="line">   <span class="keyword">if</span> m.bad &#123;</div><div class="line">      <span class="keyword">return</span> <span class="literal">nil</span></div><div class="line">   &#125;</div><div class="line">   <span class="keyword">return</span> m</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 检查concrete_type是否符合interface_type 并且创建对应的itab结构体 将其放到hash表中</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">additab</span><span class="params">(m *itab, locked, canfail <span class="keyword">bool</span>)</span></span> &#123;</div><div class="line">   inter := m.inter</div><div class="line">   typ := m._type</div><div class="line">   x := typ.uncommon()</div><div class="line"></div><div class="line">   ni := <span class="built_in">len</span>(inter.mhdr)</div><div class="line">   nt := <span class="keyword">int</span>(x.mcount)</div><div class="line">   xmhdr := (*[<span class="number">1</span> &lt;&lt; <span class="number">16</span>]method)(add(unsafe.Pointer(x), <span class="keyword">uintptr</span>(x.moff)))[:nt:nt]</div><div class="line">   j := <span class="number">0</span></div><div class="line">   <span class="keyword">for</span> k := <span class="number">0</span>; k &lt; ni; k++ &#123;</div><div class="line">      i := &amp;inter.mhdr[k]</div><div class="line">      itype := inter.typ.typeOff(i.ityp)</div><div class="line">      name := inter.typ.nameOff(i.name)</div><div class="line">      iname := name.name()</div><div class="line">      ipkg := name.pkgPath()</div><div class="line">      <span class="keyword">if</span> ipkg == <span class="string">""</span> &#123;</div><div class="line">         ipkg = inter.pkgpath.name()</div><div class="line">      &#125;</div><div class="line">      <span class="keyword">for</span> ; j &lt; nt; j++ &#123;</div><div class="line">         t := &amp;xmhdr[j]</div><div class="line">         tname := typ.nameOff(t.name)</div><div class="line">         <span class="comment">// 检查方法名字是否一致</span></div><div class="line">         <span class="keyword">if</span> typ.typeOff(t.mtyp) == itype &amp;&amp; tname.name() == iname &#123;</div><div class="line">            pkgPath := tname.pkgPath()</div><div class="line">            <span class="keyword">if</span> pkgPath == <span class="string">""</span> &#123;</div><div class="line">               pkgPath = typ.nameOff(x.pkgpath).name()</div><div class="line">            &#125;</div><div class="line">            <span class="comment">// 是否导出或在同一个包</span></div><div class="line">            <span class="keyword">if</span> tname.isExported() || pkgPath == ipkg &#123;</div><div class="line">               <span class="keyword">if</span> m != <span class="literal">nil</span> &#123;</div><div class="line">                    <span class="comment">// 获取函数地址，并加入到itab.fun数组中</span></div><div class="line">                  ifn := typ.textOff(t.ifn)</div><div class="line">                  *(*unsafe.Pointer)(add(unsafe.Pointer(&amp;m.fun[<span class="number">0</span>]), <span class="keyword">uintptr</span>(k)*sys.PtrSize)) = ifn</div><div class="line">               &#125;</div><div class="line">               <span class="keyword">goto</span> nextimethod</div><div class="line">            &#125;</div><div class="line">         &#125;</div><div class="line">      &#125;</div><div class="line">      <span class="comment">// didn't find method</span></div><div class="line">      <span class="keyword">if</span> !canfail &#123;</div><div class="line">         <span class="keyword">if</span> locked &#123;</div><div class="line">            unlock(&amp;ifaceLock)</div><div class="line">         &#125;</div><div class="line">         <span class="built_in">panic</span>(&amp;TypeAssertionError&#123;<span class="string">""</span>, typ.<span class="keyword">string</span>(), inter.typ.<span class="keyword">string</span>(), iname&#125;)</div><div class="line">      &#125;</div><div class="line">      m.bad = <span class="literal">true</span></div><div class="line">      <span class="keyword">break</span></div><div class="line">   nextimethod:</div><div class="line">   &#125;</div><div class="line">   <span class="keyword">if</span> !locked &#123;</div><div class="line">      throw(<span class="string">"invalid itab locking"</span>)</div><div class="line">   &#125;</div><div class="line">   <span class="comment">// 加到Hash Slot链表中</span></div><div class="line">   h := itabhash(inter, typ)</div><div class="line">   m.link = hash[h]</div><div class="line">   m.inhash = <span class="literal">true</span></div><div class="line">   atomicstorep(unsafe.Pointer(&amp;hash[h]), unsafe.Pointer(m))</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// runtime/iface.go</span></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">   hashSize = <span class="number">1009</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">   ifaceLock mutex <span class="comment">// lock for accessing hash</span></span><br><span class="line">   hash      [hashSize]*itab</span><br><span class="line">)</span><br><span class="line"><span class="comment">// 简单的Hash算法</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">itabhash</span><span class="params">(inter *interfacetype, typ *_type)</span> <span class="title">uint32</span></span> &#123;</span><br><span class="line">   h := inter.typ.hash</span><br><span class="line">   h += <span class="number">17</span> * typ.hash</span><br><span class="line">   <span class="keyword">return</span> h % hashSize</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 根据interface_type和concrete_type获取或生成itab信息</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getitab</span><span class="params">(inter *interfacetype, typ *_type, canfail <span class="keyword">bool</span>)</span> *<span class="title">itab</span></span> &#123;</span><br><span class="line">   ...</span><br><span class="line">    <span class="comment">// 算出hash key</span></span><br><span class="line">   h := itabhash(inter, typ)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">   <span class="keyword">var</span> m *itab</span><br><span class="line">   ...</span><br><span class="line">           <span class="comment">// 遍历hash slot链表</span></span><br><span class="line">      <span class="keyword">for</span> m = (*itab)(atomic.Loadp(unsafe.Pointer(&amp;hash[h]))); m != <span class="literal">nil</span>; m = m.link &#123;</span><br><span class="line">         <span class="comment">// 如果在hash表中找到则返回</span></span><br><span class="line">         <span class="keyword">if</span> m.inter == inter &amp;&amp; m._type == typ &#123;</span><br><span class="line">            <span class="keyword">if</span> m.bad &#123;</span><br><span class="line">               <span class="keyword">if</span> !canfail &#123;</span><br><span class="line">                  additab(m, locked != <span class="number">0</span>, <span class="literal">false</span>)</span><br><span class="line">               &#125;</span><br><span class="line">               m = <span class="literal">nil</span></span><br><span class="line">            &#125;</span><br><span class="line">            ...</span><br><span class="line">            <span class="keyword">return</span> m</span><br><span class="line">         &#125;</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">    <span class="comment">// 如果没有找到，则尝试生成itab(会检查是否满足接口)</span></span><br><span class="line">   m = (*itab)(persistentalloc(unsafe.Sizeof(itab&#123;&#125;)+<span class="keyword">uintptr</span>(<span class="built_in">len</span>(inter.mhdr)<span class="number">-1</span>)*sys.PtrSize, <span class="number">0</span>, &amp;memstats.other_sys))</span><br><span class="line">   m.inter = inter</span><br><span class="line">   m._type = typ</span><br><span class="line">   additab(m, <span class="literal">true</span>, canfail)</span><br><span class="line">   <span class="keyword">if</span> m.bad &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> m</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 检查concrete_type是否符合interface_type 并且创建对应的itab结构体 将其放到hash表中</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">additab</span><span class="params">(m *itab, locked, canfail <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">   inter := m.inter</span><br><span class="line">   typ := m._type</span><br><span class="line">   x := typ.uncommon()</span><br><span class="line"></span><br><span class="line">   ni := <span class="built_in">len</span>(inter.mhdr)</span><br><span class="line">   nt := <span class="keyword">int</span>(x.mcount)</span><br><span class="line">   xmhdr := (*[<span class="number">1</span> &lt;&lt; <span class="number">16</span>]method)(add(unsafe.Pointer(x), <span class="keyword">uintptr</span>(x.moff)))[:nt:nt]</span><br><span class="line">   j := <span class="number">0</span></span><br><span class="line">   <span class="keyword">for</span> k := <span class="number">0</span>; k &lt; ni; k++ &#123;</span><br><span class="line">      i := &amp;inter.mhdr[k]</span><br><span class="line">      itype := inter.typ.typeOff(i.ityp)</span><br><span class="line">      name := inter.typ.nameOff(i.name)</span><br><span class="line">      iname := name.name()</span><br><span class="line">      ipkg := name.pkgPath()</span><br><span class="line">      <span class="keyword">if</span> ipkg == <span class="string">""</span> &#123;</span><br><span class="line">         ipkg = inter.pkgpath.name()</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">for</span> ; j &lt; nt; j++ &#123;</span><br><span class="line">         t := &amp;xmhdr[j]</span><br><span class="line">         tname := typ.nameOff(t.name)</span><br><span class="line">         <span class="comment">// 检查方法名字是否一致</span></span><br><span class="line">         <span class="keyword">if</span> typ.typeOff(t.mtyp) == itype &amp;&amp; tname.name() == iname &#123;</span><br><span class="line">            pkgPath := tname.pkgPath()</span><br><span class="line">            <span class="keyword">if</span> pkgPath == <span class="string">""</span> &#123;</span><br><span class="line">               pkgPath = typ.nameOff(x.pkgpath).name()</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 是否导出或在同一个包</span></span><br><span class="line">            <span class="keyword">if</span> tname.isExported() || pkgPath == ipkg &#123;</span><br><span class="line">               <span class="keyword">if</span> m != <span class="literal">nil</span> &#123;</span><br><span class="line">                    <span class="comment">// 获取函数地址，并加入到itab.fun数组中</span></span><br><span class="line">                  ifn := typ.textOff(t.ifn)</span><br><span class="line">                  *(*unsafe.Pointer)(add(unsafe.Pointer(&amp;m.fun[<span class="number">0</span>]), <span class="keyword">uintptr</span>(k)*sys.PtrSize)) = ifn</span><br><span class="line">               &#125;</span><br><span class="line">               <span class="keyword">goto</span> nextimethod</span><br><span class="line">            &#125;</span><br><span class="line">         &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">// didn't find method</span></span><br><span class="line">      <span class="keyword">if</span> !canfail &#123;</span><br><span class="line">         <span class="keyword">if</span> locked &#123;</span><br><span class="line">            unlock(&amp;ifaceLock)</span><br><span class="line">         &#125;</span><br><span class="line">         <span class="built_in">panic</span>(&amp;TypeAssertionError&#123;<span class="string">""</span>, typ.<span class="keyword">string</span>(), inter.typ.<span class="keyword">string</span>(), iname&#125;)</span><br><span class="line">      &#125;</span><br><span class="line">      m.bad = <span class="literal">true</span></span><br><span class="line">      <span class="keyword">break</span></span><br><span class="line">   nextimethod:</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">if</span> !locked &#123;</span><br><span class="line">      throw(<span class="string">"invalid itab locking"</span>)</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="comment">// 加到Hash Slot链表中</span></span><br><span class="line">   h := itabhash(inter, typ)</span><br><span class="line">   m.link = hash[h]</span><br><span class="line">   m.inhash = <span class="literal">true</span></span><br><span class="line">   atomicstorep(unsafe.Pointer(&amp;hash[h]), unsafe.Pointer(m))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>可以看到，并不是每次接口赋值都要去检查一次对象是否符合接口要求，而是只在第一次生成itab信息，之后通过hash表即可找到itab信息。</p>
-<h3 id="3-接口赋值"><a href="#3-接口赋值" class="headerlink" title="3. 接口赋值"></a>3. 接口赋值</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> MyInterface <span class="keyword">interface</span> &#123;</div><div class="line">   Print()</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">type</span> MyStruct <span class="keyword">struct</span>&#123;&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ms MyStruct)</span> <span class="title">Print</span><span class="params">()</span></span> &#123;&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">   a := <span class="number">1</span></div><div class="line">   b := <span class="string">"str"</span></div><div class="line">   c := MyStruct&#123;&#125;</div><div class="line">   <span class="keyword">var</span> i1 <span class="keyword">interface</span>&#123;&#125; = a</div><div class="line">   <span class="keyword">var</span> i2 <span class="keyword">interface</span>&#123;&#125; = b</div><div class="line">   <span class="keyword">var</span> i3 MyInterface = c</div><div class="line">   <span class="keyword">var</span> i4 <span class="keyword">interface</span>&#123;&#125; = i3</div><div class="line">   <span class="keyword">var</span> i5 = i4.(MyInterface)</div><div class="line">   fmt.Println(i1, i2, i3, i4, i5)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="3-接口赋值"><a href="#3-接口赋值" class="headerlink" title="3. 接口赋值"></a>3. 接口赋值</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> MyInterface <span class="keyword">interface</span> &#123;</span><br><span class="line">   Print()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> MyStruct <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ms MyStruct)</span> <span class="title">Print</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">   a := <span class="number">1</span></span><br><span class="line">   b := <span class="string">"str"</span></span><br><span class="line">   c := MyStruct&#123;&#125;</span><br><span class="line">   <span class="keyword">var</span> i1 <span class="keyword">interface</span>&#123;&#125; = a</span><br><span class="line">   <span class="keyword">var</span> i2 <span class="keyword">interface</span>&#123;&#125; = b</span><br><span class="line">   <span class="keyword">var</span> i3 MyInterface = c</span><br><span class="line">   <span class="keyword">var</span> i4 <span class="keyword">interface</span>&#123;&#125; = i3</span><br><span class="line">   <span class="keyword">var</span> i5 = i4.(MyInterface)</span><br><span class="line">   fmt.Println(i1, i2, i3, i4, i5)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>用go1.8编译并反汇编:</p>
 <pre><code>$GO1.8PATH/bin/go build -gcflags &#39;-N -l&#39; -o tmp tmp.go
 $GO1.8PATH/bin/go tool objdump -s &quot;main\.main&quot; tmp
-</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div></pre></td><td class="code"><pre><div class="line">// var i1 interface&#123;&#125; = a</div><div class="line">test.go:16      0x1087146       488b442430                      MOVQ 0x30(SP), AX</div><div class="line">test.go:16      0x108714b       4889442438                      MOVQ AX, 0x38(SP)</div><div class="line">test.go:16      0x1087150       488d05a9e10000                  LEAQ 0xe1a9(IP), AX // 加载a的类型信息(int)</div><div class="line">test.go:16      0x1087157       48890424                        MOVQ AX, 0(SP)</div><div class="line">test.go:16      0x108715b       488d442438                      LEAQ 0x38(SP), AX // 加载a的地址</div><div class="line">test.go:16      0x1087160       4889442408                      MOVQ AX, 0x8(SP)</div><div class="line">test.go:16      0x1087165       e84645f8ff                      CALL runtime.convT2E(SB)</div><div class="line">test.go:16      0x108716a       488b442410                      MOVQ 0x10(SP), AX // 填充i1的type和data</div><div class="line">test.go:16      0x108716f       488b4c2418                      MOVQ 0x18(SP), CX </div><div class="line">test.go:16      0x1087174       48898424a0000000                MOVQ AX, 0xa0(SP)</div><div class="line">test.go:16      0x108717c       48898c24a8000000                MOVQ CX, 0xa8(SP)</div><div class="line">// var i2 interface&#123;&#125; = b</div><div class="line">// 与i1类似 加载类型信息 调用convT2E</div><div class="line">...</div><div class="line">test.go:17      0x10871bc       e8ef44f8ff                      CALL runtime.convT2E(SB)</div><div class="line">test.go:17      0x10871c1       488b442410                      MOVQ 0x10(SP), AX</div><div class="line">test.go:17      0x10871c6       488b4c2418                      MOVQ 0x18(SP), CX</div><div class="line">test.go:17      0x10871cb       4889842490000000                MOVQ AX, 0x90(SP)</div><div class="line">test.go:17      0x10871d3       48898c2498000000                MOVQ CX, 0x98(SP)</div><div class="line">// var i3 MyInterface = c</div><div class="line">test.go:18      0x10871db       488d051e000800                  LEAQ 0x8001e(IP), AX // 加载c的类型信息(MyStruct)</div><div class="line">test.go:18      0x10871e2       48890424                        MOVQ AX, 0(SP)</div><div class="line">test.go:18      0x10871e6       488d442430                      LEAQ 0x30(SP), AX</div><div class="line">test.go:18      0x10871eb       4889442408                      MOVQ AX, 0x8(SP)</div><div class="line">test.go:18      0x10871f0       e86b45f8ff                      CALL runtime.convT2I(SB)</div><div class="line">test.go:18      0x10871f5       488b442410                      MOVQ 0x10(SP), AX</div><div class="line">test.go:18      0x10871fa       488b4c2418                      MOVQ 0x18(SP), CX</div><div class="line">test.go:18      0x10871ff       4889842480000000                MOVQ AX, 0x80(SP)</div><div class="line">test.go:18      0x1087207       48898c2488000000                MOVQ CX, 0x88(SP)</div><div class="line">// var i4 interface&#123;&#125; = i3</div><div class="line">test.go:19      0x108720f       488b842488000000                MOVQ 0x88(SP), AX</div><div class="line">test.go:19      0x1087217       488b8c2480000000                MOVQ 0x80(SP), CX // CX = i3.itab</div><div class="line">test.go:19      0x108721f       48898c24e0000000                MOVQ CX, 0xe0(SP) </div><div class="line">test.go:19      0x1087227       48898424e8000000                MOVQ AX, 0xe8(SP) // 0xe8(SP) = i3.data</div><div class="line">test.go:19      0x108722f       48894c2448                      MOVQ CX, 0x48(SP) </div><div class="line">test.go:19      0x1087234       4885c9                          TESTQ CX, CX</div><div class="line">test.go:19      0x1087237       7505                            JNE 0x108723e</div><div class="line">test.go:19      0x1087239       e915020000                      JMP 0x1087453</div><div class="line">test.go:19      0x108723e       8401                            TESTB AL, 0(CX)</div><div class="line">test.go:19      0x1087240       488b4108                        MOVQ 0x8(CX), AX // (i3.itab+8) 得到 &amp;i3.itab.typ，因此AX=i3.itab.typ 即iface指向对象的具体类型信息，这里是MyStruct</div><div class="line">test.go:19      0x1087244       4889442448                      MOVQ AX, 0x48(SP) // 0x48(SP) = i3.itab.typ</div><div class="line">test.go:19      0x1087249       eb00                            JMP 0x108724b</div><div class="line">test.go:19      0x108724b       488b8424e8000000                MOVQ 0xe8(SP), AX // AX = i3.data</div><div class="line">test.go:19      0x1087253       488b4c2448                      MOVQ 0x48(SP), CX // CX = i3.itab.typ</div><div class="line">test.go:19      0x1087258       48894c2470                      MOVQ CX, 0x70(SP) // i4.typ = i3.itab.typ</div><div class="line">test.go:19      0x108725d       4889442478                      MOVQ AX, 0x78(SP) // i4.data = i3.data</div><div class="line">// var i5 = i4.(MyInterface)</div><div class="line">test.go:20      0x1087262       48c78424f000000000000000        MOVQ $0x0, 0xf0(SP)</div><div class="line">test.go:20      0x108726e       48c78424f800000000000000        MOVQ $0x0, 0xf8(SP)</div><div class="line">test.go:20      0x108727a       488b442478                      MOVQ 0x78(SP), AX</div><div class="line">test.go:20      0x108727f       488b4c2470                      MOVQ 0x70(SP), CX</div><div class="line">test.go:21      0x1087284       488d1535530100                  LEAQ 0x15335(IP), DX</div><div class="line">test.go:20      0x108728b       48891424                        MOVQ DX, 0(SP) // 压入 MyInterface 的 interfacetype</div><div class="line">test.go:20      0x108728f       48894c2408                      MOVQ CX, 0x8(SP) // 压入 i4.type</div><div class="line">test.go:20      0x1087294       4889442410                      MOVQ AX, 0x10(SP) // 压入 i4.data</div><div class="line">test.go:20      0x1087299       e87245f8ff                      CALL runtime.assertE2I(SB) // func assertE2I(inter *interfacetype, e eface) (r iface)</div><div class="line">...</div></pre></td></tr></table></figure>
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">// var i1 interface&#123;&#125; = a</span><br><span class="line">test.go:16      0x1087146       488b442430                      MOVQ 0x30(SP), AX</span><br><span class="line">test.go:16      0x108714b       4889442438                      MOVQ AX, 0x38(SP)</span><br><span class="line">test.go:16      0x1087150       488d05a9e10000                  LEAQ 0xe1a9(IP), AX // 加载a的类型信息(int)</span><br><span class="line">test.go:16      0x1087157       48890424                        MOVQ AX, 0(SP)</span><br><span class="line">test.go:16      0x108715b       488d442438                      LEAQ 0x38(SP), AX // 加载a的地址</span><br><span class="line">test.go:16      0x1087160       4889442408                      MOVQ AX, 0x8(SP)</span><br><span class="line">test.go:16      0x1087165       e84645f8ff                      CALL runtime.convT2E(SB)</span><br><span class="line">test.go:16      0x108716a       488b442410                      MOVQ 0x10(SP), AX // 填充i1的type和data</span><br><span class="line">test.go:16      0x108716f       488b4c2418                      MOVQ 0x18(SP), CX </span><br><span class="line">test.go:16      0x1087174       48898424a0000000                MOVQ AX, 0xa0(SP)</span><br><span class="line">test.go:16      0x108717c       48898c24a8000000                MOVQ CX, 0xa8(SP)</span><br><span class="line">// var i2 interface&#123;&#125; = b</span><br><span class="line">// 与i1类似 加载类型信息 调用convT2E</span><br><span class="line">...</span><br><span class="line">test.go:17      0x10871bc       e8ef44f8ff                      CALL runtime.convT2E(SB)</span><br><span class="line">test.go:17      0x10871c1       488b442410                      MOVQ 0x10(SP), AX</span><br><span class="line">test.go:17      0x10871c6       488b4c2418                      MOVQ 0x18(SP), CX</span><br><span class="line">test.go:17      0x10871cb       4889842490000000                MOVQ AX, 0x90(SP)</span><br><span class="line">test.go:17      0x10871d3       48898c2498000000                MOVQ CX, 0x98(SP)</span><br><span class="line">// var i3 MyInterface = c</span><br><span class="line">test.go:18      0x10871db       488d051e000800                  LEAQ 0x8001e(IP), AX // 加载c的类型信息(MyStruct)</span><br><span class="line">test.go:18      0x10871e2       48890424                        MOVQ AX, 0(SP)</span><br><span class="line">test.go:18      0x10871e6       488d442430                      LEAQ 0x30(SP), AX</span><br><span class="line">test.go:18      0x10871eb       4889442408                      MOVQ AX, 0x8(SP)</span><br><span class="line">test.go:18      0x10871f0       e86b45f8ff                      CALL runtime.convT2I(SB)</span><br><span class="line">test.go:18      0x10871f5       488b442410                      MOVQ 0x10(SP), AX</span><br><span class="line">test.go:18      0x10871fa       488b4c2418                      MOVQ 0x18(SP), CX</span><br><span class="line">test.go:18      0x10871ff       4889842480000000                MOVQ AX, 0x80(SP)</span><br><span class="line">test.go:18      0x1087207       48898c2488000000                MOVQ CX, 0x88(SP)</span><br><span class="line">// var i4 interface&#123;&#125; = i3</span><br><span class="line">test.go:19      0x108720f       488b842488000000                MOVQ 0x88(SP), AX</span><br><span class="line">test.go:19      0x1087217       488b8c2480000000                MOVQ 0x80(SP), CX // CX = i3.itab</span><br><span class="line">test.go:19      0x108721f       48898c24e0000000                MOVQ CX, 0xe0(SP) </span><br><span class="line">test.go:19      0x1087227       48898424e8000000                MOVQ AX, 0xe8(SP) // 0xe8(SP) = i3.data</span><br><span class="line">test.go:19      0x108722f       48894c2448                      MOVQ CX, 0x48(SP) </span><br><span class="line">test.go:19      0x1087234       4885c9                          TESTQ CX, CX</span><br><span class="line">test.go:19      0x1087237       7505                            JNE 0x108723e</span><br><span class="line">test.go:19      0x1087239       e915020000                      JMP 0x1087453</span><br><span class="line">test.go:19      0x108723e       8401                            TESTB AL, 0(CX)</span><br><span class="line">test.go:19      0x1087240       488b4108                        MOVQ 0x8(CX), AX // (i3.itab+8) 得到 &amp;i3.itab.typ，因此AX=i3.itab.typ 即iface指向对象的具体类型信息，这里是MyStruct</span><br><span class="line">test.go:19      0x1087244       4889442448                      MOVQ AX, 0x48(SP) // 0x48(SP) = i3.itab.typ</span><br><span class="line">test.go:19      0x1087249       eb00                            JMP 0x108724b</span><br><span class="line">test.go:19      0x108724b       488b8424e8000000                MOVQ 0xe8(SP), AX // AX = i3.data</span><br><span class="line">test.go:19      0x1087253       488b4c2448                      MOVQ 0x48(SP), CX // CX = i3.itab.typ</span><br><span class="line">test.go:19      0x1087258       48894c2470                      MOVQ CX, 0x70(SP) // i4.typ = i3.itab.typ</span><br><span class="line">test.go:19      0x108725d       4889442478                      MOVQ AX, 0x78(SP) // i4.data = i3.data</span><br><span class="line">// var i5 = i4.(MyInterface)</span><br><span class="line">test.go:20      0x1087262       48c78424f000000000000000        MOVQ $0x0, 0xf0(SP)</span><br><span class="line">test.go:20      0x108726e       48c78424f800000000000000        MOVQ $0x0, 0xf8(SP)</span><br><span class="line">test.go:20      0x108727a       488b442478                      MOVQ 0x78(SP), AX</span><br><span class="line">test.go:20      0x108727f       488b4c2470                      MOVQ 0x70(SP), CX</span><br><span class="line">test.go:21      0x1087284       488d1535530100                  LEAQ 0x15335(IP), DX</span><br><span class="line">test.go:20      0x108728b       48891424                        MOVQ DX, 0(SP) // 压入 MyInterface 的 interfacetype</span><br><span class="line">test.go:20      0x108728f       48894c2408                      MOVQ CX, 0x8(SP) // 压入 i4.type</span><br><span class="line">test.go:20      0x1087294       4889442410                      MOVQ AX, 0x10(SP) // 压入 i4.data</span><br><span class="line">test.go:20      0x1087299       e87245f8ff                      CALL runtime.assertE2I(SB) // func assertE2I(inter *interfacetype, e eface) (r iface)</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
 <p>可以看到编译器通过convT2E和convT2I将编译器已知的类型赋给接口(其中E代表eface，I代表iface，T代表编译器已知类型，即静态类型)，编译器知晓itab的布局，会在编译期检查接口是否适配，并且生成itab信息，因此编译器生成的convT2X调用是必然成功的。</p>
 <p>对于接口间的赋值，将iface赋给eface比较简单，直接提取eface的interfacetype和data赋给iface即可。而反过来，则需要使用接口断言，接口断言通过assertE2I, assertI2I等函数来完成，这类assert函数根据使用方调用方式有两个版本:</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">i5 := i4.(MyInterface)         <span class="comment">// call conv.assertE2I</span></div><div class="line">i5, ok := i4.(MyInterface)  <span class="comment">//  call conv.AssertE2I2</span></div></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">i5 := i4.(MyInterface)         <span class="comment">// call conv.assertE2I</span></span><br><span class="line">i5, ok := i4.(MyInterface)  <span class="comment">//  call conv.AssertE2I2</span></span><br></pre></td></tr></table></figure>
 <p>下面看一下几个常用的conv和assert函数实现:</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// go1.8/src/runtime/iface.go</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">convT2E</span><span class="params">(t *_type, elem unsafe.Pointer)</span> <span class="params">(e eface)</span></span> &#123;</div><div class="line">    <span class="keyword">if</span> raceenabled &#123;</div><div class="line">        raceReadObjectPC(t, elem, getcallerpc(unsafe.Pointer(&amp;t)), funcPC(convT2E))</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span> msanenabled &#123;</div><div class="line">        msanread(elem, t.size)</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span> isDirectIface(t) &#123;</div><div class="line">        <span class="comment">// This case is implemented directly by the compiler.</span></div><div class="line">        throw(<span class="string">"direct convT2E"</span>)</div><div class="line">    &#125;</div><div class="line">    x := newobject(t)</div><div class="line">    <span class="comment">// <span class="doctag">TODO:</span> We allocate a zeroed object only to overwrite it with</span></div><div class="line">    <span class="comment">// actual data. Figure out how to avoid zeroing. Also below in convT2I.</span></div><div class="line">    typedmemmove(t, x, elem)</div><div class="line">    e._type = t</div><div class="line">    e.data = x</div><div class="line">    <span class="keyword">return</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">convT2I</span><span class="params">(tab *itab, elem unsafe.Pointer)</span> <span class="params">(i iface)</span></span> &#123;</div><div class="line">    t := tab._type</div><div class="line">    <span class="keyword">if</span> raceenabled &#123;</div><div class="line">        raceReadObjectPC(t, elem, getcallerpc(unsafe.Pointer(&amp;tab)), funcPC(convT2I))</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span> msanenabled &#123;</div><div class="line">        msanread(elem, t.size)</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span> isDirectIface(t) &#123;</div><div class="line">        <span class="comment">// This case is implemented directly by the compiler.</span></div><div class="line">        throw(<span class="string">"direct convT2I"</span>)</div><div class="line">    &#125;</div><div class="line">    x := newobject(t)</div><div class="line">    typedmemmove(t, x, elem)</div><div class="line">    i.tab = tab</div><div class="line">    i.data = x</div><div class="line">    <span class="keyword">return</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">assertE2I</span><span class="params">(inter *interfacetype, e eface)</span> <span class="params">(r iface)</span></span> &#123;</div><div class="line">    t := e._type</div><div class="line">    <span class="keyword">if</span> t == <span class="literal">nil</span> &#123;</div><div class="line">        <span class="comment">// explicit conversions require non-nil interface value.</span></div><div class="line">        <span class="built_in">panic</span>(&amp;TypeAssertionError&#123;<span class="string">""</span>, <span class="string">""</span>, inter.typ.<span class="keyword">string</span>(), <span class="string">""</span>&#125;)</div><div class="line">    &#125;</div><div class="line">    r.tab = getitab(inter, t, <span class="literal">false</span>)</div><div class="line">    r.data = e.data</div><div class="line">    <span class="keyword">return</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// go1.8/src/runtime/iface.go</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">convT2E</span><span class="params">(t *_type, elem unsafe.Pointer)</span> <span class="params">(e eface)</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> raceenabled &#123;</span><br><span class="line">        raceReadObjectPC(t, elem, getcallerpc(unsafe.Pointer(&amp;t)), funcPC(convT2E))</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> msanenabled &#123;</span><br><span class="line">        msanread(elem, t.size)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> isDirectIface(t) &#123;</span><br><span class="line">        <span class="comment">// This case is implemented directly by the compiler.</span></span><br><span class="line">        throw(<span class="string">"direct convT2E"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    x := newobject(t)</span><br><span class="line">    <span class="comment">// <span class="doctag">TODO:</span> We allocate a zeroed object only to overwrite it with</span></span><br><span class="line">    <span class="comment">// actual data. Figure out how to avoid zeroing. Also below in convT2I.</span></span><br><span class="line">    typedmemmove(t, x, elem)</span><br><span class="line">    e._type = t</span><br><span class="line">    e.data = x</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">convT2I</span><span class="params">(tab *itab, elem unsafe.Pointer)</span> <span class="params">(i iface)</span></span> &#123;</span><br><span class="line">    t := tab._type</span><br><span class="line">    <span class="keyword">if</span> raceenabled &#123;</span><br><span class="line">        raceReadObjectPC(t, elem, getcallerpc(unsafe.Pointer(&amp;tab)), funcPC(convT2I))</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> msanenabled &#123;</span><br><span class="line">        msanread(elem, t.size)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> isDirectIface(t) &#123;</span><br><span class="line">        <span class="comment">// This case is implemented directly by the compiler.</span></span><br><span class="line">        throw(<span class="string">"direct convT2I"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    x := newobject(t)</span><br><span class="line">    typedmemmove(t, x, elem)</span><br><span class="line">    i.tab = tab</span><br><span class="line">    i.data = x</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">assertE2I</span><span class="params">(inter *interfacetype, e eface)</span> <span class="params">(r iface)</span></span> &#123;</span><br><span class="line">    t := e._type</span><br><span class="line">    <span class="keyword">if</span> t == <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="comment">// explicit conversions require non-nil interface value.</span></span><br><span class="line">        <span class="built_in">panic</span>(&amp;TypeAssertionError&#123;<span class="string">""</span>, <span class="string">""</span>, inter.typ.<span class="keyword">string</span>(), <span class="string">""</span>&#125;)</span><br><span class="line">    &#125;</span><br><span class="line">    r.tab = getitab(inter, t, <span class="literal">false</span>)</span><br><span class="line">    r.data = e.data</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>在assertE2I中，我们看到了getitab函数，即<code>i5=i4.(MyInterface)</code>中，会去判断i4的concretetype(MyStruct)是否满足MyInterface的interfacetype，由于前面我们执行过<code>var i3 MyInterface = c</code>，因此hash[itabhash(MyInterface, MyStruct)]已经存在itab，所以无需再次检查接口是否满足，从hash表中取出itab即可(里面针对接口的各个方法实现地址都已经初始化完成)。</p>
 <p>而在go1.9中，有一些优化:</p>
 <p>1.对convT2x针对简单类型(如int32,string,slice)进行特例化优化(避免typedmemmove):</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">convT2E16, convT2I16</div><div class="line">convT2E32, convT2I32</div><div class="line">convT2E64, convT2I64</div><div class="line">convT2Estring, convT2Istring</div><div class="line">convT2Eslice, convT2Islice</div><div class="line">convT2Enoptr, convT2Inoptr</div></pre></td></tr></table></figure>
-<p>据统计，在编译make.bash的时候，有93%的convT2x调用都可通过以上特例化优化。参考<a href="https://go-review.googlesource.com/c/go/+/36476" target="_blank" rel="external">这里</a>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">convT2E16, convT2I16</span><br><span class="line">convT2E32, convT2I32</span><br><span class="line">convT2E64, convT2I64</span><br><span class="line">convT2Estring, convT2Istring</span><br><span class="line">convT2Eslice, convT2Islice</span><br><span class="line">convT2Enoptr, convT2Inoptr</span><br></pre></td></tr></table></figure>
+<p>据统计，在编译make.bash的时候，有93%的convT2x调用都可通过以上特例化优化。参考<a href="https://go-review.googlesource.com/c/go/+/36476" target="_blank" rel="noopener">这里</a>。</p>
 <p>2.优化了剩余对convT2I的调用</p>
-<p>由于itab由编译器生成(参考上面go1.8生成的汇编代码和convT2I函数)，可以直接由编译器将itab和elem直接赋给iface的tab和data字段，避免函数调用和typedmemmove。关于此优化可参考<a href="https://go-review.googlesource.com/c/go/+/20901/9" target="_blank" rel="external">1</a>和<a href="https://go-review.googlesource.com/c/go/+/20902" target="_blank" rel="external">2</a>。</p>
+<p>由于itab由编译器生成(参考上面go1.8生成的汇编代码和convT2I函数)，可以直接由编译器将itab和elem直接赋给iface的tab和data字段，避免函数调用和typedmemmove。关于此优化可参考<a href="https://go-review.googlesource.com/c/go/+/20901/9" target="_blank" rel="noopener">1</a>和<a href="https://go-review.googlesource.com/c/go/+/20902" target="_blank" rel="noopener">2</a>。</p>
 <p>具体汇编代码不再列出，感兴趣的同学可以自己尝试。</p>
 <p>对接口的构造和转换本质上是对object的type和data两个字段的操作，对空接口eface来说，只需将type和data提取并填入即可，而对于非空接口iface构造和断言，需要判断object或eface是否满足接口定义，并生成对应的itab(包含接口类型，object类型，object接口实现方法地址等信息)，每个已初始化的iface都有itab字段，该字段的生成是通过hash表优化的，以及对于每个interfacetype &lt;-&gt; concrettype对，只需要生成一次itab，之后从hash表中取就可以了。由于编译器知晓itab的内存布局，因此在将iface赋给eface的时候可以避免函数调用，直接将iface.itab.typ赋给eface.typ。</p>
 <h3 id="4-类型反射"><a href="#4-类型反射" class="headerlink" title="4. 类型反射"></a>4. 类型反射</h3><h4 id="4-1-类型-amp-值解析"><a href="#4-1-类型-amp-值解析" class="headerlink" title="4.1 类型&amp;值解析"></a>4.1 类型&amp;值解析</h4><p>类型和值解析无非就是将eface{}的_type和data字段取出进行解析，针对TypeOf的实现很简单:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">// 代码位于relect/type.go</div><div class="line"></div><div class="line">// reflect.Type接口的实现为: reflect.rtype</div><div class="line">// reflect.rtype结构体定义和runtime._type一样，只是实现了reflect.Type接口，实现了一些诸如Elem()，Name()之类的方法:</div><div class="line"></div><div class="line">func TypeOf(i interface&#123;&#125;) Type &#123;</div><div class="line">    // emptyInterface结构体定义与eface一样，都是两个word(type和data)</div><div class="line">    eface := *(*emptyInterface)(unsafe.Pointer(&amp;i))</div><div class="line">    return toType(eface.typ) // 将eface.typ赋给reflect.Type接口，供外部使用</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">// 代码位于relect/type.go</span><br><span class="line"></span><br><span class="line">// reflect.Type接口的实现为: reflect.rtype</span><br><span class="line">// reflect.rtype结构体定义和runtime._type一样，只是实现了reflect.Type接口，实现了一些诸如Elem()，Name()之类的方法:</span><br><span class="line"></span><br><span class="line">func TypeOf(i interface&#123;&#125;) Type &#123;</span><br><span class="line">    // emptyInterface结构体定义与eface一样，都是两个word(type和data)</span><br><span class="line">    eface := *(*emptyInterface)(unsafe.Pointer(&amp;i))</span><br><span class="line">    return toType(eface.typ) // 将eface.typ赋给reflect.Type接口，供外部使用</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>要知道，对于复合类型，如Ptr, Slice, Chan, Map等，它们的type信息中包含其子类型的信息，如Slice元素类型，而其元素类型也可能是复合类型，因此type实际上是一颗”类型树”，可通过<code>reflect.Elem()</code>和<code>reflect.Key()</code>等API来获取这些子类型信息，但如果如果type不匹配(比如<code>reflect.TypeOf([]int{1,2}).Key()</code>)，会panic。</p>
 <p><code>reflect.ValueOf()</code>则要复杂一些，因为它需要根据type来决定数据应该如何被解释:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div></pre></td><td class="code"><pre><div class="line">type Value struct &#123;</div><div class="line">    // 值的类型</div><div class="line">    typ *rtype</div><div class="line">    // 立即数或指向数据的指针</div><div class="line">    ptr unsafe.Pointer</div><div class="line">    // type flag uintptr</div><div class="line">    // 指明值的类型，是否只读，ptr字段是否是指针等</div><div class="line">    flag</div><div class="line">&#125;</div><div class="line"></div><div class="line">func ValueOf(i interface&#123;&#125;) Value &#123;</div><div class="line">    if i == nil &#123;</div><div class="line">        return Value&#123;&#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    escapes(i)</div><div class="line"></div><div class="line">    return unpackEface(i)</div><div class="line">&#125;</div><div class="line"></div><div class="line">// 将数据从interface&#123;&#125;解包为reflec.Value</div><div class="line">func unpackEface(i interface&#123;&#125;) Value &#123;</div><div class="line">    e := (*emptyInterface)(unsafe.Pointer(&amp;i))</div><div class="line">    // NOTE: don&apos;t read e.word until we know whether it is really a pointer or not.</div><div class="line">    t := e.typ</div><div class="line">    if t == nil &#123;</div><div class="line">        return Value&#123;&#125;</div><div class="line">    &#125;</div><div class="line">    f := flag(t.Kind())</div><div class="line">    if ifaceIndir(t) &#123;</div><div class="line">        f |= flagIndir</div><div class="line">    &#125;</div><div class="line">    return Value&#123;t, e.word, f&#125;</div><div class="line">&#125;</div><div class="line"> </div><div class="line">// 将数据由reflect.Value打包为interface&#123;&#125;</div><div class="line">func packEface(v Value) interface&#123;&#125; &#123;</div><div class="line">    t := v.typ</div><div class="line">    var i interface&#123;&#125;</div><div class="line">    e := (*emptyInterface)(unsafe.Pointer(&amp;i))</div><div class="line">    // First, fill in the data portion of the interface.</div><div class="line">    switch &#123;</div><div class="line">    case ifaceIndir(t):</div><div class="line">        if v.flag&amp;flagIndir == 0 &#123;</div><div class="line">            panic(&quot;bad indir&quot;)</div><div class="line">        &#125;</div><div class="line">        ptr := v.ptr</div><div class="line">        if v.flag&amp;flagAddr != 0 &#123;</div><div class="line">            c := unsafe_New(t)</div><div class="line">            typedmemmove(t, c, ptr)</div><div class="line">            ptr = c</div><div class="line">        &#125;</div><div class="line">        e.word = ptr</div><div class="line">    case v.flag&amp;flagIndir != 0:</div><div class="line">        e.word = *(*unsafe.Pointer)(v.ptr)</div><div class="line">    default:</div><div class="line">        e.word = v.ptr</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    e.typ = t</div><div class="line">    return i</div><div class="line">&#125;</div><div class="line"> </div><div class="line">// 将reflect.Value转换为interface&#123;&#125;，相当于reflect.ValueOf的逆操作</div><div class="line">// 等价于: var i interface&#123;&#125; = (v&apos;s underlying value)</div><div class="line">func (v Value) Interface() (i interface&#123;&#125;) &#123;</div><div class="line">   return valueInterface(v, true)</div><div class="line">&#125;</div><div class="line"></div><div class="line">func valueInterface(v Value, safe bool) interface&#123;&#125; &#123;</div><div class="line">   if v.flag == 0 &#123;</div><div class="line">      panic(&amp;ValueError&#123;&quot;reflect.Value.Interface&quot;, 0&#125;)</div><div class="line">   &#125;</div><div class="line">   if safe &amp;&amp; v.flag&amp;flagRO != 0 &#123;</div><div class="line">      panic(&quot;reflect.Value.Interface: cannot return value obtained from unexported field or method&quot;)</div><div class="line">   &#125;</div><div class="line">   if v.flag&amp;flagMethod != 0 &#123;</div><div class="line">      v = makeMethodValue(&quot;Interface&quot;, v)</div><div class="line">   &#125;</div><div class="line">   // 当interface&#123;&#125;作为子类型时，会产生类型为Interface的Value</div><div class="line">   // 如 reflect.TypeOf(m).Elem().Kind() == Interface</div><div class="line">   if v.kind() == Interface &#123;</div><div class="line">      if v.NumMethod() == 0 &#123;</div><div class="line">         return *(*interface&#123;&#125;)(v.ptr)</div><div class="line">      &#125;</div><div class="line">      return *(*interface &#123;</div><div class="line">         M()</div><div class="line">      &#125;)(v.ptr)</div><div class="line">   &#125;</div><div class="line">   return packEface(v)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><span class="line">type Value struct &#123;</span><br><span class="line">    // 值的类型</span><br><span class="line">    typ *rtype</span><br><span class="line">    // 立即数或指向数据的指针</span><br><span class="line">    ptr unsafe.Pointer</span><br><span class="line">    // type flag uintptr</span><br><span class="line">    // 指明值的类型，是否只读，ptr字段是否是指针等</span><br><span class="line">    flag</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func ValueOf(i interface&#123;&#125;) Value &#123;</span><br><span class="line">    if i == nil &#123;</span><br><span class="line">        return Value&#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    escapes(i)</span><br><span class="line"></span><br><span class="line">    return unpackEface(i)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 将数据从interface&#123;&#125;解包为reflec.Value</span><br><span class="line">func unpackEface(i interface&#123;&#125;) Value &#123;</span><br><span class="line">    e := (*emptyInterface)(unsafe.Pointer(&amp;i))</span><br><span class="line">    // NOTE: don&apos;t read e.word until we know whether it is really a pointer or not.</span><br><span class="line">    t := e.typ</span><br><span class="line">    if t == nil &#123;</span><br><span class="line">        return Value&#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    f := flag(t.Kind())</span><br><span class="line">    if ifaceIndir(t) &#123;</span><br><span class="line">        f |= flagIndir</span><br><span class="line">    &#125;</span><br><span class="line">    return Value&#123;t, e.word, f&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">// 将数据由reflect.Value打包为interface&#123;&#125;</span><br><span class="line">func packEface(v Value) interface&#123;&#125; &#123;</span><br><span class="line">    t := v.typ</span><br><span class="line">    var i interface&#123;&#125;</span><br><span class="line">    e := (*emptyInterface)(unsafe.Pointer(&amp;i))</span><br><span class="line">    // First, fill in the data portion of the interface.</span><br><span class="line">    switch &#123;</span><br><span class="line">    case ifaceIndir(t):</span><br><span class="line">        if v.flag&amp;flagIndir == 0 &#123;</span><br><span class="line">            panic(&quot;bad indir&quot;)</span><br><span class="line">        &#125;</span><br><span class="line">        ptr := v.ptr</span><br><span class="line">        if v.flag&amp;flagAddr != 0 &#123;</span><br><span class="line">            c := unsafe_New(t)</span><br><span class="line">            typedmemmove(t, c, ptr)</span><br><span class="line">            ptr = c</span><br><span class="line">        &#125;</span><br><span class="line">        e.word = ptr</span><br><span class="line">    case v.flag&amp;flagIndir != 0:</span><br><span class="line">        e.word = *(*unsafe.Pointer)(v.ptr)</span><br><span class="line">    default:</span><br><span class="line">        e.word = v.ptr</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    e.typ = t</span><br><span class="line">    return i</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">// 将reflect.Value转换为interface&#123;&#125;，相当于reflect.ValueOf的逆操作</span><br><span class="line">// 等价于: var i interface&#123;&#125; = (v&apos;s underlying value)</span><br><span class="line">func (v Value) Interface() (i interface&#123;&#125;) &#123;</span><br><span class="line">   return valueInterface(v, true)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func valueInterface(v Value, safe bool) interface&#123;&#125; &#123;</span><br><span class="line">   if v.flag == 0 &#123;</span><br><span class="line">      panic(&amp;ValueError&#123;&quot;reflect.Value.Interface&quot;, 0&#125;)</span><br><span class="line">   &#125;</span><br><span class="line">   if safe &amp;&amp; v.flag&amp;flagRO != 0 &#123;</span><br><span class="line">      panic(&quot;reflect.Value.Interface: cannot return value obtained from unexported field or method&quot;)</span><br><span class="line">   &#125;</span><br><span class="line">   if v.flag&amp;flagMethod != 0 &#123;</span><br><span class="line">      v = makeMethodValue(&quot;Interface&quot;, v)</span><br><span class="line">   &#125;</span><br><span class="line">   // 当interface&#123;&#125;作为子类型时，会产生类型为Interface的Value</span><br><span class="line">   // 如 reflect.TypeOf(m).Elem().Kind() == Interface</span><br><span class="line">   if v.kind() == Interface &#123;</span><br><span class="line">      if v.NumMethod() == 0 &#123;</span><br><span class="line">         return *(*interface&#123;&#125;)(v.ptr)</span><br><span class="line">      &#125;</span><br><span class="line">      return *(*interface &#123;</span><br><span class="line">         M()</span><br><span class="line">      &#125;)(v.ptr)</span><br><span class="line">   &#125;</span><br><span class="line">   return packEface(v)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>和<code>reflect.Type.Elem()</code>一样，<code>reflect.Value</code>也提供一系列的方法进行值解析，如<code>Elem()</code>可以得到Interface或Ptr指向的值，<code>Index()</code>可以得到Array, Slice或String对应下标的元素等。但在使用这些API前要先通过<code>reflect.Type.Kind()</code>确认类型匹配，否则会panic。</p>
 <h4 id="4-2-类型反射"><a href="#4-2-类型反射" class="headerlink" title="4.2 类型反射"></a>4.2 类型反射</h4><p>类型&amp;值解析实际上对将interface{}的type和data提出来，以<code>reflect.Type</code>和<code>reflect.Value</code>接口暴露给用户使用，而类型反射是指提供一个reflect.Type，我们可以创建一个对应类型的对象，这可以通过<code>reflect.New()</code>来完成：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// reflect/value.go</span></div><div class="line"><span class="comment">// New returns a Value representing a pointer to a new zero value</span></div><div class="line"><span class="comment">// for the specified type. That is, the returned Value's Type is PtrTo(typ).</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">(typ Type)</span> <span class="title">Value</span></span> &#123;</div><div class="line">   <span class="keyword">if</span> typ == <span class="literal">nil</span> &#123;</div><div class="line">      <span class="built_in">panic</span>(<span class="string">"reflect: New(nil)"</span>)</div><div class="line">   &#125;</div><div class="line">   ptr := unsafe_New(typ.(*rtype))</div><div class="line">   fl := flag(Ptr)</div><div class="line">   <span class="keyword">return</span> Value&#123;typ.common().ptrTo(), ptr, fl&#125;</div><div class="line">&#125;</div><div class="line"> </div><div class="line"> </div><div class="line"><span class="comment">// runtime/malloc.go</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">newobject</span><span class="params">(typ *_type)</span> <span class="title">unsafe</span>.<span class="title">Pointer</span></span> &#123;</div><div class="line">   <span class="keyword">return</span> mallocgc(typ.size, typ, <span class="literal">true</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//go:linkname reflect_unsafe_New reflect.unsafe_New</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">reflect_unsafe_New</span><span class="params">(typ *_type)</span> <span class="title">unsafe</span>.<span class="title">Pointer</span></span> &#123;</div><div class="line">   <span class="keyword">return</span> newobject(typ)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// reflect/value.go</span></span><br><span class="line"><span class="comment">// New returns a Value representing a pointer to a new zero value</span></span><br><span class="line"><span class="comment">// for the specified type. That is, the returned Value's Type is PtrTo(typ).</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">(typ Type)</span> <span class="title">Value</span></span> &#123;</span><br><span class="line">   <span class="keyword">if</span> typ == <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="built_in">panic</span>(<span class="string">"reflect: New(nil)"</span>)</span><br><span class="line">   &#125;</span><br><span class="line">   ptr := unsafe_New(typ.(*rtype))</span><br><span class="line">   fl := flag(Ptr)</span><br><span class="line">   <span class="keyword">return</span> Value&#123;typ.common().ptrTo(), ptr, fl&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="comment">// runtime/malloc.go</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">newobject</span><span class="params">(typ *_type)</span> <span class="title">unsafe</span>.<span class="title">Pointer</span></span> &#123;</span><br><span class="line">   <span class="keyword">return</span> mallocgc(typ.size, typ, <span class="literal">true</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//go:linkname reflect_unsafe_New reflect.unsafe_New</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">reflect_unsafe_New</span><span class="params">(typ *_type)</span> <span class="title">unsafe</span>.<span class="title">Pointer</span></span> &#123;</span><br><span class="line">   <span class="keyword">return</span> newobject(typ)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>PS: Go的包管理看来还是不够好用，为了达成reflect包和runtime包的”解耦”，先后使用和copy struct define和link method “黑科技”。</p>
 <p><code>reflect.New()</code>创建对应Type的对象并返回其指针，以下是一个简单的示例:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">type User struct &#123;</div><div class="line">   UserId     int</div><div class="line">   Name   string</div><div class="line">&#125;</div><div class="line"></div><div class="line">func main() &#123;</div><div class="line">   x := User&#123;UserId: 111&#125;</div><div class="line">   typ := reflect.TypeOf(x)</div><div class="line">   // reflect.New返回的是*User 而不是User</div><div class="line">   y := reflect.New(typ).Elem()</div><div class="line">   for i:=0; i&lt;typ.NumField(); i++ &#123;</div><div class="line">      // 根据每个struct field的type 设置其值</div><div class="line">      fieldT := typ.Field(i) </div><div class="line">      fieldV := y.Field(i)</div><div class="line">      kind := fieldT.Type.Kind()</div><div class="line">      if kind == reflect.Int&#123;</div><div class="line">         fieldV.SetInt(123)</div><div class="line">      &#125; else if kind == reflect.String&#123;</div><div class="line">         fieldV.SetString(&quot;wudaijun&quot;)</div><div class="line">      &#125;</div><div class="line">   &#125;</div><div class="line">   fmt.Println(y.Interface())</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">type User struct &#123;</span><br><span class="line">   UserId     int</span><br><span class="line">   Name   string</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func main() &#123;</span><br><span class="line">   x := User&#123;UserId: 111&#125;</span><br><span class="line">   typ := reflect.TypeOf(x)</span><br><span class="line">   // reflect.New返回的是*User 而不是User</span><br><span class="line">   y := reflect.New(typ).Elem()</span><br><span class="line">   for i:=0; i&lt;typ.NumField(); i++ &#123;</span><br><span class="line">      // 根据每个struct field的type 设置其值</span><br><span class="line">      fieldT := typ.Field(i) </span><br><span class="line">      fieldV := y.Field(i)</span><br><span class="line">      kind := fieldT.Type.Kind()</span><br><span class="line">      if kind == reflect.Int&#123;</span><br><span class="line">         fieldV.SetInt(123)</span><br><span class="line">      &#125; else if kind == reflect.String&#123;</span><br><span class="line">         fieldV.SetString(&quot;wudaijun&quot;)</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   fmt.Println(y.Interface())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>以上代码稍改一下，即可实现简单CSV解析：根据提供的struct原型，分析其字段，并一一映射到csv每一列，将csv读出的string转换为对应的struct field type，对于简单类型使用strconv即可完成，对于复合数据结构如Map, Slice，可使用json库来定义和解析。</p>
 <p><code>reflect.New()</code>和<code>reflect.Zero()</code>可用于创建Type对应的对象，除此之外，reflect包还提供了<code>reflect.MapOf()</code>, <code>reflect.SliceOf()</code>等方法用于基于现有类型创建复合类型。具体源码不再列出，参考reflect/type.go和reflect/value.go。</p>
 <p>reflect提供的反射能力不可谓不强大，但在实际使用中仍然不够好用，一个因为Go本质上是静态类型语言，要提供”动态类型”的部分语义是比较复杂和不易用的，这有点像C++提供泛型编程，虽然强大，但也是把双刃剑。</p>
 <p>参考:</p>
 <ol>
-<li><a href="https://studygolang.com/articles/2917" target="_blank" rel="external">Golang汇编快速指南</a></li>
-<li><a href="http://legendtkl.com/2017/07/01/golang-interface-implement/" target="_blank" rel="external">Go Interface源码剖析</a></li>
+<li><a href="https://studygolang.com/articles/2917" target="_blank" rel="noopener">Golang汇编快速指南</a></li>
+<li><a href="http://legendtkl.com/2017/07/01/golang-interface-implement/" target="_blank" rel="noopener">Go Interface源码剖析</a></li>
 </ol>
-</div><div class="tags"><a href="/tags/go/">go</a></div><div class="post-share"></div><div class="post-nav"><a href="/2018/02/go-sync-map-implement/" class="pre">Go sync.Map 实现</a><a href="/2018/01/go-scheduler/" class="next">Go 调度模型</a></div><div id="comments"><div id="lv-container" data-id="city" data-uid="MTAyMC8zMzg3Ni8xMDQyOQ=="></div></div></div></div></div><div class="layout-r"><div id="sidebar"><div class="search-pla"></div><div id="toc" class="widget"><div class="widget-title"><i class="fa fa-fei">文章目录</i></div><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-eface"><span class="toc-text">1. eface</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-iface"><span class="toc-text">2. iface</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-接口赋值"><span class="toc-text">3. 接口赋值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-类型反射"><span class="toc-text">4. 类型反射</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-类型-amp-值解析"><span class="toc-text">4.1 类型&值解析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-类型反射"><span class="toc-text">4.2 类型反射</span></a></li></ol></li></ol></div><div class="widget"><div class="widget-title"><i class="fa fa-xie"> 最新文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/gs-model-save/">谈谈GS对象的落地</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/consistent-hashing/">一致Hash算法</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/flux-study/">Flux - Web应用的数据流管理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/react-notes/">React - Web中的函数式思维</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/understand-functional-programing/">理解函数式编程</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/04/go-pprof/">go pprof 性能分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/docker-container-ops/">Docker 容器管理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/docker-management/">Docker容器编排工具</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/go-sync-map-implement/">Go sync.Map 实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/go-interface-implement/">Go Interface 实现</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-gui"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/algorithm/">algorithm</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/database/">database</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">26</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/go/">go</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/os/">os</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/programing/">programing</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/system/">system</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/unity/">unity</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web/">web</a><span class="category-list-count">4</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-biao"> 标签</i></div><div class="tagcloud"><a href="/tags/mongodb/" style="font-size: 15px;">mongodb</a> <a href="/tags/ngserver/" style="font-size: 15px;">ngserver</a> <a href="/tags/lua/" style="font-size: 15px;">lua</a> <a href="/tags/skynet/" style="font-size: 15px;">skynet</a> <a href="/tags/erlang/" style="font-size: 15px;">erlang</a> <a href="/tags/git/" style="font-size: 15px;">git</a> <a href="/tags/firefly/" style="font-size: 15px;">firefly</a> <a href="/tags/python/" style="font-size: 15px;">python</a> <a href="/tags/tool/" style="font-size: 15px;">tool</a> <a href="/tags/kbengine/" style="font-size: 15px;">kbengine</a> <a href="/tags/distribution/" style="font-size: 15px;">distribution</a> <a href="/tags/unity/" style="font-size: 15px;">unity</a> <a href="/tags/tcp-ip/" style="font-size: 15px;">tcp/ip</a> <a href="/tags/other/" style="font-size: 15px;">other</a> <a href="/tags/c-c/" style="font-size: 15px;">c/c++</a> <a href="/tags/os/" style="font-size: 15px;">os</a> <a href="/tags/web/" style="font-size: 15px;">web</a> <a href="/tags/gameserver/" style="font-size: 15px;">gameserver</a> <a href="/tags/go/" style="font-size: 15px;">go</a> <a href="/tags/linux/" style="font-size: 15px;">linux</a> <a href="/tags/goa/" style="font-size: 15px;">goa</a> <a href="/tags/docker/" style="font-size: 15px;">docker</a> <a href="/tags/system/" style="font-size: 15px;">system</a> <a href="/tags/macosx/" style="font-size: 15px;">macosx</a> <a href="/tags/hexo/" style="font-size: 15px;">hexo</a> <a href="/tags/gc/" style="font-size: 15px;">gc</a> <a href="/tags/react/" style="font-size: 15px;">react</a> <a href="/tags/programing/" style="font-size: 15px;">programing</a> <a href="/tags/hash/" style="font-size: 15px;">hash</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-archive"> 归档</i></div><ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">五月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">四月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">三月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">二月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">一月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">十一月 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">十月 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a></li></ul></div></div></div></div><a id="totop" href="#top"></a><div id="footer"><div class="footer-info"><p><a href="/atom.xml">订阅</a> |  <a href="/about/">关于</a></p><p>本站总访问量：<i id="busuanzi_container_site_pv"><i id="busuanzi_value_site_pv"></i></i>次</p><p><span> Copyright &copy;<a href="/." rel="nofollow">wudaijun.</a></span><span> Theme by<a rel="nofollow" target="_blank" href="https://github.com/chaooo/hexo-theme-BlueLake"> BlueLake.</a></span><span> Count by<a href="http://busuanzi.ibruce.info/"> busuanzi.</a></span><span> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a></span></p></div></div></div><script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js" async></script><script type="text/javascript" src="/js/search.json.js?v=2.0.1"></script><script type="text/javascript" src="/js/toctotop.js?v=2.0.1" async></script><script>(function(d, s) {
-  var j, e = d.getElementsByTagName('body')[0];
-  if (typeof LivereTower === 'function') { return; }
-  j = d.createElement(s);
-  j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
-  j.async = true;
-  e.appendChild(j);
-})(document, 'script');
-</script></body></html>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/go/" rel="tag"># go</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/go-scheduler/" rel="next" title="Go 调度模型">
+                <i class="fa fa-chevron-left"></i> Go 调度模型
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/02/go-sync-map-implement/" rel="prev" title="Go sync.Map 实现">
+                Go sync.Map 实现 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/assets/theme/avatar.png"
+                alt="wudaijun" />
+            
+              <p class="site-author-name" itemprop="name">wudaijun</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">97</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">16</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">29</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-eface"><span class="nav-text">1. eface</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-iface"><span class="nav-text">2. iface</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-接口赋值"><span class="nav-text">3. 接口赋值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-类型反射"><span class="nav-text">4. 类型反射</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-类型-amp-值解析"><span class="nav-text">4.1 类型&amp;值解析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-类型反射"><span class="nav-text">4.2 类型反射</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wudaijun</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动 v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://theme-next.org">NexT.Gemini</a> v6.3.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.3.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.3.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.3.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+  
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(function (item) {
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'kL7con6xeU88chDAVyUSDSHI-gzGzoHsz',
+        appKey: '9XLxirxDW8NUhHJdu460Uiba',
+        placeholder: 'Just go go',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

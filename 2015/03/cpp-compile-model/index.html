@@ -1,10 +1,456 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>C++ 编译模型 | wudaijun's blog</title><link rel="stylesheet" type="text/css" href="//fonts.neworld.org/css?family=Source+Code+Pro"><link rel="stylesheet" type="text/css" href="/css/style.css?v=2.0.1"><link rel="stylesheet" type="text/css" href="/css/highlight.css?v=2.0.1"><link rel="Shortcut Icon" href="/favicon.ico"><link rel="bookmark" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">C++ 编译模型</h1><a id="logo" href="/.">wudaijun's blog</a><p class="description">Coding is Funny</p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div><div id="search-form"><div id="result-mask" class="hide"></div><label><input id="search-key" type="text" autocomplete="off" placeholder="请输入关键字..."></label><div id="result-wrap" class="hide"><div id="search-result"></div></div><div class="hide"><template id="search-tpl"><div class="item"><a href="/{path}" title="{title}"><div class="title">{title}</div><div class="time">{date}</div><div class="tags">{tags}</div></a></div></template></div></div></div><div id="layout" class="layout-g"><div class="layout-l"><div class="content_container"><div class="post"><h1 class="post-title">C++ 编译模型</h1><div class="post-meta"><a href="/2015/03/cpp-compile-model/#comments" class="comment-count"></a><p><span class="date">Mar 30, 2015</span><span><a href="/categories/c-c/" class="category">c/c++</a></span><span><i id="busuanzi_container_page_pv"><i id="busuanzi_value_page_pv"></i><i>点击</i></i></span></p></div><div class="post-content"><p>C++继承了C的编译模型，而C是一门古老的语言，它的编译链接模型受限于当时的硬件条件限制，并且该模型也足够用于简洁的C。而C++继承了这些机制之后，引发了更为复杂的一些问题。</p>
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.3.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/theme/favicon-100x100.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/theme/favicon-32x32.ico?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/theme/favicon-16x16.ico?v=6.3.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.3.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="C++继承了C的编译模型，而C是一门古老的语言，它的编译链接模型受限于当时的硬件条件限制，并且该模型也足够用于简洁的C。而C++继承了这些机制之后，引发了更为复杂的一些问题。">
+<meta name="keywords" content="c&#x2F;c++">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++ 编译模型">
+<meta property="og:url" content="http://wudaijun.com/2015/03/cpp-compile-model/index.html">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
+<meta property="og:description" content="C++继承了C的编译模型，而C是一门古老的语言，它的编译链接模型受限于当时的硬件条件限制，并且该模型也足够用于简洁的C。而C++继承了这些机制之后，引发了更为复杂的一些问题。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2015-11-30T02:44:52.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="C++ 编译模型">
+<meta name="twitter:description" content="C++继承了C的编译模型，而C是一门古老的语言，它的编译链接模型受限于当时的硬件条件限制，并且该模型也足够用于简洁的C。而C++继承了这些机制之后，引发了更为复杂的一些问题。">
+
+
+
+
+
+
+  <link rel="canonical" href="http://wudaijun.com/2015/03/cpp-compile-model/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>C++ 编译模型 | wudaijun's blog</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">wudaijun's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Coding is Funny</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://wudaijun.com/2015/03/cpp-compile-model/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="wudaijun">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/assets/theme/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wudaijun's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">C++ 编译模型
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2015-03-30 00:00:00" itemprop="dateCreated datePublished" datetime="2015-03-30T00:00:00+08:00">2015-03-30</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/c-c/" itemprop="url" rel="index"><span itemprop="name">c/c++</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2015/03/cpp-compile-model/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2015/03/cpp-compile-model/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>C++继承了C的编译模型，而C是一门古老的语言，它的编译链接模型受限于当时的硬件条件限制，并且该模型也足够用于简洁的C。而C++继承了这些机制之后，引发了更为复杂的一些问题。</p>
 <a id="more"></a>
 <hr>
 <h2 id="C-编译模型"><a href="#C-编译模型" class="headerlink" title="C 编译模型"></a>C 编译模型</h2><p>首先简要介绍一下C的编译模型：</p>
 <p>限于当时的硬件条件，C编译器不能够在内存里一次性地装载所有程序代码，而需要将代码分为多个源文件，并且分别编译。并且由于内存限制，编译器本身也不能太大，因此需要分为多个可执行文件，进行分阶段的编译。在早期一共包括7个可执行文件：cc(调用其它可执行文件)，cpp(预处理器)，c0(生成中间文件)，c1(生成汇编文件)，c2(优化，可选)，as(汇编器，生成目标文件)，ld(链接器)。</p>
 <h3 id="1-隐式函数声明"><a href="#1-隐式函数声明" class="headerlink" title="1. 隐式函数声明"></a>1. 隐式函数声明</h3><p>为了在减少内存使用的情况下实现分离编译，C语言还支持”隐式函数声明”，即代码在使用前文未定义的函数时，编译器不会检查函数原型，编译器假定该函数存在并且被正确调用，还假定该函数返回int，并且为该函数生成汇编代码。此时唯一不确定的，只是该函数的函数地址。这由链接器来完成。如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">int main()</div><div class="line">&#123;</div><div class="line">	printf(&quot;ok\n&quot;);</div><div class="line">	return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">	printf(&quot;ok\n&quot;);</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>在gcc上会给出隐式函数声明的警告，但能编译运行通过。因为在链接时，链接器在libc中找到了printf符号的定义，并将其地址填到编译阶段留下的空白中。PS：用g++编译则会生成错误：<code>use of undeclared identifier &#39;printf&#39;</code>。而如果使用的是未经定义的函数，如上面的printf函数改为print，得到的将是链接错误，而不是编译错误。</p>
 <h3 id="2-头文件"><a href="#2-头文件" class="headerlink" title="2. 头文件"></a>2. 头文件</h3><p>有了隐式函数声明，编译器在编译时应该就不需要头文件了，编译器可以按函数调用时的代码生成汇编代码，并且假定函数返回int。而C头文件的最初目的是用于方便文件之间共享数据结构定义，外部变量，常量宏。早期的头文件里，也只包含这三样东西。注意，没有提到函数声明。</p>
 <p>而如今在引入将函数声明放入头文件这一做法后，带来了哪些便利和缺陷：</p>
@@ -29,7 +475,7 @@
 </ul>
 <p>C语言早期的头文件就是用来提供结构体定义和外部变量声明的，而外部符号(函数或外部变量)的决议则交给链接器去做。</p>
 <p>单遍编译结合隐式函数声明，将引出一个有趣的例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">void bar()</div><div class="line">&#123;</div><div class="line">	foo(&apos;a&apos;);</div><div class="line">&#125;</div><div class="line"></div><div class="line">int foo(char a)</div><div class="line">&#123;</div><div class="line">	printf(&quot;foobar\n&quot;);</div><div class="line">	return 0;</div><div class="line">&#125;</div><div class="line"></div><div class="line">int main()</div><div class="line">&#123;</div><div class="line">	bar();</div><div class="line">	return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">void bar()</span><br><span class="line">&#123;</span><br><span class="line">	foo(&apos;a&apos;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int foo(char a)</span><br><span class="line">&#123;</span><br><span class="line">	printf(&quot;foobar\n&quot;);</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">	bar();</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>gcc编译上面的代码，得到如下错误：</p>
 <pre><code>test.c:16:6: error: conflicting types for &#39;foo&#39;
 void foo(char a)
@@ -41,11 +487,11 @@ test.c:12:2: note: previous implicit declaration is here
 <hr>
 <h2 id="C-编译模型-1"><a href="#C-编译模型-1" class="headerlink" title="C++ 编译模型"></a>C++ 编译模型</h2><p>到目前为止，我们提到的3点关于C编译模型的特性，对C语言来说，都是利多于弊的，因为C语言足够简单。而当C++试图兼容这些特性时(C++没有隐式函数声明)，加之C++本身独有的重载，类，模板等特性，使得C++更加难以理解。</p>
 <h3 id="1-单遍编译"><a href="#1-单遍编译" class="headerlink" title="1. 单遍编译"></a>1. 单遍编译</h3><p>C++没有隐式函数声明，但它仍然遵循单遍编译，至少看起来是这样，单遍编译语义给C++带来的影响主要是重载决议和名字解析。</p>
-<h4 id="1-1-重载决议"><a href="#1-1-重载决议" class="headerlink" title="1.1 重载决议"></a>1.1 重载决议</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">#include&lt;stdio.h&gt;</div><div class="line"></div><div class="line">void foo(int a)</div><div class="line">&#123;</div><div class="line">	printf(&quot;foo(int)\n&quot;);</div><div class="line">&#125;</div><div class="line"></div><div class="line">void bar()</div><div class="line">&#123;</div><div class="line">	foo(&apos;a&apos;);</div><div class="line">&#125;</div><div class="line"></div><div class="line">void foo(char a)</div><div class="line">&#123;</div><div class="line">	printf(&quot;foo(char)\n&quot;);</div><div class="line">&#125;</div><div class="line"></div><div class="line">int main()</div><div class="line">&#123;</div><div class="line">	bar();</div><div class="line">	return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="1-1-重载决议"><a href="#1-1-重载决议" class="headerlink" title="1.1 重载决议"></a>1.1 重载决议</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line"></span><br><span class="line">void foo(int a)</span><br><span class="line">&#123;</span><br><span class="line">	printf(&quot;foo(int)\n&quot;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void bar()</span><br><span class="line">&#123;</span><br><span class="line">	foo(&apos;a&apos;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void foo(char a)</span><br><span class="line">&#123;</span><br><span class="line">	printf(&quot;foo(char)\n&quot;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">	bar();</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>以上代码通过g++编译运行结果为：<code>foo(int)</code>。尽管后面有更合适的函数原型，但C++在解析bar()时，只看到了<code>void foo(int)</code>。</p>
 <p>这是C++重载结合单遍编译造成的困惑之一，即使现在C++并非真的单遍编译(想一下前向声明)，但它要和C兼容语义，因此不得不”装傻”。对于C++类是个例外，编译器会先扫描类的定义，再解析成员函数，因此类中所有同名函数都能参加重载决议。</p>
 <p>关于重载还有一点就是C的隐式类型转换也给重载带来了麻烦：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">// Case 1</div><div class="line">void f(int)&#123;&#125;</div><div class="line">void f(unsigned int)&#123;&#125;</div><div class="line">void test() &#123; f(5); &#125; // call f(int)</div><div class="line"></div><div class="line">// Case 2</div><div class="line">void f(int)&#123;&#125;</div><div class="line">void f(long)&#123;&#125;</div><div class="line">void test() &#123; f(5); &#125; // call f(int)</div><div class="line"></div><div class="line">// Case 3</div><div class="line">void f(unsigned int)&#123;&#125;</div><div class="line">void f(long)&#123;&#125;</div><div class="line">void test() &#123; f(5); &#125; // error. 编译器也不知道你要干啥</div><div class="line"></div><div class="line">// Case 4</div><div class="line">void f(unsigned int)&#123;&#125;</div><div class="line">void test&#123; f(5); &#125; // call f(unsigned int)...</div><div class="line">void f(long)&#123;&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">// Case 1</span><br><span class="line">void f(int)&#123;&#125;</span><br><span class="line">void f(unsigned int)&#123;&#125;</span><br><span class="line">void test() &#123; f(5); &#125; // call f(int)</span><br><span class="line"></span><br><span class="line">// Case 2</span><br><span class="line">void f(int)&#123;&#125;</span><br><span class="line">void f(long)&#123;&#125;</span><br><span class="line">void test() &#123; f(5); &#125; // call f(int)</span><br><span class="line"></span><br><span class="line">// Case 3</span><br><span class="line">void f(unsigned int)&#123;&#125;</span><br><span class="line">void f(long)&#123;&#125;</span><br><span class="line">void test() &#123; f(5); &#125; // error. 编译器也不知道你要干啥</span><br><span class="line"></span><br><span class="line">// Case 4</span><br><span class="line">void f(unsigned int)&#123;&#125;</span><br><span class="line">void test&#123; f(5); &#125; // call f(unsigned int)...</span><br><span class="line">void f(long)&#123;&#125;</span><br></pre></td></tr></table></figure>
 <p>再加上C++子类到父类的隐式转换，转换运算符的重载… 你必须费劲心思，才能确保编译器按你预想的去做。</p>
 <h4 id="1-2-名字查找"><a href="#1-2-名字查找" class="headerlink" title="1.2 名字查找"></a>1.2 名字查找</h4><p>单遍编译给C++造成的另一个影响是名字查找，C++只能通过源码来了解名字的含义，比如 <code>AA BB(CC)</code>，这句话即可以是声明函数，也可以是定义变量。编译器需要结合它解析过的所有源代码，来判断这句话的确切含义。当结合了C++ template之后，这种难度几何攀升。因此不经意地改动头文件，或修改头文件包含顺序，都可能改变语句语义和代码的含义。</p>
 <h3 id="2-头文件-1"><a href="#2-头文件-1" class="headerlink" title="2. 头文件"></a>2. 头文件</h3><p>在初学C++时，函数声明放在.h文件，函数实现放在.cpp文件，似乎已经成了共识。C++没有C的隐式函数声明，也没有其它高级语言的包机制，因此，同一个项目中，头文件已经成了模块与模块之间，类与类之间，共享接口的主要方式。</p>
@@ -53,7 +499,7 @@ test.c:12:2: note: previous implicit declaration is here
 <h4 id="2-1-顺序性"><a href="#2-1-顺序性" class="headerlink" title="2.1 顺序性"></a>2.1 顺序性</h4><p>由于C++头文件包含更多的内容：template, typedef, #define, #pragma, class,等等，不同的头文件包含顺序，将可能导致完全不同的语义。或者直接导致编译错误。</p>
 <h4 id="2-2-又见重载"><a href="#2-2-又见重载" class="headerlink" title="2.2 又见重载"></a>2.2 又见重载</h4><p>由于C++支持重载，因此如果头文件中的函数声明和源文件中函数实现不一致(如参数个数，const属性等)，将可能构成重载，这个时候”聪明”的C++编译器不错报错，它将该函数的调用地址交给链接器去填，而源文件中写错了的实现将被认定为一个全新的重载。从而到链接阶段才报错。这一点在C中会得到编译错误，因为C没有重载，也就没有名字改编(name mangling)，将会在编译时得到符号冲突。</p>
 <h4 id="2-3-重复包含"><a href="#2-3-重复包含" class="headerlink" title="2.3 重复包含"></a>2.3 重复包含</h4><p>由于头文件的传递性，有可能造成某上层头文件的重复包含。重复包含的头文件在展开后，将可能导致符号重定义，如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">// common.h</div><div class="line">class Common</div><div class="line">&#123;</div><div class="line">	// ...</div><div class="line">&#125;;</div><div class="line"></div><div class="line">// h1.h</div><div class="line">#include &quot;common.h&quot;</div><div class="line"></div><div class="line">// h2.h</div><div class="line">#include &quot;common.h&quot;</div><div class="line"></div><div class="line">// test.cpp</div><div class="line">#include &quot;h1.h&quot;</div><div class="line">#include &quot;h2.h&quot;</div><div class="line">int main()</div><div class="line">&#123;</div><div class="line">	return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">// common.h</span><br><span class="line">class Common</span><br><span class="line">&#123;</span><br><span class="line">	// ...</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">// h1.h</span><br><span class="line">#include &quot;common.h&quot;</span><br><span class="line"></span><br><span class="line">// h2.h</span><br><span class="line">#include &quot;common.h&quot;</span><br><span class="line"></span><br><span class="line">// test.cpp</span><br><span class="line">#include &quot;h1.h&quot;</span><br><span class="line">#include &quot;h2.h&quot;</span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>如果common.h中，有函数定义，结构体定义，类声明，外部变量定义等等。test.cpp中将展开两份common.h，编译时得到符号重定义的错误。而如果common.h中只有外部函数声明，则OK，因为<strong>函数可在多处声明，但只能在一处定义</strong>。关于类声明，C++类保持了C结构体语义，因此叫做”类定义”更为适合。始终记得，<strong>头文件只是一个公共代码的整合，这些代码会在预编译期替换到源文件中</strong>。</p>
 <p>为了解决重复包含，C++头文件常用 <code>#ifndef #define #endif</code>或<code>#pragma once</code>来保证头文件不被重复包含。</p>
 <h4 id="2-4-交叉包含"><a href="#2-4-交叉包含" class="headerlink" title="2.4 交叉包含"></a>2.4 交叉包含</h4><p>C++中的类出现相互引用时，就会出现交叉包含的情况。如Parent包含一个Child对象，而Child类包含Parent的引用。因此相互包含对方的头文件，编译器展开Child.h需要展开Parent.h，展开Parent.h又要展开Child.h，如此无限循环，最终g++给出：<code>error: #include nested too deeply</code>的编译错误。</p>
@@ -78,12 +524,840 @@ test.c:12:2: note: previous implicit declaration is here
 <li>对于编译型语言，编译后的目标文件中包含了足够的元数据，不需要读取源文件(也就没有头文件一说了)；</li>
 </ul>
 <p>它们都避免了定义和声明不一致的问题，并且在这些语言里面，定义和声明是一体的。import机制可以确保只到处必要的名字符号，不会有多余的符号加进来。</p>
-</div><div class="tags"><a href="/tags/c-c/">c/c++</a></div><div class="post-share"></div><div class="post-nav"><a href="/2015/04/erlang-mnesia/" class="pre">Erlang mnesia</a><a href="/2015/03/cpp-rvalue-referrence/" class="next">C++ 右值引用</a></div><div id="comments"><div id="lv-container" data-id="city" data-uid="MTAyMC8zMzg3Ni8xMDQyOQ=="></div></div></div></div></div><div class="layout-r"><div id="sidebar"><div class="search-pla"></div><div id="toc" class="widget"><div class="widget-title"><i class="fa fa-fei">文章目录</i></div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#C-编译模型"><span class="toc-text">C 编译模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-隐式函数声明"><span class="toc-text">1. 隐式函数声明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-头文件"><span class="toc-text">2. 头文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-单遍编译-One-Pass"><span class="toc-text">3. 单遍编译( One Pass )</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#C-编译模型-1"><span class="toc-text">C++ 编译模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-单遍编译"><span class="toc-text">1. 单遍编译</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1-重载决议"><span class="toc-text">1.1 重载决议</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-名字查找"><span class="toc-text">1.2 名字查找</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-头文件-1"><span class="toc-text">2. 头文件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-顺序性"><span class="toc-text">2.1 顺序性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-又见重载"><span class="toc-text">2.2 又见重载</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-重复包含"><span class="toc-text">2.3 重复包含</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-交叉包含"><span class="toc-text">2.4 交叉包含</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-5-如何使用头文件"><span class="toc-text">2.5 如何使用头文件</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-总结"><span class="toc-text">3.总结</span></a></li></ol></li></ol></div><div class="widget"><div class="widget-title"><i class="fa fa-xie"> 最新文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/gs-model-save/">谈谈GS对象的落地</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/consistent-hashing/">一致Hash算法</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/flux-study/">Flux - Web应用的数据流管理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/react-notes/">React - Web中的函数式思维</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/understand-functional-programing/">理解函数式编程</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/04/go-pprof/">go pprof 性能分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/docker-container-ops/">Docker 容器管理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/docker-management/">Docker容器编排工具</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/go-sync-map-implement/">Go sync.Map 实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/go-interface-implement/">Go Interface 实现</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-gui"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/algorithm/">algorithm</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/database/">database</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">26</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/go/">go</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/os/">os</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/programing/">programing</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/system/">system</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/unity/">unity</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web/">web</a><span class="category-list-count">4</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-biao"> 标签</i></div><div class="tagcloud"><a href="/tags/mongodb/" style="font-size: 15px;">mongodb</a> <a href="/tags/ngserver/" style="font-size: 15px;">ngserver</a> <a href="/tags/lua/" style="font-size: 15px;">lua</a> <a href="/tags/skynet/" style="font-size: 15px;">skynet</a> <a href="/tags/erlang/" style="font-size: 15px;">erlang</a> <a href="/tags/git/" style="font-size: 15px;">git</a> <a href="/tags/firefly/" style="font-size: 15px;">firefly</a> <a href="/tags/python/" style="font-size: 15px;">python</a> <a href="/tags/tool/" style="font-size: 15px;">tool</a> <a href="/tags/kbengine/" style="font-size: 15px;">kbengine</a> <a href="/tags/distribution/" style="font-size: 15px;">distribution</a> <a href="/tags/unity/" style="font-size: 15px;">unity</a> <a href="/tags/tcp-ip/" style="font-size: 15px;">tcp/ip</a> <a href="/tags/other/" style="font-size: 15px;">other</a> <a href="/tags/c-c/" style="font-size: 15px;">c/c++</a> <a href="/tags/os/" style="font-size: 15px;">os</a> <a href="/tags/web/" style="font-size: 15px;">web</a> <a href="/tags/gameserver/" style="font-size: 15px;">gameserver</a> <a href="/tags/go/" style="font-size: 15px;">go</a> <a href="/tags/linux/" style="font-size: 15px;">linux</a> <a href="/tags/goa/" style="font-size: 15px;">goa</a> <a href="/tags/docker/" style="font-size: 15px;">docker</a> <a href="/tags/system/" style="font-size: 15px;">system</a> <a href="/tags/macosx/" style="font-size: 15px;">macosx</a> <a href="/tags/hexo/" style="font-size: 15px;">hexo</a> <a href="/tags/gc/" style="font-size: 15px;">gc</a> <a href="/tags/react/" style="font-size: 15px;">react</a> <a href="/tags/programing/" style="font-size: 15px;">programing</a> <a href="/tags/hash/" style="font-size: 15px;">hash</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-archive"> 归档</i></div><ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">五月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">四月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">三月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">二月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">一月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">十一月 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">十月 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a></li></ul></div></div></div></div><a id="totop" href="#top"></a><div id="footer"><div class="footer-info"><p><a href="/atom.xml">订阅</a> |  <a href="/about/">关于</a></p><p>本站总访问量：<i id="busuanzi_container_site_pv"><i id="busuanzi_value_site_pv"></i></i>次</p><p><span> Copyright &copy;<a href="/." rel="nofollow">wudaijun.</a></span><span> Theme by<a rel="nofollow" target="_blank" href="https://github.com/chaooo/hexo-theme-BlueLake"> BlueLake.</a></span><span> Count by<a href="http://busuanzi.ibruce.info/"> busuanzi.</a></span><span> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a></span></p></div></div></div><script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js" async></script><script type="text/javascript" src="/js/search.json.js?v=2.0.1"></script><script type="text/javascript" src="/js/toctotop.js?v=2.0.1" async></script><script>(function(d, s) {
-  var j, e = d.getElementsByTagName('body')[0];
-  if (typeof LivereTower === 'function') { return; }
-  j = d.createElement(s);
-  j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
-  j.async = true;
-  e.appendChild(j);
-})(document, 'script');
-</script></body></html>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/c-c/" rel="tag"># c/c++</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/03/cpp-rvalue-referrence/" rel="next" title="C++ 右值引用">
+                <i class="fa fa-chevron-left"></i> C++ 右值引用
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/04/erlang-mnesia/" rel="prev" title="Erlang mnesia">
+                Erlang mnesia <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/assets/theme/avatar.png"
+                alt="wudaijun" />
+            
+              <p class="site-author-name" itemprop="name">wudaijun</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">97</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">16</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">29</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#C-编译模型"><span class="nav-text">C 编译模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-隐式函数声明"><span class="nav-text">1. 隐式函数声明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-头文件"><span class="nav-text">2. 头文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-单遍编译-One-Pass"><span class="nav-text">3. 单遍编译( One Pass )</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C-编译模型-1"><span class="nav-text">C++ 编译模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-单遍编译"><span class="nav-text">1. 单遍编译</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-重载决议"><span class="nav-text">1.1 重载决议</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-名字查找"><span class="nav-text">1.2 名字查找</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-头文件-1"><span class="nav-text">2. 头文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-顺序性"><span class="nav-text">2.1 顺序性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-又见重载"><span class="nav-text">2.2 又见重载</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-重复包含"><span class="nav-text">2.3 重复包含</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4-交叉包含"><span class="nav-text">2.4 交叉包含</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-5-如何使用头文件"><span class="nav-text">2.5 如何使用头文件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-总结"><span class="nav-text">3.总结</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wudaijun</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动 v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://theme-next.org">NexT.Gemini</a> v6.3.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.3.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.3.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.3.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+  
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(function (item) {
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'kL7con6xeU88chDAVyUSDSHI-gzGzoHsz',
+        appKey: '9XLxirxDW8NUhHJdu460Uiba',
+        placeholder: 'Just go go',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,5 +1,456 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>Go 笔记(1) 常用数据结构及实现 | wudaijun's blog</title><link rel="stylesheet" type="text/css" href="//fonts.neworld.org/css?family=Source+Code+Pro"><link rel="stylesheet" type="text/css" href="/css/style.css?v=2.0.1"><link rel="stylesheet" type="text/css" href="/css/highlight.css?v=2.0.1"><link rel="Shortcut Icon" href="/favicon.ico"><link rel="bookmark" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Go 笔记(1) 常用数据结构及实现</h1><a id="logo" href="/.">wudaijun's blog</a><p class="description">Coding is Funny</p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div><div id="search-form"><div id="result-mask" class="hide"></div><label><input id="search-key" type="text" autocomplete="off" placeholder="请输入关键字..."></label><div id="result-wrap" class="hide"><div id="search-result"></div></div><div class="hide"><template id="search-tpl"><div class="item"><a href="/{path}" title="{title}"><div class="title">{title}</div><div class="time">{date}</div><div class="tags">{tags}</div></a></div></template></div></div></div><div id="layout" class="layout-g"><div class="layout-l"><div class="content_container"><div class="post"><h1 class="post-title">Go 笔记(1) 常用数据结构及实现</h1><div class="post-meta"><a href="/2016/09/go-notes-1-datastructures/#comments" class="comment-count"></a><p><span class="date">Sep 09, 2016</span><span><a href="/categories/go/" class="category">go</a></span><span><i id="busuanzi_container_page_pv"><i id="busuanzi_value_page_pv"></i><i>点击</i></i></span></p></div><div class="post-content"><p>学习一下go中常用的几种数据结构，结合源码了解其实现原理。</p>
-<h2 id="一-类型系统"><a href="#一-类型系统" class="headerlink" title="一. 类型系统"></a>一. 类型系统</h2><h3 id="1-array"><a href="#1-array" class="headerlink" title="1. array"></a>1. array</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">(x [2]<span class="keyword">int</span>)</span></span>&#123;</div><div class="line">	x[<span class="number">1</span>] = <span class="number">9</span></div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</div><div class="line">	a := [<span class="number">3</span>]<span class="keyword">int</span>&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&#125;</div><div class="line">	b := [<span class="number">2</span>]<span class="keyword">int</span>&#123;<span class="number">4</span>,<span class="number">5</span>&#125;</div><div class="line">	f(a) <span class="comment">// error: cannot use a (type [3]int) as type [2]int in argument to f</span></div><div class="line">	f(b) <span class="comment">// 数组是值语义 因此f无法改变b中元素内容</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.3.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/theme/favicon-100x100.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/theme/favicon-32x32.ico?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/theme/favicon-16x16.ico?v=6.3.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.3.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="学习一下go中常用的几种数据结构，结合源码了解其实现原理。 一. 类型系统1. array123456789func f(x [2]int)&amp;#123;	x[1] = 9&amp;#125;func main()&amp;#123;	a := [3]int&amp;#123;1,2,3&amp;#125;	b := [2]int&amp;#123;4,5&amp;#125;	f(a) // error: cannot use a (type [">
+<meta name="keywords" content="go">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go 笔记(1) 常用数据结构及实现">
+<meta property="og:url" content="http://wudaijun.com/2016/09/go-notes-1-datastructures/index.html">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
+<meta property="og:description" content="学习一下go中常用的几种数据结构，结合源码了解其实现原理。 一. 类型系统1. array123456789func f(x [2]int)&amp;#123;	x[1] = 9&amp;#125;func main()&amp;#123;	a := [3]int&amp;#123;1,2,3&amp;#125;	b := [2]int&amp;#123;4,5&amp;#125;	f(a) // error: cannot use a (type [">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://wudaijun.com/assets/image/201609/go-slice-implement.png">
+<meta property="og:image" content="http://wudaijun.com/assets/image/201609/go-string-implement.png">
+<meta property="og:image" content="http://wudaijun.com/assets/image/201609/go-map-implement.png">
+<meta property="og:image" content="http://wudaijun.com/assets/image/201609/go-chan-implement.png">
+<meta property="og:updated_time" content="2018-06-21T09:21:55.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Go 笔记(1) 常用数据结构及实现">
+<meta name="twitter:description" content="学习一下go中常用的几种数据结构，结合源码了解其实现原理。 一. 类型系统1. array123456789func f(x [2]int)&amp;#123;	x[1] = 9&amp;#125;func main()&amp;#123;	a := [3]int&amp;#123;1,2,3&amp;#125;	b := [2]int&amp;#123;4,5&amp;#125;	f(a) // error: cannot use a (type [">
+<meta name="twitter:image" content="http://wudaijun.com/assets/image/201609/go-slice-implement.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://wudaijun.com/2016/09/go-notes-1-datastructures/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Go 笔记(1) 常用数据结构及实现 | wudaijun's blog</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">wudaijun's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Coding is Funny</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://wudaijun.com/2016/09/go-notes-1-datastructures/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="wudaijun">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/assets/theme/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wudaijun's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Go 笔记(1) 常用数据结构及实现
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2016-09-09 00:00:00" itemprop="dateCreated datePublished" datetime="2016-09-09T00:00:00+08:00">2016-09-09</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2016/09/go-notes-1-datastructures/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2016/09/go-notes-1-datastructures/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>学习一下go中常用的几种数据结构，结合源码了解其实现原理。</p>
+<h2 id="一-类型系统"><a href="#一-类型系统" class="headerlink" title="一. 类型系统"></a>一. 类型系统</h2><h3 id="1-array"><a href="#1-array" class="headerlink" title="1. array"></a>1. array</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">(x [2]<span class="keyword">int</span>)</span></span>&#123;</span><br><span class="line">	x[<span class="number">1</span>] = <span class="number">9</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	a := [<span class="number">3</span>]<span class="keyword">int</span>&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&#125;</span><br><span class="line">	b := [<span class="number">2</span>]<span class="keyword">int</span>&#123;<span class="number">4</span>,<span class="number">5</span>&#125;</span><br><span class="line">	f(a) <span class="comment">// error: cannot use a (type [3]int) as type [2]int in argument to f</span></span><br><span class="line">	f(b) <span class="comment">// 数组是值语义 因此f无法改变b中元素内容</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>array的特性:</p>
 <ul>
 <li>固定大小，且大小为类型的一部分</li>
@@ -14,17 +465,17 @@
 </blockquote>
 <p>slice只持有array的引用，而不会拷贝元素，因此它在实现上只需持有指向array元素的pointer和slice长度length即可。但由于slice的length可以收缩或扩张，因此slice还需要一个字段capacity来保存其最初引用的array的size，当length &gt; capacity时，说明对array的访问越界，触发panic错误。</p>
 <p>因此slice一共有三个字段：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> sliceHeader&#123;</div><div class="line">	Length 	<span class="keyword">int</span>			<span class="comment">// slice长度</span></div><div class="line">	Capacity 	<span class="keyword">int</span> 		<span class="comment">// slice引用的array size</span></div><div class="line">	Elem 	 	*ElemType <span class="comment">// 指向slice第一个元素array中的地址</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> sliceHeader&#123;</span><br><span class="line">	Length 	<span class="keyword">int</span>			<span class="comment">// slice长度</span></span><br><span class="line">	Capacity 	<span class="keyword">int</span> 		<span class="comment">// slice引用的array size</span></span><br><span class="line">	Elem 	 	*ElemType <span class="comment">// 指向slice第一个元素array中的地址</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>比如:</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 直接创建slice 等价于:</span></div><div class="line"><span class="comment">// tmp := [5]int&#123;2,3,5,7,11&#125;</span></div><div class="line"><span class="comment">// a := tmp[0:5]</span></div><div class="line">a := []<span class="keyword">int</span>&#123;<span class="number">2</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">7</span>,<span class="number">11</span>&#125;</div><div class="line">b := a[<span class="number">1</span>:<span class="number">3</span>]</div></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 直接创建slice 等价于:</span></span><br><span class="line"><span class="comment">// tmp := [5]int&#123;2,3,5,7,11&#125;</span></span><br><span class="line"><span class="comment">// a := tmp[0:5]</span></span><br><span class="line">a := []<span class="keyword">int</span>&#123;<span class="number">2</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">7</span>,<span class="number">11</span>&#125;</span><br><span class="line">b := a[<span class="number">1</span>:<span class="number">3</span>]</span><br></pre></td></tr></table></figure>
 <p>此时a,b的sliceHeader示意图为:</p>
 <p><img src="/assets/image/201609/go-slice-implement.png" alt=""></p>
 <p>由于slice b在slice a中的起始偏移为1，因此 cap(b) = cap(a)-1 = 4。但b只能访问到a[1],a[2]两个元素:</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 尝试访问&gt;=length(2)的元素，会触发panic error</span></div><div class="line">fmt.Println(b[<span class="number">2</span>])</div><div class="line"><span class="comment">// 等价于 c := b[0:len(b)] c和b引用完全相同的数组切片</span></div><div class="line">c := b[:]</div><div class="line"><span class="comment">// 虽然b只能访问数组[1],[2]两个元素，但d可以在[0,cap(b)]再次切片扩展引用的数组范围</span></div><div class="line">d := b[<span class="number">0</span>:<span class="built_in">cap</span>(b)]</div><div class="line">fmt.Println(d[<span class="number">3</span>]) <span class="comment">// 11</span></div></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 尝试访问&gt;=length(2)的元素，会触发panic error</span></span><br><span class="line">fmt.Println(b[<span class="number">2</span>])</span><br><span class="line"><span class="comment">// 等价于 c := b[0:len(b)] c和b引用完全相同的数组切片</span></span><br><span class="line">c := b[:]</span><br><span class="line"><span class="comment">// 虽然b只能访问数组[1],[2]两个元素，但d可以在[0,cap(b)]再次切片扩展引用的数组范围</span></span><br><span class="line">d := b[<span class="number">0</span>:<span class="built_in">cap</span>(b)]</span><br><span class="line">fmt.Println(d[<span class="number">3</span>]) <span class="comment">// 11</span></span><br></pre></td></tr></table></figure>
 <p>那么slice这种数组切片的概念，究竟带来了什么好处？比如我们有一个操作，要去掉数组的首尾元素，在C中，我们会创建(动态分配)一个新数组，然后将arr[1,n-1)拷贝出来。在C++中，有vector会方便一些，但移除元素会导致后续元素移动拷贝开销。而在Go中，<code>slice = slice[1:len(slice)-1]</code>即可完成操作，这中间不会涉及到内存分配，移动拷贝等，是个非常高效的操作。当然，由于slice是引用的数组元素，因此slice修改数组元素时，对其它引用到该元素的slice也是可见的。</p>
 <p>下面来说说slice的值语义。前面提到的sliceHeader，实际就是slice的值语义，我们创建一个slice，在底层就创建了一个sliceHeader结构体。在参数传递时，将会拷贝sliceHeader，但由于sliceHeader中持有指针，因此在调用函数内可修改数组元素，但无法修改sliceHeader结构体的成员值：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Extend</span><span class="params">(slice []<span class="keyword">int</span>, element <span class="keyword">int</span> )</span></span>&#123;</div><div class="line">	n := <span class="built_in">len</span>(slice)</div><div class="line">	slice = slice[<span class="number">0</span> : n+<span class="number">1</span>] <span class="comment">// 不会影响到传入的slice的length</span></div><div class="line">	slice[n] = element <span class="comment">// 修改了数组内容，对传入的slice可见</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>再次摘录一段<a href="https://blog.golang.org/slices" target="_blank" rel="external">golang blog</a>关于slice值语义的描述:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Extend</span><span class="params">(slice []<span class="keyword">int</span>, element <span class="keyword">int</span> )</span></span>&#123;</span><br><span class="line">	n := <span class="built_in">len</span>(slice)</span><br><span class="line">	slice = slice[<span class="number">0</span> : n+<span class="number">1</span>] <span class="comment">// 不会影响到传入的slice的length</span></span><br><span class="line">	slice[n] = element <span class="comment">// 修改了数组内容，对传入的slice可见</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>再次摘录一段<a href="https://blog.golang.org/slices" target="_blank" rel="noopener">golang blog</a>关于slice值语义的描述:</p>
 <blockquote>
 <blockquote>
 <p>It’s important to understand that even though a slice contains a pointer, it is itself a value. Under the covers, it is a struct value holding a pointer and a length. It is not a pointer to a struct.</p>
@@ -32,11 +483,11 @@
 </blockquote>
 <p>BTW，在Go里面的参数传递都是值传递的，只是针对各种类型，其值语义不同，比如int,array它们的值语义就是数据本身，不包含对外的引用(指针)，因此在传参时会完整拷贝整个数据，当然，这里的拷贝是浅拷贝，比如对指针数组这类结构而言，仍然是有副作用的，但这是应用层的东西，就数组容器本身而言，是值拷贝的。而对slice来说，其值语义中包含对数组的引用，因此在传参时，其引用内容可能被修改，但其值语义(sliceHeader)本身仍然是完整拷贝的。</p>
 <h4 id="动态数组"><a href="#动态数组" class="headerlink" title="动态数组"></a>动态数组</h4><p>前面提到slice本质上是数组切片，但slice本身也可以作为动态数组:</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</div><div class="line">	a := [<span class="number">5</span>]<span class="keyword">int</span>&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>&#125;</div><div class="line">	s := a[<span class="number">0</span>:<span class="number">3</span>]</div><div class="line">	fmt.Println(<span class="string">"cap: "</span>,<span class="built_in">cap</span>(s),<span class="string">"len: "</span>,<span class="built_in">len</span>(s),<span class="string">"slice: "</span>,s,<span class="string">"array: "</span>,a)</div><div class="line">	<span class="comment">// len=3 cap=5 capacity足够 无需重新分配 因此修改会作用于a之上</span></div><div class="line">	s = <span class="built_in">append</span>(s, <span class="number">6</span>, <span class="number">7</span>)</div><div class="line">	fmt.Println(<span class="string">"cap: "</span>,<span class="built_in">cap</span>(s),<span class="string">"len: "</span>,<span class="built_in">len</span>(s),<span class="string">"slice: "</span>,s,<span class="string">"array: "</span>,a)</div><div class="line">	<span class="comment">// len=5 cap=5 append通过make()重新分配新的slice 并通过copy()拷贝已有元素</span></div><div class="line">	<span class="comment">// 此后s不再指向a 而指向新分配的连续内存空间</span></div><div class="line">	s = <span class="built_in">append</span>(s, <span class="number">8</span>)</div><div class="line">	fmt.Println(<span class="string">"cap: "</span>,<span class="built_in">cap</span>(s),<span class="string">"len: "</span>,<span class="built_in">len</span>(s),<span class="string">"slice: "</span>,s,<span class="string">"array: "</span>,a)</div><div class="line">	<span class="comment">// 对s的修改将不在作用于a上</span></div><div class="line">	s[<span class="number">0</span>] = <span class="number">0</span></div><div class="line">	fmt.Println(<span class="string">"cap: "</span>,<span class="built_in">cap</span>(s),<span class="string">"len: "</span>,<span class="built_in">len</span>(s),<span class="string">"slice: "</span>,s,<span class="string">"array: "</span>,a)</div><div class="line">&#125;</div><div class="line"><span class="comment">// 输出:</span></div><div class="line"><span class="built_in">cap</span>:  <span class="number">5</span> <span class="built_in">len</span>:  <span class="number">3</span> slice:  [<span class="number">1</span> <span class="number">2</span> <span class="number">3</span>] array:  [<span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span>]</div><div class="line"><span class="built_in">cap</span>:  <span class="number">5</span> <span class="built_in">len</span>:  <span class="number">5</span> slice:  [<span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">6</span> <span class="number">7</span>] array:  [<span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">6</span> <span class="number">7</span>]</div><div class="line"><span class="built_in">cap</span>:  <span class="number">10</span> <span class="built_in">len</span>:  <span class="number">6</span> slice:  [<span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">6</span> <span class="number">7</span> <span class="number">8</span>] array:  [<span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">6</span> <span class="number">7</span>]</div><div class="line"><span class="built_in">cap</span>:  <span class="number">10</span> <span class="built_in">len</span>:  <span class="number">6</span> slice:  [<span class="number">0</span> <span class="number">2</span> <span class="number">3</span> <span class="number">6</span> <span class="number">7</span> <span class="number">8</span>] array:  [<span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">6</span> <span class="number">7</span>]</div></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	a := [<span class="number">5</span>]<span class="keyword">int</span>&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>&#125;</span><br><span class="line">	s := a[<span class="number">0</span>:<span class="number">3</span>]</span><br><span class="line">	fmt.Println(<span class="string">"cap: "</span>,<span class="built_in">cap</span>(s),<span class="string">"len: "</span>,<span class="built_in">len</span>(s),<span class="string">"slice: "</span>,s,<span class="string">"array: "</span>,a)</span><br><span class="line">	<span class="comment">// len=3 cap=5 capacity足够 无需重新分配 因此修改会作用于a之上</span></span><br><span class="line">	s = <span class="built_in">append</span>(s, <span class="number">6</span>, <span class="number">7</span>)</span><br><span class="line">	fmt.Println(<span class="string">"cap: "</span>,<span class="built_in">cap</span>(s),<span class="string">"len: "</span>,<span class="built_in">len</span>(s),<span class="string">"slice: "</span>,s,<span class="string">"array: "</span>,a)</span><br><span class="line">	<span class="comment">// len=5 cap=5 append通过make()重新分配新的slice 并通过copy()拷贝已有元素</span></span><br><span class="line">	<span class="comment">// 此后s不再指向a 而指向新分配的连续内存空间</span></span><br><span class="line">	s = <span class="built_in">append</span>(s, <span class="number">8</span>)</span><br><span class="line">	fmt.Println(<span class="string">"cap: "</span>,<span class="built_in">cap</span>(s),<span class="string">"len: "</span>,<span class="built_in">len</span>(s),<span class="string">"slice: "</span>,s,<span class="string">"array: "</span>,a)</span><br><span class="line">	<span class="comment">// 对s的修改将不在作用于a上</span></span><br><span class="line">	s[<span class="number">0</span>] = <span class="number">0</span></span><br><span class="line">	fmt.Println(<span class="string">"cap: "</span>,<span class="built_in">cap</span>(s),<span class="string">"len: "</span>,<span class="built_in">len</span>(s),<span class="string">"slice: "</span>,s,<span class="string">"array: "</span>,a)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出:</span></span><br><span class="line"><span class="built_in">cap</span>:  <span class="number">5</span> <span class="built_in">len</span>:  <span class="number">3</span> slice:  [<span class="number">1</span> <span class="number">2</span> <span class="number">3</span>] array:  [<span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span>]</span><br><span class="line"><span class="built_in">cap</span>:  <span class="number">5</span> <span class="built_in">len</span>:  <span class="number">5</span> slice:  [<span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">6</span> <span class="number">7</span>] array:  [<span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">6</span> <span class="number">7</span>]</span><br><span class="line"><span class="built_in">cap</span>:  <span class="number">10</span> <span class="built_in">len</span>:  <span class="number">6</span> slice:  [<span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">6</span> <span class="number">7</span> <span class="number">8</span>] array:  [<span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">6</span> <span class="number">7</span>]</span><br><span class="line"><span class="built_in">cap</span>:  <span class="number">10</span> <span class="built_in">len</span>:  <span class="number">6</span> slice:  [<span class="number">0</span> <span class="number">2</span> <span class="number">3</span> <span class="number">6</span> <span class="number">7</span> <span class="number">8</span>] array:  [<span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">6</span> <span class="number">7</span>]</span><br></pre></td></tr></table></figure>
 <p>append会在<strong>len(s)+添加的元素个数&gt;cap(s)时</strong>，重新分配(make)一个slice，拷贝(copy)已有元素，添加新元素，最后返回这个新的slice。在使用append时，需要保存其返回值，因为append传入的是slice的值，也就是sliceHeader结构体，当slice capacity扩展时，append函数内不能修改sliceHeader中的Length和Capacity字段，因此需要返回一个新的sliceHeader。</p>
 <p>为了避免混淆，不要像上例一样将slice的切片特性和动态数组特性混用，使用动态数组时，使用空的slice(<code>var s []int</code>)或make(<code>make([]int, len, cap)</code>)初始化一个slice会比较好。</p>
 <h3 id="3-string"><a href="#3-string" class="headerlink" title="3. string"></a>3. string</h3><p>Go中的string更像是C中的字符串字面量，而不是字符数组：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">str := <span class="string">"Hello, 世界"</span></div><div class="line"><span class="comment">//str[0] = 'X' // error 不可改变字符串(类似字面常量)</span></div><div class="line"></div><div class="line"><span class="comment">// 字符串可通过 + 进行拼接</span></div><div class="line">str += <span class="string">" !"</span></div><div class="line"></div><div class="line"><span class="comment">// 以ANSI字符遍历 ch是一个byte n=15(每个中文在UTF-8中占3个字节)</span></div><div class="line">n := <span class="built_in">len</span>(str)</div><div class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i&lt; n; i++ &#123;</div><div class="line">    ch := str[i]</div><div class="line">    fmt.Println(i, ch)</div><div class="line">&#125;</div><div class="line"><span class="comment">// 以Unicode字符遍历 ch是一个rune 而不是byte 此时遍历得到11个Unicode字符</span></div><div class="line"><span class="keyword">for</span> i, ch := <span class="keyword">range</span> str&#123;</div><div class="line">    fmt.Println(i, ch)                </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">str := <span class="string">"Hello, 世界"</span></span><br><span class="line"><span class="comment">//str[0] = 'X' // error 不可改变字符串(类似字面常量)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 字符串可通过 + 进行拼接</span></span><br><span class="line">str += <span class="string">" !"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 以ANSI字符遍历 ch是一个byte n=15(每个中文在UTF-8中占3个字节)</span></span><br><span class="line">n := <span class="built_in">len</span>(str)</span><br><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i&lt; n; i++ &#123;</span><br><span class="line">    ch := str[i]</span><br><span class="line">    fmt.Println(i, ch)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 以Unicode字符遍历 ch是一个rune 而不是byte 此时遍历得到11个Unicode字符</span></span><br><span class="line"><span class="keyword">for</span> i, ch := <span class="keyword">range</span> str&#123;</span><br><span class="line">    fmt.Println(i, ch)                </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>在实现上，string是个read-only byte slice，另外，string的”sliceHeader”没有capacity字段：</p>
 <p><img src="/assets/image/201609/go-string-implement.png" alt=""></p>
 <pre><code>s := &quot;hello&quot;
@@ -53,7 +504,7 @@ v := t[0:2] // 没有capacity字段，无法扩展，触发panic error: out of r
 }
 </code></pre><p>PS，slice的这种切片特性，与Erlang的<a href="http://wudaijun.com/2015/12/erlang-datastructures/#refc-bianry">refc binary和sub binary</a>实现有相似之处，这种高效的处理方案有个老大难问题，那就是slice string未释放，那么它引用的string本身也不会被GC，哪怕只引用了很小一部分。</p>
 <h3 id="4-map"><a href="#4-map" class="headerlink" title="4. map"></a>4. map</h3><p>map通过hash表实现，实现位于runtime/hashmap.go，以下是主要字段:</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span>(</div><div class="line">	bucketCntBits = <span class="number">3</span></div><div class="line">	bucketCnt     = <span class="number">1</span> &lt;&lt; bucketCntBits</div><div class="line">)</div><div class="line"><span class="keyword">type</span> hmap <span class="keyword">struct</span> &#123;</div><div class="line">	count <span class="keyword">int</span> <span class="comment">// # live cells == size of map.  Must be first (used by len() builtin)</span></div><div class="line">	flags <span class="keyword">uint8</span></div><div class="line">	B     <span class="keyword">uint8</span>  <span class="comment">// log_2 of # of buckets (can hold up to loadFactor * 2^B items)</span></div><div class="line"></div><div class="line">	buckets    unsafe.Pointer <span class="comment">// array of 2^B Buckets. may be nil if count==0.</span></div><div class="line">	oldbuckets unsafe.Pointer <span class="comment">// previous bucket array of half the size, non-nil only when growing</span></div><div class="line">	</div><div class="line">	evacuate  <span class="keyword">uintptr</span>        <span class="comment">// progress counter for evacuation (buckets less than this have been evacuated)</span></div><div class="line">&#125;</div><div class="line">	</div><div class="line"><span class="comment">// A bucket for a Go map.</span></div><div class="line"><span class="keyword">type</span> bmap <span class="keyword">struct</span> &#123;</div><div class="line">	tophash [bucketCnt]<span class="keyword">uint8</span></div><div class="line">	<span class="comment">// Followed by bucketCnt keys and then bucketCnt values.</span></div><div class="line">	<span class="comment">// Followed by an overflow pointer.</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span>(</span><br><span class="line">	bucketCntBits = <span class="number">3</span></span><br><span class="line">	bucketCnt     = <span class="number">1</span> &lt;&lt; bucketCntBits</span><br><span class="line">)</span><br><span class="line"><span class="keyword">type</span> hmap <span class="keyword">struct</span> &#123;</span><br><span class="line">	count <span class="keyword">int</span> <span class="comment">// # live cells == size of map.  Must be first (used by len() builtin)</span></span><br><span class="line">	flags <span class="keyword">uint8</span></span><br><span class="line">	B     <span class="keyword">uint8</span>  <span class="comment">// log_2 of # of buckets (can hold up to loadFactor * 2^B items)</span></span><br><span class="line"></span><br><span class="line">	buckets    unsafe.Pointer <span class="comment">// array of 2^B Buckets. may be nil if count==0.</span></span><br><span class="line">	oldbuckets unsafe.Pointer <span class="comment">// previous bucket array of half the size, non-nil only when growing</span></span><br><span class="line">	</span><br><span class="line">	evacuate  <span class="keyword">uintptr</span>        <span class="comment">// progress counter for evacuation (buckets less than this have been evacuated)</span></span><br><span class="line">&#125;</span><br><span class="line">	</span><br><span class="line"><span class="comment">// A bucket for a Go map.</span></span><br><span class="line"><span class="keyword">type</span> bmap <span class="keyword">struct</span> &#123;</span><br><span class="line">	tophash [bucketCnt]<span class="keyword">uint8</span></span><br><span class="line">	<span class="comment">// Followed by bucketCnt keys and then bucketCnt values.</span></span><br><span class="line">	<span class="comment">// Followed by an overflow pointer.</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>摘自源码注释：</p>
 <blockquote>
 <blockquote>
@@ -68,7 +519,7 @@ v := t[0:2] // 没有capacity字段，无法扩展，触发panic error: out of r
 <p>下面来看个结构图:</p>
 <p><img src="/assets/image/201609/go-map-implement.png" alt=""></p>
 <p>再来看Key查找过程(简化版):</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// From go 1.8.1 src/runtime/hashmap.go</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">mapaccess1</span><span class="params">(t *maptype, h *hmap, key unsafe.Pointer)</span> <span class="title">unsafe</span>.<span class="title">Pointer</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> h == <span class="literal">nil</span> || h.count == <span class="number">0</span> &#123;</div><div class="line">		<span class="keyword">return</span> unsafe.Pointer(&amp;zeroVal[<span class="number">0</span>])</div><div class="line">	&#125;</div><div class="line">	<span class="comment">// 并发检查 go hashmap不支持并发访问</span></div><div class="line">	<span class="keyword">if</span> h.flags&amp;hashWriting != <span class="number">0</span> &#123;</div><div class="line">		throw(<span class="string">"concurrent map read and map write"</span>)</div><div class="line">	&#125;</div><div class="line">	alg := t.key.alg</div><div class="line">	hash := alg.hash(key, <span class="keyword">uintptr</span>(h.hash0))</div><div class="line">	m := <span class="keyword">uintptr</span>(<span class="number">1</span>)&lt;&lt;h.B - <span class="number">1</span></div><div class="line">	b := (*bmap)(add(h.buckets, (hash&amp;m)*<span class="keyword">uintptr</span>(t.bucketsize)))</div><div class="line">	<span class="comment">// step1: 找到bucket</span></div><div class="line">	<span class="comment">// 如果oldbuckets未迁移完成 则找打oldbuckets中对应的bucket(低B-1位)</span></div><div class="line">	<span class="comment">// 否则为buckets中的bucket(低B位)</span></div><div class="line">	<span class="keyword">if</span> c := h.oldbuckets; c != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="keyword">if</span> !h.sameSizeGrow() &#123;</div><div class="line">			m &gt;&gt;= <span class="number">1</span></div><div class="line">		&#125;</div><div class="line">		oldb := (*bmap)(add(c, (hash&amp;m)*<span class="keyword">uintptr</span>(t.bucketsize)))</div><div class="line">		<span class="keyword">if</span> !evacuated(oldb) &#123;</div><div class="line">			b = oldb</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	top := <span class="keyword">uint8</span>(hash &gt;&gt; (sys.PtrSize*<span class="number">8</span> - <span class="number">8</span>))</div><div class="line">	<span class="keyword">if</span> top &lt; minTopHash &#123;</div><div class="line">		top += minTopHash</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">for</span> &#123;</div><div class="line">		<span class="comment">// step2: 比较tophash</span></div><div class="line">		<span class="keyword">for</span> i := <span class="keyword">uintptr</span>(<span class="number">0</span>); i &lt; bucketCnt; i++ &#123;</div><div class="line">			<span class="keyword">if</span> b.tophash[i] != top &#123;</div><div class="line">				<span class="keyword">continue</span></div><div class="line">			&#125;</div><div class="line">			<span class="comment">// dataOffset为key数组在bucket(bmap结构)中的起始偏移</span></div><div class="line">			k := add(unsafe.Pointer(b), dataOffset+i*<span class="keyword">uintptr</span>(t.keysize))</div><div class="line">			<span class="keyword">if</span> t.indirectkey &#123;</div><div class="line">				k = *((*unsafe.Pointer)(k))</div><div class="line">			&#125;</div><div class="line">			<span class="comment">// step3: 比较key</span></div><div class="line">			<span class="keyword">if</span> alg.equal(key, k) &#123;</div><div class="line">				v := add(unsafe.Pointer(b), dataOffset+bucketCnt*<span class="keyword">uintptr</span>(t.keysize)+i*<span class="keyword">uintptr</span>(t.valuesize))</div><div class="line">				<span class="keyword">if</span> t.indirectvalue &#123;</div><div class="line">					v = *((*unsafe.Pointer)(v))</div><div class="line">				&#125;</div><div class="line">				<span class="keyword">return</span> v</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		b = b.overflow(t)</div><div class="line">		<span class="keyword">if</span> b == <span class="literal">nil</span> &#123;</div><div class="line">			<span class="keyword">return</span> unsafe.Pointer(&amp;zeroVal[<span class="number">0</span>])</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// From go 1.8.1 src/runtime/hashmap.go</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">mapaccess1</span><span class="params">(t *maptype, h *hmap, key unsafe.Pointer)</span> <span class="title">unsafe</span>.<span class="title">Pointer</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> h == <span class="literal">nil</span> || h.count == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> unsafe.Pointer(&amp;zeroVal[<span class="number">0</span>])</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 并发检查 go hashmap不支持并发访问</span></span><br><span class="line">	<span class="keyword">if</span> h.flags&amp;hashWriting != <span class="number">0</span> &#123;</span><br><span class="line">		throw(<span class="string">"concurrent map read and map write"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	alg := t.key.alg</span><br><span class="line">	hash := alg.hash(key, <span class="keyword">uintptr</span>(h.hash0))</span><br><span class="line">	m := <span class="keyword">uintptr</span>(<span class="number">1</span>)&lt;&lt;h.B - <span class="number">1</span></span><br><span class="line">	b := (*bmap)(add(h.buckets, (hash&amp;m)*<span class="keyword">uintptr</span>(t.bucketsize)))</span><br><span class="line">	<span class="comment">// step1: 找到bucket</span></span><br><span class="line">	<span class="comment">// 如果oldbuckets未迁移完成 则找打oldbuckets中对应的bucket(低B-1位)</span></span><br><span class="line">	<span class="comment">// 否则为buckets中的bucket(低B位)</span></span><br><span class="line">	<span class="keyword">if</span> c := h.oldbuckets; c != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> !h.sameSizeGrow() &#123;</span><br><span class="line">			m &gt;&gt;= <span class="number">1</span></span><br><span class="line">		&#125;</span><br><span class="line">		oldb := (*bmap)(add(c, (hash&amp;m)*<span class="keyword">uintptr</span>(t.bucketsize)))</span><br><span class="line">		<span class="keyword">if</span> !evacuated(oldb) &#123;</span><br><span class="line">			b = oldb</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	top := <span class="keyword">uint8</span>(hash &gt;&gt; (sys.PtrSize*<span class="number">8</span> - <span class="number">8</span>))</span><br><span class="line">	<span class="keyword">if</span> top &lt; minTopHash &#123;</span><br><span class="line">		top += minTopHash</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		<span class="comment">// step2: 比较tophash</span></span><br><span class="line">		<span class="keyword">for</span> i := <span class="keyword">uintptr</span>(<span class="number">0</span>); i &lt; bucketCnt; i++ &#123;</span><br><span class="line">			<span class="keyword">if</span> b.tophash[i] != top &#123;</span><br><span class="line">				<span class="keyword">continue</span></span><br><span class="line">			&#125;</span><br><span class="line">			<span class="comment">// dataOffset为key数组在bucket(bmap结构)中的起始偏移</span></span><br><span class="line">			k := add(unsafe.Pointer(b), dataOffset+i*<span class="keyword">uintptr</span>(t.keysize))</span><br><span class="line">			<span class="keyword">if</span> t.indirectkey &#123;</span><br><span class="line">				k = *((*unsafe.Pointer)(k))</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="comment">// step3: 比较key</span></span><br><span class="line">			<span class="keyword">if</span> alg.equal(key, k) &#123;</span><br><span class="line">				v := add(unsafe.Pointer(b), dataOffset+bucketCnt*<span class="keyword">uintptr</span>(t.keysize)+i*<span class="keyword">uintptr</span>(t.valuesize))</span><br><span class="line">				<span class="keyword">if</span> t.indirectvalue &#123;</span><br><span class="line">					v = *((*unsafe.Pointer)(v))</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">return</span> v</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		b = b.overflow(t)</span><br><span class="line">		<span class="keyword">if</span> b == <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> unsafe.Pointer(&amp;zeroVal[<span class="number">0</span>])</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>限于理解深度，其它一些细节没有提到，比如对不含pointer的key/value优化，另外，go map还针对常用key类型(如int32,int64,string)进行了特例优化，代码位于src/runtime/hashmap_fast.go。以下是上面已经提到的一些小的优化细节：</p>
 <ul>
 <li>key value采用k1,k2,..v1,v2,…排列，而不是k1,v1,k2,v2，这是出于内存对齐考虑，节约空间</li>
@@ -85,7 +536,7 @@ v := t[0:2] // 没有capacity字段，无法扩展，触发panic error: out of r
 <p>值语义：如hmap结构体所示，buckets为bucket指针数组，那么对key,value的操作都是引用语义的。</p>
 <h3 id="5-channel"><a href="#5-channel" class="headerlink" title="5. channel"></a>5. channel</h3><p>channel是goroutine用于数据交互的通道，和Erlang的Actor以通信实体为第一类对象不同(Actor模型)，Go以通信介质作为第一类对象(CSP模型)，channel支持多写入者和读取者，并且可通过缓冲来实现同步/异步(一定数量)通信。</p>
 <p>在实现上，channel其实就是个消息队列：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 省略部分字段</span></div><div class="line"><span class="keyword">type</span> hchan <span class="keyword">struct</span> &#123;</div><div class="line">	qcount   <span class="keyword">uint</span>           <span class="comment">// total data in the queue</span></div><div class="line">	dataqsiz <span class="keyword">uint</span>           <span class="comment">// size of the circular queue</span></div><div class="line">	buf      unsafe.Pointer <span class="comment">// points to an array of dataqsiz elements</span></div><div class="line">	elemsize <span class="keyword">uint16</span></div><div class="line">	closed   <span class="keyword">uint32</span></div><div class="line">	elemtype *_type <span class="comment">// element type</span></div><div class="line">	sendx    <span class="keyword">uint</span>   <span class="comment">// send index</span></div><div class="line">	recvx    <span class="keyword">uint</span>   <span class="comment">// receive index</span></div><div class="line">	recvq    waitq  <span class="comment">// list of recv waiters</span></div><div class="line">	sendq    waitq  <span class="comment">// list of send waiters</span></div><div class="line">	lock mutex</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 省略部分字段</span></span><br><span class="line"><span class="keyword">type</span> hchan <span class="keyword">struct</span> &#123;</span><br><span class="line">	qcount   <span class="keyword">uint</span>           <span class="comment">// total data in the queue</span></span><br><span class="line">	dataqsiz <span class="keyword">uint</span>           <span class="comment">// size of the circular queue</span></span><br><span class="line">	buf      unsafe.Pointer <span class="comment">// points to an array of dataqsiz elements</span></span><br><span class="line">	elemsize <span class="keyword">uint16</span></span><br><span class="line">	closed   <span class="keyword">uint32</span></span><br><span class="line">	elemtype *_type <span class="comment">// element type</span></span><br><span class="line">	sendx    <span class="keyword">uint</span>   <span class="comment">// send index</span></span><br><span class="line">	recvx    <span class="keyword">uint</span>   <span class="comment">// receive index</span></span><br><span class="line">	recvq    waitq  <span class="comment">// list of recv waiters</span></span><br><span class="line">	sendq    waitq  <span class="comment">// list of send waiters</span></span><br><span class="line">	lock mutex</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>下图描述了一个缓冲区大小为5，并阻塞了若干读goroutine的情况:</p>
 <p><img src="/assets/image/201609/go-chan-implement.png" alt=""></p>
 <p>该图省略了hchan和sudog的部分字段，waitq在实现上是双向链表，虽然实际只会用到单链表语义(FIFO)。</p>
@@ -115,13 +566,13 @@ v := t[0:2] // 没有capacity字段，无法扩展，触发panic error: out of r
 </ol>
 <p>没有缓冲的channel(dataqsize==0)操作要简单一些，写入时如果recvq-&gt;first!=nil，则直接拷贝数据到读取者的elem字段，否则将写入者挂起。反之，读写过程也类似。</p>
 <p>另外，由于一个goroutine读写多个channel，因此go提供语言级别的select，用于处理异步IO问题。这其实本质上仍然是尝试对channel进行读写操作(chanrecv)，只不过由block参数为false表明该读写不阻塞，当读写操作需要挂起时，立即返回false。而select操作本身其实就是个多分支的if-elseif-else表达式:</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">src/runtime/<span class="keyword">chan</span>.<span class="keyword">go</span></div><div class="line"><span class="comment">// compiler implements</span></div><div class="line"><span class="comment">//</span></div><div class="line"><span class="comment">//	select &#123;</span></div><div class="line"><span class="comment">//	case c &lt;- v:</span></div><div class="line"><span class="comment">//		... foo</span></div><div class="line"><span class="comment">//	default:</span></div><div class="line"><span class="comment">//		... bar</span></div><div class="line"><span class="comment">//	&#125;</span></div><div class="line"><span class="comment">//</span></div><div class="line"><span class="comment">// as</span></div><div class="line"><span class="comment">//</span></div><div class="line"><span class="comment">//	if selectnbsend(c, v) &#123;</span></div><div class="line"><span class="comment">//		... foo</span></div><div class="line"><span class="comment">//	&#125; else &#123;</span></div><div class="line"><span class="comment">//		... bar</span></div><div class="line"><span class="comment">//	&#125;</span></div><div class="line"><span class="comment">//</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">selectnbsend</span><span class="params">(t *chantype, c *hchan, elem unsafe.Pointer)</span> <span class="params">(selected <span class="keyword">bool</span>)</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> chansend(t, c, elem, <span class="literal">false</span>, getcallerpc(unsafe.Pointer(&amp;t)))</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">src/runtime/<span class="keyword">chan</span>.<span class="keyword">go</span></span><br><span class="line"><span class="comment">// compiler implements</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//	select &#123;</span></span><br><span class="line"><span class="comment">//	case c &lt;- v:</span></span><br><span class="line"><span class="comment">//		... foo</span></span><br><span class="line"><span class="comment">//	default:</span></span><br><span class="line"><span class="comment">//		... bar</span></span><br><span class="line"><span class="comment">//	&#125;</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// as</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//	if selectnbsend(c, v) &#123;</span></span><br><span class="line"><span class="comment">//		... foo</span></span><br><span class="line"><span class="comment">//	&#125; else &#123;</span></span><br><span class="line"><span class="comment">//		... bar</span></span><br><span class="line"><span class="comment">//	&#125;</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">selectnbsend</span><span class="params">(t *chantype, c *hchan, elem unsafe.Pointer)</span> <span class="params">(selected <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> chansend(t, c, elem, <span class="literal">false</span>, getcallerpc(unsafe.Pointer(&amp;t)))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>select的if-elseif-else语句分支顺序是随机的，在每次执行select时会将所有scase(包含hchan)顺序随机排列。参考src/runtime/select.go hselect和scase结构体。</p>
 <p>通过<code>cap(chan)</code>和<code>len(chan)</code>可以获取channel的缓冲区大小(dataqsize)和当前消息数量(qcount)。</p>
 <h3 id="6-interface"><a href="#6-interface" class="headerlink" title="6. interface"></a>6. interface</h3><p>interface接口的用法和实现放到<a href="http://wudaijun.com/2016/09/go-notes-3-object-oriented/">go面向对象</a>和<a href="http://wudaijun.com/2018/01/go-interface-implement/">go interface实现</a>中。</p>
 <h3 id="7-make-amp-new"><a href="#7-make-amp-new" class="headerlink" title="7. make &amp; new"></a>7. make &amp; new</h3><p>go中有make和new两个关键字用于分配一个对象，简要提一下两者的区别：</p>
 <p>内建函数 new 用来分配内存，它的第一个参数是一个类型，不是一个值，它的返回值是一个指向新分配类型<strong>零值</strong>的指针</p>
-<p>内建函数 make 用来为 slice，map 或 chan 类型分配内存和<strong>初始化</strong>一个对象(目前只能用于这三种类型)，跟 new 类似，第一个参数也是一个类型而不是一个值，跟 new 不同的是，make 返回类型的引用而不是指针，而返回值也依赖于具体传入的类型，具体使用如下：</p>
+<p>内建函数 make 用来为 slice，map 或 chan 类型分配内存和<strong>初始化</strong>一个对象(目前只能用于这三种类型)，跟 new 类似，第一个参数也是一个类型而不是一个值，跟 new 不同的是，make 返回类型的引用而不是指针，而返回值也依赖于具体传入的类型，具体使用如下：</p>
 <pre><code>// 等价于 a := [capacity]int{}  s := a[0:2]
 s := make([]int, length [,capacity])
 m := make(map[int]string [,size])
@@ -138,12 +589,840 @@ const (
     c1            // c1 == 1
     c2            // c2 == 2
 )
-</code></pre></div><div class="tags"><a href="/tags/go/">go</a></div><div class="post-share"></div><div class="post-nav"><a href="/2016/09/erlang-rebar3/" class="pre">Rebar3 Erlang/OTP构建利器</a><a href="/2016/09/go-notes-2-procedural-programming/" class="next">Go 笔记(2) 顺序编程</a></div><div id="comments"><div id="lv-container" data-id="city" data-uid="MTAyMC8zMzg3Ni8xMDQyOQ=="></div></div></div></div></div><div class="layout-r"><div id="sidebar"><div class="search-pla"></div><div id="toc" class="widget"><div class="widget-title"><i class="fa fa-fei">文章目录</i></div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一-类型系统"><span class="toc-text">一. 类型系统</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-array"><span class="toc-text">1. array</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-slice"><span class="toc-text">2. slice</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#数组切片"><span class="toc-text">数组切片</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#动态数组"><span class="toc-text">动态数组</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-string"><span class="toc-text">3. string</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-map"><span class="toc-text">4. map</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-channel"><span class="toc-text">5. channel</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-interface"><span class="toc-text">6. interface</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-make-amp-new"><span class="toc-text">7. make & new</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-常量"><span class="toc-text">8. 常量</span></a></li></ol></li></ol></div><div class="widget"><div class="widget-title"><i class="fa fa-xie"> 最新文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/gs-model-save/">谈谈GS对象的落地</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/consistent-hashing/">一致Hash算法</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/flux-study/">Flux - Web应用的数据流管理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/react-notes/">React - Web中的函数式思维</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/understand-functional-programing/">理解函数式编程</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/04/go-pprof/">go pprof 性能分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/docker-container-ops/">Docker 容器管理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/docker-management/">Docker容器编排工具</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/go-sync-map-implement/">Go sync.Map 实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/go-interface-implement/">Go Interface 实现</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-gui"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/algorithm/">algorithm</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/c-c/">c/c++</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/database/">database</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><span class="category-list-count">26</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gameserver/">gameserver</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/go/">go</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/lua/">lua</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/os/">os</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/other/">other</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/programing/">programing</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/system/">system</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/tool/">tool</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/unity/">unity</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web/">web</a><span class="category-list-count">4</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-biao"> 标签</i></div><div class="tagcloud"><a href="/tags/mongodb/" style="font-size: 15px;">mongodb</a> <a href="/tags/ngserver/" style="font-size: 15px;">ngserver</a> <a href="/tags/lua/" style="font-size: 15px;">lua</a> <a href="/tags/skynet/" style="font-size: 15px;">skynet</a> <a href="/tags/erlang/" style="font-size: 15px;">erlang</a> <a href="/tags/git/" style="font-size: 15px;">git</a> <a href="/tags/firefly/" style="font-size: 15px;">firefly</a> <a href="/tags/python/" style="font-size: 15px;">python</a> <a href="/tags/tool/" style="font-size: 15px;">tool</a> <a href="/tags/kbengine/" style="font-size: 15px;">kbengine</a> <a href="/tags/distribution/" style="font-size: 15px;">distribution</a> <a href="/tags/unity/" style="font-size: 15px;">unity</a> <a href="/tags/tcp-ip/" style="font-size: 15px;">tcp/ip</a> <a href="/tags/other/" style="font-size: 15px;">other</a> <a href="/tags/c-c/" style="font-size: 15px;">c/c++</a> <a href="/tags/os/" style="font-size: 15px;">os</a> <a href="/tags/web/" style="font-size: 15px;">web</a> <a href="/tags/gameserver/" style="font-size: 15px;">gameserver</a> <a href="/tags/go/" style="font-size: 15px;">go</a> <a href="/tags/linux/" style="font-size: 15px;">linux</a> <a href="/tags/goa/" style="font-size: 15px;">goa</a> <a href="/tags/docker/" style="font-size: 15px;">docker</a> <a href="/tags/system/" style="font-size: 15px;">system</a> <a href="/tags/macosx/" style="font-size: 15px;">macosx</a> <a href="/tags/hexo/" style="font-size: 15px;">hexo</a> <a href="/tags/gc/" style="font-size: 15px;">gc</a> <a href="/tags/react/" style="font-size: 15px;">react</a> <a href="/tags/programing/" style="font-size: 15px;">programing</a> <a href="/tags/hash/" style="font-size: 15px;">hash</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-archive"> 归档</i></div><ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">三月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/02/">二月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">五月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">四月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">三月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">二月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">一月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">十一月 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">十月 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a></li></ul></div></div></div></div><a id="totop" href="#top"></a><div id="footer"><div class="footer-info"><p><a href="/atom.xml">订阅</a> |  <a href="/about/">关于</a></p><p>本站总访问量：<i id="busuanzi_container_site_pv"><i id="busuanzi_value_site_pv"></i></i>次</p><p><span> Copyright &copy;<a href="/." rel="nofollow">wudaijun.</a></span><span> Theme by<a rel="nofollow" target="_blank" href="https://github.com/chaooo/hexo-theme-BlueLake"> BlueLake.</a></span><span> Count by<a href="http://busuanzi.ibruce.info/"> busuanzi.</a></span><span> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a></span></p></div></div></div><script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js" async></script><script type="text/javascript" src="/js/search.json.js?v=2.0.1"></script><script type="text/javascript" src="/js/toctotop.js?v=2.0.1" async></script><script>(function(d, s) {
-  var j, e = d.getElementsByTagName('body')[0];
-  if (typeof LivereTower === 'function') { return; }
-  j = d.createElement(s);
-  j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
-  j.async = true;
-  e.appendChild(j);
-})(document, 'script');
-</script></body></html>
+</code></pre>
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/go/" rel="tag"># go</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/linux-job-control/" rel="next" title="Linux 作业管理">
+                <i class="fa fa-chevron-left"></i> Linux 作业管理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/09/go-notes-2-procedural-programming/" rel="prev" title="Go 笔记(2) 顺序编程">
+                Go 笔记(2) 顺序编程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/assets/theme/avatar.png"
+                alt="wudaijun" />
+            
+              <p class="site-author-name" itemprop="name">wudaijun</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">97</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">16</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">29</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-类型系统"><span class="nav-text">一. 类型系统</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-array"><span class="nav-text">1. array</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-slice"><span class="nav-text">2. slice</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#数组切片"><span class="nav-text">数组切片</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#动态数组"><span class="nav-text">动态数组</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-string"><span class="nav-text">3. string</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-map"><span class="nav-text">4. map</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-channel"><span class="nav-text">5. channel</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-interface"><span class="nav-text">6. interface</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-make-amp-new"><span class="nav-text">7. make &amp; new</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-常量"><span class="nav-text">8. 常量</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wudaijun</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动 v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://theme-next.org">NexT.Gemini</a> v6.3.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.3.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.3.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.3.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+  
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(function (item) {
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'kL7con6xeU88chDAVyUSDSHI-gzGzoHsz',
+        appKey: '9XLxirxDW8NUhHJdu460Uiba',
+        placeholder: 'Just go go',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
