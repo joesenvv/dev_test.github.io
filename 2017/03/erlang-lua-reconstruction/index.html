@@ -116,7 +116,7 @@
 <meta property="og:site_name" content="wudaijun&#39;s blog">
 <meta property="og:description" content="目前所在的项目基于erlang cluster搭建框架，再接入lua用于写逻辑。由于之前有一些erlang+lua的开发经验，因此着手项目的重构和优化，过程中一些体会，记录于此。 先简述一下项目架构，erlang做集群，网络层，节点交互，DB交互等，lua层只写逻辑。一个erlang的Actor持有一个luastate，为了加速erlang和lua之间的交互效率：  将逻辑数据置于lua中而不是e">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2017-03-30T03:14:59.000Z">
+<meta property="og:updated_time" content="2018-07-02T10:41:45.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Erlang+Lua的一次重构">
 <meta name="twitter:description" content="目前所在的项目基于erlang cluster搭建框架，再接入lua用于写逻辑。由于之前有一些erlang+lua的开发经验，因此着手项目的重构和优化，过程中一些体会，记录于此。 先简述一下项目架构，erlang做集群，网络层，节点交互，DB交互等，lua层只写逻辑。一个erlang的Actor持有一个luastate，为了加速erlang和lua之间的交互效率：  将逻辑数据置于lua中而不是e">
@@ -451,6 +451,7 @@
 <li>以<code>lual_ref</code>和msgid等方式，尽量用整数代理字符串</li>
 <li>erlang和lua异步运行，lua跑在原生线程池中，这在<a href="http://wudaijun.com/2015/09/erlang-server-design2-erlang-lua-battle/">这篇博文</a>中介绍过</li>
 </ol>
+<a id="more"></a>
 <p>除了这些，还需要注意lua的沙盒环境管理，错误处理，热更新等，这里不再详述。就目前这种结构而言，还有一些缺陷：</p>
 <ol>
 <li>原子线程池忙碌可能导致的erlang虚拟机假死，需要保证原生线程池最多占用的核数不超过erlang虚拟机能使用的核数</li>

@@ -116,7 +116,7 @@
 <meta property="og:site_name" content="wudaijun&#39;s blog">
 <meta property="og:description" content="源于从Erlang到Go的一些思维碰撞，就像当初从C++到Erlang一样，整理下来记于此。 ActorActor模型，又叫参与者模型，其”一切皆参与者(actor)”的理念与面向对象编程的“一切皆是对象”类似，但是面向对象编程中对象的交互通常是顺序执行的(占用的是调用方的时间片，是否并发由调用方决定)，而Actor模型中actor的交互是并行执行的(不占用调用方的时间片，是否并发由自己决定)。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2017-10-31T03:16:27.000Z">
+<meta property="og:updated_time" content="2018-07-02T10:40:44.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Go vs Erlang">
 <meta name="twitter:description" content="源于从Erlang到Go的一些思维碰撞，就像当初从C++到Erlang一样，整理下来记于此。 ActorActor模型，又叫参与者模型，其”一切皆参与者(actor)”的理念与面向对象编程的“一切皆是对象”类似，但是面向对象编程中对象的交互通常是顺序执行的(占用的是调用方的时间片，是否并发由调用方决定)，而Actor模型中actor的交互是并行执行的(不占用调用方的时间片，是否并发由自己决定)。">
@@ -447,6 +447,7 @@
         <p>源于从Erlang到Go的一些思维碰撞，就像当初从C++到Erlang一样，整理下来记于此。</p>
 <h3 id="Actor"><a href="#Actor" class="headerlink" title="Actor"></a>Actor</h3><p>Actor模型，又叫参与者模型，其”一切皆参与者(actor)”的理念与面向对象编程的“一切皆是对象”类似，但是面向对象编程中对象的交互通常是顺序执行的(占用的是调用方的时间片，是否并发由调用方决定)，而Actor模型中actor的交互是并行执行的(不占用调用方的时间片，是否并发由自己决定)。</p>
 <p>在Actor模型中，actor执行体是第一类对象，每个actor都有自己的ID(类比人的身份证)，可以被传递。actor的交互通过发送消息来完成，每个actor都有一个通信信箱(mailbox，本质上是FIFO消息队列)，用于保存已经收到但尚未被处理的消息。actorA要向actorB发消息，只需持有actorB ID，发送的消息将被立即Push到actorB的消息信箱尾部，然后返回。因此Actor的通信原语是异步的。</p>
+<a id="more"></a>
 <p>从actor自身来说，它的行为模式可简化为:</p>
 <ul>
 <li>发送消息给其它的actor</li>

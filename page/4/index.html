@@ -336,7 +336,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://wudaijun.com/2016/09/go-notes-2-procedural-programming/">
+    <link itemprop="mainEntityOfPage" href="http://wudaijun.com/2016/09/go-notes-3-object-oriented/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="wudaijun">
@@ -355,8 +355,8 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2016/09/go-notes-2-procedural-programming/" itemprop="url">
-                  Go 笔记(2) 顺序编程
+                <a class="post-title-link" href="/2016/09/go-notes-3-object-oriented/" itemprop="url">
+                  Go 笔记(3) 面向对象和接口
                 </a>
               
             
@@ -415,8 +415,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2016/09/go-notes-2-procedural-programming/#comments" itemprop="discussionUrl">
-                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2016/09/go-notes-2-procedural-programming/" itemprop="commentCount"></span>
+                <a href="/2016/09/go-notes-3-object-oriented/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2016/09/go-notes-3-object-oriented/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -446,14 +446,12 @@
       
         
           
-          不定参数&amp;多返回值不定参数只能是最后一个参数，它实际上是数组切片参数的语法糖：
-// 语法糖 相当于 func myfunc(args []interface{})
-func myfunc(args ...interface{}){
-    for _, arg := range args 
+          探索Go类型扩展，类和继承，以及接口的用法和实现。
+面向对象1. 类型扩展12345678910package main	import "fmt"	// 定义了一个新类型:Integer，与int不能直接比较/赋值type Integer int	func (a *Integer) Add(b In
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2016/09/go-notes-2-procedural-programming/" rel="contents">
+            <a class="btn" href="/2016/09/go-notes-3-object-oriented/" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -680,7 +678,7 @@ func myfunc(args ...interface{}){
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://wudaijun.com/2016/09/go-notes-3-object-oriented/">
+    <link itemprop="mainEntityOfPage" href="http://wudaijun.com/2016/09/go-notes-2-procedural-programming/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="wudaijun">
@@ -699,8 +697,8 @@ func myfunc(args ...interface{}){
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2016/09/go-notes-3-object-oriented/" itemprop="url">
-                  Go 笔记(3) 面向对象和接口
+                <a class="post-title-link" href="/2016/09/go-notes-2-procedural-programming/" itemprop="url">
+                  Go 笔记(2) 顺序编程
                 </a>
               
             
@@ -759,8 +757,8 @@ func myfunc(args ...interface{}){
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2016/09/go-notes-3-object-oriented/#comments" itemprop="discussionUrl">
-                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2016/09/go-notes-3-object-oriented/" itemprop="commentCount"></span>
+                <a href="/2016/09/go-notes-2-procedural-programming/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2016/09/go-notes-2-procedural-programming/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -790,12 +788,14 @@ func myfunc(args ...interface{}){
       
         
           
-          探索Go类型扩展，类和继承，以及接口的用法和实现。
-面向对象1. 类型扩展12345678910package main	import "fmt"	// 定义了一个新类型:Integer，与int不能直接比较/赋值type Integer int	func (a *Integer) Add(b In
+          不定参数&amp;多返回值不定参数只能是最后一个参数，它实际上是数组切片参数的语法糖：
+// 语法糖 相当于 func myfunc(args []interface{})
+func myfunc(args ...interface{}){
+    for _, arg := range args 
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2016/09/go-notes-3-object-oriented/" rel="contents">
+            <a class="btn" href="/2016/09/go-notes-2-procedural-programming/" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>

@@ -116,7 +116,7 @@
 <meta property="og:site_name" content="wudaijun&#39;s blog">
 <meta property="og:description" content="go select思想来源于网络IO模型中的select，本质上也是IO多路复用，只不过这里的IO是基于channel而不是基于网络，同时go select也有一些自己不同的特性，这里简单探讨下。 go select 的特性:  每个case都必须是一个通信 所有channel表达式都会被求值 所有被发送的表达式都会被求值 如果任意某个通信可以进行，它就执行；其他被忽略。 如果有多个case都可以">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-07-02T10:33:11.000Z">
+<meta property="og:updated_time" content="2018-07-02T10:44:11.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="go select机制与常见的坑">
 <meta name="twitter:description" content="go select思想来源于网络IO模型中的select，本质上也是IO多路复用，只不过这里的IO是基于channel而不是基于网络，同时go select也有一些自己不同的特性，这里简单探讨下。 go select 的特性:  每个case都必须是一个通信 所有channel表达式都会被求值 所有被发送的表达式都会被求值 如果任意某个通信可以进行，它就执行；其他被忽略。 如果有多个case都可以">
@@ -455,6 +455,7 @@
 <li>如果没有default字句，select将阻塞，直到某个通信可以运行；Go不会重新对channel或值进行求值。</li>
 </ol>
 <p>下面通过几个例子来理解这些特性:</p>
+<a id="more"></a>
 <p>1.select closed/nil channel</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">	<span class="keyword">select</span> &#123;</span><br><span class="line">	<span class="keyword">case</span> v1, ok := &lt;-c1:</span><br><span class="line">        <span class="comment">// 如果c1被关闭(ok==false)，每次从c1读取都会立即返回，将导致死循环</span></span><br><span class="line">        <span class="comment">// 可以通过将c1置为nil来让select ignore掉这个case，继续评估其它case</span></span><br><span class="line">		<span class="keyword">if</span> !ok &#123;</span><br><span class="line">			c1 = <span class="literal">nil</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">case</span> v2 := &lt;- c2:</span><br><span class="line">	    <span class="comment">// 同样，如果c2被关闭，每次从c1读取都会立即返回对应元素类型的零值(如空字符串)，导致死循环</span></span><br><span class="line">	    <span class="comment">// 解决方案仍然是置c2为nil，但是有可能误判(写入方是写入了一个零值而不是关闭channel，比如整数0)</span></span><br><span class="line">	    </span><br><span class="line">	<span class="keyword">case</span> c3 &lt;- v3:</span><br><span class="line">	    <span class="comment">// 如果c3已经关闭，则panic</span></span><br><span class="line">	    <span class="comment">// 如果c3为nil，则ignore该case	    </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>2.实现非阻塞读写</p>
@@ -473,7 +474,7 @@ val:1
 2: case &lt;-tick.C
 val:3
 4: case &lt;-tick.C
-</code></pre><p>可以看到向ch写入的2和4”不见”了，因为当tick.C和ch同时满足读写条件时，select随机选择了一个执行，导致看起来一些数据丢了，其实这个例子是比较极端的，因为向ch写入的数据本身就与外部for循环计数耦合了，导致依赖于select的随机结果(本次没随机到，放到下次，但此时写入的数据已经变更了)，因此实际不是数据丢了，而是例子设计没有考虑到每次select只会执行一条读写语句(并且是随机选取的)。</p>
+</code></pre><p>可以看到向ch写入的2和4”不见”了，因为当tick.C和ch同时满足读写条件时，select随机选择了一个执行，导致看起来一些数据丢了，其实这个例子是比较极端的，因为向ch写入的数据本身就与外部for循环计数耦合了，导致依赖于select的随机结果(本次没随机到，放到下次，但此时写入的数据已经变更了)，因此实际不是数据丢了，而是代码设计时没有考虑到每次select只会执行一条读写语句(并且是随机选取的)，导致结果不如预期。</p>
 <p>总的来说，go select还是比较容易踩坑的，比如加了不该加的default，没有考虑到channel关闭的情况，没有理解随机性等等，在使用的时候还是要小心。</p>
 
       

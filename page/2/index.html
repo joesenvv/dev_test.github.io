@@ -1135,14 +1135,17 @@ npm inst
 
       
         
-          
-          go select思想来源于网络IO模型中的select，本质上也是IO多路复用，只不过这里的IO是基于channel而不是基于网络，同时go select也有一些自己不同的特性，这里简单探讨下。
-go select 的特性:
-
-每个case都必须是一个通信
-所有channel表达式都会被求值
-所有
-          ...
+          <p>go select思想来源于网络IO模型中的select，本质上也是IO多路复用，只不过这里的IO是基于channel而不是基于网络，同时go select也有一些自己不同的特性，这里简单探讨下。</p>
+<p>go select 的特性:</p>
+<ol>
+<li>每个case都必须是一个通信</li>
+<li>所有channel表达式都会被求值</li>
+<li>所有被发送的表达式都会被求值</li>
+<li>如果任意某个通信可以进行，它就执行；其他被忽略。</li>
+<li>如果有多个case都可以运行，select会随机公平地选出一个执行。其他不会执行。否则执行default子句(如果有)</li>
+<li>如果没有default字句，select将阻塞，直到某个通信可以运行；Go不会重新对channel或值进行求值。</li>
+</ol>
+<p>下面通过几个例子来理解这些特性:</p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2017/10/go-select/" rel="contents">
@@ -1310,10 +1313,9 @@ go select 的特性:
 
       
         
-          
-          本文记录最近做战斗系统的一些心得和思考，由于我们的战斗系统是回合制的，与大部分回合制游戏一样，需要服务器计算战斗，客户端以战报的方式回放。这里探讨一下服务端战斗系统的设计思路，实现一个灵活，可配置，扩展性强的战斗系统。
-战斗流程战斗地图是一个X*Y的矩阵，每个参与者(Fighter)初始位于其中一个
-          ...
+          <p>本文记录最近做战斗系统的一些心得和思考，由于我们的战斗系统是回合制的，与大部分回合制游戏一样，需要服务器计算战斗，客户端以战报的方式回放。这里探讨一下服务端战斗系统的设计思路，实现一个灵活，可配置，扩展性强的战斗系统。</p>
+<h2 id="战斗流程"><a href="#战斗流程" class="headerlink" title="战斗流程"></a>战斗流程</h2><p>战斗地图是一个X*Y的矩阵，每个参与者(Fighter)初始位于其中一个格子上。战斗开始后，按照回合迭代，达到胜负条件或最大回合数则战斗结束。回合内，英雄按照出手顺序先后行动(Action)，英雄的Action包括移动，释放技能和普攻。</p>
+<p>战斗流程是比较简明易懂的，整个战斗系统的难点在于多样的技能实现。每个英雄有N个技能，每个英雄可通过学习其它技能来实现不同的战斗效果，技能的效果和作用比较繁杂，例如：</p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2017/09/ngs-battle/" rel="contents">
@@ -1481,12 +1483,13 @@ go select 的特性:
 
       
         
-          
-          常见并发模型之前对比过Go和Erlang的并发模型，提到了Go的优势在于流控，下面列举几种常见的流控:
-Ping-Pong这通常针对于两个goroutine之间进行简单的数据交互和协作，我们常用的RPC也属于此类，通过channel的类型可以灵活实现交互方式:
-
-同步单工: 单个双向非缓冲chann
-          ...
+          <h3 id="常见并发模型"><a href="#常见并发模型" class="headerlink" title="常见并发模型"></a>常见并发模型</h3><p>之前对比过<a href="http://wudaijun.com/2017/05/go-vs-erlang/">Go和Erlang的并发模型</a>，提到了Go的优势在于流控，下面列举几种常见的流控:</p>
+<h4 id="Ping-Pong"><a href="#Ping-Pong" class="headerlink" title="Ping-Pong"></a>Ping-Pong</h4><p>这通常针对于两个goroutine之间进行简单的数据交互和协作，我们常用的RPC也属于此类，通过channel的类型可以灵活实现交互方式:</p>
+<ul>
+<li>同步单工: 单个双向非缓冲channel</li>
+<li>同步双工: 多个单向非缓冲channel</li>
+<li>异步双工: 多个单向缓冲channel</li>
+</ul>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2017/08/go-conetxt-usage/" rel="contents">
@@ -1654,10 +1657,9 @@ Ping-Pong这通常针对于两个goroutine之间进行简单的数据交互和�
 
       
         
-          
-          源于从Erlang到Go的一些思维碰撞，就像当初从C++到Erlang一样，整理下来记于此。
-ActorActor模型，又叫参与者模型，其”一切皆参与者(actor)”的理念与面向对象编程的“一切皆是对象”类似，但是面向对象编程中对象的交互通常是顺序执行的(占用的是调用方的时间片，是否并发由调用方决
-          ...
+          <p>源于从Erlang到Go的一些思维碰撞，就像当初从C++到Erlang一样，整理下来记于此。</p>
+<h3 id="Actor"><a href="#Actor" class="headerlink" title="Actor"></a>Actor</h3><p>Actor模型，又叫参与者模型，其”一切皆参与者(actor)”的理念与面向对象编程的“一切皆是对象”类似，但是面向对象编程中对象的交互通常是顺序执行的(占用的是调用方的时间片，是否并发由调用方决定)，而Actor模型中actor的交互是并行执行的(不占用调用方的时间片，是否并发由自己决定)。</p>
+<p>在Actor模型中，actor执行体是第一类对象，每个actor都有自己的ID(类比人的身份证)，可以被传递。actor的交互通过发送消息来完成，每个actor都有一个通信信箱(mailbox，本质上是FIFO消息队列)，用于保存已经收到但尚未被处理的消息。actorA要向actorB发消息，只需持有actorB ID，发送的消息将被立即Push到actorB的消息信箱尾部，然后返回。因此Actor的通信原语是异步的。</p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2017/05/go-vs-erlang/" rel="contents">
@@ -1825,10 +1827,13 @@ ActorActor模型，又叫参与者模型，其”一切皆参与者(actor)”的
 
       
         
-          
-          目前所在的项目基于erlang cluster搭建框架，再接入lua用于写逻辑。由于之前有一些erlang+lua的开发经验，因此着手项目的重构和优化，过程中一些体会，记录于此。
-先简述一下项目架构，erlang做集群，网络层，节点交互，DB交互等，lua层只写逻辑。一个erlang的Actor持有
-          ...
+          <p>目前所在的项目基于<a href="http://wudaijun.com/2015/08/erlang-server-design1-cluster-server/">erlang cluster</a>搭建框架，再接入lua用于写逻辑。由于之前有一些erlang+lua的开发经验，因此着手项目的重构和优化，过程中一些体会，记录于此。</p>
+<p>先简述一下项目架构，erlang做集群，网络层，节点交互，DB交互等，lua层只写逻辑。一个erlang的Actor持有一个luastate，为了加速erlang和lua之间的交互效率：</p>
+<ol>
+<li>将逻辑数据置于lua中而不是erlang中，在落地时，以二进制格式丢给erlang进行DB操作</li>
+<li>以<code>lual_ref</code>和msgid等方式，尽量用整数代理字符串</li>
+<li>erlang和lua异步运行，lua跑在原生线程池中，这在<a href="http://wudaijun.com/2015/09/erlang-server-design2-erlang-lua-battle/">这篇博文</a>中介绍过</li>
+</ol>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2017/03/erlang-lua-reconstruction/" rel="contents">
