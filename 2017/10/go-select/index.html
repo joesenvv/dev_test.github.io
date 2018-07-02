@@ -108,20 +108,25 @@
 
 
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="wudaijun&#39;s blog">
-<meta property="og:url" content="http://wudaijun.com/tags/firefly/index.html">
+  <meta name="description" content="go select思想来源于网络IO模型中的select，本质上也是IO多路复用，只不过这里的IO是基于channel而不是基于网络，同时go select也有一些自己不同的特性，这里简单探讨下。 go select 的特性:  每个case都必须是一个通信 所有channel表达式都会被求值 所有被发送的表达式都会被求值 如果任意某个通信可以进行，它就执行；其他被忽略。 如果有多个case都可以">
+<meta name="keywords" content="go">
+<meta property="og:type" content="article">
+<meta property="og:title" content="go select机制与常见的坑">
+<meta property="og:url" content="http://wudaijun.com/2017/10/go-select/index.html">
 <meta property="og:site_name" content="wudaijun&#39;s blog">
+<meta property="og:description" content="go select思想来源于网络IO模型中的select，本质上也是IO多路复用，只不过这里的IO是基于channel而不是基于网络，同时go select也有一些自己不同的特性，这里简单探讨下。 go select 的特性:  每个case都必须是一个通信 所有channel表达式都会被求值 所有被发送的表达式都会被求值 如果任意某个通信可以进行，它就执行；其他被忽略。 如果有多个case都可以">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-07-02T10:33:11.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="wudaijun&#39;s blog">
+<meta name="twitter:title" content="go select机制与常见的坑">
+<meta name="twitter:description" content="go select思想来源于网络IO模型中的select，本质上也是IO多路复用，只不过这里的IO是基于channel而不是基于网络，同时go select也有一些自己不同的特性，这里简单探讨下。 go select 的特性:  每个case都必须是一个通信 所有channel表达式都会被求值 所有被发送的表达式都会被求值 如果任意某个通信可以进行，它就执行；其他被忽略。 如果有多个case都可以">
 
 
 
 
 
 
-  <link rel="canonical" href="http://wudaijun.com/tags/firefly/"/>
+  <link rel="canonical" href="http://wudaijun.com/2017/10/go-select/"/>
 
 
 
@@ -131,7 +136,7 @@
   };
 </script>
 
-  <title>标签: firefly | wudaijun's blog</title>
+  <title>go select机制与常见的坑 | wudaijun's blog</title>
   
 
 
@@ -178,7 +183,7 @@
     
   
 
-  <div class="container sidebar-position-left ">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -235,7 +240,7 @@
         
         
           
-          <li class="menu-item menu-item-tags menu-item-active">
+          <li class="menu-item menu-item-tags">
     <a href="/tags/" rel="section">
       <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
   </li>
@@ -315,112 +320,238 @@
           
             
 
-    
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-    
-
-  
-
-
           
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block tag">
+  <div id="posts" class="posts-expand">
+    
 
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h1>firefly<small>标签</small>
-        </h1>
-      </div>
+  
 
-      
-        
+  
+  
+  
+
+  
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://wudaijun.com/2017/10/go-select/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="wudaijun">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/assets/theme/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wudaijun's blog">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/2015/06/firefly-study2/" itemprop="url">
-              
-                <span itemprop="name">Firefly 学习(二)</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">go select机制与常见的坑
+              
+            
+          </h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2015-06-03T00:00:00+08:00"
-              content="2015-06-03" >
-          06-03
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
 
-    </header>
-  </article>
+            
+            
+            
 
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2017-10-12 00:00:00" itemprop="dateCreated datePublished" datetime="2017-10-12T00:00:00+08:00">2017-10-12</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/10/go-select/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2017/10/go-select/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-        
+      
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2015/05/firefly-study1/" itemprop="url">
-              
-                <span itemprop="name">Firefly 学习(一)</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2015-05-20T00:00:00+08:00"
-              content="2015-05-20" >
-          05-20
-        </time>
-      </div>
-
-    </header>
-  </article>
-
+      
+        <p>go select思想来源于网络IO模型中的select，本质上也是IO多路复用，只不过这里的IO是基于channel而不是基于网络，同时go select也有一些自己不同的特性，这里简单探讨下。</p>
+<p>go select 的特性:</p>
+<ol>
+<li>每个case都必须是一个通信</li>
+<li>所有channel表达式都会被求值</li>
+<li>所有被发送的表达式都会被求值</li>
+<li>如果任意某个通信可以进行，它就执行；其他被忽略。</li>
+<li>如果有多个case都可以运行，select会随机公平地选出一个执行。其他不会执行。否则执行default子句(如果有)</li>
+<li>如果没有default字句，select将阻塞，直到某个通信可以运行；Go不会重新对channel或值进行求值。</li>
+</ol>
+<p>下面通过几个例子来理解这些特性:</p>
+<p>1.select closed/nil channel</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">	<span class="keyword">select</span> &#123;</span><br><span class="line">	<span class="keyword">case</span> v1, ok := &lt;-c1:</span><br><span class="line">        <span class="comment">// 如果c1被关闭(ok==false)，每次从c1读取都会立即返回，将导致死循环</span></span><br><span class="line">        <span class="comment">// 可以通过将c1置为nil来让select ignore掉这个case，继续评估其它case</span></span><br><span class="line">		<span class="keyword">if</span> !ok &#123;</span><br><span class="line">			c1 = <span class="literal">nil</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">case</span> v2 := &lt;- c2:</span><br><span class="line">	    <span class="comment">// 同样，如果c2被关闭，每次从c1读取都会立即返回对应元素类型的零值(如空字符串)，导致死循环</span></span><br><span class="line">	    <span class="comment">// 解决方案仍然是置c2为nil，但是有可能误判(写入方是写入了一个零值而不是关闭channel，比如整数0)</span></span><br><span class="line">	    </span><br><span class="line">	<span class="keyword">case</span> c3 &lt;- v3:</span><br><span class="line">	    <span class="comment">// 如果c3已经关闭，则panic</span></span><br><span class="line">	    <span class="comment">// 如果c3为nil，则ignore该case	    </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>2.实现非阻塞读写</p>
+<p>结合特性5,6，可以通过带 default 语句的 select 实现非阻塞读写，在实践中还是比较有用的，比如 GS 尝试给玩家推送某条消息，可能并不希望 GS 阻塞在该玩家的 writeChan 上。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> writeChan &lt;- msg:</span><br><span class="line">        <span class="comment">// do something write successed</span></span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        <span class="comment">// drop msg, or log err</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>需要注意，一些同学可能将select与switch搞混，习惯先把default写好，然后加上外层的for循环导致死循环。使用select语句，for和default基本不会同时出现。</p>
+<p>3.实现定时任务</p>
+<p>结合特性2，每次 select 都会对所有通信表达式求值，因此可通过 <code>time.After</code>简洁实现定时器功能，并且定时任务可通过 done channel 停止:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">	<span class="keyword">select</span> &#123;</span><br><span class="line">	<span class="keyword">case</span> &lt;- time.After(time.Second):</span><br><span class="line">	    <span class="comment">// do something per second</span></span><br><span class="line">	<span class="keyword">case</span> &lt;- donec:</span><br><span class="line">		<span class="keyword">return</span>	</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>4.多个case满足读写条件</p>
+<p>结合特性4，如果多个case满足读写条件，select会随机选择一个语句执行：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">1024</span>)</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(ch <span class="keyword">chan</span> <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">		<span class="keyword">for</span> &#123;</span><br><span class="line">			val := &lt;-ch</span><br><span class="line">			fmt.Printf(<span class="string">"val:%d\n"</span>, val)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;(ch)</span><br><span class="line">    </span><br><span class="line">	tick := time.NewTicker(<span class="number">1</span> * time.Second)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">5</span>; i++ &#123;</span><br><span class="line">		<span class="keyword">select</span> &#123;</span><br><span class="line">		<span class="keyword">case</span> ch &lt;- i:</span><br><span class="line">		<span class="keyword">case</span> &lt;-tick.C:</span><br><span class="line">			fmt.Printf(<span class="string">"%d: case &lt;-tick.C\n"</span>, i)</span><br><span class="line">		&#125;</span><br><span class="line">    </span><br><span class="line">		time.Sleep(<span class="number">500</span> * time.Millisecond)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">close</span>(ch)</span><br><span class="line">	tick.Stop()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出:</p>
+<pre><code>val:0
+val:1
+2: case &lt;-tick.C
+val:3
+4: case &lt;-tick.C
+</code></pre><p>可以看到向ch写入的2和4”不见”了，因为当tick.C和ch同时满足读写条件时，select随机选择了一个执行，导致看起来一些数据丢了，其实这个例子是比较极端的，因为向ch写入的数据本身就与外部for循环计数耦合了，导致依赖于select的随机结果(本次没随机到，放到下次，但此时写入的数据已经变更了)，因此实际不是数据丢了，而是例子设计没有考虑到每次select只会执行一条读写语句(并且是随机选取的)。</p>
+<p>总的来说，go select还是比较容易踩坑的，比如加了不该加的default，没有考虑到channel关闭的情况，没有理解随机性等等，在使用的时候还是要小心。</p>
 
       
     </div>
 
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/go/" rel="tag"># go</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/ngs-battle/" rel="next" title="探讨服务端回合制战斗系统">
+                <i class="fa fa-chevron-left"></i> 探讨服务端回合制战斗系统
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/11/docker-network/" rel="prev" title="docker 网络模式">
+                docker 网络模式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
           
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
 
         </div>
         
@@ -737,6 +868,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
 
   
 
