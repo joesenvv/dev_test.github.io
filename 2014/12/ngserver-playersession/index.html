@@ -116,7 +116,7 @@
 <meta property="og:site_name" content="wudaijun&#39;s blog">
 <meta property="og:description" content="PlayerSession类在之前的网络底层设计中，Player和Session之间通过组合实现弱关联，但仍然有个诟病：Player类和Session类在网络连接到来时一并创建了。这样后面在做断线重连的时候，会有两个Player。而事实上LoginService只管登录认证，登录认证的时候并不需要创建Player类，因此可以延迟Player的创建，将其放在MapService中。而这之前Login">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2015-09-22T02:30:04.000Z">
+<meta property="og:updated_time" content="2018-08-02T05:52:15.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NGServer 加入PlayerSession">
 <meta name="twitter:description" content="PlayerSession类在之前的网络底层设计中，Player和Session之间通过组合实现弱关联，但仍然有个诟病：Player类和Session类在网络连接到来时一并创建了。这样后面在做断线重连的时候，会有两个Player。而事实上LoginService只管登录认证，登录认证的时候并不需要创建Player类，因此可以延迟Player的创建，将其放在MapService中。而这之前Login">
@@ -484,8 +484,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2014/11/cpp-constructor/" rel="next" title="C++ 构造语义">
-                <i class="fa fa-chevron-left"></i> C++ 构造语义
+              <a href="/2014/12/shared_ptr-reference/" rel="next" title="shared_ptr的引用链">
+                <i class="fa fa-chevron-left"></i> shared_ptr的引用链
               </a>
             
           </div>
@@ -494,8 +494,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2014/12/shared_ptr-reference/" rel="prev" title="shared_ptr的引用链">
-                shared_ptr的引用链 <i class="fa fa-chevron-right"></i>
+              <a href="/2014/12/lua-C/" rel="prev" title="lua 与 C 交互">
+                lua 与 C 交互 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -577,7 +577,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">102</span>
+                    <span class="site-state-item-count">104</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
