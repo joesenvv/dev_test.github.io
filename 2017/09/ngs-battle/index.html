@@ -116,7 +116,7 @@
 <meta property="og:site_name" content="wudaijun&#39;s blog">
 <meta property="og:description" content="本文记录最近做战斗系统的一些心得和思考，由于我们的战斗系统是回合制的，与大部分回合制游戏一样，需要服务器计算战斗，客户端以战报的方式回放。这里探讨一下服务端战斗系统的设计思路，实现一个灵活，可配置，扩展性强的战斗系统。 战斗流程战斗地图是一个X*Y的矩阵，每个参与者(Fighter)初始位于其中一个格子上。战斗开始后，按照回合迭代，达到胜负条件或最大回合数则战斗结束。回合内，英雄按照出手顺序先后行">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-08-02T05:52:15.000Z">
+<meta property="og:updated_time" content="2018-08-31T06:18:01.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="探讨服务端回合制战斗系统">
 <meta name="twitter:description" content="本文记录最近做战斗系统的一些心得和思考，由于我们的战斗系统是回合制的，与大部分回合制游戏一样，需要服务器计算战斗，客户端以战报的方式回放。这里探讨一下服务端战斗系统的设计思路，实现一个灵活，可配置，扩展性强的战斗系统。 战斗流程战斗地图是一个X*Y的矩阵，每个参与者(Fighter)初始位于其中一个格子上。战斗开始后，按照回合迭代，达到胜负条件或最大回合数则战斗结束。回合内，英雄按照出手顺序先后行">
@@ -495,7 +495,11 @@ DelEventListener(ListenerId)
 <h3 id="3-Buff作用链"><a href="#3-Buff作用链" class="headerlink" title="3. Buff作用链"></a>3. Buff作用链</h3><p>不是所有的Buff都可以通过属性来完成解耦，比如护盾效果，A Buff 加200护盾，B Buff 加300护盾，那么 Fighter 护盾属性为500，此时战斗伤害结算流程扣除400护盾值，那么这个值应该从 A 减还是 B 减，战斗流程并不知晓，需要护盾Buff自己来维护(并且在护盾为0时结束Buff)，并且护盾还有各种类型(物理护盾，魔法护盾等)。属性系统在这里并不适用，因此，我们需要一个Buff作用链来完成护盾的结算流程。比如受击400点魔法伤害，战斗系统抛出 EVENT_FLOW_SHIELD 事件，传入400以及伤害类型，A Buff 收到后判断伤害类型，减免200点伤害(并结束自身)，返回400-200=200，B Buff 伤害类型不满足，返回200，战斗流程得到返回值200，继续后续处理。</p>
 <p>到这里，可能你会问：为什么不将沉默，眩晕这些效果也通过 Buff作用链来完成？实现上是可以的，每次 Fighter移动/攻击/释放技能前，抛出对应事件，检查其返回值，决定是否执行操移动/攻击等。但就我的设计理念而言，能够通过虚拟属性固化的效果尽量固化，对系统复杂度和效率都有好处。</p>
 <p>Buff 作用链和 Buff 事件处理的机制是一样的，只不过前者关心返回值，后者不关心返回值。可公用EventMgr来处理，通过引用类型的EventArgs来更新和返回。</p>
-<h3 id="4-Buff相互关系"><a href="#4-Buff相互关系" class="headerlink" title="4.Buff相互关系"></a>4.Buff相互关系</h3><p>-Buff 冲突:  即该BUFF生效时，已有的哪些Buff会失效，如一些清除负面状态的Buff<br>-Buff 免疫:     即该BUFF生效时，后面来的哪些BUFF不能生效，如BKB免疫眩晕<br>-Buff 叠加:  两种同类增益或减益BUFF同时生效时，按照某个规则进行BUFF效果重新计算生成</p>
+<h3 id="4-Buff相互关系"><a href="#4-Buff相互关系" class="headerlink" title="4.Buff相互关系"></a>4.Buff相互关系</h3><ul>
+<li>Buff 冲突:  即该BUFF生效时，已有的哪些Buff会失效，如一些清除负面状态的Buff</li>
+<li>Buff 免疫:     即该BUFF生效时，后面来的哪些BUFF不能生效，如BKB免疫眩晕</li>
+<li>Buff 叠加:  两种同类增益或减益BUFF同时生效时，按照某个规则进行BUFF效果重新计算生成</li>
+</ul>
 <p>Buff的冲突免疫关系实际上是Buff作用效果的一部分，但是一个可抽象和配置化的流程，在挂载Buff时统一处理。至于Buff叠加，在Buff B的Start节点中，判断是否有指定Buff A存在，如果存在，修正BuffB的效果(或移除已有BuffA)，是个特例流程，做到Buff脚本里面就行了。</p>
 <p>至此，我们通过属性维度和公式计算来避免了作用于同一个属性的Buff的顺序依赖，通过公用流程来处理Buff的免疫和冲突，仅针对Buff叠加这类少见的特殊作用进行特例化处理，这样最大程度的提升了Buff的扩展性，Buff可以独立实现，Buff的关系可通过配置表配置，新加一个Buff无需修改已有的Buff系统，对其它模块的影响也降到最小。</p>
 <h3 id="5-Buff生命周期"><a href="#5-Buff生命周期" class="headerlink" title="5.Buff生命周期"></a>5.Buff生命周期</h3><p>为了达成复用，我们会通过子Buff的概念来实现一些复杂的Buff，SkillA的BuffA，它维护自己的状态，并在条件满足时，产生伤害翻倍这个子Buff，父子Buff的生命周期关系大致有三种:</p>
