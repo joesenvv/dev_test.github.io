@@ -108,25 +108,25 @@
 
 
 
-  <meta name="description" content="本文是《深度探索C++对象模型》的读书笔记，主要根据自己的理解整理一下C++对象构造的实现细节以及其在实际编程中所带来的影响。">
-<meta name="keywords" content="c&#x2F;c++">
+  <meta name="description" content="go module 是 go1.11 引入的新概念，为 go  当前饱受诟病的 GOPATH 和依赖管理提供了更好的解决方案。在理解 go module 之前，先回顾下当前 Go 的项目结构和依赖管理都有什么问题: 1.GOPATH GOPATH一定程度上简化了项目构建，但是给了开发者过多的限制，你的项目必须位于 GOPATH 下，否则编译器找到它，想要使用你自己的项目组织结构，要么你需要为每个项">
+<meta name="keywords" content="go">
 <meta property="og:type" content="article">
-<meta property="og:title" content="C++ 构造语义">
-<meta property="og:url" content="http://wudaijun.com/2014/11/cpp-constructor/index.html">
+<meta property="og:title" content="go module 来了">
+<meta property="og:url" content="http://wudaijun.com/2018/10/go-mod-intro/index.html">
 <meta property="og:site_name" content="wudaijun&#39;s blog">
-<meta property="og:description" content="本文是《深度探索C++对象模型》的读书笔记，主要根据自己的理解整理一下C++对象构造的实现细节以及其在实际编程中所带来的影响。">
+<meta property="og:description" content="go module 是 go1.11 引入的新概念，为 go  当前饱受诟病的 GOPATH 和依赖管理提供了更好的解决方案。在理解 go module 之前，先回顾下当前 Go 的项目结构和依赖管理都有什么问题: 1.GOPATH GOPATH一定程度上简化了项目构建，但是给了开发者过多的限制，你的项目必须位于 GOPATH 下，否则编译器找到它，想要使用你自己的项目组织结构，要么你需要为每个项">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-08-02T05:52:15.000Z">
+<meta property="og:updated_time" content="2018-10-26T02:39:37.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="C++ 构造语义">
-<meta name="twitter:description" content="本文是《深度探索C++对象模型》的读书笔记，主要根据自己的理解整理一下C++对象构造的实现细节以及其在实际编程中所带来的影响。">
+<meta name="twitter:title" content="go module 来了">
+<meta name="twitter:description" content="go module 是 go1.11 引入的新概念，为 go  当前饱受诟病的 GOPATH 和依赖管理提供了更好的解决方案。在理解 go module 之前，先回顾下当前 Go 的项目结构和依赖管理都有什么问题: 1.GOPATH GOPATH一定程度上简化了项目构建，但是给了开发者过多的限制，你的项目必须位于 GOPATH 下，否则编译器找到它，想要使用你自己的项目组织结构，要么你需要为每个项">
 
 
 
 
 
 
-  <link rel="canonical" href="http://wudaijun.com/2014/11/cpp-constructor/"/>
+  <link rel="canonical" href="http://wudaijun.com/2018/10/go-mod-intro/"/>
 
 
 
@@ -136,7 +136,7 @@
   };
 </script>
 
-  <title>C++ 构造语义 | wudaijun's blog</title>
+  <title>go module 来了 | wudaijun's blog</title>
   
 
 
@@ -340,7 +340,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://wudaijun.com/2014/11/cpp-constructor/">
+    <link itemprop="mainEntityOfPage" href="http://wudaijun.com/2018/10/go-mod-intro/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="wudaijun">
@@ -357,7 +357,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">C++ 构造语义
+          <h1 class="post-title" itemprop="name headline">go module 来了
               
             
           </h1>
@@ -382,7 +382,7 @@
                 
               
 
-              <time title="创建时间：2014-11-25 00:00:00" itemprop="dateCreated datePublished" datetime="2014-11-25T00:00:00+08:00">2014-11-25</time>
+              <time title="创建时间：2018-10-25 00:00:00" itemprop="dateCreated datePublished" datetime="2018-10-25T00:00:00+08:00">2018-10-25</time>
             
 
             
@@ -400,7 +400,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/c-c/" itemprop="url" rel="index"><span itemprop="name">c/c++</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a></span>
 
                 
                 
@@ -415,8 +415,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2014/11/cpp-constructor/#comments" itemprop="discussionUrl">
-                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2014/11/cpp-constructor/" itemprop="commentCount"></span>
+                <a href="/2018/10/go-mod-intro/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2018/10/go-mod-intro/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -444,68 +444,68 @@
       
 
       
-        <p>本文是《深度探索C++对象模型》的读书笔记，主要根据自己的理解整理一下C++对象构造的实现细节以及其在实际编程中所带来的影响。</p>
+        <p>go module 是 go1.11 引入的新概念，为 go  当前饱受诟病的 GOPATH 和依赖管理提供了更好的解决方案。在理解 go module 之前，先回顾下当前 Go 的项目结构和依赖管理都有什么问题:</p>
+<p>1.GOPATH</p>
+<p>GOPATH一定程度上简化了项目构建，但是给了开发者过多的限制，你的项目必须位于 GOPATH 下，否则编译器找到它，想要使用你自己的项目组织结构，要么你需要为每个项目设置一个 GOPATH，要么使用软链接来实现。大多数 go 新手都会纠结于应该使用一个 GOPATH 还是为每个项目创建一个 GOPATH，还是为所有依赖创建一个 GOPATH，受到一堆限制，却并没有得到便利。</p>
 <a id="more"></a>
-<h2 id="一-构造函数"><a href="#一-构造函数" class="headerlink" title="一. 构造函数"></a>一. 构造函数</h2><p>C++95标准对构造函数如下描述：</p>
+<p>2.依赖管理</p>
+<p>依赖管理？对不起，go 没有依赖管理，go1.11之前所有的<a href="https://github.com/golang/go/wiki/PackageManagementTools" target="_blank" rel="noopener">依赖管理方案</a>都是基于 Go 没有依赖管理这个事实之上的一些变通方案(tricks)。据说这个起因要追溯到 Google 内部，其使用巨大的单个仓库来维护项目代码，没有第三方仓库，也就不需要版本控制。go1.5开始关于依赖管理的最大变化就是 vendor 机制，它鼓励你将所有的依赖作为项目代码的一部分去管理，其实也是 “Google 风格” 的延续，只不过你可以选择使用某个版本的依赖，然后将其”冻结”到项目的 vendor 目录下，这一方面保证了可重现的构建，另一方面，解决了不同项目使用同一个依赖的不同版本的问题，但单片仓库和版本管理的问题仍然存在，依赖缺乏明确的版本定义，如果没有指定要使用的依赖版本，那么将是依赖这个 branch，然后再通过 hash 来校验，如果版本冲突了，你很难定位版本，并且解决冲突。</p>
+<h4 id="go-module-初试"><a href="#go-module-初试" class="headerlink" title="go module 初试"></a>go module 初试</h4><p>一个 module 是指一组相关的 package，通常对应于一个 git 仓库，module 是代码交换和版本管理的基本单位，即 module 的依赖也是一个 module，go 命令现在直接支持 module 相关操作。由于现在还是试验阶段，go1.11 通过一个临时的环境变量 GO111MODULE 来控制启动和停用go module，该环境变量有三个值:</p>
+<pre><code>auto: 默认值，即在 GOPATH 目录下，使用传统的 GOPATH 和 vendor 来查找依赖，在非 GOPATH 下则使用 go module 
+on: module-aware mode，在任何目录都启用 go module，使用 go module 来控制依赖管理，在这种模式下，GOPATH 不再作为构建时的imports路径，只是作为存放下载的依赖($GOPATH/pkg/mod)和安装二进制文件的目录($GOPATH/bin，如果 GOBIN 未设置)
+off: GOPATH mode，停用 go module，和 go1.11之前一样，使用 GOPATH 和 vendor 来定位依赖，并使用 dep 之类的依赖版本管理工具来冻结依赖
+</code></pre><p>在介绍<code>go mod</code>命令前，我们先简单看下 go module 长啥样。假设我们设置<code>GO111MODULE=on</code>，现在开始对 GOPATH/src/ngs 库(之前由 dep 管理依赖)进行移植。</p>
+<p>执行 <code>go mod init ngs</code>，会在 ngs 根目录下生成一个 go.mod 文件，该文件和 dep 的 Gopkg.toml 文件一样，用于记录当前module所依赖的版本，对新项目而言，只会生成一行<code>module packagename</code>，如果是已有项目，go module 会自动从 Gopkg.toml 等已有的依赖版本信息中导入生成依赖版本信息，比如以下是项目的 Gopkg.toml 文件内容:</p>
+<pre><code>[[constraint]]
+  branch = &quot;master&quot;
+  name = &quot;github.com/yuin/gopher-lua&quot;
+
+[[constraint]]
+  name = &quot;google.golang.org/grpc&quot;
+  version = &quot;1.12.2&quot;
+
+[[constraint]]
+  branch = &quot;v2&quot;
+  name = &quot;gopkg.in/mgo.v2&quot;
+</code></pre><p>对应生成的 go.mod 为:</p>
+<pre><code>module ngs
+
+require (
+    github.com/yuin/gopher-lua v0.0.0-20180611022520-ca850f594eaa
+    google.golang.org/grpc v1.12.2
+    gopkg.in/mgo.v2 v2.0.0-20160818020120-3f83fa500528
+)
+</code></pre><p>注意，go.mod 中每个依赖都有严格的版本信息，这也是不同于之前 dep 等工具的地方，比如在 Gopkg.toml 中， gopher-lua 使用的 master 分支，go.mod 中，则会为依赖自动生成一个伪版本号<code>v0.0.0-20180611022520-ca850f594eaa</code>，你可以通过命令来手动升级它。这种自动冻结的特性不仅保证了可重现的构建，并且版本冲突的显式清晰的，你可以很直观地在 go.md 中看到冲突的原因，那个版本更新或者更稳定。</p>
 <blockquote>
-<p>对于 class X，如果没有任何user-declared constructor，那么会有一个default constructor被<strong>隐式声明</strong>出来…..一个被隐式声明出来的 default constructor 将是一个<strong>trivial(浅薄无能的，没啥用的) constructor</strong> ……</p>
+<blockquote>
+<p>go module 使用<a href="https://semver.org/lang/zh-CN/" target="_blank" rel="noopener">语义化版本(semantic versions)</a>标准来作为描述依赖版本的格式，这样版号可以通过直接比较来决定那个版本更新。版号通常通过 git tag 来标注。对于没有通过 tag 打版本号的提交，go module 使用伪版本号(pseudo-version) 来标记，伪版号的格式为 [之前最近一次的版本号]-[提交时间]-[提交哈希值]，比如 v0.0.0-20180611022520-ca850f594eaa，这样伪版本号也可以用于比较，伪版本号不需要手动输入，会由 go module 在冻结版本时自动生成。</p>
 </blockquote>
-<p>上面的话摘自《深度探索C++对象模型》P40，由于其省略了其中c++标准的部分内容，因此很容易造成误解：</p>
-<p>编译器<strong>隐式生成</strong>的构造函数都是 trivial constructor …..</p>
-<p>事实上，描述中提到 default constructor 被隐式声明出来（满足语法需要），而该构造函数是否被编译器合成（实现或定义），取决于<strong>编译器是否需要在构造函数中做些额外工作</strong>，一个没有被合成的 default constructor 被视为 trivial constructor(这也是c++标准原话的意思)，而当编译器在需要时合成了构造函数，那么该类构造函数将被视为 nontrivial。</p>
-<p>另外，一个定义了 user-decalred constructor(用户定义的任何构造函数) 的类被视为具有 nontrivial constructor。</p>
-<p>下面将着重讨论编译器隐式声明的构造函数在哪种情况下需要被合成(nontrivial)，哪种情况下无需被合成(trivial)：</p>
-<p>考虑下面这个类：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">class A</span><br><span class="line">&#123;</span><br><span class="line">private:</span><br><span class="line">	int _ivalue;</span><br><span class="line">	float _fvalue;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>对于类A来说，编译器将为其隐式声明的默认构造函数被视为trivial。因为编译器无需在其声明的构造函数中，对A类对象进行任何额外处理。注意，编译器生成的默认构造函数不会对 _ivalue 和 _fvalue 进行初始化。因此在这种情况下，编译器隐式生成的默认构造函数可有可无，视之为”trivial”。</p>
-<p>而对于如下四种情况，编译器隐式生成的默认构造函数(以下简称”隐式构造函数”)是 nontrivial default constructor ：</p>
-<h4 id="a-类中有-“带-nontrivial-default-constructor”-的对象成员"><a href="#a-类中有-“带-nontrivial-default-constructor”-的对象成员" class="headerlink" title="a. 类中有 “带 nontrivial default constructor” 的对象成员"></a>a. 类中有 “带 nontrivial default constructor” 的对象成员</h4><p>注意，这里的notrivial default constructor包括<strong>用户定义的任何构造函数</strong>或者<strong>编译器生成的notrivial构造函数</strong>。这实际上是一个递归定义，当类X中有具备notrivial default constructor的对象成员Y _y时，X的隐式构造函数需要调用Y的默认构造函数完成对成员_y的构造。如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">class B</span><br><span class="line">&#123;</span><br><span class="line">private:</span><br><span class="line">	A _a;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">class C</span><br><span class="line">&#123;</span><br><span class="line">private:</span><br><span class="line">	std::string _str;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>我们说类B中的对象成员 A _a “不带default constructor”，因为它只有一个隐式生成的 trivial default constructor。因此B的隐式构造函数中，无需操心对成员_a的构造。因而实际上B的隐式构造函数也被视为trivial(无关紧要)。而对于类C，由于其对象成员类型string具备用户(库作者)声明的默认构造函数，因此string的构造函数是nontrivial，所以编译器在为C合成的默认构造函数中，需要调用string的默认构造函数来为_str初始化，此时C的构造函数便不再是”无关紧要”的，被视为 nontrivial。</p>
-<h4 id="b-类继承于-“带-nontrivial-default-constructor”-的基类"><a href="#b-类继承于-“带-nontrivial-default-constructor”-的基类" class="headerlink" title="b. 类继承于 “带 nontrivial default constructor” 的基类"></a>b. 类继承于 “带 nontrivial default constructor” 的基类</h4><p>情形b和情形a类似：当类具有 “带 nontrivial default constructor”的基类时，编译器隐式生成的默认构造函数需要调用基类的默认构造函数确保基类的正确初始化。此时该类构造函数视为nontrivial。</p>
-<h4 id="c-类中有虚函数-或继承体系中有虚函数"><a href="#c-类中有虚函数-或继承体系中有虚函数" class="headerlink" title="c. 类中有虚函数(或继承体系中有虚函数)"></a>c. 类中有虚函数(或继承体系中有虚函数)</h4><p>在这种情况下，编译器生成的隐式构造函数需要完成对虚函数表vtable的构造，并且将vtable的指针安插到对象中(通常是头四个字节)。此时的隐式构造函数自然是必不可少(nontrivial)。</p>
-<h4 id="d-类的继承体系中具有虚基类"><a href="#d-类的继承体系中具有虚基类" class="headerlink" title="d. 类的继承体系中具有虚基类"></a>d. 类的继承体系中具有虚基类</h4><p>和情形c一样，编译器需要在合成的构造函数中，对虚基类进行处理(处理方式和虚函数类似，通过一个指针来指向虚基类，以保证虚基类在其继承体系中，只有一份内容)，这样才能保证程序能在运行中正确存取虚基类数据。被视为nontrivial。</p>
-<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>编译器隐式声明的默认构造函数，是 trivial or nontrivial，取决于编译器是否需要在构造函数中做一些额外的处理，主要包括对象成员和基类的初始化(取决于对象成员或基类有无nontrivial default constructor)，以及对虚函数和虚基类的处理(取决于在其继承体系中是否有虚函数或虚基类)。这些工作使隐式构造函数不再是可有可无。</p>
-<p>不存在以上四种情况并且没有用户定义的任何构造函数时，隐式构造函数也被称作 implicit trivial default constructors。这类构造函数实际上并不会被编译器合成出来。这也是对 trivial 和 nontrivial 的直观理解。</p>
-<p>而实际上，即使你定义了自己的构造函数，如果类中满足以上四种情形之一，编译器也会将你的构造函数展开，将必要的处理(如vtable的构造)植入到你的构造函数中(一般是你的构造代码之前)。不过仍然请注意，一旦你定义了自己的构造函数，哪怕该函数什么也不做，该类也将被视为具备 nontrivial constrcutor。</p>
-<h2 id="二-复制构造函数"><a href="#二-复制构造函数" class="headerlink" title="二. 复制构造函数"></a>二. 复制构造函数</h2><p>就像 default constructor 一样，C++ Standard 上说，如果 class 没有声明一个 copy constructor，就会有隐式的声明(implicitly declared)或隐式的定义(implicitly defined)出现，和以前一样，C++ Standard 把 copy constructor 区分为 trivial 和 nontrivial 两种，只有 nontrivial 的实例才会被合成于程序之中。决定一个 copy constructor 是否为 trivial 的标准在于 class 是否展现出所谓的 “bitwise copy semantics(按位拷贝语义)”。</p>
-<p>“按位拷贝语义”是指该类对象之间的拷贝构造，可以通过简单的”位拷贝”(memcpy)来完成，并且与该对象拷贝的原本语义一致。例如 上面的类A，它便具有按位拷贝语义。因此它的拷贝构造函数也是 trivial copy constructor。这样的拷贝构造函数不会被编译器合成到程序中。直接将其作为内存块拷贝即可(类似于 int double 之类的基本类型)。</p>
-<p>那么类何时不具有按位拷贝语义？ 和构造函数一样，当编译器声明的拷贝构造函数需要替程序做一些事情时，视为nontrivial。具有也有如下四种情况：</p>
-<ol>
-<li>类中有 “带 nontrivial copy constructor” 的对象成员</li>
-<li>类继承于 “带 nontrivial copy constructor” 的基类</li>
-<li>类中有虚函数(或继承体系中有虚函数)</li>
-<li>类的继承体系中具有虚基类</li>
-</ol>
-<p>对于1，2，复制构造函数需要通过调用基类或对象成员的 nontrivial 拷贝构造函数来保证它们的正确拷贝。</p>
-<p>而对于3，考虑如下情形：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">// class Derive public派生于 class Base</span><br><span class="line">Derive d;</span><br><span class="line">Derive d2 = d;</span><br><span class="line">Base b = d; // 发生切割(sliced)行为</span><br></pre></td></tr></table></figure>
-<p>对于d2对象，编译器使用位拷贝并无问题(假设Derive并不存在1，2，4所述情况)，因为d和d2的虚函数表均来自于Derive。而对于<code>Base b = d;</code>编译器需要保证对象b的虚函数表为Base的虚函数表，而不是从对象d直接位拷贝过来的Derive类的虚函数表。否则在通过b调用Derive特有而基类Base没有的虚函数时，会发生崩溃(因为Base的虚函数表不含该函数)。因此对于有虚函数的类，编译器必须对该类的虚函数表”负责”，保证其正确初始化。</p>
-<p>对于4，和情况3一样，编译器需要确保被构造的对象指向虚基类的指针(virtual base class point)得到正确初始化。</p>
-<p>当类不满足以上四种情况时，我们说它的copy constructor为trivial。编译器不会合成trivial copy constrcutor到程序中。在拷贝对象时，执行简单的内存块拷贝。</p>
-<h2 id="三-trivial的一些扩展"><a href="#三-trivial的一些扩展" class="headerlink" title="三. trivial的一些扩展"></a>三. trivial的一些扩展</h2><p>在std中，提供了对某个类各个trivial属性的判别。如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#include &lt;iostream&gt;</span><br><span class="line"></span><br><span class="line">class A</span><br><span class="line">&#123;</span><br><span class="line">public:</span><br><span class="line">    A()</span><br><span class="line">    &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">private:</span><br><span class="line">    int _i;</span><br><span class="line">    char* _str;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">class B : public A</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">private:</span><br><span class="line">    double _d;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">	// 0 A 有 user-declared constructor</span><br><span class="line">    std::cout &lt;&lt; std::is_trivially_constructible&lt;A&gt;::value &lt;&lt; std::endl; </span><br><span class="line">	// 1 A 没有 user-declared copy constructor 并且不含abcd情形       </span><br><span class="line">    std::cout &lt;&lt; std::is_trivially_copy_constructible&lt;A&gt;::value &lt;&lt; std::endl;   </span><br><span class="line"></span><br><span class="line">	// 0 B 需要调用A::A() 完成对基类的构造</span><br><span class="line">    std::cout &lt;&lt; std::is_trivially_constructible&lt;B&gt;::value &lt;&lt; std::endl;</span><br><span class="line">	// 1 B 没有 user-declared copy constructor 并且基类 A 没有 nontrivial copy constructor        </span><br><span class="line">    std::cout &lt;&lt; std::is_trivially_copy_constructible&lt;B&gt;::value &lt;&lt; std::endl;   </span><br><span class="line">    </span><br><span class="line">    std::cout &lt;&lt; std::is_trivial&lt;A&gt;::value &lt;&lt; std::endl;	// 0</span><br><span class="line">    std::cout &lt;&lt; std::is_trivial&lt;B&gt;::value &lt;&lt; std::endl;    // 0</span><br><span class="line"></span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>std::is_<em>*</em>是c++11引入的关于类型特性(type_traits)的一些列模板，它们可以在编译器就获得有关类型的特性信息。也就是说：</p>
-<pre><code>std::cout &lt;&lt; std::is_trivial&lt;A&gt;::value &lt;&lt; std::endl;
-</code></pre><p>在运行时相当于：</p>
-<pre><code>std::cout &lt;&lt; 1 &lt;&lt; std::endl;
-</code></pre><p>这种编译期获得结果的特性让我们可以结合 static_assert 完成更多的事情。如：</p>
-<pre><code>static_assert(std::is_trivially_constructible&lt;A&gt;::value, &quot;A is not pod type&quot;);
-</code></pre><p>那么如果A不具备 trivial constructor，那么我们可以在程序编译期得到一个编译错误：A is not pod type</p>
-<p>std::is_trivial判断一个类型是否为trivial类型。C++标准把trivial类型定义如下： </p>
+</blockquote>
+<p>现在我们的 ngs 已经成为了一个 go module，现在我们为其添加一个依赖: <code>go get github.com/gorilla/websocket@v1.3.0</code>，可以看到 go.mod 中多出一行: <code>github.com/gorilla/websocket v1.3.0</code>，但 GOPATH 和 vendor 下都没有看到 websocket，其被下载到了 <code>$GOPATH/pkg/mod/github.com/gorilla/websocket@1.3.0</code>目录，在 module-aware mode 下，<code>$GOPATH/pkg/mod</code> 目录会作为依赖被下载后的缓存目录，这里的依赖会将版本作为路径的一部分(与之前依赖管理本质区别)。我们可以以下方式对其进行升级/维护:</p>
+<pre><code>go get -u 将会升级到最新的次要版本或者修订版本(x.y.z, z是修订版本号， y是次要版本号)
+go get -u=patch 将会升级到最新的修订版本
+go get package@version 将会升级到指定的版本号version
+</code></pre><p>当然，我们这里在代码中并没有用到 websocket，可以运行 <code>go mod tidy</code> 来新增被漏掉的，或者删除多余的依赖，运行之后 go.mod 恢复如初。</p>
+<p>可以看到，在 go module 模式下，我们不再需要 vendor 目录来保证可重现的构建，而是可以通过一个 go.mod 来基于每个依赖的精确管理号，并通过<code>go get</code> 等命令即可管理依赖升级/降级等。当然，如果你仍然想保留 vendor 目录，可以通过 <code>go mod vendor</code> 命令将项目用到的依赖拷贝到 vendor 目录下(为了保证兼容性，vendor 目录下的依赖目录名是不包含版本号的)。除了 go.mod 外，go module 还会生成一个 go.sum 来记录每个依赖版本的哈希值，用于校验版本正确性。通常情况下，你不需要手动编辑 go.mod，通过 <code>go get</code>，<code>go mod</code> 等命令来完成依赖管理的同时，go.mod 也会自动更新。</p>
+<p>以下是 go module 相关的一些命令:</p>
+<pre><code>go mod init: 初始化 go module
+go mod download: 下载 go.mod 中的依赖到本地 Cache ($GOPATH/pkg/mod 下)
+go mod vendor: 将项目依赖拷贝到 vendor 下
+go mod tidy: 相当于 dep ensure，增加缺失的依赖(module)，丢掉没用的依赖(module)
+go mod verify: 校验依赖
+go mod edit: 编辑依赖，通过命令行手动升级或获取依赖
+go list -m all: 列出当前项目(main module)的构建列表
+</code></pre><p>go 的任何构建命令都可以判断依赖缺失并决定是否需要添加到 go.mod，比如如果你在你的项目代码没有依赖redis，然后你在代码中加入<code>import &quot;github.com/go-redis/redis&quot;</code> ，然后直接执行go build，将会导致 redis 被发现为缺失依赖，被自动添加进 go.mod 中。你可以通过 <code>-mod</code> 构建选项来控制这一行为，该选项有如下几个值:</p>
 <ul>
-<li><p>没有 nontrivial constructor</p>
-</li>
-<li><p>没有 nontrivial copy constructor </p>
-</li>
-<li><p>没有 nontrivial move constructor</p>
-</li>
-<li><p>没有 nontrivial assignment operator </p>
-</li>
-<li><p>有一个 trivial destructor </p>
-</li>
+<li><code>-mod=readonly</code>: 构建过程中，如果发现需要更改 go.mod，将会构建失败，即 go.mod 在构建过程中为只读的。 注: <code>go get</code> 命令不受此限制，<code>go mod</code> 命令不接受 -mod 选项</li>
+<li><code>-mod=vendor</code>: go 命令假设所有的依赖都存放在 vendor 目录下，并且忽略 go.mod 中的依赖描述</li>
 </ul>
-<p>由于类A和类B均有 nontrivial constructor 因此它们都不是trivial类型。</p>
+<p>大概了解了 go module 之后，我们回顾它是如何解决我们前面提出的两个问题的:</p>
+<ol>
+<li>go module 通过 go.mod 来定位当前 module(也叫做 main module) 的 root path，即从当前执行命令的目录向上查找，直到找到go.mod，而不再通过 <code>$GOPATH/src</code> 来定位项目。</li>
+<li>go module 对每个依赖生成严格的版本号，并且将同一个依赖的不同版本以目录区分开来，以 $GOPATH/pkg/mod 作为不同 module 共享依赖的路径。</li>
+</ol>
+<p>现在 go module 已经有一些依赖版本管理的雏形了，离 <a href="http://wudaijun.com/2016/09/erlang-rebar3/">Erlang Rebar3</a> 这种成熟的依赖管理虽然还有一些距离，但确实实用性，易用性都要好很多。</p>
 
       
     </div>
@@ -526,7 +526,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/c-c/" rel="tag"># c/c++</a>
+            <a href="/tags/go/" rel="tag"># go</a>
           
         </div>
       
@@ -539,8 +539,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2014/11/ngserver-message-callback/" rel="next" title="NGServer 消息的注册与回调">
-                <i class="fa fa-chevron-left"></i> NGServer 消息的注册与回调
+              <a href="/2018/10/linux-cgroup/" rel="next" title="Linux CGroup 基础">
+                <i class="fa fa-chevron-left"></i> Linux CGroup 基础
               </a>
             
           </div>
@@ -548,10 +548,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2014/12/ngserver-playersession/" rel="prev" title="NGServer 加入PlayerSession">
-                NGServer 加入PlayerSession <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -790,7 +786,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-构造函数"><span class="nav-text">一. 构造函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#a-类中有-“带-nontrivial-default-constructor”-的对象成员"><span class="nav-text">a. 类中有 “带 nontrivial default constructor” 的对象成员</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#b-类继承于-“带-nontrivial-default-constructor”-的基类"><span class="nav-text">b. 类继承于 “带 nontrivial default constructor” 的基类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#c-类中有虚函数-或继承体系中有虚函数"><span class="nav-text">c. 类中有虚函数(或继承体系中有虚函数)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#d-类的继承体系中具有虚基类"><span class="nav-text">d. 类的继承体系中具有虚基类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结"><span class="nav-text">总结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-复制构造函数"><span class="nav-text">二. 复制构造函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-trivial的一些扩展"><span class="nav-text">三. trivial的一些扩展</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#go-module-初试"><span class="nav-text">go module 初试</span></a></li></ol></div>
             
 
           </div>
