@@ -119,7 +119,7 @@
 <meta property="og:image" content="http://wudaijun.com/assets/image/201811/scheduler-1-1.png">
 <meta property="og:image" content="http://wudaijun.com/assets/image/201811/scheduler-n-1.png">
 <meta property="og:image" content="http://wudaijun.com/assets/image/201811/scheduler-n-n.png">
-<meta property="og:updated_time" content="2018-12-17T08:48:17.000Z">
+<meta property="og:updated_time" content="2018-12-19T06:24:47.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="再谈调度">
 <meta name="twitter:description" content="调度的概念这里就不赘述了，调度本质上就是一个资源分配算法，本文谈谈调度的基础策略，常见模型，以及 Go 和 Erlang 的一些调度特性。 调度策略抢占 vs 协作从调度机制上来讲，调度可以分为抢占式和协作式。 非抢占方式是指一旦将调度资源(如 CPU)分配给某任务 后，便让该任务一直执行，直到该任务完成或阻塞或主动让出CPU控制权，非抢占调度又称为协作式调度，它实现简单，并且对共享资源的访问也更">
@@ -483,7 +483,7 @@
 <h2 id="现实中的调度器"><a href="#现实中的调度器" class="headerlink" title="现实中的调度器"></a>现实中的调度器</h2><p>就调度器结构而言，各个调度算法大同小异，各个调度算法的根本差异还是在调度策略上，基于设计目标，在复杂性，吞吐量，实时性之间去做取舍，这里我仍然想以 Erlang 和 Go来举例说明。</p>
 <p>基于Erlang的产生背景(通信领域)，Erlang 在设计之初就对实时性(低延迟)非常看重，为了达成软实时性，Erlang的调度必然是抢占式的，它通过给每个Erlang进程设定规约(Reduction)来作为一个进程的虚拟时间片，进程调用函数，BIF，GC，ETS操作，发送消息等，都会消耗规约，甚至用Erlang自带的用C写的正则表达式处理，也添加了扣除规约的代码，每个Erlang进程默认有2000规约，在Erlang的设计理念中，天下没有”免费”的操作，它重度依靠规约来衡量进程何时被换出。但理想和现实往往有差别，NIF的出现打破了这个定律，NIF是用户用C实现的可供Erlang调用的函数，它是不可被调度的，对此，Erlang打出了如下补丁:</p>
 <ol>
-<li>官方建议NIF不要超过1ms(为什么是1ms？1.05ms怎么办…)</li>
+<li>官方建议NIF不要超过1ms(相信开发者对自己写的代码心里有数…)</li>
 <li>在NIF中给Erlang虚拟机手动汇报当前执行时间，并手动记录上下文和恢复(抢占式变成了协作式，强制变成了自愿…)</li>
 <li>将NIF放到自己创建的OS线程中执行，通过消息的方式将结果返回到Erlang进程(走开，别脏了我的公平调度器)</li>
 <li>将NIF放到OTP为你准备的脏调度器(OTP R17引入，需要在启动时通过参数开启)中执行(好吧，我给你提供脏调度器)</li>
@@ -502,14 +502,16 @@
 <li>通过三个优先级队列(low/normal,high,max)来实现进程的优先级调度</li>
 <li>当调度器idle时，会自旋一段时间，如果没有新任务到达，则关闭该调度器(节能减排)</li>
 <li>除了Process外，Erlang还处理Port任务，Port是Erlang与外部通信(文件，网络，C等)的一种机制</li>
+<li>Erlang对网络IO进行了特别的优化(System Level Activities)，即将所有的套接字设置为非阻塞，然后通过epoll机制去轮询并唤醒调用进程，通过应用层的阻塞/唤醒模拟系统调用。</li>
 </ol>
-<p>反过来谈 Go，如果说 Erlang 为实时性殚精竭虑的话，那么Go则要实务得多，更加偏向于吞吐量和实用性，我之前谈过<a href="http://wudaijun.com/2018/01/go-scheduler/">Go GPM模型</a>，Go没有时间片或规约的概念，它的抢占也不是完全抢占的，它通过一个后台线程sysmon来监控并决定何时发起抢占，何时 GC 等，比如一个goroutine执行超过了10ms，sysmon则会向其发出抢占请求。抢占的方式也很简单，给goroutine打一个标记，goroutine在调用函数分配函数栈时会检查该标记，来决定当前G是否应该让出调度权，因此它没办法抢占死循环。可以看到，Go的调度模型实现相对比较简单，一方面可能调度器仍然还很年轻(STW的痛还历历在目)，另一方面Go的设计哲学就是简单(这里不是褒义)。如果要解释得再官方一些: Go 更看重吞吐量，而非实时性。</p>
+<p>反过来谈 Go，如果说 Erlang 为实时性殚精竭虑的话，那么Go则要实务得多，更加偏向于吞吐量和实用性，我之前谈过<a href="http://wudaijun.com/2018/01/go-scheduler/">Go GPM模型</a>，Go没有时间片或规约的概念，它的抢占也不是完全抢占的，它通过一个后台线程sysmon来监控并决定何时发起抢占，何时 GC 等，比如一个goroutine执行超过了10ms，sysmon则会向其发出抢占请求。抢占的方式也很简单，给goroutine打一个标记，goroutine在调用函数分配函数栈时会检查该标记，来决定当前G是否应该让出调度权，因此它没办法抢占死循环。可以看到，Go的调度模型实现相对比较简单，一方面可能调度器仍然还很年轻(STW的痛还历历在目)，另一方面Go的设计哲学就是简单。如果要解释得再官方一些: Go 更看重吞吐量，而非实时性。</p>
+<p>另外，由于Erlang和Go都是为服务器设计的语言，因此它们都是网络IO进行了优化，将所有套接字设置为 nonblock，通过轮询/唤醒来向应用层屏蔽系统调用，通过IO复用+应用层阻塞来避免调度器阻塞在系统调用上。</p>
 <h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>要理解一个调度器，需要结合其产生背景，设计目标，变更历史等，万丈高楼平地起，调度器这类复杂的系统，通常都是”First make it work, then measure, then optimize”，比如 Erlang 的 NIF，Go 的 STW 等，都在逐渐优化。</p>
 <p>实时性和吞吐量是不可兼得的，这已经在其它系统上得到了验证。实时系统通常实现都比较复杂，并且由于现代 OS 最多满足软实时特性，因此应用层的调度也最多实现软实时。严格意义上的硬实时系统通常由特定领域的嵌入式系统实现。同时，也因为应用层的调度受更底层的OS调度的影响，要达到一个系统的整体最优，需要协调不同的调度层级，比如 Erlang 提供一个<code>+sbt</code>参数可以将调度器与 CPU 核心绑定，这样可以更好地利用 CPU 缓存和局部性，以提升整体性能。</p>
 <p>相关资料:</p>
 <ol>
 <li><a href="http://wudaijun.com/2018/01/go-scheduler/">Go 调度模型</a></li>
-<li><a href="http://os.51cto.com/art/201708/548270.htm" target="_blank" rel="noopener">Linux内核态抢占机制分析</a></li>
+<li><a href="https://blog.csdn.net/gatieme/article/details/51872618" target="_blank" rel="noopener">Linux用户抢占和内核抢占详解</a></li>
 <li><a href="http://erlang.org/euc/08/euc_smp.pdf" target="_blank" rel="noopener">Inside the Erlang VM</a></li>
 <li><a href="http://www.cnblogs.com/zhengsyao/p/how_erlang_does_scheduling_translation.html" target="_blank" rel="noopener">Erlang的调度原理(译文)</a></li>
 </ol>

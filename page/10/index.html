@@ -1850,7 +1850,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://wudaijun.com/2014/12/shared_ptr-reference/">
+    <link itemprop="mainEntityOfPage" href="http://wudaijun.com/2014/12/ngserver-playersession/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="wudaijun">
@@ -1869,8 +1869,8 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2014/12/shared_ptr-reference/" itemprop="url">
-                  shared_ptr的引用链
+                <a class="post-title-link" href="/2014/12/ngserver-playersession/" itemprop="url">
+                  NGServer 加入PlayerSession
                 </a>
               
             
@@ -1914,7 +1914,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/c-c/" itemprop="url" rel="index"><span itemprop="name">c/c++</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/gameserver/" itemprop="url" rel="index"><span itemprop="name">gameserver</span></a></span>
 
                 
                 
@@ -1929,8 +1929,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2014/12/shared_ptr-reference/#comments" itemprop="discussionUrl">
-                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2014/12/shared_ptr-reference/" itemprop="commentCount"></span>
+                <a href="/2014/12/ngserver-playersession/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2014/12/ngserver-playersession/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -1959,10 +1959,10 @@
 
       
         
-          <p>总结下几个使用shared_ptr需要注意的问题:</p>
+          <h2 id="PlayerSession类"><a href="#PlayerSession类" class="headerlink" title="PlayerSession类"></a>PlayerSession类</h2><p>在之前的网络底层设计中，Player和Session之间通过组合实现弱关联，但仍然有个诟病：Player类和Session类在网络连接到来时一并创建了。这样后面在做断线重连的时候，会有两个Player。而事实上LoginService只管登录认证，登录认证的时候并不需要创建Player类，因此可以延迟Player的创建，将其放在MapService中。而这之前LoginService的登录认证也需要用户的一些基本信息。基于这些，实现了PlayerSession类：</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2014/12/shared_ptr-reference/" rel="contents">
+            <a class="btn" href="/2014/12/ngserver-playersession/" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
