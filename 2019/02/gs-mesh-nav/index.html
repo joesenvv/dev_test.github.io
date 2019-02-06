@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.3.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/theme/favicon-100x100.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/theme/favicon-32x32.ico?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/theme/favicon-16x16.ico?v=6.3.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.3.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="本文简单讨论如何在服务端实现基于三角形网格的寻路算法。 地图表示1. 基于路点基于路点是最原始的寻路方案，比如要让你实现一个迷宫，你会很自然地想到用0代表通路，1代码障碍物，整个迷宫地图由0和1构成的点阵来表示。这就是基于路点，本质上是将地图上可以通过的位置(坐标状态)都记录下来。   图1 基于路点的地图   2. 基于网格基于网格是指对地图进行预处理，将地图边界拐点和障碍物外围拐点所形成的离散">
+<meta name="keywords" content="gameserver">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GS 中的 Mesh 寻路">
+<meta property="og:url" content="http://wudaijun.com/2019/02/gs-mesh-nav/index.html">
+<meta property="og:site_name" content="wudaijun&#39;s blog">
+<meta property="og:description" content="本文简单讨论如何在服务端实现基于三角形网格的寻路算法。 地图表示1. 基于路点基于路点是最原始的寻路方案，比如要让你实现一个迷宫，你会很自然地想到用0代表通路，1代码障碍物，整个迷宫地图由0和1构成的点阵来表示。这就是基于路点，本质上是将地图上可以通过的位置(坐标状态)都记录下来。   图1 基于路点的地图   2. 基于网格基于网格是指对地图进行预处理，将地图边界拐点和障碍物外围拐点所形成的离散">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://wudaijun.com/assets/image/201902/nav_point_1.jpeg">
+<meta property="og:image" content="http://wudaijun.com/assets/image/201902/nav_mesh_1.jpeg">
+<meta property="og:image" content="http://wudaijun.com/assets/image/201902/nav_point_2.jpeg">
+<meta property="og:image" content="http://wudaijun.com/assets/image/201902/nav_mesh_2.jpeg">
+<meta property="og:image" content="http://wudaijun.com/assets/image/201902/nav_point_3.jpeg">
+<meta property="og:image" content="http://wudaijun.com/assets/image/201902/nav_mesh_3.jpeg">
+<meta property="og:image" content="http://wudaijun.com/assets/image/201902/nav_mesh_quad_tree.jpg">
+<meta property="og:image" content="http://wudaijun.com/assets/image/201902/nav_mesh_demo.jpg">
+<meta property="og:image" content="http://wudaijun.com/assets/image/201902/nav_mesh_grid_path.jpg">
+<meta property="og:image" content="http://wudaijun.com/assets/image/201902/nav_mesh_line_path.jpg">
+<meta property="og:image" content="http://wudaijun.com/assets/image/201902/nav_mesh_line_path_1.jpg">
+<meta property="og:image" content="http://wudaijun.com/assets/image/201902/nav_mesh_line_path_2.jpg">
+<meta property="og:image" content="http://wudaijun.com/assets/image/201902/nav_mesh_line_path_3.jpg">
+<meta property="og:image" content="http://wudaijun.com/assets/image/201902/nav_mesh_line_path_4.jpg">
+<meta property="og:image" content="http://wudaijun.com/assets/image/201902/nav_mesh_line_path_5.jpg">
+<meta property="og:image" content="http://wudaijun.com/assets/image/201902/nav_mesh_line_path_6.jpg">
+<meta property="og:image" content="http://wudaijun.com/assets/image/201902/nav_mesh_line_path_7.jpg">
+<meta property="og:image" content="http://wudaijun.com/assets/image/201902/nav_mesh_line_path_8.jpg">
+<meta property="og:updated_time" content="2019-02-06T16:36:10.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="GS 中的 Mesh 寻路">
+<meta name="twitter:description" content="本文简单讨论如何在服务端实现基于三角形网格的寻路算法。 地图表示1. 基于路点基于路点是最原始的寻路方案，比如要让你实现一个迷宫，你会很自然地想到用0代表通路，1代码障碍物，整个迷宫地图由0和1构成的点阵来表示。这就是基于路点，本质上是将地图上可以通过的位置(坐标状态)都记录下来。   图1 基于路点的地图   2. 基于网格基于网格是指对地图进行预处理，将地图边界拐点和障碍物外围拐点所形成的离散">
+<meta name="twitter:image" content="http://wudaijun.com/assets/image/201902/nav_point_1.jpeg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://wudaijun.com/2019/02/gs-mesh-nav/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>GS 中的 Mesh 寻路 | wudaijun's blog</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">wudaijun's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Done is better than perfect</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://wudaijun.com/2019/02/gs-mesh-nav/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="wudaijun">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/assets/theme/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wudaijun's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">GS 中的 Mesh 寻路
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-02-07 00:00:00" itemprop="dateCreated datePublished" datetime="2019-02-07T00:00:00+08:00">2019-02-07</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/gameserver/" itemprop="url" rel="index"><span itemprop="name">gameserver</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/02/gs-mesh-nav/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2019/02/gs-mesh-nav/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文简单讨论如何在服务端实现基于三角形网格的寻路算法。</p>
+<h3 id="地图表示"><a href="#地图表示" class="headerlink" title="地图表示"></a>地图表示</h3><h4 id="1-基于路点"><a href="#1-基于路点" class="headerlink" title="1. 基于路点"></a>1. 基于路点</h4><p>基于路点是最原始的寻路方案，比如要让你实现一个迷宫，你会很自然地想到用0代表通路，1代码障碍物，整个迷宫地图由0和1构成的点阵来表示。这就是基于路点，本质上是将地图上可以通过的位置(坐标状态)都记录下来。</p>
+<p><img src="/assets/image/201902/nav_point_1.jpeg" alt=""></p>
+<center> 图1 基于路点的地图 </center>
+
+<h4 id="2-基于网格"><a href="#2-基于网格" class="headerlink" title="2. 基于网格"></a>2. 基于网格</h4><p>基于网格是指对地图进行预处理，将地图边界拐点和障碍物外围拐点所形成的离散点集合转换为一个由多边形(通常是三角形)构成的网格，然后去掉障碍物内部的多边形，剩下即为所有可达地点的网格，称作寻路网格。或者换个角度来讲，将地图上的障碍物和边界之外去掉，然后将剩下的部分通过多边形切割，得到寻路网格。</p>
+<p><img src="/assets/image/201902/nav_mesh_1.jpeg" alt=""></p>
+<center> 图2 基于网格的地图 </center>
+
+<p>以下简单对比基于路点和基于网格的寻路:</p>
+<ol>
+<li>基于路点要比基于网格存储更多的信息</li>
+</ol>
+<p><img src="/assets/image/201902/nav_point_2.jpeg" alt=""></p>
+<center> 图3 基于路点存储的数据量 </center>
+
+<p><img src="/assets/image/201902/nav_mesh_2.jpeg" alt=""></p>
+<center> 图4 基于路点存储的数据量 </center>
+
+<ol>
+<li>基于路点寻路，即使没有障碍物，也可能走折线</li>
+</ol>
+<p><img src="/assets/image/201902/nav_point_3.jpeg" alt=""></p>
+<center> 图5 基于路点寻路，从 A 点到 B 点 </center>
+
+<p><img src="/assets/image/201902/nav_mesh_3.jpeg" alt=""></p>
+<center> 图6 基于网格寻路，从 A 点到 B 点 </center>
+
+<ol>
+<li><p>基于网格可以更好地处理平滑转弯，角色大小等细节，如体型过大的角色可能无法通过某个小通道</p>
+</li>
+<li><p>基于网格可以通过网格保存更多的地表信息，如水中移动速度更慢，可用于寻路算法计算权重</p>
+</li>
+</ol>
+<h3 id="寻路算法"><a href="#寻路算法" class="headerlink" title="寻路算法"></a>寻路算法</h3><p>不管是基于网关还是基于路点，最终的地图都是图结构，只不过基于路点的图结构基本单位是点，而基于网格的基本单位是网格。基于路点的寻路比较简单，通常通过 A* 或 Dijkstra 算法即可直接算出。这里讨论基于三角形的网格寻路。</p>
+<h4 id="Step-1-导出网格数据"><a href="#Step-1-导出网格数据" class="headerlink" title="Step 1. 导出网格数据"></a>Step 1. 导出网格数据</h4><p>网格地图需要对地图进行预处理生成地图元数据，这里不讨论生成过程，假设我们已经得到了地图元数据，其中包含地图上所有的三角形信息。</p>
+<h4 id="Step-2-数据预处理"><a href="#Step-2-数据预处理" class="headerlink" title="Step 2. 数据预处理"></a>Step 2. 数据预处理</h4><p>预处理有两个目的:</p>
+<ol>
+<li>给定一个点，能快速找到其所在的三角形</li>
+<li>给定一个三角形，能快速索引到与其相连的其它三角形</li>
+</ol>
+<p>第一点可以通过将整个地图(假设为方形)组织成四叉树，起初所有的三角形都在根节点下，当节点下的三角形超过某个阈值时，将该节点进一步分为四个节点，各个节点保存其 Rect 区域内的所有三角形，那些在边界处的三角形(存在于多个 Rect 区域内)，则继续挂在根节点上，这样在查找点时，可通过该点是否在节点区域内不断递归缩小查找范围，找到所在三角形。</p>
+<p>如下图，我们将三角形网格地图分为了四部分，当我们要寻找 A 点所在的三角形时，只需遍历左上角黑线包围的三角形即可，在地图较大，四叉树层数较深时，能够极大优化三角形查找。</p>
+<p><img src="/assets/image/201902/nav_mesh_quad_tree.jpg" alt=""></p>
+<center> 图7 组织为四叉树的网络地图 </center>
+
+<p>现在来解决如何存储三角形相邻关系，如果将三角形看做点，本质上我们要做的其实是要保存一张图，保存图的方式通常有邻接矩阵，邻接图等，一个地图可能有上万网格，而每个三角形相邻的三角形通常是个位数，在这种情况下，用邻接表是个不错的选择，具体的实现不再罗列，本质上该部分预处理数据提供网格的通路信息。</p>
+<h4 id="Step-3-寻路"><a href="#Step-3-寻路" class="headerlink" title="Step 3. 寻路"></a>Step 3. 寻路</h4><p>到这里我们开始阐述寻路的具体过程，我们有了以上的预处理数据，并且给定地图上的两个点 A，B，求 A, B 之间的寻路路径:</p>
+<p><img src="/assets/image/201902/nav_mesh_demo.jpg" alt=""></p>
+<center> 图8 找 A 点到 B 点的寻路路径 </center>
+
+<p>我们将寻路算法分为如下步骤:</p>
+<h5 id="3-1-找到-A-B-两点所在的三角形"><a href="#3-1-找到-A-B-两点所在的三角形" class="headerlink" title="3.1 找到 A, B 两点所在的三角形"></a>3.1 找到 A, B 两点所在的三角形</h5><p>基于前面我们创建的四叉树，我们可以得到 A,B 两点所在的三角形</p>
+<h5 id="3-2-找到两个三角形之间的最短三角形路径"><a href="#3-2-找到两个三角形之间的最短三角形路径" class="headerlink" title="3.2 找到两个三角形之间的最短三角形路径"></a>3.2 找到两个三角形之间的最短三角形路径</h5><p>前面提到，如果将三角形看做基本单位，那么我们的网格图本质上就是个无向图，基于图的寻路算法主要有 A* 和 Dijkstra 算法，通常启发式的 A* 是更好地选择，我们可以用三角形的中心点(三条边中线的交点)到目标三角形的中心点的距离作为启发函数 h值。</p>
+<h5 id="3-3-将三角形路径转换为最短线路径"><a href="#3-3-将三角形路径转换为最短线路径" class="headerlink" title="3.3 将三角形路径转换为最短线路径"></a>3.3 将三角形路径转换为最短线路径</h5><p>假设我们现在得到了A，B 间的网格路径:</p>
+<p><img src="/assets/image/201902/nav_mesh_grid_path.jpg" alt=""></p>
+<center> 图9 A B 两点间的网格路径 </center>
+
+<p>现在我们要将其转换为角色最终行走的线路径，一种简单的算法是直接将沿途三角形的中心点联结起来，得到如上图所示的线路，但一来是路线存在不必要的折现，不是最短线路。二来返回给客户端的点过多，不适合作为服务器寻路结果。理想的最短路线如下图所示:</p>
+<p><img src="/assets/image/201902/nav_mesh_line_path.jpg" alt=""></p>
+<center> 图10 A B 两点间的最短线路径 </center>
+
+<p>其中只有三个拐点，我们只需要将这三个拐点返回给客户端即可(这里不讨论平滑转弯)。接下来我们来尝试将网格路径推演为最短线路径。</p>
+<p>首先我们知道，拐点必然出现在三角形路径上某两个三角形共同边的端点，因此我们尝试遍历三角形路径上所有的共同边，得到拐点。如上图所示，A，B 两点间一共有9条共同边，我们称这9条边为临边或者穿出边，我们以 A 点为起点，对第一条临边作两个向量:</p>
+<p><img src="/assets/image/201902/nav_mesh_line_path_1.jpg" alt=""></p>
+<p>我们将这两个向量通过向量叉乘的方式分为左向量和右向量，设为 vLeft1，vRight1，我们可以非正式地将 vLeft1 和 vRight 1之间的夹角看做角色的当前视野(之后我们用<code>{vLeft, vRight}</code>表示)。然后对第二条临边做向量，vLeft2 和 vRight2，发现新视野{vLeft2，vRight2}在当前视野{vLeft1，vRight1}之间，因此更新当前视野为{vLeft1, vRight2}:</p>
+<p><img src="/assets/image/201902/nav_mesh_line_path_2.jpg" alt=""></p>
+<p>同样，继续从出发点对第三条临边锻炼做向量得到新视野 {vLeft3, vRight3}，仍然在当前视野{vLeft1, vRight2}内，如此迭代:</p>
+<p><img src="/assets/image/201902/nav_mesh_line_path_3.jpg" alt=""></p>
+<p><img src="/assets/image/201902/nav_mesh_line_path_4.jpg" alt=""></p>
+<p>直到我们对第五条临边做向量得到的视野{vLeft4, vRight4}，发现vRight4不在当前视野{vLeft1, vRight4}内，即视野不是包含关系:</p>
+<p><img src="/assets/image/201902/nav_mesh_line_path_5.jpg" alt=""></p>
+<p>此时忽略第五条临边，当前视野不变，仍然是{vLeft1, vRight4}，继续对第六条临边作视野:</p>
+<p><img src="/assets/image/201902/nav_mesh_line_path_6.jpg" alt=""></p>
+<p>发现新的视野{vLeft6, vRight6}在当前视野{vLeft1, vRight4}左侧，没有重叠部分，即 vLeft6 和 vRight6 均在 vLeft1 的左侧，换句话说，我们无法从起点直接到达第6条临边，需要在某个点转弯，这个点就是拐点，也就是这里的 Left1 的非起点端点。此时记录该拐点 C，将当前起点从 A 点更新到 C 点，重新找到与 C 点不相邻的第一条临边，也就是整条路径的第5条临边，重新初始化当前视野，递归寻找从 C 点到达 B 的路径拐点。</p>
+<p><img src="/assets/image/201902/nav_mesh_line_path_7.jpg" alt=""></p>
+<p>最终得到最短线路径:</p>
+<p><img src="/assets/image/201902/nav_mesh_line_path_8.jpg" alt=""></p>
+<h3 id="其它细节"><a href="#其它细节" class="headerlink" title="其它细节"></a>其它细节</h3><p>到此我们就得到了基于拐点的寻路路径，本文只讨论了大概思路，实际上寻路还有很多有意思的问题值得探讨，如:</p>
+<ol>
+<li>如何在寻路时考虑到单位的半径？Tips: 在寻路算法找出三角形路径时，比较三角形的临边和角色大小</li>
+<li>如何在寻路时考虑到各种地形的权重？Tips: 将地形信息保存在三角形网格中，在 A* 算法的代价函数中考虑三角形权重</li>
+<li>如何动态更新寻路？Tips: 可选方案: a. 定时检查 b. 每 N 步检查一次 c. 有障碍物时触发相关寻路更新 d. 寻路局部更新优化</li>
+</ol>
+<p>由于懒且画工不好，本文图片均出自以下参考文章:</p>
+<ol>
+<li><a href="https://zhuanlan.zhihu.com/p/24112879" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/24112879</a></li>
+<li><a href="http://gad.qq.com/article/detail/10042" target="_blank" rel="noopener">http://gad.qq.com/article/detail/10042</a></li>
+</ol>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/gameserver/" rel="tag"># gameserver</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/gs-acid-consistency/" rel="next" title="GS 中的 ACID 一致性">
+                <i class="fa fa-chevron-left"></i> GS 中的 ACID 一致性
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/assets/theme/avatar.png"
+                alt="wudaijun" />
+            
+              <p class="site-author-name" itemprop="name">wudaijun</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">110</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">31</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#地图表示"><span class="nav-text">地图表示</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-基于路点"><span class="nav-text">1. 基于路点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-基于网格"><span class="nav-text">2. 基于网格</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#寻路算法"><span class="nav-text">寻路算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Step-1-导出网格数据"><span class="nav-text">Step 1. 导出网格数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Step-2-数据预处理"><span class="nav-text">Step 2. 数据预处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Step-3-寻路"><span class="nav-text">Step 3. 寻路</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-1-找到-A-B-两点所在的三角形"><span class="nav-text">3.1 找到 A, B 两点所在的三角形</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-2-找到两个三角形之间的最短三角形路径"><span class="nav-text">3.2 找到两个三角形之间的最短三角形路径</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-3-将三角形路径转换为最短线路径"><span class="nav-text">3.3 将三角形路径转换为最短线路径</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其它细节"><span class="nav-text">其它细节</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wudaijun</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动 v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://theme-next.org">NexT.Gemini</a> v6.3.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.3.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.3.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.3.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+  
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(function (item) {
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'kL7con6xeU88chDAVyUSDSHI-gzGzoHsz',
+        appKey: '9XLxirxDW8NUhHJdu460Uiba',
+        placeholder: 'Just go go',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
