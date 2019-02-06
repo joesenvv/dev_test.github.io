@@ -134,7 +134,7 @@
 <meta property="og:image" content="http://wudaijun.com/assets/image/201902/nav_mesh_line_path_6.jpg">
 <meta property="og:image" content="http://wudaijun.com/assets/image/201902/nav_mesh_line_path_7.jpg">
 <meta property="og:image" content="http://wudaijun.com/assets/image/201902/nav_mesh_line_path_8.jpg">
-<meta property="og:updated_time" content="2019-02-06T16:36:10.000Z">
+<meta property="og:updated_time" content="2019-02-06T18:44:11.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GS 中的 Mesh 寻路">
 <meta name="twitter:description" content="本文简单讨论如何在服务端实现基于三角形网格的寻路算法。 地图表示1. 基于路点基于路点是最原始的寻路方案，比如要让你实现一个迷宫，你会很自然地想到用0代表通路，1代码障碍物，整个迷宫地图由0和1构成的点阵来表示。这就是基于路点，本质上是将地图上可以通过的位置(坐标状态)都记录下来。   图1 基于路点的地图   2. 基于网格基于网格是指对地图进行预处理，将地图边界拐点和障碍物外围拐点所形成的离散">
@@ -539,8 +539,9 @@
 <p><img src="/assets/image/201902/nav_mesh_line_path_6.jpg" alt=""></p>
 <p>发现新的视野{vLeft6, vRight6}在当前视野{vLeft1, vRight4}左侧，没有重叠部分，即 vLeft6 和 vRight6 均在 vLeft1 的左侧，换句话说，我们无法从起点直接到达第6条临边，需要在某个点转弯，这个点就是拐点，也就是这里的 Left1 的非起点端点。此时记录该拐点 C，将当前起点从 A 点更新到 C 点，重新找到与 C 点不相邻的第一条临边，也就是整条路径的第5条临边，重新初始化当前视野，递归寻找从 C 点到达 B 的路径拐点。</p>
 <p><img src="/assets/image/201902/nav_mesh_line_path_7.jpg" alt=""></p>
-<p>最终得到最短线路径:</p>
+<p>如此递归，直到找到最后一个拐点P:</p>
 <p><img src="/assets/image/201902/nav_mesh_line_path_8.jpg" alt=""></p>
+<p>从 P 点的视野可以直接连到最后一个三角形，也就是与目标点B所在的三角形，由于 B 在 P 点的视野内，因此 P，B 可直接连线到达。如果 B 点不在 P 的视野内，则还需一个拐点，通常我们将目标点作为一条特殊的边来处理即可，即长度为0的边，这样可以用同样的拐点算法来计算。至此，我们就得到了 A, B 两点间的最短路径。</p>
 <h3 id="其它细节"><a href="#其它细节" class="headerlink" title="其它细节"></a>其它细节</h3><p>到此我们就得到了基于拐点的寻路路径，本文只讨论了大概思路，实际上寻路还有很多有意思的问题值得探讨，如:</p>
 <ol>
 <li>如何在寻路时考虑到单位的半径？Tips: 在寻路算法找出三角形路径时，比较三角形的临边和角色大小</li>
