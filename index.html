@@ -445,13 +445,15 @@
 
       
         
-          
-          本文谈谈在函数式编程中的延迟计算，惰性求值等技术及其应用。
-Racket本文将以 Racket 为例，以下是 Racket 的概要:
-
-更广泛的函数概念: 什么 if define + myfunc 等，统统都是函数
-前缀表达式: 同 Lisp, Scheme 等语言一样，Racket 使用前缀表达
-          ...
+          <p>本文谈谈在函数式编程中的延迟计算，惰性求值等技术及其应用。</p>
+<h2 id="Racket"><a href="#Racket" class="headerlink" title="Racket"></a>Racket</h2><p>本文将以 Racket 为例，以下是 Racket 的概要:</p>
+<ol>
+<li>更广泛的函数概念: 什么 if define + myfunc 等，统统都是函数</li>
+<li>前缀表达式: 同 Lisp, Scheme 等语言一样，Racket 使用前缀表达式，如(myfunc 1 2)，(+ 1 2 3)等</li>
+<li>支持可变性: 可修改变量值(不建议)，如 (set! x 2)，并且支持修改 Pair，Map 的指定元素</li>
+</ol>
+<p>其它关于 Racket 的具体语法和 API 细节请参考<a href="https://github.com/OnRoadZy/RacketGuideInChinese" target="_blank" rel="noopener">Raccket 中文文档</a>。</p>
+<h2 id="Delay-Evaluation"><a href="#Delay-Evaluation" class="headerlink" title="Delay Evaluation"></a>Delay Evaluation</h2><p>Delay Evaluation 意为延迟计算，即表达式只在必要时才求值，而非被赋给某个变量时立即求值。</p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2019/02/lazy-evaluation/" rel="contents">
@@ -619,12 +621,8 @@ Racket本文将以 Racket 为例，以下是 Racket 的概要:
 
       
         
-          
-          本文简单讨论如何在服务端实现基于三角形网格的寻路算法。
-地图表示1. 基于路点基于路点是最原始的寻路方案，比如要让你实现一个迷宫，你会很自然地想到用0代表通路，1代码障碍物，整个迷宫地图由0和1构成的点阵来表示。这就是基于路点，本质上是将地图上可以通过的位置(坐标状态)都记录下来。
-
- 图1 基于路
-          ...
+          <p>本文简单讨论如何在服务端实现基于三角形网格的寻路算法。</p>
+<h3 id="地图表示"><a href="#地图表示" class="headerlink" title="地图表示"></a>地图表示</h3><h4 id="1-基于路点"><a href="#1-基于路点" class="headerlink" title="1. 基于路点"></a>1. 基于路点</h4><p>基于路点是最原始的寻路方案，比如要让你实现一个迷宫，你会很自然地想到用0代表通路，1代码障碍物，整个迷宫地图由0和1构成的点阵来表示。这就是基于路点，本质上是将地图上可以通过的位置(坐标状态)都记录下来。</p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2019/02/gs-mesh-nav/" rel="contents">

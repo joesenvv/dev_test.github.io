@@ -108,13 +108,13 @@
 
 
 
-  <meta name="description" content="本文简单讨论如何在服务端实现基于三角形网格的寻路算法。 地图表示1. 基于路点基于路点是最原始的寻路方案，比如要让你实现一个迷宫，你会很自然地想到用0代表通路，1代码障碍物，整个迷宫地图由0和1构成的点阵来表示。这就是基于路点，本质上是将地图上可以通过的位置(坐标状态)都记录下来。   图1 基于路点的地图   2. 基于网格基于网格是指对地图进行预处理，将地图边界拐点和障碍物外围拐点所形成的离散">
+  <meta name="description" content="本文简单讨论如何在服务端实现基于三角形网格的寻路算法。 地图表示1. 基于路点基于路点是最原始的寻路方案，比如要让你实现一个迷宫，你会很自然地想到用0代表通路，1代码障碍物，整个迷宫地图由0和1构成的点阵来表示。这就是基于路点，本质上是将地图上可以通过的位置(坐标状态)都记录下来。">
 <meta name="keywords" content="gameserver">
 <meta property="og:type" content="article">
 <meta property="og:title" content="GS 中的 Mesh 寻路">
 <meta property="og:url" content="http://wudaijun.com/2019/02/gs-mesh-nav/index.html">
 <meta property="og:site_name" content="wudaijun&#39;s blog">
-<meta property="og:description" content="本文简单讨论如何在服务端实现基于三角形网格的寻路算法。 地图表示1. 基于路点基于路点是最原始的寻路方案，比如要让你实现一个迷宫，你会很自然地想到用0代表通路，1代码障碍物，整个迷宫地图由0和1构成的点阵来表示。这就是基于路点，本质上是将地图上可以通过的位置(坐标状态)都记录下来。   图1 基于路点的地图   2. 基于网格基于网格是指对地图进行预处理，将地图边界拐点和障碍物外围拐点所形成的离散">
+<meta property="og:description" content="本文简单讨论如何在服务端实现基于三角形网格的寻路算法。 地图表示1. 基于路点基于路点是最原始的寻路方案，比如要让你实现一个迷宫，你会很自然地想到用0代表通路，1代码障碍物，整个迷宫地图由0和1构成的点阵来表示。这就是基于路点，本质上是将地图上可以通过的位置(坐标状态)都记录下来。">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://wudaijun.com/assets/image/201902/nav_point_1.jpeg">
 <meta property="og:image" content="http://wudaijun.com/assets/image/201902/nav_mesh_1.jpeg">
@@ -134,10 +134,10 @@
 <meta property="og:image" content="http://wudaijun.com/assets/image/201902/nav_mesh_line_path_6.jpg">
 <meta property="og:image" content="http://wudaijun.com/assets/image/201902/nav_mesh_line_path_7.jpg">
 <meta property="og:image" content="http://wudaijun.com/assets/image/201902/nav_mesh_line_path_8.jpg">
-<meta property="og:updated_time" content="2019-02-06T18:44:11.000Z">
+<meta property="og:updated_time" content="2019-02-17T07:24:07.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GS 中的 Mesh 寻路">
-<meta name="twitter:description" content="本文简单讨论如何在服务端实现基于三角形网格的寻路算法。 地图表示1. 基于路点基于路点是最原始的寻路方案，比如要让你实现一个迷宫，你会很自然地想到用0代表通路，1代码障碍物，整个迷宫地图由0和1构成的点阵来表示。这就是基于路点，本质上是将地图上可以通过的位置(坐标状态)都记录下来。   图1 基于路点的地图   2. 基于网格基于网格是指对地图进行预处理，将地图边界拐点和障碍物外围拐点所形成的离散">
+<meta name="twitter:description" content="本文简单讨论如何在服务端实现基于三角形网格的寻路算法。 地图表示1. 基于路点基于路点是最原始的寻路方案，比如要让你实现一个迷宫，你会很自然地想到用0代表通路，1代码障碍物，整个迷宫地图由0和1构成的点阵来表示。这就是基于路点，本质上是将地图上可以通过的位置(坐标状态)都记录下来。">
 <meta name="twitter:image" content="http://wudaijun.com/assets/image/201902/nav_point_1.jpeg">
 
 
@@ -465,6 +465,7 @@
       
         <p>本文简单讨论如何在服务端实现基于三角形网格的寻路算法。</p>
 <h3 id="地图表示"><a href="#地图表示" class="headerlink" title="地图表示"></a>地图表示</h3><h4 id="1-基于路点"><a href="#1-基于路点" class="headerlink" title="1. 基于路点"></a>1. 基于路点</h4><p>基于路点是最原始的寻路方案，比如要让你实现一个迷宫，你会很自然地想到用0代表通路，1代码障碍物，整个迷宫地图由0和1构成的点阵来表示。这就是基于路点，本质上是将地图上可以通过的位置(坐标状态)都记录下来。</p>
+<a id="more"></a>
 <p><img src="/assets/image/201902/nav_point_1.jpeg" alt=""></p>
 <center> 图1 基于路点的地图 </center>
 

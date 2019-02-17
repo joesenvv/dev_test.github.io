@@ -116,7 +116,7 @@
 <meta property="og:site_name" content="wudaijun&#39;s blog">
 <meta property="og:description" content="本文谈谈在函数式编程中的延迟计算，惰性求值等技术及其应用。 Racket本文将以 Racket 为例，以下是 Racket 的概要:  更广泛的函数概念: 什么 if define + myfunc 等，统统都是函数 前缀表达式: 同 Lisp, Scheme 等语言一样，Racket 使用前缀表达式，如(myfunc 1 2)，(+ 1 2 3)等 支持可变性: 可修改变量值(不建议)，如 (s">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-02-17T07:13:02.000Z">
+<meta property="og:updated_time" content="2019-02-17T07:23:16.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="函数式中的延迟计算及惰性求值">
 <meta name="twitter:description" content="本文谈谈在函数式编程中的延迟计算，惰性求值等技术及其应用。 Racket本文将以 Racket 为例，以下是 Racket 的概要:  更广泛的函数概念: 什么 if define + myfunc 等，统统都是函数 前缀表达式: 同 Lisp, Scheme 等语言一样，Racket 使用前缀表达式，如(myfunc 1 2)，(+ 1 2 3)等 支持可变性: 可修改变量值(不建议)，如 (s">
@@ -453,6 +453,7 @@
 </ol>
 <p>其它关于 Racket 的具体语法和 API 细节请参考<a href="https://github.com/OnRoadZy/RacketGuideInChinese" target="_blank" rel="noopener">Raccket 中文文档</a>。</p>
 <h2 id="Delay-Evaluation"><a href="#Delay-Evaluation" class="headerlink" title="Delay Evaluation"></a>Delay Evaluation</h2><p>Delay Evaluation 意为延迟计算，即表达式只在必要时才求值，而非被赋给某个变量时立即求值。</p>
+<a id="more"></a>
 <p>要理解延迟计算，我们先看一个小例子:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">(define (my-if e1 e2 e3)</span><br><span class="line">    (if e1 e2 e3))</span><br><span class="line">    </span><br><span class="line">(define (factorial x)</span><br><span class="line">  (my-if (= x 0)</span><br><span class="line">         1</span><br><span class="line">         (* x (factorial (- x 1)))))</span><br></pre></td></tr></table></figure>
 <p>上面的代码实现了一个 <code>my-if</code> 函数，它的作用和 if 一样，以及一个计算阶乘的函数 factorial，只不过使用 <code>my-if</code> 替代了 if，如果你运行<code>(factorial 1)</code>，将陷入死循环，因为在对 <code>(factorial 1)</code> 求值时，将会对<code>(my-if e1 e2 e3)</code>求值，而在大多数语言包括 Racket 中，实参表达式是在被传入时即会被求值的，因为 e3 中递归调用了 factorial，然后又会对 <code>(factorial 0)</code> 求值，如此递归，并且没有终止，因为要对 factorial 函数求值完成后，<code>my-if</code> 表达式才能求值，才能终止递归。而 if 则不同，它只有在 x 不为 0 时才会递归对 <code>(factorial (- x 1))</code> 求值，不会形成无限递归。</p>
