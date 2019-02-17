@@ -118,7 +118,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="leanote://file/getImage?fileId=5ad172004a714562e4000001">
 <meta property="og:image" content="http://wudaijun.com/assets/image/201805/haskell-monad.png">
-<meta property="og:updated_time" content="2018-08-02T05:52:15.000Z">
+<meta property="og:updated_time" content="2019-02-17T07:12:41.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="理解函数式编程">
 <meta name="twitter:description" content="源自于我做的一次公司内部的技术分享，这是初稿。 PPT 就不贴了。 一. 序章: 可计算模型1936 阿隆佐·邱奇发表可计算函数的第一份精确定义，即Lambda演算(λ演算)。λ演算是一套从数学逻辑中发展，以变量绑定和替换的规则，来研究函数如何抽象化定义、函数如何被应用以及递归的形式系统。1936 艾伦·图灵提出图灵机设想，通过TAPE,HEAD,TABLE,STATE四个部分模拟人的纸笔运算19">
@@ -547,12 +547,11 @@ func countChange2(changes []int, money int) int {
     return dp[money]
 }
 </code></pre><p>可以看到，递归版比迭代版要容易理解得多，后者需要手动维护状态，而前者将状态隐藏到递归过程中了。类似的还有背包问题，都是理解递归很好的例子。</p>
-<h3 id="4-惰性求值-乱序求值"><a href="#4-惰性求值-乱序求值" class="headerlink" title="4. 惰性求值/乱序求值"></a>4. 惰性求值/乱序求值</h3><p>表达式不在它被绑定到变量之后就立即求值，而是在该值被取用的时候求值。</p>
+<h3 id="4-惰性求值-乱序求值"><a href="#4-惰性求值-乱序求值" class="headerlink" title="4. 惰性求值/乱序求值"></a>4. 惰性求值/乱序求值</h3><p>表达式不在它被绑定到变量之后就立即求值，而是在该值被取用的时候求值。<a href="http://wudaijun/2019/02/lazy-evaluation/" target="_blank" rel="noopener">这篇文章</a> 更详细地讨论了惰性求值。</p>
 <pre><code>A = dosomething1()
 B = dosomething2(A)
 C = dosomething3()    
-</code></pre><p>编译器很容易就可以推断出，A-&gt;B 和 C 可以乱序(无状态)或者并行(不可变语义)执行，并且对 A，B，C 的求值可以等到它们被引用的时候再计算，因此函数式本身是比较好优化的。</p>
-<p>Haskell 语言天生就是惰性的，你可以用<code>[1..]</code>表示1到无穷大的列表，只要有获取这个列表的第 N 个元素时，Haskell 才会去计算它:<code>[1..] !! 999</code>返回列表中下标为999的元素，这里会计算1-1000的列表，最终返回1000。另外个例子，如果 xs 是一个列表，doubleMe 会将 xs 中的元素*2，那么在Haskell中，doubleMe(doubleMe(doubleMe(xs)))只会遍历列表一次。</p>
+</code></pre><p>编译器很容易就可以推断出，A-&gt;B 和 C 可以乱序(无状态)或者并行(不可变语义)执行，并且对 A，B，C 的求值可以等到它们被引用的时候再计算，因此函数式本身的优化空间是比较大的。</p>
 <h3 id="5-柯里化-currying"><a href="#5-柯里化-currying" class="headerlink" title="5. 柯里化(currying)"></a>5. 柯里化(currying)</h3><p>柯里化:将一个多参数函数分解成多个单参数函数，然后将单参函数多层封装起来，每层函数都返回一个函数去接收下一个参数，这可以简化函数的多个参数。比如前面我们的尾递归版阶乘计算，可以写成:</p>
 <pre><code>fact2(Acc) -&gt;
     fun(N) -&gt; fact(Acc, N) end.
@@ -788,7 +787,7 @@ main = do
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">110</span>
+                    <span class="site-state-item-count">111</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
