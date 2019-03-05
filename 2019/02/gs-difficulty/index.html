@@ -116,7 +116,7 @@
 <meta property="og:site_name" content="wudaijun&#39;s blog">
 <meta property="og:description" content="不知不觉做游戏服务器四年多，期间有些同事跟我讲游戏服务器很简单，就是写点逻辑保存下玩家数据，也有同事觉得游戏服务器很复杂，需要学习的东西很多。本文谈谈我对这个问题的一些理解，或者是说，如果说游戏服务器开发很难，那么它究竟难在哪里？ 状态性游戏服务器是后端，做后端的，每天耳濡目染横向扩展，自动伸缩等炫酷的特性，要说放在以前，这些特性还是巨头的”专利”，我们想要自己实现这些东西挑战性是比较大的，但近几">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-03-01T03:12:52.000Z">
+<meta property="og:updated_time" content="2019-03-05T08:32:13.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="游戏服务器难在哪？">
 <meta name="twitter:description" content="不知不觉做游戏服务器四年多，期间有些同事跟我讲游戏服务器很简单，就是写点逻辑保存下玩家数据，也有同事觉得游戏服务器很复杂，需要学习的东西很多。本文谈谈我对这个问题的一些理解，或者是说，如果说游戏服务器开发很难，那么它究竟难在哪里？ 状态性游戏服务器是后端，做后端的，每天耳濡目染横向扩展，自动伸缩等炫酷的特性，要说放在以前，这些特性还是巨头的”专利”，我们想要自己实现这些东西挑战性是比较大的，但近几">
@@ -469,8 +469,8 @@
 <h3 id="数据状态性"><a href="#数据状态性" class="headerlink" title="数据状态性"></a>数据状态性</h3><p>数据状态性是指，游戏服务器本身是否包含数据状态。通常 GS 都是会先将数据更新到内存中，再定期存盘，这意味着服务器内存数据状态和数据库中的数据状态有一定的不一致窗口，这就是所谓的数据状态。</p>
 <p>从实现上来讲，无数据状态服务器的逻辑节点本身只是 Handler，真正的数据放到DB(或Redis缓存)等数据服务中，由于逻辑服务通常是不稳定的，而数据服务通常是相对稳定的，并且更容易做扩展或者主从，因此逻辑节点挂掉不会造成数据丢失或不一致，并且可以透明重启(暂不考虑连接状态)。</p>
 <p>那么游戏服务器能否做成无数据状态呢，假设我们将所有的玩家/地图等数据全部存放到外部数据服务如Redis中，每次逻辑处理的时候从Redis 读出数据处理然后再写回。来看看可能产生什么问题。</p>
-<h3 id="数据耦合"><a href="#数据耦合" class="headerlink" title="数据耦合"></a>数据耦合</h3><p>游戏服务器的特性之一就是数据关系灵活多变，比如一个使用道具的请求就可能涉及到道具，Buff，任务，活动等数据表的更新，即数据耦合重和单次请求相关数据量大，分表或者范式化只能针对前者做优化，而数据量大则会更多地影响服务器吞吐量以及数据服务的压力。</p>
-<h3 id="数据不一致"><a href="#数据不一致" class="headerlink" title="数据不一致"></a>数据不一致</h3><p>无状态服务器的处理模型无非两种:</p>
+<h4 id="数据耦合"><a href="#数据耦合" class="headerlink" title="数据耦合"></a>数据耦合</h4><p>游戏服务器的特性之一就是数据关系灵活多变，比如一个使用道具的请求就可能涉及到道具，Buff，任务，活动等数据表的更新，即数据耦合重和单次请求相关数据量大，分表或者范式化只能针对前者做优化，而数据量大则会更多地影响服务器吞吐量以及数据服务的压力。</p>
+<h4 id="数据不一致"><a href="#数据不一致" class="headerlink" title="数据不一致"></a>数据不一致</h4><p>无状态服务器的处理模型无非两种:</p>
 <ul>
 <li>串行模型: 所有的地图相关逻辑在一个线程中处理，优点是数据的一致性，缺点是串行瓶颈。这里其实还分同步和异步: 同步数据存取吞吐量不可接受，而异步数据存取写起来很痛苦，并且可能失去数据的一致性(依赖外部数据服务的一致性)。</li>
 <li>并行模型: 每个请求在单独的线程中执行，优点是并发性和可扩展性(包括节点级的扩展)，缺点是数据一致性。当多个线程在读写同一块数据的时候，可能出现数据不一致，写丢失等问题。</li>
@@ -789,7 +789,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#状态性"><span class="nav-text">状态性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#连接状态性"><span class="nav-text">连接状态性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据状态性"><span class="nav-text">数据状态性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据耦合"><span class="nav-text">数据耦合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据不一致"><span class="nav-text">数据不一致</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#架构设计"><span class="nav-text">架构设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#节点拓扑"><span class="nav-text">节点拓扑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#节点内部"><span class="nav-text">节点内部</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#快速迭代"><span class="nav-text">快速迭代</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-text">总结</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#状态性"><span class="nav-text">状态性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#连接状态性"><span class="nav-text">连接状态性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据状态性"><span class="nav-text">数据状态性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#数据耦合"><span class="nav-text">数据耦合</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据不一致"><span class="nav-text">数据不一致</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#架构设计"><span class="nav-text">架构设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#节点拓扑"><span class="nav-text">节点拓扑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#节点内部"><span class="nav-text">节点内部</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#快速迭代"><span class="nav-text">快速迭代</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-text">总结</span></a></li></ol></div>
             
 
           </div>
