@@ -116,7 +116,7 @@
 <meta property="og:site_name" content="wudaijun&#39;s blog">
 <meta property="og:description" content="前段时间又和同事讨论到 GS 中的 ACID 一致性，在这里唠叨几句。ACID 一致性即系统内部的数据一致性，而非分布式系统对外体现的一致性(CAP 中的 C)。 假设我们有一个业务逻辑叫做行军，在单线程下，其逻辑如下:">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-01-14T12:02:33.000Z">
+<meta property="og:updated_time" content="2019-03-20T15:41:16.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GS 中的 ACID 一致性">
 <meta name="twitter:description" content="前段时间又和同事讨论到 GS 中的 ACID 一致性，在这里唠叨几句。ACID 一致性即系统内部的数据一致性，而非分布式系统对外体现的一致性(CAP 中的 C)。 假设我们有一个业务逻辑叫做行军，在单线程下，其逻辑如下:">
@@ -585,11 +585,11 @@
 <p>Q1. 为什么不通过事务来保证一致性？</p>
 <p>在分布式中，常见的2PC，3PC都不能完全解决分布式一致性问题，2PC 其实和我们的执行流C有点类似，都是先询问各个参与者(Play, Map)是否可以提交(CanCommit)，再执行提交(DoCommit)。事实上，2PC，3PC 都不能完全解决分布式中的一致性问题，并且会引入更多的复杂度，如协调者单点，超时机制，锁等。随着业务逻辑变动频繁，并发实体不断增多，想要保证任何操作的事务性是非常困难且难以维护的。因此在游戏服务器中，通常我们认为可用性大于一致性，对于重要的逻辑，如充值，购买，可以做尝试逻辑回滚，但对于大部分的普通逻辑，我们是选择忍受这部分不一致性的。</p>
 <p>Q2. 为什么不用同步调用？</p>
-<p>为了保证<code>check_money</code>和<code>deduct_money</code>，以及<code>check_march</code>和<code>start_march</code>的不一致性，我们可以让 Map <code>check_march</code> 后，直接同步调用 Play 的<code>deduct_money</code>，然后根据扣除是否成功执行后续操作。这样就像写同步代码一样避免了不一致性。同步调用容易带来两个问题: 一是一定程度限制了并发能力，<br>二是容易形成 A Call B, B Call C, C Call A 这样的环形调用，最后 A,B,C 均永远阻塞。随着并发实体的增多和逻辑复杂度提升，这类错误很难避免和调试。</p>
+<p>为了保证<code>check_money</code>和<code>deduct_money</code>，以及<code>check_march</code>和<code>start_march</code>的不一致性，我们可以让 Map <code>check_march</code> 后，直接同步调用 Play 的<code>deduct_money</code>，然后根据扣除是否成功执行后续操作。这样就像写同步代码一样避免了不一致性。然而同步调用可能会带来更多的问题，我在<a href="http://wudaijun.com/2018/07/gs-async-programing/">GS中的异步编程</a>中有详细讨论。</p>
 <p>Q3. 关于异步超时?</p>
 <p>考虑这样一种情况，当执行流C Step3 <code>deduct_money</code>之后，Map 因为各种原因(网络波动，甚至节点挂掉)没有处理到 <code>start_march</code> 这条消息，然后整个执行流就断掉了，就没有下文了(这也是2PC 协调者单独存在的意义)。那么我们是否应该给异步调用一个超时，让发起者可以对对端无响应有所感知加以处理？我们目前的处理方式是，节点内的 Actor 交互无需超时机制，节点间的异步交互通过 gRPC 超时来做。我认为超时机制适用于 RPC 这种机制，而不适用于异步消息，因为异步消息本身就不包含调用上下文语义，同样的消息可能在不同的场景对超时有不同的需求(或者不需要超时)。</p>
 <p>Q4. 通过更细粒度的 Actor 化异步为同步？</p>
-<p>由于所有玩家都跑在 Play 中，Play 的任何外部 IO(网络IO，DB，与 Map 的交互等)都必须是非阻塞的，因此必然会产生很多异步逻辑，那么换一种思路: 如果我们进一步地将每个玩家都跑在一个单独的 Actor 中，这样玩家 Actor 就可以将一些原本 Play 需要异步的操作变成同步(阻塞一个玩家 Actor 是可接受的)，可以简化部分逻辑(比如登录状态机)，但也会带来玩家与玩家之间的异步交互，对于 SLG 这类玩家数据交互频繁的游戏来说，这未必是简化。通常我们做拆分都是基于性能瓶颈或扩展性，性能拆分要考虑到整体瓶颈，最好是基于实测，比如我们的例子中可能实际的瓶颈是 Map 而不是 Play，扩展性是指 Actor 之间的交互边界是否清晰，不清晰的交互边界会放大分布式的不一致性，环形阻塞等问题。</p>
+<p>由于所有玩家都跑在 Play 中，Play 的任何外部 IO(网络IO，DB，与 Map 的交互等)都必须是非阻塞的，因此必然会产生很多异步逻辑，那么换一种思路: 如果我们进一步地将每个玩家都跑在一个单独的 Actor 中，这样玩家 Actor 就可以将一些原本 Play 需要异步的操作变成同步(阻塞一个玩家 Actor 是可接受的)，可以简化部分逻辑(比如登录状态机)，但也会带来玩家与玩家之间的异步交互，对于 SLG 这类玩家数据交互频繁的游戏来说，这未必是简化。通常我们做拆分都是基于性能瓶颈或扩展性，性能拆分要考虑到整体瓶颈，最好是基于实测，比如我们的例子中可能实际的瓶颈是 Map 而不是 Play，扩展性是指 Actor 之间的交互边界是否清晰，不清晰的交互边界会放大系统的数据不一致性，环形阻塞等问题。</p>
 
       
     </div>
