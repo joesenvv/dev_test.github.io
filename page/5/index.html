@@ -336,6 +336,182 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://wudaijun.com/2016/12/unicode-in-erlang/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="wudaijun">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/assets/theme/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wudaijun's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2016/12/unicode-in-erlang/" itemprop="url">
+                  Erlang Unicode编码
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2016-12-17 00:00:00" itemprop="dateCreated datePublished" datetime="2016-12-17T00:00:00+08:00">2016-12-17</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/erlang/" itemprop="url" rel="index"><span itemprop="name">erlang</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2016/12/unicode-in-erlang/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2016/12/unicode-in-erlang/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="Unicode基础"><a href="#Unicode基础" class="headerlink" title="Unicode基础"></a>Unicode基础</h2><h3 id="编码方式"><a href="#编码方式" class="headerlink" title="编码方式"></a>编码方式</h3><p>定义字符集中每个字符的<strong>codepoint(数字编码)</strong></p>
+<ul>
+<li>ASCII: 不用多说，编码空间为7位(0-127)</li>
+<li><a href="https://zh.wikipedia.org/wiki/ISO/IEC_8859-1" target="_blank" rel="noopener">ISO 8859-1</a>: 又称Latin-1，以ASCII为基础，在空置的0xA0-0xFF的范围内，加入96个字母及符号。编码空间为8位(0-255)</li>
+<li>UCS-2: 16位编码空间 又称基本多文种平面或零平面</li>
+<li>UCS-4: 32位编码空间 在UCS-2基本上，加入辅助平面(目前有16个辅助平面，至少需要21位)</li>
+<li>注1: UCS(Universal Character Set, <a href="https://zh.wikipedia.org/wiki/%E9%80%9A%E7%94%A8%E5%AD%97%E7%AC%A6%E9%9B%86" target="_blank" rel="noopener">通用字符集</a>)</li>
+<li>注2: 以上四种编码都是向前兼容的，通常我们所说的Unicode编码指UCS-2和UCS-4，目前广泛运用的是UCS-2</li>
+</ul>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2016/12/unicode-in-erlang/" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://wudaijun.com/2016/11/docker-erlang/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1234,7 +1410,7 @@ start() -&gt;
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://wudaijun.com/2016/09/go-notes-1-datastructures/">
+    <link itemprop="mainEntityOfPage" href="http://wudaijun.com/2016/09/go-notes-3-object-oriented/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="wudaijun">
@@ -1253,8 +1429,8 @@ start() -&gt;
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2016/09/go-notes-1-datastructures/" itemprop="url">
-                  Go 笔记(1) 常用数据结构及实现
+                <a class="post-title-link" href="/2016/09/go-notes-3-object-oriented/" itemprop="url">
+                  Go 笔记(3) 面向对象和接口
                 </a>
               
             
@@ -1313,8 +1489,8 @@ start() -&gt;
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2016/09/go-notes-1-datastructures/#comments" itemprop="discussionUrl">
-                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2016/09/go-notes-1-datastructures/" itemprop="commentCount"></span>
+                <a href="/2016/09/go-notes-3-object-oriented/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2016/09/go-notes-3-object-oriented/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -1344,12 +1520,12 @@ start() -&gt;
       
         
           
-          学习一下go中常用的几种数据结构，结合源码了解其实现原理。
-一. 类型系统1. array123456789func f(x [2]int)&#123;	x[1] = 9&#125;func main()&#123;	a := [3]int&#123;1,2,3&#125;	b := [2]int&
+          探索Go类型扩展，类和继承，以及接口的用法和实现。
+面向对象1. 类型扩展12345678910package main	import "fmt"	// 定义了一个新类型:Integer，与int不能直接比较/赋值type Integer int	func (a *Integer) Add(b In
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2016/09/go-notes-1-datastructures/" rel="contents">
+            <a class="btn" href="/2016/09/go-notes-3-object-oriented/" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1578,7 +1754,7 @@ func myfunc(args ...interface{}){
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://wudaijun.com/2016/09/go-notes-3-object-oriented/">
+    <link itemprop="mainEntityOfPage" href="http://wudaijun.com/2016/09/go-notes-1-datastructures/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="wudaijun">
@@ -1597,8 +1773,8 @@ func myfunc(args ...interface{}){
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2016/09/go-notes-3-object-oriented/" itemprop="url">
-                  Go 笔记(3) 面向对象和接口
+                <a class="post-title-link" href="/2016/09/go-notes-1-datastructures/" itemprop="url">
+                  Go 笔记(1) 常用数据结构及实现
                 </a>
               
             
@@ -1657,8 +1833,8 @@ func myfunc(args ...interface{}){
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2016/09/go-notes-3-object-oriented/#comments" itemprop="discussionUrl">
-                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2016/09/go-notes-3-object-oriented/" itemprop="commentCount"></span>
+                <a href="/2016/09/go-notes-1-datastructures/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2016/09/go-notes-1-datastructures/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -1688,12 +1864,12 @@ func myfunc(args ...interface{}){
       
         
           
-          探索Go类型扩展，类和继承，以及接口的用法和实现。
-面向对象1. 类型扩展12345678910package main	import "fmt"	// 定义了一个新类型:Integer，与int不能直接比较/赋值type Integer int	func (a *Integer) Add(b In
+          学习一下go中常用的几种数据结构，结合源码了解其实现原理。
+一. 类型系统1. array123456789func f(x [2]int)&#123;	x[1] = 9&#125;func main()&#123;	a := [3]int&#123;1,2,3&#125;	b := [2]int&
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2016/09/go-notes-3-object-oriented/" rel="contents">
+            <a class="btn" href="/2016/09/go-notes-1-datastructures/" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1909,179 +2085,6 @@ func myfunc(args ...interface{}){
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://wudaijun.com/2016/08/gs-design-concept/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="wudaijun">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/assets/theme/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wudaijun's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2016/08/gs-design-concept/" itemprop="url">
-                  一些GS设计理念
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2016-08-15 00:00:00" itemprop="dateCreated datePublished" datetime="2016-08-15T00:00:00+08:00">2016-08-15</time>
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/gameserver/" itemprop="url" rel="index"><span itemprop="name">gameserver</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2016/08/gs-design-concept/#comments" itemprop="discussionUrl">
-                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2016/08/gs-design-concept/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>关于GS设计的一些体会，纯属个人理解。</p>
-<h2 id="一-系统结构"><a href="#一-系统结构" class="headerlink" title="一. 系统结构"></a>一. 系统结构</h2><p>解耦是在做系统设计时，最应该铭记于心的原则，解耦的目的是让<strong>系统组件可以独立变化</strong>，构建易于理解，测试，维护的系统。</p>
-<p>解耦的手段通常有如下几种：</p>
-<h3 id="1-依赖倒置"><a href="#1-依赖倒置" class="headerlink" title="1. 依赖倒置"></a>1. 依赖倒置</h3><p>依赖倒置的原则：上层模块不应该依赖于下层模块，它们共同依赖于一个抽象。抽象不能依赖于具象，具象依赖于抽象。</p>
-<p><a href="https://zh.wikipedia.org/wiki/%E4%BE%9D%E8%B5%96%E5%8F%8D%E8%BD%AC%E5%8E%9F%E5%88%99" target="_blank" rel="noopener">依赖倒置</a>原则的目的是把高层次组件从对低层次组件的依赖中解耦出来，这样使得重用不同层级的组件实现变得可能。如模块A依赖于模块B，那么在A和B之间加一层接口(interface)，A调用(依赖)该接口，B实现(依赖)该接口，这样，只要接口稳定，A，B即可独立变化。</p>
-<p>这种依赖抽象的思想，在GOF的设计模式中，有大量宝贵实践，如策略模式，模板方法模式等。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2016/08/gs-design-concept/" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2133,7 +2136,7 @@ func myfunc(args ...interface{}){
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">112</span>
+                    <span class="site-state-item-count">113</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -2180,7 +2183,9 @@ func myfunc(args ...interface{}){
                     
                       
                     
-                    <span class="site-state-item-count">17</span>
+                      
+                    
+                    <span class="site-state-item-count">18</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
