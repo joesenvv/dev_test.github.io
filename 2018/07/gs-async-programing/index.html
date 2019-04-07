@@ -113,7 +113,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="GS 中的异步编程">
 <meta property="og:url" content="http://wudaijun.com/2018/07/gs-async-programing/index.html">
-<meta property="og:site_name" content="wudaijun&#39;s blog">
+<meta property="og:site_name" content="joesenvv&#39;s blog">
 <meta property="og:description" content="异步思维是后端架构设计的必备思维，尽管同步代码简单直观且易于维护，但为了构建健壮，可靠的后端系统，对于同步的选择是应该慎之又慎的。为了方便讨论同步可能带来的问题，我将同步请求大概分为三类:   不带超时的同步请求 带超时但非关键的同步请求 带超时且关键的同步请求  第一类同步请求的问题很明显，就是请求方无法对对端的响应有一个最坏预期，即有可能对端挂掉了，永远也不响应，那么请求方就永远被阻塞了。很多">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2019-03-20T15:37:14.000Z">
@@ -343,7 +343,7 @@
     <link itemprop="mainEntityOfPage" href="http://wudaijun.com/2018/07/gs-async-programing/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="wudaijun">
+      <meta itemprop="name" content="joesenvv">
       <meta itemprop="description" content="">
       <meta itemprop="image" content="/assets/theme/avatar.png">
     </span>
@@ -491,7 +491,7 @@
 <p>扯远了，回到我们的轻量级线程上来，现在由于我们有了更轻量级的线程，创建和切换的开销都很低，因此我们可以尝试将逻辑粒度分得更细，比如每个玩家一个轻量级线程，这样玩家在执行一些阻塞操作时，就让它阻塞好了，这其实就是 Actor 编程模型，也是异步编程的一个思路：将服务拆分得更细，阻塞和错误的影响降到更低，这样对于玩家登录这种操作，就不需要复杂的状态机来维护了，直接同步调用就行。目前在我们的Go 服务器中没有用 Actor 模型，主要出于对 SLG 游戏交互复杂度的考量。</p>
 <h4 id="基于消息中间件"><a href="#基于消息中间件" class="headerlink" title="基于消息中间件"></a>基于消息中间件</h4><p>本质上仍然是消息通信，但解决了消息路由问题，加了中间件这一层之后，解耦了服务之间的直接依赖，可以灵活实现如一对一，组播，发布/订阅等通信模式，并且避免了全联通网络。消息中间件是个很好用的东西，我目前也在学习如何在项目中更好地应用它，比如将所有服务器内部服务间的通信由 etcd + grpc/protobuf 换成 RabbitMQ，这样每个服务不需要知道其它服务的地址，通信协议，状态等，只需要知道有这样一个服务，对服务本身来讲，也只有两种外部通信协议，RabbitMQ 消息协议以及 C/S 通信协议，集群的扩展性更强。当然，加了中间件之后，状态性就变弱了，比如可能收到过时消息。</p>
 <h4 id="异步-RPC-库"><a href="#异步-RPC-库" class="headerlink" title="异步 RPC 库"></a>异步 RPC 库</h4><p>目前流行的 RPC 框架主要是 <a href="https://grpc.io/" target="_blank" rel="noopener">grpc</a>和<a href="https://github.com/apache/thrift" target="_blank" rel="noopener">thrift</a>，但它们对异步的支持非常有限，比如 grpc 就只支持 C++版本的异步调用，通常依赖应用层的封装。另外，grpc 的<a href="https://grpc.io/docs/tutorials/basic/go.html#bidirectional-streaming-rpc" target="_blank" rel="noopener">双向Stream通信</a>也是个很不错的 feature，我们目前将其用于 Gate 和 Game 的双工通信。</p>
-<p>总结一下，不同于<a href="wudaijun.com/2018-07-21-web-async-programing/">Web异步编程</a>，GS 更看重可扩展性，讲究组件与组件间的解耦，并且组件之间的交互也更加灵活，因此通常服务之间会通过消息而不是回调或RPC的方式来交互。另外，不同的语言或框架可能提供了不同的轻量级执行体(轻量级线程，协程)，在使用时在确定阻塞造成的影响，这需要结合语言调度机制(是否会占用调度线程，是否抢占等)，以及执行体划分粒度来分析。</p>
+<p>总结一下，不同于<a href="joesenvv.com/2018-07-21-web-async-programing/">Web异步编程</a>，GS 更看重可扩展性，讲究组件与组件间的解耦，并且组件之间的交互也更加灵活，因此通常服务之间会通过消息而不是回调或RPC的方式来交互。另外，不同的语言或框架可能提供了不同的轻量级执行体(轻量级线程，协程)，在使用时在确定阻塞造成的影响，这需要结合语言调度机制(是否会占用调度线程，是否抢占等)，以及执行体划分粒度来分析。</p>
 
       
     </div>
@@ -609,7 +609,7 @@
             
               <img class="site-author-image" itemprop="image"
                 src="/assets/theme/avatar.png"
-                alt="wudaijun" />
+                alt="joesenvv" />
             
               <p class="site-author-name" itemprop="name">wudaijun</p>
               <p class="site-description motion-element" itemprop="description"></p>

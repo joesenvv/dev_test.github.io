@@ -113,7 +113,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="docker 网络">
 <meta property="og:url" content="http://wudaijun.com/2017/11/docker-network/index.html">
-<meta property="og:site_name" content="wudaijun&#39;s blog">
+<meta property="og:site_name" content="joesenvv&#39;s blog">
 <meta property="og:description" content="以Docker为平台部署服务器时，最应该理解透彻的便是网络配置。离上次学习，Docker网络又更新了不少内容，重新温习一下。 通过docker run的--network选项可配置容器的网络，Docker提供了多种网络工作模式，none, host, bridge, overlay 等。 none不为Docker容器进行任何网络配置，容器将不能访问任何外部的路由(容器内部仍然有loopback接口">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://wudaijun.com/assets/image/201711/docker-bridge.png">
@@ -346,7 +346,7 @@
     <link itemprop="mainEntityOfPage" href="http://wudaijun.com/2017/11/docker-network/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="wudaijun">
+      <meta itemprop="name" content="joesenvv">
       <meta itemprop="description" content="">
       <meta itemprop="image" content="/assets/theme/avatar.png">
     </span>
@@ -471,7 +471,7 @@
 <p>从实现上来讲，Docker的这种NAT(实际上是NATP，包含IP,Port的转换)规则，是Docker Daemon通过修改ipatables规则来实现的，ubuntu下可通过<code>sudo ipatbles -t nat -L</code>来查看和NAT相关的规则。</p>
 <p>总之，Docker容器在bridge模式下不具有一个公有IP，即和宿主机的eth0不处于同一个网段。导致的结果是宿主机以外的世界不能直接和容器进行通信。虽然NAT模式经过中间处理实现了这一点，但是NAT模式仍然存在问题与不便，如：容器均需要在宿主机上竞争端口，容器内部服务的访问者需要使用服务发现获知服务的外部端口等。另外NAT模式会一定程度的影响网络传输效率。</p>
 <p>默认设置下，Docker允许容器之间的互联，可通过<code>--icc=false</code>关闭容器互联(通过iptables DROP实现)，此时容器间相互访问只能通过<code>--link</code>选项链接容器来实现容器访问。<code>—link</code> 选项实际在链接容器的/etc/hosts中添加了一行被链接容器名和其IP的映射，并且会在被链接容器重启后更新该行(这样即使IP有变动也可以通过容器名正确连接)，此外还会添加一条针对两个容器允许连接的iptables规则。但Docker官方文档说<code>--link</code>已经是遗留的选项，更推荐通过已有或自定义网络模式实现互连。</p>
-<h3 id="overlay"><a href="#overlay" class="headerlink" title="overlay"></a>overlay</h3><p>前面提到的网络模式，主要解决同一个主机上容器与容器，容器与主机，容器与外界的连接方案。overlay网络可以实现跨主机的容器VLAN，主要用于 docker swarm 上，docker 文档中也基本是两者同时出现，因此docker swarm是跨主机的容器与容器之间的官方标准通信方案。<a href="wudaijun.com/2018/03/08/docker-swarm/">这里</a>有关于 docker swarm 的更多介绍。当初始化 swarm 时，会生成如下东西:</p>
+<h3 id="overlay"><a href="#overlay" class="headerlink" title="overlay"></a>overlay</h3><p>前面提到的网络模式，主要解决同一个主机上容器与容器，容器与主机，容器与外界的连接方案。overlay网络可以实现跨主机的容器VLAN，主要用于 docker swarm 上，docker 文档中也基本是两者同时出现，因此docker swarm是跨主机的容器与容器之间的官方标准通信方案。<a href="joesenvv.com/2018/03/08/docker-swarm/">这里</a>有关于 docker swarm 的更多介绍。当初始化 swarm 时，会生成如下东西:</p>
 <ul>
 <li>docker_gwbridge: 用于实现 host 上的 container 互联，类似 docker0，以及对swarm container暴露端口的SNAT, DNAT转换</li>
 <li>ingress: 用于实现跨主机的 swarm 网络，相同集群的不同节点上的 swarm cotainer 属于同一个 ingress</li>
@@ -628,7 +628,7 @@ docker network rm alpine1
             
               <img class="site-author-image" itemprop="image"
                 src="/assets/theme/avatar.png"
-                alt="wudaijun" />
+                alt="joesenvv" />
             
               <p class="site-author-name" itemprop="name">wudaijun</p>
               <p class="site-description motion-element" itemprop="description"></p>
